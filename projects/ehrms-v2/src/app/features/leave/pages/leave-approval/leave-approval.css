@@ -1,12 +1,6 @@
 /* Leave approval: Aurora Glass. Alerts, spinner, empty state, status badges, modal shell and form fields
    come from the shared kit in styles.css; this file keeps layout only. */
 
-.approval-page {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
-}
-
 /* ── Header ──────────────────────────────────────────────── */
 .page-header {
   display: flex;
@@ -64,23 +58,7 @@
   flex-wrap: wrap;
   gap: var(--space-1);
 }
-.status-filter-btn {
-  min-block-size: 44px;
-  padding-inline: var(--space-4);
-  border: 1px solid var(--mat-sys-outline-variant);
-  border-radius: 999px;
-  background: var(--table-surface);
-  color: var(--mat-sys-on-surface-variant);
-  font: inherit;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: var(--motion-fast);
-}
-.status-filter-btn:hover {
-  border-color: var(--mat-sys-primary);
-  color: var(--mat-sys-primary);
-}
+
 .status-filter-btn.active {
   background-image: var(--grad-primary);
   border-color: transparent;
@@ -108,11 +86,7 @@
 }
 
 /* ── Leave cards: one compact row + one details line ─────── */
-.leaves-grid {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
-}
+
 .leave-card {
   overflow: hidden;
   background: var(--table-surface);
@@ -154,12 +128,7 @@
   flex-wrap: wrap;
   gap: var(--space-2) var(--space-4);
 }
-.card-emp {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  min-inline-size: 200px;
-}
+
 .emp-avatar {
   inline-size: 40px;
   block-size: 40px;
@@ -186,12 +155,7 @@
   font-weight: 600;
   color: var(--mat-sys-primary);
 }
-.leave-type-row {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  min-inline-size: 128px;
-}
+
 .type-dot {
   inline-size: 8px;
   block-size: 8px;
@@ -232,13 +196,7 @@
   margin-inline-start: var(--space-2);
   padding-block: 1px;
 }
-.card-end {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: var(--space-2);
-  margin-inline-start: auto;
-}
+
 /* The icon already carries the status; skip the global dot. */
 .status-badge::before {
   display: none;
@@ -253,41 +211,15 @@
 }
 
 /* Row actions: outline reject, solid approve. 44px targets. */
-.btn-reject,
-.btn-approve {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-1);
-  min-block-size: 44px;
-  padding-inline: var(--space-4);
-  border: 1px solid transparent;
-  border-radius: var(--radius-md);
-  font: inherit;
-  font-weight: 700;
-  cursor: pointer;
-  transition: var(--motion-fast);
-}
-.btn-reject {
-  border-color: var(--status-rejected-fg);
-  background: var(--table-surface);
-  color: var(--status-rejected-fg);
-}
+
 .btn-reject:hover:not(:disabled) {
   background: var(--status-rejected-bg);
 }
-.btn-approve {
-  background: #047857; /* darker than the token so white text keeps 4.5:1 in both themes */
-  color: #fff;
-}
+
 .btn-approve:hover:not(:disabled) {
   transform: translateY(-1px);
 }
-.btn-reject:disabled,
-.btn-approve:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
+
 .btn-reject .material-icons,
 .btn-approve .material-icons {
   font-size: 18px;
@@ -314,11 +246,7 @@
 .submitted-date {
   margin-inline-start: auto;
 }
-.approval-info {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-1);
-}
+
 .approval-info .material-icons {
   font-size: 16px;
 }
@@ -408,14 +336,7 @@
 .modal-header .modal-close {
   margin-inline-start: auto;
 }
-.header-approve {
-  background: var(--status-active-bg);
-  color: var(--status-active-fg);
-}
-.header-reject {
-  background: var(--status-rejected-bg);
-  color: var(--status-rejected-fg);
-}
+
 .modal-header-icon .material-icons {
   font-size: 32px;
 }
@@ -427,28 +348,7 @@
   margin: 2px 0 0;
   font-size: 13px;
 }
-.modal-summary {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-  padding: var(--space-4) var(--space-5);
-  border-block-end: 1px solid var(--mat-sys-outline-variant);
-  background: var(--table-header-bg);
-}
-.summary-row {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--space-3);
-}
-.summary-label {
-  inline-size: 88px;
-  flex-shrink: 0;
-  padding-block-start: 2px;
-  color: var(--mat-sys-on-surface-variant);
-  font-size: 12px;
-  font-weight: 700;
-  text-transform: uppercase;
-}
+
 .summary-val {
   flex: 1;
 }

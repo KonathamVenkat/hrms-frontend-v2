@@ -1,12 +1,6 @@
 /* Employee list: Aurora Glass. Theme tokens + logical properties only, so Arabic mirrors without overrides.
    Controls are >= 44px; the table header is sticky inside .table-wrap. */
 
-.emp-page {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
-}
-
 /* ── Header ──────────────────────────────────────────────── */
 .page-header {
   display: flex;
@@ -37,35 +31,7 @@
 }
 
 /* ── Buttons: gradient primary, glass secondary ──────────── */
-.btn-create,
-.btn-search,
-.btn-create-sm {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-2);
-  min-block-size: 44px;
-  padding-inline: var(--space-5);
-  border: 0;
-  border-radius: var(--radius-md);
-  background-image: var(--grad-cta);
-  color: #fff;
-  font: inherit;
-  font-size: 14px;
-  font-weight: 700;
-  box-shadow: var(--cta-shadow);
-  cursor: pointer;
-  transition: transform var(--motion-fast);
-}
-.btn-search {
-  background-image: var(--grad-primary);
-  box-shadow: var(--primary-shadow);
-}
-.btn-create:hover,
-.btn-search:hover,
-.btn-create-sm:hover {
-  transform: translateY(-1px);
-}
+
 .btn-create .material-icons,
 .btn-create-sm .material-icons {
   font-size: 20px;
@@ -117,21 +83,7 @@
   color: var(--mat-sys-on-surface);
   font: inherit;
 }
-.clear-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  inline-size: 32px;
-  block-size: 32px;
-  border: 0;
-  border-radius: 50%;
-  background: none;
-  color: var(--mat-sys-on-surface-variant);
-  cursor: pointer;
-}
-.clear-icon:hover {
-  background: var(--mat-sys-surface-container-high);
-}
+
 .clear-icon .material-icons {
   font-size: 18px;
 }
@@ -185,18 +137,6 @@
   box-shadow: var(--glass-shine), var(--glass-shadow);
 }
 
-.loading-overlay {
-  position: absolute;
-  inset: 0;
-  z-index: 10;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-3);
-  background: var(--glass-bg-strong);
-  color: var(--mat-sys-on-surface-variant);
-}
 .spinner {
   inline-size: 30px;
   block-size: 30px;
@@ -217,25 +157,7 @@
   max-block-size: calc(100vh - 360px);
   min-block-size: 200px;
 }
-.emp-table {
-  inline-size: 100%;
-  min-inline-size: 800px;
-  border-collapse: collapse;
-}
-.emp-table th {
-  position: sticky;
-  inset-block-start: 0;
-  z-index: 1;
-  padding: var(--space-3) var(--space-4);
-  background: var(--table-header-bg);
-  color: var(--mat-sys-on-surface-variant);
-  font-size: 12px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  text-align: start;
-  white-space: nowrap;
-}
+
 .emp-row {
   border-block-start: 1px solid var(--mat-sys-outline-variant);
   cursor: pointer;
@@ -248,12 +170,6 @@
 .emp-row:focus-visible {
   outline: 2px solid var(--mat-sys-primary);
   outline-offset: -2px;
-}
-.emp-table td {
-  padding: var(--space-3) var(--space-4);
-  color: var(--mat-sys-on-surface);
-  vertical-align: middle;
-  font-variant-numeric: tabular-nums;
 }
 
 .emp-cell {
@@ -289,12 +205,6 @@
   font-weight: 600;
   color: var(--mat-sys-primary);
 }
-.emp-email {
-  font-size: 12px;
-  color: var(--mat-sys-on-surface-variant);
-  /* Emails are always left-to-right data. */
-  unicode-bidi: plaintext;
-}
 
 /* ── Badges: status tokens, always text + dot ────────────── */
 .status-badge {
@@ -317,26 +227,6 @@
   flex-shrink: 0;
   background: currentcolor;
 }
-.badge-active {
-  background: var(--status-active-bg);
-  color: var(--status-active-fg);
-}
-.badge-inactive {
-  background: var(--mat-sys-surface-container-high);
-  color: var(--mat-sys-on-surface-variant);
-}
-.badge-probation {
-  background: var(--status-approved-bg);
-  color: var(--status-approved-fg);
-}
-.badge-notice {
-  background: var(--status-pending-bg);
-  color: var(--status-pending-fg);
-}
-.badge-terminated {
-  background: var(--status-rejected-bg);
-  color: var(--status-rejected-fg);
-}
 
 .type-badge {
   display: inline-block;
@@ -344,22 +234,6 @@
   border-radius: 999px;
   font-size: 12px;
   font-weight: 600;
-}
-.type-full {
-  background: var(--status-approved-bg);
-  color: var(--status-approved-fg);
-}
-.type-part {
-  background: var(--mat-sys-secondary-container);
-  color: var(--mat-sys-on-secondary-container);
-}
-.type-contract {
-  background: var(--status-pending-bg);
-  color: var(--status-pending-fg);
-}
-.type-intern {
-  background: var(--status-active-bg);
-  color: var(--status-active-fg);
 }
 
 /* ── Row actions: 44px targets ───────────────────────────── */
@@ -427,9 +301,6 @@
 .empty-state small {
   color: var(--mat-sys-on-surface-variant);
 }
-.btn-create-sm {
-  margin-block-start: var(--space-2);
-}
 
 /* ── Pagination ──────────────────────────────────────────── */
 .pagination {
@@ -446,20 +317,13 @@
   color: var(--mat-sys-on-surface-variant);
   font-size: 13px;
 }
-.page-size-wrap {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-}
+
 .pag-btns {
   display: flex;
   align-items: center;
   gap: var(--space-1);
 }
-.pag-ellipsis {
-  padding-inline: var(--space-1);
-  color: var(--mat-sys-on-surface-variant);
-}
+
 .pag-btn {
   min-inline-size: 44px;
   block-size: 44px;

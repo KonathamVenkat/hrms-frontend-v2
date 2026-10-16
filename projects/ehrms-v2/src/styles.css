@@ -2042,3 +2042,543 @@ html[dir='rtl'] * {
 .app-page :is(.stat-mini, .stat-card) mat-icon {
   flex-shrink: 0;
 }
+
+/* ── Moved from leave-calendar.css (component style budget; class names are unique to that screen) ── */
+.cal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+.nav-btn,
+.today-btn,
+.popup-close {
+  min-block-size: 44px;
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: var(--radius-md);
+  background: var(--table-surface);
+  color: var(--mat-sys-on-surface-variant);
+  font: inherit;
+  cursor: pointer;
+  transition: var(--motion-fast);
+}
+.today-btn {
+  padding-inline: var(--space-4);
+  border-color: var(--mat-sys-primary);
+  color: var(--mat-sys-primary);
+  font-weight: 700;
+}
+.nav-btn:focus-visible,
+.today-btn:focus-visible,
+.popup-close:focus-visible,
+.cal-day:focus-visible {
+  outline: 2px solid var(--mat-sys-primary);
+  outline-offset: 2px;
+}
+.cal-grid-wrap,
+.panel-card,
+.day-popup {
+  overflow: hidden;
+  background: var(--table-surface);
+  border: var(--glass-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--glass-shine), var(--glass-shadow);
+}
+.weekday-header {
+  padding-block: var(--space-3);
+  text-align: center;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--mat-sys-on-surface-variant);
+}
+.cal-day {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-block-size: 92px;
+  padding: var(--space-2);
+  border-inline-end: 1px solid var(--mat-sys-outline-variant);
+  border-block-start: 1px solid var(--mat-sys-outline-variant);
+  cursor: pointer;
+  transition: background var(--motion-fast);
+}
+.day-number {
+  align-self: flex-start;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.leave-dot.dot-pending {
+  border: 2px dashed currentcolor;
+  background: transparent !important;
+  color: var(--mat-sys-on-surface-variant);
+}
+.more-dot {
+  padding-inline: var(--space-1);
+  border-radius: 999px;
+  background: var(--mat-sys-surface-container-high);
+  color: var(--mat-sys-on-surface-variant);
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 16px;
+}
+.leave-count {
+  position: absolute;
+  inset-block-end: 6px;
+  inset-inline-end: 6px;
+  inline-size: 20px;
+  block-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #b45309;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+}
+.panel-card-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  background: var(--table-header-bg);
+  border-block-end: 1px solid var(--mat-sys-outline-variant);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--mat-sys-on-surface-variant);
+}
+.panel-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-5) var(--space-4);
+  color: var(--mat-sys-on-surface-variant);
+}
+.emp-chip,
+.popup-avatar {
+  inline-size: 36px;
+  block-size: 36px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 13px;
+  color: var(--mat-sys-on-surface-variant);
+}
+.legend-swatch {
+  inline-size: 18px;
+  block-size: 12px;
+  flex-shrink: 0;
+  border-radius: 3px;
+  border: 1px solid var(--mat-sys-outline-variant);
+}
+.popup-header {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-5);
+  background: var(--table-header-bg);
+  border-block-end: 1px solid var(--mat-sys-outline-variant);
+}
+.tag-today,
+.tag-holiday,
+.tag-weekend,
+.holiday-type {
+  padding: 2px var(--space-3);
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+}
+.tag-weekend,
+.holiday-type {
+  background: var(--mat-sys-surface-container-high);
+  color: var(--mat-sys-on-surface-variant);
+}
+.popup-section-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0 0 var(--space-3);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--mat-sys-on-surface-variant);
+}
+.popup-leave-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--mat-sys-surface-container);
+}
+.popup-status {
+  padding: 1px var(--space-2);
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.popup-empty {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-5);
+  color: var(--mat-sys-on-surface-variant);
+}
+
+/* ── Moved from employee-list.css (component style budget; class names are unique to that screen) ── */
+.emp-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+.btn-create,
+.btn-search,
+.btn-create-sm {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-block-size: 44px;
+  padding-inline: var(--space-5);
+  border: 0;
+  border-radius: var(--radius-md);
+  background-image: var(--grad-cta);
+  color: #fff;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  box-shadow: var(--cta-shadow);
+  cursor: pointer;
+  transition: transform var(--motion-fast);
+}
+.btn-search {
+  background-image: var(--grad-primary);
+  box-shadow: var(--primary-shadow);
+}
+.btn-create:hover,
+.btn-search:hover,
+.btn-create-sm:hover {
+  transform: translateY(-1px);
+}
+.clear-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 32px;
+  block-size: 32px;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  color: var(--mat-sys-on-surface-variant);
+  cursor: pointer;
+}
+.clear-icon:hover {
+  background: var(--mat-sys-surface-container-high);
+}
+.loading-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  background: var(--glass-bg-strong);
+  color: var(--mat-sys-on-surface-variant);
+}
+.emp-table {
+  inline-size: 100%;
+  min-inline-size: 800px;
+  border-collapse: collapse;
+}
+.emp-table th {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 1;
+  padding: var(--space-3) var(--space-4);
+  background: var(--table-header-bg);
+  color: var(--mat-sys-on-surface-variant);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  text-align: start;
+  white-space: nowrap;
+}
+.emp-table td {
+  padding: var(--space-3) var(--space-4);
+  color: var(--mat-sys-on-surface);
+  vertical-align: middle;
+  font-variant-numeric: tabular-nums;
+}
+.emp-email {
+  font-size: 12px;
+  color: var(--mat-sys-on-surface-variant);
+  /* Emails are always left-to-right data. */
+  unicode-bidi: plaintext;
+}
+.badge-active {
+  background: var(--status-active-bg);
+  color: var(--status-active-fg);
+}
+.badge-inactive {
+  background: var(--mat-sys-surface-container-high);
+  color: var(--mat-sys-on-surface-variant);
+}
+.badge-probation {
+  background: var(--status-approved-bg);
+  color: var(--status-approved-fg);
+}
+.badge-notice {
+  background: var(--status-pending-bg);
+  color: var(--status-pending-fg);
+}
+.badge-terminated {
+  background: var(--status-rejected-bg);
+  color: var(--status-rejected-fg);
+}
+.type-full {
+  background: var(--status-approved-bg);
+  color: var(--status-approved-fg);
+}
+.type-part {
+  background: var(--mat-sys-secondary-container);
+  color: var(--mat-sys-on-secondary-container);
+}
+.type-contract {
+  background: var(--status-pending-bg);
+  color: var(--status-pending-fg);
+}
+.type-intern {
+  background: var(--status-active-bg);
+  color: var(--status-active-fg);
+}
+.btn-create-sm {
+  margin-block-start: var(--space-2);
+}
+.page-size-wrap {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.pag-ellipsis {
+  padding-inline: var(--space-1);
+  color: var(--mat-sys-on-surface-variant);
+}
+
+/* ── Moved from leave-approval.css (component style budget; class names are unique to that screen) ── */
+.approval-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+.status-filter-btn {
+  min-block-size: 44px;
+  padding-inline: var(--space-4);
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: 999px;
+  background: var(--table-surface);
+  color: var(--mat-sys-on-surface-variant);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--motion-fast);
+}
+.status-filter-btn:hover {
+  border-color: var(--mat-sys-primary);
+  color: var(--mat-sys-primary);
+}
+.leaves-grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.card-emp {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-inline-size: 200px;
+}
+.leave-type-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-inline-size: 128px;
+}
+.card-end {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-inline-start: auto;
+}
+.btn-reject,
+.btn-approve {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  min-block-size: 44px;
+  padding-inline: var(--space-4);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--motion-fast);
+}
+.btn-reject {
+  border-color: var(--status-rejected-fg);
+  background: var(--table-surface);
+  color: var(--status-rejected-fg);
+}
+.btn-approve {
+  background: #047857; /* darker than the token so white text keeps 4.5:1 in both themes */
+  color: #fff;
+}
+.btn-reject:disabled,
+.btn-approve:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.approval-info {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+.header-approve {
+  background: var(--status-active-bg);
+  color: var(--status-active-fg);
+}
+.header-reject {
+  background: var(--status-rejected-bg);
+  color: var(--status-rejected-fg);
+}
+.modal-summary {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-4) var(--space-5);
+  border-block-end: 1px solid var(--mat-sys-outline-variant);
+  background: var(--table-header-bg);
+}
+.summary-row {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+}
+.summary-label {
+  inline-size: 88px;
+  flex-shrink: 0;
+  padding-block-start: 2px;
+  color: var(--mat-sys-on-surface-variant);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+/* ── Moved from leave-balance.css (component style budget; class names are unique to that screen) ── */
+.tab-nav {
+  inline-size: fit-content;
+  max-inline-size: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  padding: var(--space-1);
+  background: var(--glass-bg);
+  border: var(--glass-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--glass-shine), var(--glass-shadow);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+}
+.type-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background: var(--table-header-bg);
+  border-block-end: 1px solid var(--mat-sys-outline-variant);
+}
+.info-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  background: var(--status-approved-bg);
+  color: var(--status-approved-fg);
+}
+.adj-type-btn {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-block-size: 44px;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: var(--radius-md);
+  background: var(--table-surface);
+  cursor: pointer;
+  transition: var(--motion-fast);
+}
+.adj-type-btn.adj-selected {
+  border-color: var(--mat-sys-primary);
+  box-shadow: 0 0 0 1px var(--mat-sys-primary);
+  background: color-mix(in srgb, var(--mat-sys-primary) 10%, transparent);
+}
+.result-errors {
+  margin-block-start: var(--space-3);
+  padding-block-start: var(--space-3);
+  border-block-start: 1px solid var(--mat-sys-outline-variant);
+}
+
+/* ── Moved from leave-list.css (component style budget; class names are unique to that screen) ── */
+.unpaid-tag {
+  padding: 2px var(--space-2);
+  border-radius: 999px;
+  background: var(--mat-sys-surface-container-high);
+  color: var(--mat-sys-on-surface-variant);
+  font-size: 11px;
+  font-weight: 700;
+}
+.btn-cancel-req {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-block-size: 44px;
+  padding-inline: var(--space-3);
+  border: 1px solid var(--status-rejected-fg);
+  border-radius: var(--radius-md);
+  background: var(--table-surface);
+  color: var(--status-rejected-fg);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background var(--motion-fast);
+}

@@ -169,14 +169,7 @@
   font-weight: 700;
   white-space: nowrap;
 }
-.unpaid-tag {
-  padding: 2px var(--space-2);
-  border-radius: 999px;
-  background: var(--mat-sys-surface-container-high);
-  color: var(--mat-sys-on-surface-variant);
-  font-size: 11px;
-  font-weight: 700;
-}
+
 /* The icon already carries the status; skip the global dot. */
 .status-badge::before {
   display: none;
@@ -190,21 +183,6 @@
   color: var(--mat-sys-on-surface-variant);
 }
 
-.btn-cancel-req {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-1);
-  min-block-size: 44px;
-  padding-inline: var(--space-3);
-  border: 1px solid var(--status-rejected-fg);
-  border-radius: var(--radius-md);
-  background: var(--table-surface);
-  color: var(--status-rejected-fg);
-  font: inherit;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background var(--motion-fast);
-}
 .btn-cancel-req:hover:not(:disabled) {
   background: var(--status-rejected-bg);
 }

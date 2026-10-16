@@ -87,20 +87,7 @@
 }
 
 /* ── Tab nav (glass segmented control) ───────────────────── */
-.tab-nav {
-  inline-size: fit-content;
-  max-inline-size: 100%;
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-1);
-  padding: var(--space-1);
-  background: var(--glass-bg);
-  border: var(--glass-border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--glass-shine), var(--glass-shadow);
-  -webkit-backdrop-filter: var(--glass-blur);
-  backdrop-filter: var(--glass-blur);
-}
+
 .tab-btn {
   display: inline-flex;
   align-items: center;
@@ -142,15 +129,7 @@
   border-radius: var(--radius-lg);
   box-shadow: var(--glass-shine), var(--glass-shadow);
 }
-.type-card-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-3);
-  padding: var(--space-3) var(--space-4);
-  background: var(--table-header-bg);
-  border-block-end: 1px solid var(--mat-sys-outline-variant);
-}
+
 .type-info,
 .type-stats {
   display: flex;
@@ -258,15 +237,6 @@
   gap: var(--space-4);
 }
 
-.info-banner {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--space-3);
-  padding: var(--space-3) var(--space-4);
-  border-radius: var(--radius-md);
-  background: var(--status-approved-bg);
-  color: var(--status-approved-fg);
-}
 .info-banner .material-icons {
   font-size: 20px;
   flex-shrink: 0;
@@ -296,19 +266,7 @@
   flex-direction: column;
   gap: var(--space-2);
 }
-.adj-type-btn {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  min-block-size: 44px;
-  padding: var(--space-2) var(--space-3);
-  border: 1px solid var(--mat-sys-outline-variant);
-  border-radius: var(--radius-md);
-  background: var(--table-surface);
-  cursor: pointer;
-  transition: var(--motion-fast);
-}
+
 .adj-type-btn input {
   position: absolute;
   opacity: 0;
@@ -321,11 +279,7 @@
 .adj-type-btn:hover {
   border-color: var(--mat-sys-primary);
 }
-.adj-type-btn.adj-selected {
-  border-color: var(--mat-sys-primary);
-  box-shadow: 0 0 0 1px var(--mat-sys-primary);
-  background: color-mix(in srgb, var(--mat-sys-primary) 10%, transparent);
-}
+
 .adj-type-btn:focus-within {
   outline: 2px solid var(--mat-sys-primary);
   outline-offset: 2px;
@@ -396,11 +350,7 @@
 .stat-val.blue {
   color: var(--status-approved-fg);
 }
-.result-errors {
-  margin-block-start: var(--space-3);
-  padding-block-start: var(--space-3);
-  border-block-start: 1px solid var(--mat-sys-outline-variant);
-}
+
 .error-title {
   margin: 0 0 var(--space-2);
   font-weight: 700;

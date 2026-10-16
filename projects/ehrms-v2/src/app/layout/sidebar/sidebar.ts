@@ -69,6 +69,8 @@ export class Sidebar implements OnInit {
   // Delay timer — prevents flicker when the mouse moves between
   // the icon button and the flyout panel
   private hideTimer: ReturnType<typeof setTimeout> | null = null;
+  // True while the open flyout came from hover, so the click that follows doesn't close it
+  private openedByHover = false;
   // The button that opened the current flyout, so Escape can return focus to it
   private lastTrigger: HTMLElement | null = null;
 
@@ -153,10 +155,11 @@ export class Sidebar implements OnInit {
     const trigger = event.currentTarget as HTMLElement;
     if (this.hasChildren(item)) {
       const id = item.mainMenuId.toString();
-      if (this.activeMenu() === id) {
+      if (this.activeMenu() === id && !this.openedByHover) {
         this.activeMenu.set(null);
       } else {
         this.openMenu(id, trigger);
+        this.openedByHover = false;
       }
     } else if (item.route) {
       this.navigate(item.route);
@@ -180,6 +183,7 @@ export class Sidebar implements OnInit {
     const li = event.currentTarget as HTMLElement;
     const trigger = li.querySelector<HTMLElement>('.rail-btn') ?? li;
     this.openMenu(item.mainMenuId.toString(), trigger);
+    this.openedByHover = true;
   }
 
   // ── Hover flyout — mouseleave on rail-item OR flyout ───
