@@ -52,6 +52,7 @@ export class Dashboard implements OnInit {
 
   // ── State ─────────────────────────────────────────────────
   readonly isHr = signal(false);
+  readonly isSystemAdmin = signal(false);
   readonly displayName = signal('');
   readonly loading = signal(true);
   readonly loadFailed = signal(false);
@@ -119,6 +120,10 @@ export class Dashboard implements OnInit {
     if (this.auth.hasAnyRole('HR_ADMIN', 'HR_MANAGER')) {
       this.isHr.set(true);
       this.loadHr();
+    } else if (this.auth.hasAnyRole('SYSTEM_ADMIN')) {
+      // No employee record, so there is nothing personal to load.
+      this.isSystemAdmin.set(true);
+      this.loading.set(false);
     } else {
       this.loadEmployee(this.auth.getEmployeeId());
     }

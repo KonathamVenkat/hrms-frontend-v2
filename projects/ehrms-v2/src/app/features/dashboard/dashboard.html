@@ -74,6 +74,9 @@
           </ul>
         </section>
       }
+    } @else if (isSystemAdmin()) {
+      <!-- ── System administrator: no employee record ──── -->
+      <p class="dashboard-status">{{ 'dashboard.system.hint' | translate }}</p>
     } @else {
       <!-- ── Employee ─────────────────────────────────── -->
       <div class="employee-grid">

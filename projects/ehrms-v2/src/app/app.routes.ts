@@ -32,7 +32,9 @@ export const routes: Routes = [
         path: 'profile',
         data: { self: true },
         loadComponent: () =>
-          import('./features/employee/pages/employee-detail/employee-detail').then((m) => m.EmployeeDetail),
+          import('./features/employee/pages/employee-detail/employee-detail').then(
+            (m) => m.EmployeeDetail,
+          ),
         title: 'employee.routes.profile',
       },
       {
@@ -43,8 +45,18 @@ export const routes: Routes = [
       },
       {
         path: 'admin',
-        canActivate: [roleGuard(...HR_ROLES)],
+        canActivate: [roleGuard('SYSTEM_ADMIN', ...HR_ROLES)],
         children: [
+          {
+            // The API answers 403 to anyone but SYSTEM_ADMIN, so keep the HR roles out of the screen too.
+            path: 'departments',
+            canActivate: [roleGuard('SYSTEM_ADMIN')],
+            loadComponent: () =>
+              import('./features/admin/departments/pages/department/department').then(
+                (m) => m.Departments,
+              ),
+            title: 'Departments · EHRMS',
+          },
           {
             path: 'leave-types',
             loadComponent: () =>

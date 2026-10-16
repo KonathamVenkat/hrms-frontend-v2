@@ -666,6 +666,9 @@
       "applyLeave": "Demander un congé",
       "holidaysTitle": "Jours fériés à venir",
       "noHolidays": "Aucun jour férié à venir cette année."
+    },
+    "system": {
+      "hint": "Utilisez le menu Admin Config de la barre latérale pour gérer les données de référence."
     }
   },
   "leave": {
@@ -1682,6 +1685,46 @@
         "created": "« {{name}} » créé",
         "deactivated": "« {{name}} » désactivé",
         "activated": "« {{name}} » activé"
+      }
+    },
+    "departments": {
+      "title": "Départements",
+      "totalChip": "{{count}} au total",
+      "activeChip": "{{count}} actifs",
+      "addDepartment": "Ajouter un département",
+      "searchPlaceholder": "Rechercher un département...",
+      "emptyTitle": "Aucun département trouvé",
+      "emptyHint": "Ajoutez un département ci-dessus",
+      "editTitle": "Modifier le département",
+      "code": "Code",
+      "codePlaceholder": "ex. IT",
+      "nameEn": "Nom du département (EN)",
+      "nameEnPlaceholder": "ex. Information Technology",
+      "nameAr": "Nom du département (AR)",
+      "description": "Description",
+      "descriptionPlaceholder": "Rôle de ce département (facultatif)",
+      "costCenter": "Centre de coût",
+      "costCenterPlaceholder": "ex. CC-IT-001",
+      "activeHint": "Un département inactif ne peut pas être attribué aux employés",
+      "saving": "Enregistrement...",
+      "update": "Mettre à jour",
+      "deactivateTitle": "Désactiver le département ?",
+      "activateTitle": "Activer le département ?",
+      "deleteTitle": "Supprimer le département ?",
+      "deleteHint": "Cette action est irréversible. Un département utilisé ne peut pas être supprimé ; désactivez-le plutôt.",
+      "deactivate": "Désactiver",
+      "activate": "Activer",
+      "delete": "Supprimer",
+      "errors": {
+        "loadFailed": "Échec du chargement des départements.",
+        "duplicate": "Un département avec ce code existe déjà."
+      },
+      "success": {
+        "created": "« {{name}} » créé",
+        "updated": "« {{name}} » mis à jour",
+        "activated": "« {{name}} » activé",
+        "deactivated": "« {{name}} » désactivé",
+        "deleted": "« {{name}} » supprimé"
       }
     }
   }

@@ -666,6 +666,9 @@
       "applyLeave": "تقديم طلب إجازة",
       "holidaysTitle": "العطلات القادمة",
       "noHolidays": "لا توجد عطلات قادمة هذه السنة."
+    },
+    "system": {
+      "hint": "استخدم قائمة إعدادات الإدارة في الشريط الجانبي لإدارة البيانات الأساسية."
     }
   },
   "leave": {
@@ -1682,6 +1685,46 @@
         "created": "تم إنشاء \"{{name}}\"",
         "deactivated": "تم إلغاء تفعيل \"{{name}}\"",
         "activated": "تم تفعيل \"{{name}}\""
+      }
+    },
+    "departments": {
+      "title": "الأقسام",
+      "totalChip": "{{count}} إجمالي",
+      "activeChip": "{{count}} نشط",
+      "addDepartment": "إضافة قسم",
+      "searchPlaceholder": "البحث في الأقسام...",
+      "emptyTitle": "لا توجد أقسام",
+      "emptyHint": "أضف قسماً من الأعلى",
+      "editTitle": "تعديل القسم",
+      "code": "الرمز",
+      "codePlaceholder": "مثال: IT",
+      "nameEn": "اسم القسم (إنجليزي)",
+      "nameEnPlaceholder": "مثال: Information Technology",
+      "nameAr": "اسم القسم (عربي)",
+      "description": "الوصف",
+      "descriptionPlaceholder": "مهام هذا القسم (اختياري)",
+      "costCenter": "مركز التكلفة",
+      "costCenterPlaceholder": "مثال: CC-IT-001",
+      "activeHint": "لا يمكن اختيار الأقسام غير النشطة للموظفين",
+      "saving": "جارٍ الحفظ...",
+      "update": "تحديث",
+      "deactivateTitle": "تعطيل القسم؟",
+      "activateTitle": "تفعيل القسم؟",
+      "deleteTitle": "حذف القسم؟",
+      "deleteHint": "لا يمكن التراجع عن هذا الإجراء. لا يمكن حذف قسم قيد الاستخدام؛ قم بتعطيله بدلاً من ذلك.",
+      "deactivate": "تعطيل",
+      "activate": "تفعيل",
+      "delete": "حذف",
+      "errors": {
+        "loadFailed": "تعذّر تحميل الأقسام.",
+        "duplicate": "يوجد قسم بهذا الرمز بالفعل."
+      },
+      "success": {
+        "created": "تم إنشاء \"{{name}}\"",
+        "updated": "تم تحديث \"{{name}}\"",
+        "activated": "تم تفعيل \"{{name}}\"",
+        "deactivated": "تم تعطيل \"{{name}}\"",
+        "deleted": "تم حذف \"{{name}}\""
       }
     }
   }

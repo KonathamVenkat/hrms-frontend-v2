@@ -666,6 +666,9 @@
       "applyLeave": "Apply for leave",
       "holidaysTitle": "Upcoming holidays",
       "noHolidays": "No upcoming holidays this year."
+    },
+    "system": {
+      "hint": "Use the Admin Config menu in the sidebar to manage master data."
     }
   },
   "leave": {
@@ -1682,6 +1685,46 @@
         "created": "\"{{name}}\" created",
         "deactivated": "\"{{name}}\" deactivated",
         "activated": "\"{{name}}\" activated"
+      }
+    },
+    "departments": {
+      "title": "Departments",
+      "totalChip": "{{count}} Total",
+      "activeChip": "{{count}} Active",
+      "addDepartment": "Add Department",
+      "searchPlaceholder": "Search departments...",
+      "emptyTitle": "No departments found",
+      "emptyHint": "Add a department above",
+      "editTitle": "Edit Department",
+      "code": "Code",
+      "codePlaceholder": "e.g. IT",
+      "nameEn": "Department Name (EN)",
+      "nameEnPlaceholder": "e.g. Information Technology",
+      "nameAr": "Department Name (AR)",
+      "description": "Description",
+      "descriptionPlaceholder": "What this department does (optional)",
+      "costCenter": "Cost Center",
+      "costCenterPlaceholder": "e.g. CC-IT-001",
+      "activeHint": "Inactive departments cannot be chosen for employees",
+      "saving": "Saving...",
+      "update": "Update",
+      "deactivateTitle": "Deactivate Department?",
+      "activateTitle": "Activate Department?",
+      "deleteTitle": "Delete Department?",
+      "deleteHint": "This cannot be undone. A department that is in use cannot be deleted; deactivate it instead.",
+      "deactivate": "Deactivate",
+      "activate": "Activate",
+      "delete": "Delete",
+      "errors": {
+        "loadFailed": "Failed to load departments.",
+        "duplicate": "A department with this code already exists."
+      },
+      "success": {
+        "created": "\"{{name}}\" created",
+        "updated": "\"{{name}}\" updated",
+        "activated": "\"{{name}}\" activated",
+        "deactivated": "\"{{name}}\" deactivated",
+        "deleted": "\"{{name}}\" deleted"
       }
     }
   }
