@@ -58,6 +58,15 @@ export const routes: Routes = [
             title: 'Departments · EHRMS',
           },
           {
+            path: 'designations',
+            canActivate: [roleGuard('SYSTEM_ADMIN')],
+            loadComponent: () =>
+              import('./features/admin/designations/pages/designation/designation').then(
+                (m) => m.Designations,
+              ),
+            title: 'Designations · EHRMS',
+          },
+          {
             path: 'leave-types',
             loadComponent: () =>
               import('./features/admin/leave-types/pages/leave-types/leave-types').then(

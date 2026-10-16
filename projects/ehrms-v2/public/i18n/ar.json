@@ -1726,6 +1726,54 @@
         "deactivated": "تم تعطيل \"{{name}}\"",
         "deleted": "تم حذف \"{{name}}\""
       }
+    },
+    "designations": {
+      "title": "المسميات الوظيفية",
+      "totalChip": "{{count}} إجمالي",
+      "activeChip": "{{count}} نشط",
+      "addDesignation": "إضافة مسمى وظيفي",
+      "searchPlaceholder": "البحث في المسميات الوظيفية...",
+      "allDepartments": "كل الأقسام",
+      "noDepartment": "بدون قسم",
+      "department": "القسم",
+      "emptyTitle": "لا توجد مسميات وظيفية",
+      "editTitle": "تعديل المسمى الوظيفي",
+      "code": "الرمز",
+      "codePlaceholder": "مثال: SR_SWE",
+      "grade": "الدرجة",
+      "gradePlaceholder": "مثال: P3",
+      "titleEn": "المسمى (إنجليزي)",
+      "titleEnPlaceholder": "مثال: Senior Software Engineer",
+      "titleAr": "المسمى (عربي)",
+      "activeHint": "لا يمكن اختيار المسميات غير النشطة للموظفين",
+      "saving": "جارٍ الحفظ...",
+      "update": "تحديث",
+      "deactivateTitle": "تعطيل المسمى الوظيفي؟",
+      "activateTitle": "تفعيل المسمى الوظيفي؟",
+      "deleteTitle": "حذف المسمى الوظيفي؟",
+      "deleteHint": "لا يمكن التراجع عن هذا الإجراء. لا يمكن حذف مسمى قيد الاستخدام؛ قم بتعطيله بدلاً من ذلك.",
+      "deactivate": "تعطيل",
+      "activate": "تفعيل",
+      "delete": "حذف",
+      "columns": {
+        "code": "الرمز",
+        "title": "المسمى",
+        "department": "القسم",
+        "grade": "الدرجة",
+        "status": "الحالة",
+        "actions": "الإجراءات"
+      },
+      "errors": {
+        "loadFailed": "تعذّر تحميل المسميات الوظيفية.",
+        "duplicate": "يوجد مسمى وظيفي بهذا الرمز بالفعل."
+      },
+      "success": {
+        "created": "تم إنشاء \"{{name}}\"",
+        "updated": "تم تحديث \"{{name}}\"",
+        "activated": "تم تفعيل \"{{name}}\"",
+        "deactivated": "تم تعطيل \"{{name}}\"",
+        "deleted": "تم حذف \"{{name}}\""
+      }
     }
   }
 }

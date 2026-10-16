@@ -1726,6 +1726,54 @@
         "deactivated": "\"{{name}}\" deactivated",
         "deleted": "\"{{name}}\" deleted"
       }
+    },
+    "designations": {
+      "title": "Designations",
+      "totalChip": "{{count}} Total",
+      "activeChip": "{{count}} Active",
+      "addDesignation": "Add Designation",
+      "searchPlaceholder": "Search designations...",
+      "allDepartments": "All departments",
+      "noDepartment": "No department",
+      "department": "Department",
+      "emptyTitle": "No designations found",
+      "editTitle": "Edit Designation",
+      "code": "Code",
+      "codePlaceholder": "e.g. SR_SWE",
+      "grade": "Grade level",
+      "gradePlaceholder": "e.g. P3",
+      "titleEn": "Title (EN)",
+      "titleEnPlaceholder": "e.g. Senior Software Engineer",
+      "titleAr": "Title (AR)",
+      "activeHint": "Inactive designations cannot be chosen for employees",
+      "saving": "Saving...",
+      "update": "Update",
+      "deactivateTitle": "Deactivate Designation?",
+      "activateTitle": "Activate Designation?",
+      "deleteTitle": "Delete Designation?",
+      "deleteHint": "This cannot be undone. A designation that is in use cannot be deleted; deactivate it instead.",
+      "deactivate": "Deactivate",
+      "activate": "Activate",
+      "delete": "Delete",
+      "columns": {
+        "code": "Code",
+        "title": "Title",
+        "department": "Department",
+        "grade": "Grade",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "errors": {
+        "loadFailed": "Failed to load designations.",
+        "duplicate": "A designation with this code already exists."
+      },
+      "success": {
+        "created": "\"{{name}}\" created",
+        "updated": "\"{{name}}\" updated",
+        "activated": "\"{{name}}\" activated",
+        "deactivated": "\"{{name}}\" deactivated",
+        "deleted": "\"{{name}}\" deleted"
+      }
     }
   }
 }

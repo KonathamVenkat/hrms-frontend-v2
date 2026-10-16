@@ -1726,6 +1726,54 @@
         "deactivated": "« {{name}} » désactivé",
         "deleted": "« {{name}} » supprimé"
       }
+    },
+    "designations": {
+      "title": "Désignations",
+      "totalChip": "{{count}} au total",
+      "activeChip": "{{count}} actives",
+      "addDesignation": "Ajouter une désignation",
+      "searchPlaceholder": "Rechercher une désignation...",
+      "allDepartments": "Tous les départements",
+      "noDepartment": "Aucun département",
+      "department": "Département",
+      "emptyTitle": "Aucune désignation trouvée",
+      "editTitle": "Modifier la désignation",
+      "code": "Code",
+      "codePlaceholder": "ex. SR_SWE",
+      "grade": "Niveau de grade",
+      "gradePlaceholder": "ex. P3",
+      "titleEn": "Intitulé (EN)",
+      "titleEnPlaceholder": "ex. Senior Software Engineer",
+      "titleAr": "Intitulé (AR)",
+      "activeHint": "Une désignation inactive ne peut pas être attribuée aux employés",
+      "saving": "Enregistrement...",
+      "update": "Mettre à jour",
+      "deactivateTitle": "Désactiver la désignation ?",
+      "activateTitle": "Activer la désignation ?",
+      "deleteTitle": "Supprimer la désignation ?",
+      "deleteHint": "Cette action est irréversible. Une désignation utilisée ne peut pas être supprimée ; désactivez-la plutôt.",
+      "deactivate": "Désactiver",
+      "activate": "Activer",
+      "delete": "Supprimer",
+      "columns": {
+        "code": "Code",
+        "title": "Intitulé",
+        "department": "Département",
+        "grade": "Grade",
+        "status": "Statut",
+        "actions": "Actions"
+      },
+      "errors": {
+        "loadFailed": "Échec du chargement des désignations.",
+        "duplicate": "Une désignation avec ce code existe déjà."
+      },
+      "success": {
+        "created": "« {{name}} » créée",
+        "updated": "« {{name}} » mise à jour",
+        "activated": "« {{name}} » activée",
+        "deactivated": "« {{name}} » désactivée",
+        "deleted": "« {{name}} » supprimée"
+      }
     }
   }
 }

@@ -1,0 +1,386 @@
+<div class="admin-page">
+  <div class="page-header">
+    <div class="header-left">
+      <h1 class="page-title">{{ 'admin.designations.title' | translate }}</h1>
+      <div class="stat-chips">
+        <span class="chip chip-total">{{
+          'admin.designations.totalChip' | translate: { count: designations().length }
+        }}</span>
+        <span class="chip chip-active">{{
+          'admin.designations.activeChip' | translate: { count: activeCount() }
+        }}</span>
+      </div>
+    </div>
+    <button type="button" class="btn-add" (click)="openCreate()">
+      <span aria-hidden="true" class="material-icons">add</span>
+      {{ 'admin.designations.addDesignation' | translate }}
+    </button>
+  </div>
+
+  @if (successMsg()) {
+    <div class="alert alert-success" role="status">
+      <span aria-hidden="true" class="material-icons">check_circle</span>{{ successMsg() }}
+    </div>
+  }
+  @if (error() && !showModal()) {
+    <div class="alert alert-error" role="alert">
+      <span aria-hidden="true" class="material-icons">error_outline</span>{{ error() }}
+    </div>
+  }
+
+  <div class="filter-bar">
+    <div class="search-wrap">
+      <span aria-hidden="true" class="material-icons">search</span>
+      <input
+        type="text"
+        [placeholder]="'admin.designations.searchPlaceholder' | translate"
+        [attr.aria-label]="'admin.designations.searchPlaceholder' | translate"
+        [value]="filterText()"
+        (input)="filterText.set($any($event.target).value)"
+      />
+      @if (filterText()) {
+        <button
+          type="button"
+          class="clear-btn"
+          [attr.aria-label]="'common.clear' | translate"
+          (click)="filterText.set('')"
+        >
+          <span aria-hidden="true" class="material-icons">close</span>
+        </button>
+      }
+    </div>
+    <select
+      class="filter-select"
+      [attr.aria-label]="'admin.designations.department' | translate"
+      [value]="filterDepartment()"
+      (change)="filterDepartment.set($any($event.target).value)"
+    >
+      <option value="">{{ 'admin.designations.allDepartments' | translate }}</option>
+      <option value="none">{{ 'admin.designations.noDepartment' | translate }}</option>
+      @for (dep of departments(); track dep.deptId) {
+        <option [value]="dep.deptId">{{ dep.name }}</option>
+      }
+    </select>
+    <div class="tab-filter">
+      <button
+        type="button"
+        class="tab-btn"
+        [class.active]="filterActive() === 'all'"
+        (click)="filterActive.set('all')"
+      >
+        {{ 'common.all' | translate }}
+      </button>
+      <button
+        type="button"
+        class="tab-btn"
+        [class.active]="filterActive() === 'active'"
+        (click)="filterActive.set('active')"
+      >
+        {{ 'common.active' | translate }}
+      </button>
+      <button
+        type="button"
+        class="tab-btn"
+        [class.active]="filterActive() === 'inactive'"
+        (click)="filterActive.set('inactive')"
+      >
+        {{ 'common.inactive' | translate }}
+      </button>
+    </div>
+  </div>
+
+  @if (loading()) {
+    <div class="loading-wrap">
+      <div class="spinner"></div>
+      <span>{{ 'common.loading' | translate }}</span>
+    </div>
+  }
+
+  @if (!loading()) {
+    <div class="table-card">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>{{ 'admin.designations.columns.code' | translate }}</th>
+            <th>{{ 'admin.designations.columns.title' | translate }}</th>
+            <th>{{ 'admin.designations.columns.department' | translate }}</th>
+            <th>{{ 'admin.designations.columns.grade' | translate }}</th>
+            <th>{{ 'admin.designations.columns.status' | translate }}</th>
+            <th>{{ 'admin.designations.columns.actions' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (filtered().length === 0) {
+            <tr>
+              <td colspan="7">
+                <div class="empty-state">
+                  <span aria-hidden="true" class="material-icons">badge</span>
+                  <p>{{ 'admin.designations.emptyTitle' | translate }}</p>
+                </div>
+              </td>
+            </tr>
+          }
+          @for (d of filtered(); track d.desigId; let i = $index) {
+            <tr class="data-row" [class.inactive-row]="!d.isActive">
+              <td class="cell-num">{{ i + 1 }}</td>
+              <td>
+                <span class="code-badge">{{ d.code }}</span>
+              </td>
+              <td>
+                <div class="name-cell">
+                  <span class="name-en">{{ d.title }}</span>
+                  @if (d.titleAr) {
+                    <span class="name-ar">{{ d.titleAr }}</span>
+                  }
+                </div>
+              </td>
+              <td>{{ d.departmentName || '—' }}</td>
+              <td>
+                @if (d.gradeLevel) {
+                  <span class="tz-badge">{{ d.gradeLevel }}</span>
+                } @else {
+                  —
+                }
+              </td>
+              <td>
+                <span
+                  class="status-badge"
+                  [class.status-active]="d.isActive"
+                  [class.status-inactive]="!d.isActive"
+                >
+                  <span class="status-dot"></span
+                  >{{ (d.isActive ? 'common.active' : 'common.inactive') | translate }}
+                </span>
+              </td>
+              <td>
+                <div class="action-wrap">
+                  <button
+                    type="button"
+                    class="act-btn btn-edit"
+                    [attr.aria-label]="'common.edit' | translate"
+                    (click)="openEdit(d)"
+                  >
+                    <span aria-hidden="true" class="material-icons">edit</span>
+                  </button>
+                  <button
+                    type="button"
+                    class="act-btn"
+                    [class.btn-deactivate]="d.isActive"
+                    [class.btn-activate]="!d.isActive"
+                    [attr.aria-label]="
+                      (d.isActive ? 'admin.designations.deactivate' : 'admin.designations.activate')
+                        | translate
+                    "
+                    (click)="openConfirm(d, 'toggle')"
+                  >
+                    <span aria-hidden="true" class="material-icons">{{
+                      d.isActive ? 'toggle_off' : 'toggle_on'
+                    }}</span>
+                  </button>
+                  <button
+                    type="button"
+                    class="act-btn btn-delete"
+                    [attr.aria-label]="'admin.designations.delete' | translate"
+                    (click)="openConfirm(d, 'delete')"
+                  >
+                    <span aria-hidden="true" class="material-icons">delete</span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>
+
+<!-- MODAL -->
+@if (showModal()) {
+  <div class="modal-backdrop" (click)="closeModal()">
+    <div
+      class="modal"
+      (click)="$event.stopPropagation()"
+      [appAccessibleDialog]="'dg-modal-title'"
+      (dialogClosed)="closeModal()"
+      cdkTrapFocus
+      cdkTrapFocusAutoCapture
+    >
+      <div class="modal-header">
+        <h2 id="dg-modal-title" class="modal-title">
+          {{
+            (isEditMode() ? 'admin.designations.editTitle' : 'admin.designations.addDesignation')
+              | translate
+          }}
+        </h2>
+        <button
+          type="button"
+          class="modal-close"
+          [attr.aria-label]="'common.close' | translate"
+          (click)="closeModal()"
+        >
+          <span aria-hidden="true" class="material-icons">close</span>
+        </button>
+      </div>
+      @if (error()) {
+        <div class="modal-alert" role="alert">
+          <span aria-hidden="true" class="material-icons">error_outline</span>{{ error() }}
+        </div>
+      }
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+        <div class="modal-body">
+          <div class="field-row">
+            <div class="field">
+              <label for="dg-code"
+                >{{ 'admin.designations.code' | translate }} <span class="req">*</span></label
+              >
+              <input
+                id="dg-code"
+                formControlName="code"
+                [placeholder]="'admin.designations.codePlaceholder' | translate"
+              />
+              @if (isInvalid('code')) {
+                <span class="field-error">{{ getError('code') }}</span>
+              }
+            </div>
+            <div class="field">
+              <label for="dg-grade">{{ 'admin.designations.grade' | translate }}</label>
+              <input
+                id="dg-grade"
+                formControlName="gradeLevel"
+                [placeholder]="'admin.designations.gradePlaceholder' | translate"
+              />
+              @if (isInvalid('gradeLevel')) {
+                <span class="field-error">{{ getError('gradeLevel') }}</span>
+              }
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="dg-title"
+                >{{ 'admin.designations.titleEn' | translate }} <span class="req">*</span></label
+              >
+              <input
+                id="dg-title"
+                formControlName="title"
+                [placeholder]="'admin.designations.titleEnPlaceholder' | translate"
+              />
+              @if (isInvalid('title')) {
+                <span class="field-error">{{ getError('title') }}</span>
+              }
+            </div>
+            <div class="field">
+              <label for="dg-title-ar">{{ 'admin.designations.titleAr' | translate }}</label>
+              <input id="dg-title-ar" formControlName="titleAr" dir="rtl" />
+              @if (isInvalid('titleAr')) {
+                <span class="field-error">{{ getError('titleAr') }}</span>
+              }
+            </div>
+          </div>
+          <div class="field">
+            <label for="dg-dept">{{ 'admin.designations.department' | translate }}</label>
+            <select id="dg-dept" formControlName="departmentId">
+              <option [ngValue]="null">{{ 'admin.designations.noDepartment' | translate }}</option>
+              @for (dep of departments(); track dep.deptId) {
+                <option [ngValue]="dep.deptId">
+                  {{
+                    dep.isActive
+                      ? dep.name
+                      : dep.name + ' (' + ('common.inactive' | translate) + ')'
+                  }}
+                </option>
+              }
+            </select>
+          </div>
+          @if (isEditMode()) {
+            <label class="toggle-item">
+              <div class="toggle-info">
+                <span class="toggle-label">{{ 'common.active' | translate }}</span>
+                <span class="toggle-hint">{{ 'admin.designations.activeHint' | translate }}</span>
+              </div>
+              <div class="toggle-wrap">
+                <input type="checkbox" formControlName="isActive" class="toggle-inp" />
+                <span class="toggle-slider"></span>
+              </div>
+            </label>
+          }
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-cancel" (click)="closeModal()">
+            {{ 'common.cancel' | translate }}
+          </button>
+          <button type="submit" class="btn-save" [disabled]="saving()">
+            @if (saving()) {
+              <div class="btn-spinner"></div>
+              <span>{{ 'admin.designations.saving' | translate }}</span>
+            } @else {
+              <span aria-hidden="true" class="material-icons">save</span>
+              <span>{{
+                (isEditMode() ? 'admin.designations.update' : 'admin.designations.addDesignation')
+                  | translate
+              }}</span>
+            }
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}
+
+<!-- CONFIRM: deactivate / activate / delete -->
+@if (confirmItem(); as item) {
+  <div class="modal-backdrop" (click)="cancelConfirm()">
+    <div
+      class="confirm-dialog"
+      (click)="$event.stopPropagation()"
+      [appAccessibleDialog]="'dg-confirm-title'"
+      (dialogClosed)="cancelConfirm()"
+      cdkTrapFocus
+      cdkTrapFocusAutoCapture
+    >
+      @let deleting = confirmAction() === 'delete';
+      @let warn = deleting || item.isActive;
+      <div class="confirm-icon" [class.icon-warn]="warn" [class.icon-info]="!warn">
+        <span aria-hidden="true" class="material-icons">{{ deleting ? 'delete' : 'badge' }}</span>
+      </div>
+      <h3 id="dg-confirm-title" class="confirm-title">
+        {{
+          (deleting
+            ? 'admin.designations.deleteTitle'
+            : item.isActive
+              ? 'admin.designations.deactivateTitle'
+              : 'admin.designations.activateTitle'
+          ) | translate
+        }}
+      </h3>
+      <p class="confirm-msg">
+        <strong>{{ item.title }}</strong>
+        @if (deleting) {
+          <br />{{ 'admin.designations.deleteHint' | translate }}
+        }
+      </p>
+      <div class="confirm-actions">
+        <button type="button" class="btn-cancel" (click)="cancelConfirm()">
+          {{ 'common.cancel' | translate }}
+        </button>
+        <button
+          type="button"
+          class="btn-confirm"
+          [class.btn-danger]="warn"
+          [class.btn-success]="!warn"
+          (click)="confirm()"
+        >
+          {{
+            (deleting
+              ? 'admin.designations.delete'
+              : item.isActive
+                ? 'admin.designations.deactivate'
+                : 'admin.designations.activate'
+            ) | translate
+          }}
+        </button>
+      </div>
+    </div>
+  </div>
+}
