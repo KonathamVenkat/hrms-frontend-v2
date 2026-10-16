@@ -1,0 +1,208 @@
+/* Dashboard: Aurora Glass. KPI cards are pastel gradient glass with a gradient icon tile; all colour comes from
+   theme tokens and every offset is logical, so Arabic mirrors without overrides. The page gutter comes from
+   .page-content, so this block adds none of its own. */
+
+.dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.dashboard-title {
+  margin: 0;
+  font-size: 28px;
+  line-height: 1.25;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.dashboard-welcome {
+  margin: var(--space-1) 0 0;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.dashboard-status {
+  margin: 0;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.dashboard-alert {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  background: var(--status-rejected-bg);
+  color: var(--status-rejected-fg);
+}
+
+.section-title {
+  margin: 0 0 var(--space-4);
+  font: var(--mat-sys-title-medium);
+  font-weight: 700;
+}
+
+/* Lists rendered as grids: reset default list styling */
+.card-grid,
+.plain-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: var(--space-4);
+}
+
+/* Per-card tint + icon gradient, cycled by position (pastel glass, dark text). */
+.card-grid > li {
+  --tint: var(--grad-kpi-blue);
+  --icon-bg: var(--grad-icon-blue);
+}
+.card-grid > li:nth-child(4n + 2) {
+  --tint: var(--grad-kpi-violet);
+  --icon-bg: var(--grad-icon-violet);
+}
+.card-grid > li:nth-child(4n + 3) {
+  --tint: var(--grad-kpi-orange);
+  --icon-bg: var(--grad-icon-orange);
+}
+.card-grid > li:nth-child(4n) {
+  --tint: var(--grad-kpi-green);
+  --icon-bg: var(--grad-icon-green);
+}
+
+.stat-card {
+  position: relative;
+  block-size: 100%;
+  overflow: hidden;
+  --mat-card-outlined-container-color: transparent;
+  --mat-card-outlined-outline-color: transparent;
+  background: var(--tint), var(--glass-bg);
+  border: var(--glass-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--glass-shine), var(--glass-shadow);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+}
+/* Glossy highlight along the top edge. */
+.stat-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    160deg,
+    light-dark(rgb(255 255 255 / 45%), rgb(255 255 255 / 10%)),
+    transparent 40%
+  );
+  pointer-events: none;
+}
+
+.stat-content {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding-block-start: var(--space-4);
+}
+
+.stat-icon {
+  flex: none;
+  inline-size: 48px;
+  block-size: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  border-radius: var(--radius-md);
+  background: var(--icon-bg);
+  color: #fff;
+  box-shadow: 0 8px 16px rgb(0 0 0 / 16%);
+}
+
+.stat-value {
+  margin: 0;
+  font-size: 34px;
+  line-height: 1.15;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+}
+
+.stat-label {
+  margin: 0;
+  font-weight: 600;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.stat-muted {
+  margin: 0;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+/* Pending = amber status colours, always paired with an icon and the count (never colour alone) */
+.pending-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding-block: 0;
+  padding-inline: var(--space-2) var(--space-3);
+  border-radius: 999px;
+  background: var(--status-pending-bg);
+  color: var(--status-pending-fg);
+}
+
+/* Employee view: glass cards. */
+.employee-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--space-4);
+  align-items: start;
+}
+.employee-grid > mat-card {
+  --mat-card-outlined-container-color: transparent;
+  --mat-card-outlined-outline-color: transparent;
+  background: var(--glass-bg);
+  border: var(--glass-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--glass-shine), var(--glass-shadow);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+}
+
+.attendance-message {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0;
+}
+
+.plain-list li {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding-block: var(--space-2);
+  border-block-end: 1px solid var(--mat-sys-outline-variant);
+}
+
+.plain-list li:last-child {
+  border-block-end: none;
+}
+
+.list-secondary {
+  color: var(--mat-sys-on-surface-variant);
+  text-align: end;
+}
+
+/* Opaque cards when the user asks for less transparency. */
+@media (prefers-reduced-transparency: reduce) {
+  .stat-card,
+  .employee-grid > mat-card {
+    background: var(--tint, none), var(--mat-sys-surface-container);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}

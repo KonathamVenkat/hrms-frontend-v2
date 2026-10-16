@@ -1,0 +1,336 @@
+/* Leave apply: Aurora Glass. Alerts, spinner, buttons and form fields come from the shared kit in styles.css;
+   this file keeps layout only. */
+
+.apply-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+/* ── Header ──────────────────────────────────────────────── */
+.page-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+.back-btn {
+  inline-size: 44px;
+  block-size: 44px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: var(--radius-md);
+  background: var(--table-surface);
+  color: var(--mat-sys-on-surface-variant);
+  cursor: pointer;
+  transition: var(--motion-fast);
+}
+.back-btn:hover {
+  border-color: var(--mat-sys-primary);
+  color: var(--mat-sys-primary);
+}
+.back-btn:focus-visible,
+.file-chip-remove:focus-visible {
+  outline: 2px solid var(--mat-sys-primary);
+  outline-offset: 2px;
+}
+.page-title {
+  margin: 0;
+  font-size: 28px;
+  line-height: 1.25;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.page-sub {
+  margin: 2px 0 0;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+/* ── Layout ──────────────────────────────────────────────── */
+.apply-layout {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: var(--space-5);
+  align-items: start;
+}
+
+/* ── Form card ───────────────────────────────────────────── */
+.form-card,
+.balance-sidebar {
+  overflow: hidden;
+  background: var(--table-surface);
+  border: var(--glass-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--glass-shine), var(--glass-shadow);
+}
+.form-card-header,
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-5);
+  background: var(--table-header-bg);
+  border-block-end: 1px solid var(--mat-sys-outline-variant);
+  font-size: 16px;
+  font-weight: 700;
+}
+.form-card-header .material-icons,
+.sidebar-header .material-icons {
+  font-size: 20px;
+  color: var(--mat-sys-primary);
+}
+.form-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-5);
+}
+
+/* ── Leave type selector (radio cards, input stays focusable) */
+.no-balance-warn,
+.field-alert {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  background: var(--status-pending-bg);
+  color: var(--status-pending-fg);
+}
+.no-balance-warn .material-icons,
+.field-alert .material-icons {
+  font-size: 18px;
+  flex-shrink: 0;
+}
+.type-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-2);
+}
+.type-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-block-size: 44px;
+  padding: var(--space-3);
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: var(--radius-md);
+  background: var(--table-surface);
+  cursor: pointer;
+  transition: var(--motion-fast);
+}
+.type-card input {
+  position: absolute;
+  opacity: 0;
+  inset: 0;
+  inline-size: 100%;
+  block-size: 100%;
+  margin: 0;
+  cursor: pointer;
+}
+.type-card:hover:not(.type-empty) {
+  border-color: var(--mat-sys-primary);
+}
+.type-card.type-selected {
+  border-color: var(--mat-sys-primary);
+  background: color-mix(in srgb, var(--mat-sys-primary) 10%, transparent);
+  box-shadow: 0 0 0 1px var(--mat-sys-primary);
+}
+.type-card:focus-within {
+  outline: 2px solid var(--mat-sys-primary);
+  outline-offset: 2px;
+}
+.type-card.type-empty {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+.type-dot,
+.bal-type-dot {
+  inline-size: 8px;
+  block-size: 8px;
+  flex-shrink: 0;
+  border-radius: 50%;
+}
+.type-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.type-name {
+  font-weight: 700;
+}
+.type-avail {
+  font-size: 12px;
+  color: var(--mat-sys-on-surface-variant);
+}
+.type-mini-bar,
+.bal-bar {
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--mat-sys-surface-container-high);
+}
+.type-mini-bar {
+  block-size: 4px;
+}
+.type-mini-fill,
+.bal-bar-fill {
+  block-size: 100%;
+  border-radius: 999px;
+  transition: inline-size var(--motion-base);
+}
+
+/* ── Days preview ────────────────────────────────────────── */
+.days-preview {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  background: var(--status-active-bg);
+  color: var(--status-active-fg);
+}
+.days-preview.days-warn {
+  background: var(--status-rejected-bg);
+  color: var(--status-rejected-fg);
+}
+.days-icon .material-icons {
+  font-size: 28px;
+}
+.days-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.days-count {
+  font-size: 18px;
+  font-weight: 800;
+}
+.days-remaining {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.char-count {
+  font-size: 12px;
+  color: var(--mat-sys-on-surface-variant);
+  text-align: end;
+}
+.file-input {
+  padding-block: var(--space-2);
+  cursor: pointer;
+}
+.file-chip {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  gap: var(--space-2);
+  max-inline-size: 100%;
+  padding-inline: var(--space-3) 2px;
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: 999px;
+  background: var(--table-surface);
+}
+.file-chip .material-icons {
+  font-size: 16px;
+  color: var(--mat-sys-on-surface-variant);
+}
+.file-chip-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.file-chip-remove {
+  inline-size: 44px;
+  block-size: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--mat-sys-on-surface-variant);
+  cursor: pointer;
+}
+.file-chip-remove:hover {
+  background: var(--status-rejected-bg);
+  color: var(--status-rejected-fg);
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+/* ── Balance sidebar ─────────────────────────────────────── */
+.balance-sidebar {
+  position: sticky;
+  inset-block-start: var(--space-5);
+}
+.sidebar-header {
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.balance-list {
+  padding-block: var(--space-2);
+}
+.bal-item {
+  padding: var(--space-3) var(--space-4);
+}
+.bal-item.bal-selected {
+  background: color-mix(in srgb, var(--mat-sys-primary) 10%, transparent);
+}
+.bal-item-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-block-end: var(--space-2);
+}
+.bal-type-name {
+  flex: 1;
+  font-weight: 600;
+}
+.bal-avail {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.bal-bar {
+  block-size: 6px;
+  margin-block-end: var(--space-1);
+}
+.bal-breakdown {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  font-size: 12px;
+  color: var(--mat-sys-on-surface-variant);
+}
+.pending-text {
+  color: var(--status-pending-fg);
+  font-weight: 600;
+}
+
+@media (max-width: 900px) {
+  .apply-layout {
+    grid-template-columns: 1fr;
+  }
+  .balance-sidebar {
+    position: static;
+  }
+  .type-grid {
+    grid-template-columns: 1fr;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .type-mini-fill,
+  .bal-bar-fill,
+  .type-card {
+    transition: none;
+  }
+}

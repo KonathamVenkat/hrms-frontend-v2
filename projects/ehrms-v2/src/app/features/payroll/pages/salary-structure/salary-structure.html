@@ -1,0 +1,382 @@
+<div class="page-container app-page">
+  <!-- ── Header ──────────────────────────────────────────── -->
+  <div class="page-header">
+    <div class="header-left">
+      <mat-icon class="header-icon">account_tree</mat-icon>
+      <div>
+        <h2>{{ 'payroll.salaryStructure.title' | translate }}</h2>
+        <span class="subtitle">{{ 'payroll.salaryStructure.subtitle' | translate }}</span>
+      </div>
+    </div>
+    <button mat-flat-button color="primary" (click)="openCreate()">
+      <mat-icon>add</mat-icon> {{ 'payroll.salaryStructure.newButton' | translate }}
+    </button>
+  </div>
+
+  <!-- ── Create / Edit Form ──────────────────────────────── -->
+  @if (showForm()) {
+    <mat-card class="form-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>{{ editingId() ? 'edit' : 'add_circle' }}</mat-icon>
+          {{
+            (editingId()
+              ? 'payroll.salaryStructure.formTitleEdit'
+              : 'payroll.salaryStructure.formTitleNew'
+            ) | translate
+          }}
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <form [formGroup]="form">
+          <!-- Structure details -->
+          <div class="structure-details">
+            <mat-form-field appearance="outline">
+              <mat-label>{{
+                'payroll.salaryStructure.fields.structureCode' | translate
+              }}</mat-label>
+              <input
+                matInput
+                formControlName="structureCode"
+                [placeholder]="
+                  'payroll.salaryStructure.fields.structureCodePlaceholder' | translate
+                "
+                [readonly]="!!editingId()"
+              />
+              @if (form.get('structureCode')?.hasError('required')) {
+                <mat-error>{{ 'common.validation.required' | translate }}</mat-error>
+              }
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>{{
+                'payroll.salaryStructure.fields.structureName' | translate
+              }}</mat-label>
+              <input
+                matInput
+                formControlName="structureName"
+                [placeholder]="
+                  'payroll.salaryStructure.fields.structureNamePlaceholder' | translate
+                "
+              />
+              @if (form.get('structureName')?.hasError('required')) {
+                <mat-error>{{ 'common.validation.required' | translate }}</mat-error>
+              }
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="full-col">
+              <mat-label>{{ 'payroll.salaryStructure.fields.description' | translate }}</mat-label>
+              <input matInput formControlName="description" />
+            </mat-form-field>
+          </div>
+          <mat-divider class="form-divider"></mat-divider>
+          <!-- Components table -->
+          <div class="items-header">
+            <h3>{{ 'payroll.salaryStructure.items.title' | translate }}</h3>
+            <button mat-stroked-button type="button" (click)="addComponent()">
+              <mat-icon>add</mat-icon> {{ 'payroll.salaryStructure.items.addButton' | translate }}
+            </button>
+          </div>
+          <div class="items-table-wrap" formArrayName="items">
+            <table class="items-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>{{ 'payroll.salaryStructure.items.columns.component' | translate }}</th>
+                  <th>{{ 'payroll.salaryStructure.items.columns.type' | translate }}</th>
+                  <th>
+                    {{ 'payroll.salaryStructure.items.columns.calcTypeOverride' | translate }}
+                  </th>
+                  <th>{{ 'payroll.salaryStructure.items.columns.amount' | translate }}</th>
+                  <th>{{ 'payroll.salaryStructure.items.columns.percentage' | translate }}</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (item of itemsArray.controls; track item; let i = $index) {
+                  <tr [formGroupName]="i">
+                    <td class="sort-col">{{ i + 1 }}</td>
+                    <!-- Component selector -->
+                    <td class="comp-col">
+                      <mat-form-field appearance="outline" class="compact-field">
+                        <mat-select
+                          formControlName="componentId"
+                          (selectionChange)="onComponentSelect(i, $event.value)"
+                        >
+                          @for (c of allComponents(); track c) {
+                            <mat-option [value]="c.componentId">
+                              {{ c.componentName }}
+                            </mat-option>
+                          }
+                        </mat-select>
+                      </mat-form-field>
+                    </td>
+                    <!-- Type badge -->
+                    <td class="type-col">
+                      @if (item.get('componentId')?.value) {
+                        <span
+                          class="type-chip"
+                          [style.background]="
+                            getTypeStyle(getComponentType(item.get('componentId')?.value)).bg
+                          "
+                          [style.color]="
+                            getTypeStyle(getComponentType(item.get('componentId')?.value)).color
+                          "
+                        >
+                          {{
+                            getTypeStyle(getComponentType(item.get('componentId')?.value)).label
+                              | translate
+                          }}
+                        </span>
+                      }
+                    </td>
+                    <!-- Calc type override -->
+                    <td class="calc-col">
+                      <mat-form-field appearance="outline" class="compact-field">
+                        <mat-select
+                          formControlName="calcTypeOverride"
+                          [placeholder]="'payroll.salaryStructure.items.useDefault' | translate"
+                        >
+                          <mat-option [value]="null">{{
+                            'payroll.salaryStructure.items.useDefault' | translate
+                          }}</mat-option>
+                          @for (ct of calcTypes; track ct) {
+                            <mat-option [value]="ct.value">
+                              {{ ct.label | translate }}
+                            </mat-option>
+                          }
+                        </mat-select>
+                      </mat-form-field>
+                    </td>
+                    <!-- Amount -->
+                    <td class="num-col">
+                      <mat-form-field appearance="outline" class="compact-field">
+                        <input
+                          matInput
+                          type="number"
+                          formControlName="amount"
+                          min="0"
+                          placeholder="0.000"
+                        />
+                      </mat-form-field>
+                    </td>
+                    <!-- Percentage -->
+                    <td class="num-col">
+                      <mat-form-field appearance="outline" class="compact-field">
+                        <input
+                          matInput
+                          type="number"
+                          formControlName="percentage"
+                          min="0"
+                          max="100"
+                          placeholder="0.00"
+                        />
+                        <span matTextSuffix>%</span>
+                      </mat-form-field>
+                    </td>
+                    <!-- Remove -->
+                    <td class="action-col">
+                      <button
+                        mat-icon-button
+                        color="warn"
+                        type="button"
+                        (click)="removeItem(i)"
+                        [matTooltip]="'payroll.salaryStructure.items.removeTooltip' | translate"
+                      >
+                        <mat-icon>remove_circle_outline</mat-icon>
+                      </button>
+                    </td>
+                  </tr>
+                }
+                @if (itemsArray.length === 0) {
+                  <tr>
+                    <td colspan="7" class="empty-items">
+                      {{ 'payroll.salaryStructure.items.empty' | translate }}
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </form>
+      </mat-card-content>
+      <mat-card-actions align="end">
+        <button mat-stroked-button (click)="closeForm()" [disabled]="saving()">
+          {{ 'common.cancel' | translate }}
+        </button>
+        <button mat-flat-button color="primary" (click)="onSave()" [disabled]="saving()">
+          @if (saving()) {
+            <mat-spinner diameter="18"></mat-spinner>
+          }
+          @if (!saving()) {
+            <span
+              ><mat-icon>save</mat-icon>
+              {{ 'payroll.salaryStructure.saveButton' | translate }}</span
+            >
+          }
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  }
+
+  <!-- ── Structures List ──────────────────────────────────── -->
+  @if (!showForm()) {
+    <div class="structures-list">
+      @if (loading()) {
+        <div class="center-spinner">
+          <mat-spinner diameter="44"></mat-spinner>
+        </div>
+      }
+      @if (!loading()) {
+        <mat-accordion multi>
+          @for (s of structures(); track s) {
+            <mat-expansion-panel class="structure-panel" [class.inactive-panel]="!s.isActive">
+              <!-- Panel header -->
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  <span class="code-chip">{{ s.structureCode }}</span>
+                  <span class="structure-name">{{ s.structureName }}</span>
+                </mat-panel-title>
+                <mat-panel-description>
+                  <span class="emp-count">
+                    <mat-icon>people</mat-icon>
+                    {{
+                      'payroll.salaryStructure.panel.employeeCount'
+                        | translate: { count: s.employeeCount }
+                    }}
+                  </span>
+                  <span class="item-count">
+                    <mat-icon>list</mat-icon>
+                    {{
+                      'payroll.salaryStructure.panel.itemCount'
+                        | translate: { count: s.items.length }
+                    }}
+                  </span>
+                  <span
+                    class="status-chip"
+                    [style.background]="
+                      s.isActive ? 'var(--status-active-bg)' : 'var(--status-rejected-bg)'
+                    "
+                    [style.color]="
+                      s.isActive ? 'var(--status-active-fg)' : 'var(--status-rejected-fg)'
+                    "
+                  >
+                    {{ (s.isActive ? 'common.active' : 'common.inactive') | translate }}
+                  </span>
+                </mat-panel-description>
+              </mat-expansion-panel-header>
+              <!-- Panel content — component breakdown -->
+              <div class="panel-body">
+                @if (s.description) {
+                  <div class="description">{{ s.description }}</div>
+                }
+                <!-- Earnings -->
+                <div class="component-section">
+                  <h4 class="section-title earning">
+                    <mat-icon>add_circle</mat-icon>
+                    {{ 'payroll.salaryStructure.sections.earnings' | translate }}
+                  </h4>
+                  <div class="comp-rows">
+                    @for (item of filterItems(s.items, 'EARNING'); track item) {
+                      <div class="comp-row">
+                        <span class="comp-name">{{ item.componentName }}</span>
+                        <span class="comp-ar">{{ item.componentNameAr }}</span>
+                        <span class="comp-basis">{{
+                          calcLabels[item.effectiveCalcType] | translate
+                        }}</span>
+                        <span class="comp-value earning-val">
+                          {{
+                            item.effectiveCalcType === 'FIXED'
+                              ? (item.amount | number: '1.2-2') + ' SSP'
+                              : item.percentage + '%'
+                          }}
+                        </span>
+                      </div>
+                    }
+                  </div>
+                </div>
+                <!-- Deductions -->
+                @if (filterItems(s.items, 'DEDUCTION').length > 0) {
+                  <div class="component-section">
+                    <h4 class="section-title deduction">
+                      <mat-icon>remove_circle</mat-icon>
+                      {{ 'payroll.salaryStructure.sections.deductions' | translate }}
+                    </h4>
+                    <div class="comp-rows">
+                      @for (item of filterItems(s.items, 'DEDUCTION'); track item) {
+                        <div class="comp-row">
+                          <span class="comp-name">{{ item.componentName }}</span>
+                          <span class="comp-ar">{{ item.componentNameAr }}</span>
+                          <span class="comp-basis">{{
+                            calcLabels[item.effectiveCalcType] | translate
+                          }}</span>
+                          <span class="comp-value deduction-val">
+                            {{
+                              item.effectiveCalcType === 'FIXED'
+                                ? (item.amount | number: '1.2-2') + ' SSP'
+                                : item.percentage + '%'
+                            }}
+                          </span>
+                        </div>
+                      }
+                    </div>
+                  </div>
+                }
+                <!-- Statutory -->
+                @if (filterItems(s.items, 'STATUTORY').length > 0) {
+                  <div class="component-section">
+                    <h4 class="section-title statutory">
+                      <mat-icon>account_balance</mat-icon>
+                      {{ 'payroll.salaryStructure.sections.statutory' | translate }}
+                    </h4>
+                    <div class="comp-rows">
+                      @for (item of filterItems(s.items, 'STATUTORY'); track item) {
+                        <div class="comp-row">
+                          <span class="comp-name">{{ item.componentName }}</span>
+                          <span class="comp-ar">{{ item.componentNameAr }}</span>
+                          <span class="comp-basis">{{
+                            calcLabels[item.effectiveCalcType] | translate
+                          }}</span>
+                          <span class="comp-value statutory-val">{{ item.percentage }}%</span>
+                        </div>
+                      }
+                    </div>
+                  </div>
+                }
+                <!-- Actions -->
+                <div class="panel-actions">
+                  <button mat-stroked-button (click)="openEdit(s)">
+                    <mat-icon>edit</mat-icon> {{ 'common.edit' | translate }}
+                  </button>
+                  <button
+                    mat-stroked-button
+                    [color]="s.isActive ? 'warn' : 'primary'"
+                    (click)="toggleActive(s)"
+                  >
+                    <mat-icon>{{ s.isActive ? 'toggle_off' : 'toggle_on' }}</mat-icon>
+                    {{
+                      (s.isActive
+                        ? 'payroll.salaryStructure.deactivate'
+                        : 'payroll.salaryStructure.activate'
+                      ) | translate
+                    }}
+                  </button>
+                </div>
+              </div>
+            </mat-expansion-panel>
+          }
+        </mat-accordion>
+      }
+      <!-- Empty state -->
+      @if (!loading() && structures().length === 0) {
+        <mat-card class="empty-card">
+          <mat-card-content class="empty-content">
+            <mat-icon>account_tree</mat-icon>
+            <p>{{ 'payroll.salaryStructure.emptyTitle' | translate }}</p>
+            <button mat-flat-button color="primary" (click)="openCreate()">
+              {{ 'payroll.salaryStructure.emptyAction' | translate }}
+            </button>
+          </mat-card-content>
+        </mat-card>
+      }
+    </div>
+  }
+</div>

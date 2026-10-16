@@ -1,0 +1,133 @@
+<nav class="sidebar-rail" [attr.aria-label]="'layout.sidebar.navLabel' | translate">
+
+  <!-- ── Logo ──────────────────────────────────────────── -->
+  <div class="rail-logo" aria-hidden="true">
+    <div class="logo-avatar">
+      <span aria-hidden="true" class="material-icons">hexagon</span>
+    </div>
+  </div>
+
+  <!-- ── Loading skeleton ──────────────────────────────── -->
+  @if (loading()) {
+    <div class="rail-loading" role="status" [attr.aria-label]="'layout.sidebar.loading' | translate">
+      @for (i of [1,2,3,4,5,6,7,8]; track i) {
+        <div class="skeleton-icon"></div>
+      }
+    </div>
+  }
+
+  <!-- ── Load failure: say so and offer a retry ────────── -->
+  @if (!loading() && loadFailed()) {
+    <div class="rail-error" role="alert">
+      <button
+        class="rail-btn"
+        type="button"
+        [attr.aria-label]="'layout.sidebar.loadFailedRetry' | translate"
+        (click)="reload()">
+        <span class="material-icons rail-icon" aria-hidden="true">refresh</span>
+        <span class="rail-tooltip" aria-hidden="true">{{ 'layout.sidebar.loadFailedRetry' | translate }}</span>
+      </button>
+    </div>
+  }
+
+  <!-- ── Nav list ──────────────────────────────────────── -->
+  @if (!loading() && !loadFailed()) {
+    <ul class="rail-list">
+
+      @for (item of navItems(); track item.mainMenuId) {
+        <li
+          class="rail-item"
+          [class.active]="isActive(item)"
+          (mouseenter)="onMenuEnter(item, $event)"
+          (mouseleave)="onMenuLeave()"
+          (focusout)="onGroupFocusOut($event)"
+        >
+          <!-- Icon button: click / Enter / Space opens the submenu (or navigates) -->
+          <button
+            class="rail-btn"
+            type="button"
+            [class.active]="isActive(item)"
+            [attr.aria-label]="item.mainMenuName"
+            [attr.aria-haspopup]="hasChildren(item) ? 'true' : null"
+            [attr.aria-expanded]="hasChildren(item) ? activeMenu() === item.mainMenuId.toString() : null"
+            [attr.aria-current]="isActive(item) && !hasChildren(item) ? 'page' : null"
+            (click)="onItemClick(item, $event)">
+
+            <!-- Colored icon (decorative: the button's aria-label names it) -->
+            <span class="material-icons rail-icon" aria-hidden="true">{{ item.icon }}</span>
+
+            <!-- Visible only when the rail is expanded / in the mobile drawer -->
+            <span class="rail-label" aria-hidden="true">{{ item.mainMenuName }}</span>
+
+            <!-- Tooltip — only shows when no flyout open -->
+            @if (!hasChildren(item)) {
+              <span class="rail-tooltip" aria-hidden="true">
+                {{ item.mainMenuName }}
+              </span>
+            }
+          </button>
+
+          <!-- ── Flyout submenu ─────────────────────────── -->
+          @if (hasChildren(item) && activeMenu() === item.mainMenuId.toString()) {
+            <div
+              class="flyout"
+              role="group"
+              [attr.aria-label]="item.mainMenuName"
+              [style.top.px]="flyoutTop()"
+              (mouseenter)="onFlyoutEnter()"
+              (mouseleave)="onFlyoutLeave()">
+
+              <!-- Flyout header with module color -->
+              <div class="flyout-header">
+                <span class="material-icons flyout-header-icon" aria-hidden="true">{{ item.icon }}</span>
+                {{ item.mainMenuName }}
+              </div>
+
+              <!-- Flyout links -->
+              <ul class="flyout-list">
+                @for (child of item.children; track child.subMenuId) {
+                  <li>
+                    <button
+                      class="flyout-link"
+                      type="button"
+                      [class.active]="isChildActive(child.subMenuAction)"
+                      [attr.aria-current]="isChildActive(child.subMenuAction) ? 'page' : null"
+                      (click)="navigate(child.subMenuAction)">
+
+                      <!-- Active dot indicator -->
+                      @if (isChildActive(child.subMenuAction)) {
+                        <span class="flyout-dot" aria-hidden="true"></span>
+                      } @else {
+                        <span class="flyout-dot-placeholder" aria-hidden="true"></span>
+                      }
+
+                      {{ child.subMenuName }}
+                    </button>
+                  </li>
+                }
+              </ul>
+            </div>
+          }
+
+        </li>
+      }
+
+    </ul>
+  }
+
+  <!-- ── Logout at bottom ──────────────────────────────── -->
+  @if (!loading()) {
+    <div class="rail-bottom">
+      <button
+        class="rail-btn logout-btn"
+        type="button"
+        [attr.aria-label]="'layout.sidebar.logout' | translate"
+        (click)="signOut()">
+        <span class="material-icons rail-icon" aria-hidden="true">power_settings_new</span>
+        <span class="rail-label" aria-hidden="true">{{ 'layout.sidebar.logout' | translate }}</span>
+        <span class="rail-tooltip" aria-hidden="true">{{ 'layout.sidebar.logout' | translate }}</span>
+      </button>
+    </div>
+  }
+
+</nav>

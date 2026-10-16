@@ -1,0 +1,496 @@
+<!-- job-details.html -->
+<!-- Used as a child component inside employee-detail tabs -->
+
+<div class="job-section">
+  <!-- ── Section header ──────────────────────────────────── -->
+  <div class="section-header">
+    <div class="header-left">
+      <h2 class="section-title">{{ 'employee.jobDetails.title' | translate }}</h2>
+      <div class="tab-switch">
+        <button
+          class="tab-btn"
+          [class.active]="activeTab() === 'current'"
+          (click)="onTabChange('current')"
+        >
+          {{ 'employee.jobDetails.tabs.current' | translate }}
+        </button>
+        <button
+          class="tab-btn"
+          [class.active]="activeTab() === 'history'"
+          (click)="onTabChange('history')"
+        >
+          {{ 'employee.jobDetails.tabs.history' | translate }}
+          @if (historyCount() > 0) {
+            <span class="tab-count">{{ historyCount() }}</span>
+          }
+        </button>
+      </div>
+    </div>
+    <div class="header-actions">
+      @if (currentJob()) {
+        <button class="btn-minor" (click)="openEditCurrent()">
+          <span class="material-icons" aria-hidden="true">edit</span>
+          {{ 'employee.jobDetails.editCurrent' | translate }}
+        </button>
+      }
+      <button class="btn-assign" (click)="openNewAssignment()">
+        <span class="material-icons" aria-hidden="true">work</span>
+        {{ (currentJob() ? 'employee.jobDetails.newAssignment' : 'employee.jobDetails.assignJob') | translate }}
+      </button>
+    </div>
+  </div>
+
+  <!-- ── Alerts ─────────────────────────────────────────────── -->
+  @if (successMsg()) {
+    <div class="alert alert-success" role="status">
+      <span class="material-icons" aria-hidden="true">check_circle</span>{{ successMsg() }}
+    </div>
+  }
+  @if (error()) {
+    <div class="alert alert-error" role="alert">
+      <span class="material-icons" aria-hidden="true">error_outline</span>{{ error() }}
+    </div>
+  }
+
+  <!-- ══════════════════════════════════════════════════════ -->
+  <!-- TAB: CURRENT JOB                                      -->
+  <!-- ══════════════════════════════════════════════════════ -->
+  @if (activeTab() === 'current') {
+    @if (loading()) {
+      <div class="loading-wrap" role="status">
+        <div class="spinner"></div>
+        <span>{{ 'employee.jobDetails.loading' | translate }}</span>
+      </div>
+    }
+
+    @if (!loading() && !currentJob()) {
+      <div class="empty-job">
+        <span class="material-icons" aria-hidden="true">work_off</span>
+        <p>{{ 'employee.jobDetails.emptyTitle' | translate }}</p>
+        <small>{{ 'employee.jobDetails.emptyHint' | translate }}</small>
+        <button class="btn-assign-sm" (click)="openNewAssignment()">
+          <span class="material-icons" aria-hidden="true">add</span> {{ 'employee.jobDetails.assignJob' | translate }}
+        </button>
+      </div>
+    }
+
+    @if (!loading() && currentJob()) {
+      <div class="job-cards">
+        <!-- ── Org card ──────────────────────────────────── -->
+        <div class="job-card">
+          <div class="job-card-header">
+            <span class="material-icons" aria-hidden="true">corporate_fare</span>
+            {{ 'employee.jobDetails.sections.organisation' | translate }}
+          </div>
+          <div class="job-card-body">
+            <div class="info-row">
+              <span class="info-label">{{ 'employee.jobDetails.fields.department' | translate }}</span>
+              <div class="info-value">
+                <span class="val-main">{{ currentJob()!.departmentName }}</span>
+                <span class="val-ar">{{ currentJob()!.departmentNameAr }}</span>
+                <span class="val-code">{{ currentJob()!.departmentCode }}</span>
+              </div>
+            </div>
+            <div class="info-row">
+              <span class="info-label">{{ 'employee.jobDetails.fields.designation' | translate }}</span>
+              <div class="info-value">
+                <span class="val-main">{{ currentJob()!.designationTitle }}</span>
+                <span class="val-ar">{{ currentJob()!.designationTitleAr }}</span>
+                @if (currentJob()!.gradeLevel) {
+                  <span class="grade-badge">{{ currentJob()!.gradeLevel }}</span>
+                }
+              </div>
+            </div>
+            @if (currentJob()!.jobPositionId) {
+              <div class="info-row">
+                <span class="info-label">{{ 'employee.jobDetails.fields.jobPosition' | translate }}</span>
+                <span class="info-value val-main">{{ currentJob()!.jobPositionId }}</span>
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- ── Managers card ──────────────────────────────── -->
+        <div class="job-card">
+          <div class="job-card-header">
+            <span class="material-icons" aria-hidden="true">supervisor_account</span>
+            {{ 'employee.jobDetails.sections.managers' | translate }}
+          </div>
+          <div class="job-card-body">
+            <div class="info-row">
+              <span class="info-label">{{ 'employee.jobDetails.fields.reportingManager' | translate }}</span>
+              <div class="info-value">
+                @if (currentJob()!.reportingManagerName) {
+                  <span class="val-main">{{ currentJob()!.reportingManagerName }}</span>
+                  <span class="val-code">{{ currentJob()!.reportingManagerCode }}</span>
+                } @else {
+                  <span class="val-empty">{{ 'employee.jobDetails.notAssigned' | translate }}</span>
+                }
+              </div>
+            </div>
+            <div class="info-row">
+              <span class="info-label">{{ 'employee.jobDetails.fields.functionalManager' | translate }}</span>
+              <div class="info-value">
+                @if (currentJob()!.functionalManagerName) {
+                  <span class="val-main">{{ currentJob()!.functionalManagerName }}</span>
+                  <span class="val-code">{{ currentJob()!.functionalManagerCode }}</span>
+                } @else {
+                  <span class="val-empty">{{ 'employee.jobDetails.notAssigned' | translate }}</span>
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Work location card ────────────────────────── -->
+        <div class="job-card">
+          <div class="job-card-header">
+            <span class="material-icons" aria-hidden="true">location_on</span>
+            {{ 'employee.jobDetails.sections.workLocation' | translate }}
+          </div>
+          <div class="job-card-body">
+            <div class="info-row">
+              <span class="info-label">{{ 'employee.jobDetails.fields.location' | translate }}</span>
+              <div class="info-value">
+                <span class="val-main">{{ currentJob()!.locationName }}</span>
+                <span class="val-sub">{{ currentJob()!.locationCity }}</span>
+                <span class="val-code">{{ currentJob()!.locationCode }}</span>
+              </div>
+            </div>
+            <div class="info-row">
+              <span class="info-label">{{ 'employee.jobDetails.fields.workMode' | translate }}</span>
+              <span class="work-mode-badge" [class]="getWorkModeBadge(currentJob()!.workMode)">
+                {{ currentJob()!.workMode.replace('_', ' ') }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Shift card ─────────────────────────────────── -->
+        <div class="job-card">
+          <div class="job-card-header">
+            <span class="material-icons" aria-hidden="true">schedule</span>
+            {{ 'employee.jobDetails.sections.shiftEffectiveDate' | translate }}
+          </div>
+          <div class="job-card-body">
+            <div class="info-row">
+              <span class="info-label">{{ 'employee.jobDetails.fields.shift' | translate }}</span>
+              <div class="info-value">
+                @if (currentJob()!.shiftName) {
+                  <span class="val-main">{{ currentJob()!.shiftName }}</span>
+                  <span class="val-sub">
+                    {{ currentJob()!.shiftStartTime }} – {{ currentJob()!.shiftEndTime }}
+                  </span>
+                } @else {
+                  <span class="val-empty">{{ 'employee.jobDetails.notAssigned' | translate }}</span>
+                }
+              </div>
+            </div>
+            <div class="info-row">
+              <span class="info-label">{{ 'employee.jobDetails.fields.effectiveDate' | translate }}</span>
+              <span class="info-value val-main">
+                {{ formatDateRange(currentJob()!.effectiveFrom, currentJob()!.effectiveTo) }}
+              </span>
+            </div>
+            @if (currentJob()!.remarks) {
+              <div class="info-row">
+                <span class="info-label">{{ 'employee.jobDetails.fields.remarks' | translate }}</span>
+                <span class="info-value val-sub">{{ currentJob()!.remarks }}</span>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+      <!-- end job-cards -->
+    }
+  }
+
+  <!-- ══════════════════════════════════════════════════════ -->
+  <!-- TAB: HISTORY                                          -->
+  <!-- ══════════════════════════════════════════════════════ -->
+  @if (activeTab() === 'history') {
+    @if (history().length === 0) {
+      <div class="loading-wrap" role="status">
+        <div class="spinner"></div>
+        <span>{{ 'employee.jobDetails.loadingHistory' | translate }}</span>
+      </div>
+    }
+    @if (history().length > 0) {
+      <div class="timeline">
+        @for (job of history(); track job.jobDetailsId; let i = $index) {
+          <div class="timeline-item" [class.is-current]="job.isCurrent">
+            <!-- Timeline dot -->
+            <div class="timeline-dot">
+              @if (job.isCurrent) {
+                <span class="material-icons dot-current" aria-hidden="true">radio_button_checked</span>
+              } @else {
+                <span class="material-icons dot-past" aria-hidden="true">radio_button_unchecked</span>
+              }
+            </div>
+
+            <!-- Timeline content -->
+            <div class="timeline-card">
+              <div class="timeline-card-header">
+                <div class="timeline-dates">
+                  <span class="date-from">{{ job.effectiveFrom }}</span>
+                  <span class="date-arrow">→</span>
+                  <span class="date-to">
+                    {{ job.effectiveTo ?? ('employee.jobDetails.present' | translate) }}
+                  </span>
+                </div>
+                @if (job.isCurrent) {
+                  <span class="current-badge">{{ 'employee.jobDetails.current' | translate }}</span>
+                }
+              </div>
+
+              <div class="timeline-details">
+                <div class="tl-row">
+                  <span class="tl-label">{{ 'employee.jobDetails.fields.department' | translate }}</span>
+                  <span class="tl-value">{{ job.departmentName }}</span>
+                </div>
+                <div class="tl-row">
+                  <span class="tl-label">{{ 'employee.jobDetails.fields.designation' | translate }}</span>
+                  <div class="tl-value">
+                    {{ job.designationTitle }}
+                    @if (job.gradeLevel) {
+                      <span class="grade-badge-sm">{{ job.gradeLevel }}</span>
+                    }
+                  </div>
+                </div>
+                <div class="tl-row">
+                  <span class="tl-label">{{ 'employee.jobDetails.fields.location' | translate }}</span>
+                  <span class="tl-value">{{ job.locationName }} ({{ job.locationCity }})</span>
+                </div>
+                <div class="tl-row">
+                  <span class="tl-label">{{ 'employee.jobDetails.fields.workMode' | translate }}</span>
+                  <span class="work-mode-badge sm" [class]="getWorkModeBadge(job.workMode)">
+                    {{ job.workMode.replace('_', ' ') }}
+                  </span>
+                </div>
+                @if (job.reportingManagerName) {
+                  <div class="tl-row">
+                    <span class="tl-label">{{ 'employee.jobDetails.fields.reportsTo' | translate }}</span>
+                    <span class="tl-value">{{ job.reportingManagerName }}</span>
+                  </div>
+                }
+                @if (job.remarks) {
+                  <div class="tl-row">
+                    <span class="tl-label">{{ 'employee.jobDetails.fields.remarks' | translate }}</span>
+                    <span class="tl-value tl-remarks">{{ job.remarks }}</span>
+                  </div>
+                }
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  }
+</div>
+<!-- end job-section -->
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!-- MODAL — Assign / Edit Job                                 -->
+<!-- ══════════════════════════════════════════════════════════ -->
+@if (showModal()) {
+  <div class="modal-backdrop">
+    <div
+      class="modal"
+      [appAccessibleDialog]="'jd-modal-title'"
+      (dialogClosed)="closeModal()"
+      cdkTrapFocus
+      cdkTrapFocusAutoCapture
+    >
+      <div class="modal-header">
+        <div>
+          <h2 id="jd-modal-title" class="modal-title">
+            {{ (isNewAssignment() ? 'employee.jobDetails.modal.newTitle' : 'employee.jobDetails.modal.updateTitle') | translate }}
+          </h2>
+          <p class="modal-sub">
+            @if (isNewAssignment()) {
+              {{ 'employee.jobDetails.modal.newSub' | translate }}
+            } @else {
+              {{ 'employee.jobDetails.modal.updateSub' | translate }}
+            }
+          </p>
+        </div>
+        <button type="button" class="modal-close" [attr.aria-label]="'common.close' | translate" (click)="closeModal()">
+          <span class="material-icons" aria-hidden="true">close</span>
+        </button>
+      </div>
+
+      @if (error()) {
+        <div class="modal-alert" role="alert">
+          <span class="material-icons" aria-hidden="true">error_outline</span>{{ error() }}
+        </div>
+      }
+
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+        <div class="modal-body">
+          <!-- ── Section: Organisation ──────────────────── -->
+          <div class="form-section-title">{{ 'employee.jobDetails.sections.organisation' | translate }}</div>
+
+          <div class="field-row">
+            <div class="field">
+              <label for="jd-department-id">{{ 'employee.jobDetails.fields.department' | translate }} <span class="req">*</span></label>
+              <select
+                id="jd-department-id"
+                formControlName="departmentId"
+                [attr.disabled]="!isNewAssignment() ? true : null"
+              >
+                <option value="">{{ 'employee.jobDetails.formFields.selectDepartment' | translate }}</option>
+                @for (d of departments(); track d.id) {
+                  <option [value]="d.id">{{ d.name }}</option>
+                }
+              </select>
+              @if (isInvalid('departmentId')) {
+                <span class="field-error" id="fe-departmentId">{{ getError('departmentId') }}</span>
+              }
+            </div>
+            <div class="field">
+              <label for="jd-designation-id">{{ 'employee.jobDetails.fields.designation' | translate }} <span class="req">*</span></label>
+              <select
+                id="jd-designation-id"
+                formControlName="designationId"
+                [attr.disabled]="!isNewAssignment() ? true : null"
+              >
+                <option value="">{{ 'employee.jobDetails.formFields.selectDesignation' | translate }}</option>
+                @for (d of filteredDesignations(); track d.id) {
+                  <option [value]="d.id">
+                    {{ d.title }}
+                    @if (d.gradeLevel) {
+                      ({{ d.gradeLevel }})
+                    }
+                  </option>
+                }
+              </select>
+              @if (isInvalid('designationId')) {
+                <span class="field-error" id="fe-designationId">{{ getError('designationId') }}</span>
+              }
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="jd-job-position-id">{{ 'employee.jobDetails.fields.jobPosition' | translate }}</label>
+            <input
+              id="jd-job-position-id"
+              formControlName="jobPositionId"
+              [placeholder]="'employee.jobDetails.formFields.jobPositionIdPlaceholder' | translate"
+              [attr.disabled]="!isNewAssignment() ? true : null"
+            />
+          </div>
+
+          <!-- ── Section: Managers ──────────────────────── -->
+          <div class="form-section-title">{{ 'employee.jobDetails.sections.managers' | translate }}</div>
+
+          <div class="field-row">
+            <div class="field">
+              <label for="jd-reporting-manager-id">{{ 'employee.jobDetails.fields.reportingManager' | translate }}</label>
+              <app-employee-search-select
+                #reportingManagerPicker
+                inputId="jd-reporting-manager-id"
+                formControlName="reportingManagerId"
+                [excludeEmployeeId]="employeeId()"
+                [placeholder]="'employee.jobDetails.formFields.searchPlaceholder' | translate"
+              />
+            </div>
+            <div class="field">
+              <label for="jd-functional-manager-id">{{ 'employee.jobDetails.fields.functionalManager' | translate }}</label>
+              <app-employee-search-select
+                #functionalManagerPicker
+                inputId="jd-functional-manager-id"
+                formControlName="functionalManagerId"
+                [excludeEmployeeId]="employeeId()"
+                [placeholder]="'employee.jobDetails.formFields.searchPlaceholder' | translate"
+              />
+            </div>
+          </div>
+
+          <!-- ── Section: Work Location ─────────────────── -->
+          <div class="form-section-title">{{ 'employee.jobDetails.formFields.workLocationShift' | translate }}</div>
+
+          <div class="field-row">
+            <div class="field">
+              <label for="jd-location-id">{{ 'employee.jobDetails.formFields.officeLocationLabel' | translate }} <span class="req">*</span></label>
+              <select
+                id="jd-location-id"
+                formControlName="locationId"
+                [attr.disabled]="!isNewAssignment() ? true : null"
+              >
+                <option value="">{{ 'employee.jobDetails.formFields.selectLocation' | translate }}</option>
+                @for (l of locations(); track l.locationId) {
+                  <option [value]="l.locationId">
+                    {{ l.locationName }} ({{ l.locationCode }})
+                  </option>
+                }
+              </select>
+              @if (isInvalid('locationId')) {
+                <span class="field-error" id="fe-locationId">{{ getError('locationId') }}</span>
+              }
+            </div>
+            <div class="field">
+              <label for="jd-work-mode">{{ 'employee.jobDetails.fields.workMode' | translate }} <span class="req">*</span></label>
+              <select id="jd-work-mode" formControlName="workMode">
+                @for (wm of workModes; track wm) {
+                  <option [value]="wm">{{ wm.replace('_', ' ') }}</option>
+                }
+              </select>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="jd-shift-id">{{ 'employee.jobDetails.formFields.workShiftLabel' | translate }}</label>
+            <select id="jd-shift-id" formControlName="shiftId">
+              <option value="">{{ 'employee.jobDetails.formFields.noShiftAssigned' | translate }}</option>
+              @for (s of shifts(); track s.shiftId) {
+                <option [value]="s.shiftId">
+                  {{ s.shiftName }} ({{ s.startTime }} – {{ s.endTime }})
+                </option>
+              }
+            </select>
+          </div>
+
+          <!-- ── Effective date (new assignment only) ────── -->
+          @if (isNewAssignment()) {
+            <div class="form-section-title">{{ 'employee.jobDetails.fields.effectiveDate' | translate }}</div>
+            <div class="field">
+              <label for="jd-effective-from">{{ 'employee.jobDetails.formFields.effectiveFromLabel' | translate }} <span class="req">*</span></label>
+              <input id="jd-effective-from" type="date" formControlName="effectiveFrom" />
+              @if (isInvalid('effectiveFrom')) {
+                <span class="field-error" id="fe-effectiveFrom">{{ getError('effectiveFrom') }}</span>
+              }
+              <span class="field-hint">
+                {{ 'employee.jobDetails.formFields.effectiveFromHint' | translate }}
+              </span>
+            </div>
+          }
+
+          <!-- ── Remarks ─────────────────────────────────── -->
+          <div class="field">
+            <label for="jd-remarks">{{ 'employee.jobDetails.fields.remarks' | translate }}</label>
+            <textarea
+              id="jd-remarks"
+              formControlName="remarks"
+              [placeholder]="'employee.jobDetails.formFields.remarksPlaceholder' | translate"
+              rows="2"
+            ></textarea>
+          </div>
+        </div>
+        <!-- end modal-body -->
+
+        <div class="modal-footer">
+          <button type="button" class="btn-cancel" (click)="closeModal()">{{ 'common.cancel' | translate }}</button>
+          <button type="submit" class="btn-save" [disabled]="saving()">
+            @if (saving()) {
+              <div class="btn-spinner"></div>
+              <span>{{ 'employee.jobDetails.saving' | translate }}</span>
+            } @else {
+              <span class="material-icons" aria-hidden="true">save</span>
+              <span>{{ (isNewAssignment() ? 'employee.jobDetails.assignJob' : 'employee.jobDetails.update') | translate }}</span>
+            }
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}

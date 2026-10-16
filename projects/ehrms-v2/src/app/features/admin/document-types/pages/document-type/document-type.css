@@ -1,0 +1,5 @@
+/* Document types. Page shell, filters, table, badges, buttons and modal come from the shared blocks in styles.css. */
+
+.chip-mandatory {
+  font-weight: 700;
+}

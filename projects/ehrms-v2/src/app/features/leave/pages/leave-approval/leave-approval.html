@@ -1,0 +1,393 @@
+<div class="approval-page">
+  <!-- ── Page header ────────────────────────────────────── -->
+  <div class="page-header">
+    <div class="header-left">
+      <h1 class="page-title">{{ 'leave.approval.title' | translate }}</h1>
+      @if (totalElements() > 0) {
+        <span class="count-badge">{{ totalElements() }}</span>
+      }
+      @if (filterStatus() === 'PENDING' && pendingCount() > 0) {
+        <span class="pending-chip">
+          <span aria-hidden="true" class="material-icons">hourglass_empty</span>
+          {{ 'leave.approval.awaitingActionCount' | translate: { count: pendingCount() } }}
+        </span>
+      }
+    </div>
+  </div>
+
+  <!-- ── Filter bar ─────────────────────────────────────── -->
+  <div class="filter-bar">
+    <!-- Status -->
+    <div class="filter-group">
+      @for (s of ['PENDING', 'APPROVED', 'REJECTED', 'CANCELLED', '']; track s) {
+        <button
+          class="status-filter-btn"
+          [class.active]="filterStatus() === s"
+          (click)="filterStatus.set(s); onFilterChange()"
+        >
+          @if (s === '') {
+            {{ 'common.all' | translate }}
+          } @else {
+            {{ s }}
+          }
+        </button>
+      }
+    </div>
+
+    <!-- Leave type -->
+    <select
+      class="filter-select"
+      [attr.aria-label]="'leave.approval.typeFilterLabel' | translate"
+      [value]="filterLeaveType()"
+      (change)="filterLeaveType.set($any($event.target).value); onFilterChange()"
+    >
+      <option value="">{{ 'leave.list.allTypes' | translate }}</option>
+      @for (lt of leaveTypes; track lt) {
+        <option [value]="lt">{{ lt }}</option>
+      }
+    </select>
+  </div>
+
+  <!-- ── Alerts ─────────────────────────────────────────── -->
+  @if (successMsg()) {
+    <div class="alert alert-success">
+      <span aria-hidden="true" class="material-icons">check_circle</span>{{ successMsg() }}
+    </div>
+  }
+  @if (error() && !showModal()) {
+    <div class="alert alert-error">
+      <span aria-hidden="true" class="material-icons">error_outline</span>{{ error() }}
+    </div>
+  }
+
+  <!-- ── Loading ────────────────────────────────────────── -->
+  @if (loading()) {
+    <div class="loading-wrap">
+      <div class="spinner"></div>
+      <span>{{ 'leave.list.loadingText' | translate }}</span>
+    </div>
+  }
+
+  <!-- ── Empty ──────────────────────────────────────────── -->
+  @if (!loading() && leaves().length === 0) {
+    <div class="empty-state">
+      <span aria-hidden="true" class="material-icons">task_alt</span>
+      <p>
+        @if (filterStatus() === 'PENDING') {
+          {{ 'leave.approval.emptyPendingTitle' | translate }}
+        } @else {
+          {{ 'leave.list.emptyTitle' | translate }}
+        }
+      </p>
+      <small>{{ 'leave.approval.allCaughtUp' | translate }}</small>
+    </div>
+  }
+
+  <!-- ── Leave cards ────────────────────────────────────── -->
+  @if (!loading() && leaves().length > 0) {
+    <div class="leaves-grid">
+      @for (leave of leaves(); track leave.leaveReqId) {
+        <div class="leave-card" [class]="'card-' + leave.status.toLowerCase()">
+          <div class="card-content">
+            <!-- ── Main row: who, what, when, status, actions ─── -->
+            <div class="card-main">
+              <div class="card-emp">
+                <div class="emp-avatar" aria-hidden="true">
+                  {{ getInitials(leave.employeeName) }}
+                </div>
+                <div class="emp-info">
+                  <span class="emp-name">{{ leave.employeeName ?? '—' }}</span>
+                  <span class="emp-code">{{ leave.employeeCode }}</span>
+                </div>
+              </div>
+
+              <div class="leave-type-row">
+                <span
+                  class="type-dot"
+                  aria-hidden="true"
+                  [style.background]="getTypeColor(leave.leaveTypeCode)"
+                ></span>
+                <span class="type-name">{{ leave.leaveTypeName }}</span>
+              </div>
+
+              <div class="dates-row">
+                <span class="visually-hidden">{{ 'leave.list.dateFrom' | translate }}</span>
+                <span class="date-val">{{ leave.startDate }}</span>
+                <span class="material-icons date-arrow" aria-hidden="true">arrow_forward</span>
+                <span class="visually-hidden">{{ 'leave.list.dateTo' | translate }}</span>
+                <span class="date-val">{{ leave.endDate }}</span>
+              </div>
+
+              <span class="days-chip">
+                {{ leave.totalDays }}
+                {{
+                  (leave.totalDays !== 1 ? 'leave.list.daysPlural' : 'leave.list.daySingular')
+                    | translate
+                }}
+              </span>
+
+              <div class="card-end">
+                <span class="status-badge" [class]="getStatusClass(leave.status)">
+                  <span class="material-icons" aria-hidden="true">{{
+                    getStatusIcon(leave.status)
+                  }}</span>
+                  {{ leave.status }}
+                </span>
+                @if (leave.status === 'PENDING') {
+                  <button
+                    class="btn-reject"
+                    [disabled]="processing() === leave.leaveReqId"
+                    [attr.aria-label]="
+                      'leave.approval.rejectFor'
+                        | translate: { type: leave.leaveTypeName, name: leave.employeeName }
+                    "
+                    (click)="openReject(leave)"
+                  >
+                    <span class="material-icons" aria-hidden="true">close</span>
+                    {{ 'leave.approval.rejectButton' | translate }}
+                  </button>
+                  <button
+                    class="btn-approve"
+                    [disabled]="processing() === leave.leaveReqId"
+                    [attr.aria-label]="
+                      'leave.approval.approveFor'
+                        | translate: { type: leave.leaveTypeName, name: leave.employeeName }
+                    "
+                    (click)="openApprove(leave)"
+                  >
+                    @if (processing() === leave.leaveReqId) {
+                      <div class="btn-spinner"></div>
+                    } @else {
+                      <span class="material-icons" aria-hidden="true">check</span>
+                    }
+                    {{ 'leave.approval.approveButton' | translate }}
+                  </button>
+                }
+              </div>
+            </div>
+
+            <!-- ── Details line: reason, decision, attachment, submitted ─── -->
+            <div class="card-meta">
+              @if (leave.reason) {
+                <span class="reason-text" [attr.title]="leave.reason">{{ leave.reason }}</span>
+              }
+
+              @if (leave.hasAttachment) {
+                <button type="button" class="attachment-link" (click)="downloadAttachment(leave)">
+                  <span class="material-icons" aria-hidden="true">attach_file</span>
+                  {{ 'leave.list.attachment' | translate }}: {{ leave.attachmentName }}
+                </button>
+              }
+
+              @if (leave.status === 'APPROVED' || leave.status === 'REJECTED') {
+                <span class="approval-info">
+                  <span class="material-icons" aria-hidden="true">
+                    {{ leave.status === 'APPROVED' ? 'verified_user' : 'block' }}
+                  </span>
+                  {{
+                    (leave.status === 'APPROVED'
+                      ? 'leave.list.statusApproved'
+                      : 'leave.list.statusRejected'
+                    ) | translate
+                  }}
+                  {{ 'leave.list.byConnector' | translate }} <strong>{{ leave.approvedBy }}</strong>
+                  @if (leave.remarks) {
+                    <span class="approval-remarks">— "{{ leave.remarks }}"</span>
+                  }
+                </span>
+              }
+
+              <span class="submitted-date">
+                {{ 'leave.list.submittedLabel' | translate }}
+                <bdi>{{ leave.createdAt | slice: 0 : 10 }}</bdi>
+              </span>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- ── Pagination ──────────────────────────────────── -->
+    @if (totalPages() > 1) {
+      <div class="pagination">
+        <span class="pag-info">
+          {{
+            'leave.list.showing'
+              | translate: { from: showingFrom, to: showingTo, total: totalElements() }
+          }}
+        </span>
+        <div class="pag-btns">
+          <button
+            class="pag-btn"
+            [attr.aria-label]="'common.previous' | translate"
+            [disabled]="currentPage() === 0"
+            (click)="onPageChange(currentPage() - 1)"
+          >
+            <span aria-hidden="true" class="material-icons">chevron_left</span>
+          </button>
+          @for (p of pages; track p) {
+            <button
+              class="pag-btn num"
+              [class.active]="p === currentPage()"
+              (click)="onPageChange(p)"
+            >
+              {{ p + 1 }}
+            </button>
+          }
+          <button
+            class="pag-btn"
+            [attr.aria-label]="'common.next' | translate"
+            [disabled]="currentPage() === totalPages() - 1"
+            (click)="onPageChange(currentPage() + 1)"
+          >
+            <span aria-hidden="true" class="material-icons">chevron_right</span>
+          </button>
+        </div>
+      </div>
+    }
+  }
+</div>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!-- APPROVE / REJECT MODAL                                    -->
+<!-- ══════════════════════════════════════════════════════════ -->
+@if (showModal() && selectedLeave() && remarksForm) {
+  <div class="modal-backdrop" (click)="closeModal()">
+    <div
+      class="modal"
+      (click)="$event.stopPropagation()"
+      [appAccessibleDialog]="'la-modal-title'"
+      (dialogClosed)="closeModal()"
+      cdkTrapFocus
+      cdkTrapFocusAutoCapture
+    >
+      <!-- Header -->
+      <div
+        class="modal-header"
+        [class.header-approve]="actionType() === 'APPROVED'"
+        [class.header-reject]="actionType() === 'REJECTED'"
+      >
+        <div class="modal-header-icon">
+          <span aria-hidden="true" class="material-icons">
+            {{ actionType() === 'APPROVED' ? 'check_circle' : 'cancel' }}
+          </span>
+        </div>
+        <div>
+          <h2 id="la-modal-title" class="modal-title">
+            {{
+              (actionType() === 'APPROVED'
+                ? 'leave.approval.modalTitleApprove'
+                : 'leave.approval.modalTitleReject'
+              ) | translate
+            }}
+          </h2>
+          <p class="modal-sub">
+            {{ selectedLeave()!.employeeName ?? selectedLeave()!.employeeCode }}
+          </p>
+        </div>
+        <button
+          class="modal-close"
+          [attr.aria-label]="'common.close' | translate"
+          (click)="closeModal()"
+        >
+          <span aria-hidden="true" class="material-icons">close</span>
+        </button>
+      </div>
+
+      <!-- Leave summary -->
+      <div class="modal-summary">
+        <div class="summary-row">
+          <span class="summary-label">{{ 'leave.approval.summaryLeaveType' | translate }}</span>
+          <span class="summary-val">{{ selectedLeave()!.leaveTypeName }}</span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-label">{{ 'leave.approval.summaryDuration' | translate }}</span>
+          <span class="summary-val">
+            <bdi>{{ selectedLeave()!.startDate }} → {{ selectedLeave()!.endDate }}</bdi>
+            <span class="days-tag">
+              {{ selectedLeave()!.totalDays }} {{ 'leave.list.daysUnitParenthetical' | translate }}
+            </span>
+          </span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-label">{{ 'leave.approval.summaryReason' | translate }}</span>
+          <span class="summary-val">{{ selectedLeave()!.reason }}</span>
+        </div>
+        @if (selectedLeave()!.balanceAvailable != null) {
+          <div class="summary-row">
+            <span class="summary-label">{{ 'leave.approval.summaryBalance' | translate }}</span>
+            <span class="summary-val">
+              {{ selectedLeave()!.balanceAvailable | number: '1.1-1' }}
+              {{ 'leave.approval.daysAvailable' | translate }}
+            </span>
+          </div>
+        }
+      </div>
+
+      <!-- Remarks form -->
+      <form [formGroup]="remarksForm" (ngSubmit)="confirmAction()" class="modal-body">
+        <div class="field">
+          <label for="approval-remarks">
+            {{ 'leave.approval.remarksLabel' | translate }}
+            @if (actionType() === 'REJECTED') {
+              <span class="req">{{
+                'leave.approval.remarksRequiredForRejection' | translate
+              }}</span>
+            } @else {
+              <span class="opt">{{ 'leave.approval.remarksOptional' | translate }}</span>
+            }
+          </label>
+          <textarea
+            id="approval-remarks"
+            formControlName="remarks"
+            rows="3"
+            [placeholder]="
+              (actionType() === 'APPROVED'
+                ? 'leave.approval.remarksPlaceholderApprove'
+                : 'leave.approval.remarksPlaceholderReject'
+              ) | translate
+            "
+          >
+          </textarea>
+          @if (remarksForm.get('remarks')?.invalid && remarksForm.get('remarks')?.touched) {
+            <span class="field-error">
+              @if (remarksForm.get('remarks')?.errors?.['required']) {
+                {{ 'leave.approval.rejectionReasonRequired' | translate }}
+              }
+            </span>
+          }
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-cancel" (click)="closeModal()">
+            {{ 'common.cancel' | translate }}
+          </button>
+          <button
+            type="submit"
+            class="btn-confirm"
+            [class.btn-success]="actionType() === 'APPROVED'"
+            [class.btn-danger]="actionType() === 'REJECTED'"
+            [disabled]="processing() !== null"
+          >
+            @if (processing() !== null) {
+              <div class="btn-spinner"></div>
+              <span>{{ 'leave.approval.processingText' | translate }}</span>
+            } @else {
+              <span aria-hidden="true" class="material-icons">
+                {{ actionType() === 'APPROVED' ? 'check' : 'close' }}
+              </span>
+              <span>
+                {{
+                  (actionType() === 'APPROVED'
+                    ? 'leave.approval.confirmApproveButton'
+                    : 'leave.approval.confirmRejectButton'
+                  ) | translate
+                }}
+              </span>
+            }
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}

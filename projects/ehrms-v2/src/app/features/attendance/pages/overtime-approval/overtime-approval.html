@@ -1,0 +1,426 @@
+<div class="approval-container app-page">
+  <!-- ── Header ──────────────────────────────────────────── -->
+  <div class="page-header">
+    <div class="header-left">
+      <mat-icon class="header-icon">fact_check</mat-icon>
+      <div>
+        <h2 #pageTitle tabindex="-1">{{ 'attendance.overtimeApproval.title' | translate }}</h2>
+        <span class="subtitle">{{ 'attendance.overtimeApproval.subtitle' | translate }}</span>
+      </div>
+    </div>
+    <div class="header-badges">
+      <div class="badge-pill pending-pill">
+        <mat-icon>pending</mat-icon>
+        <span>{{
+          'attendance.overtimeApproval.pendingBadge' | translate: { count: pendingCount() }
+        }}</span>
+      </div>
+      @if (totalApprovedMins() > 0) {
+        <div class="badge-pill approved-pill">
+          <mat-icon>timer</mat-icon>
+          <span>{{
+            'attendance.overtimeApproval.approvedBadge'
+              | translate: { amount: totalApprovedFormatted() }
+          }}</span>
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- ── Filters ─────────────────────────────────────────── -->
+  <mat-card class="filter-card">
+    <mat-card-content>
+      <form [formGroup]="filterForm" class="filter-form">
+        <mat-form-field appearance="outline" class="filter-field">
+          <mat-label>{{ 'attendance.overtimeApproval.status' | translate }}</mat-label>
+          <mat-select formControlName="status" (selectionChange)="onFilterChange()">
+            @for (opt of statusOptions; track opt) {
+              <mat-option [value]="opt.value">
+                {{ opt.label | translate }}
+              </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="filter-field">
+          <mat-label>{{ 'attendance.overtimeApproval.employeeId' | translate }}</mat-label>
+          <input
+            matInput
+            formControlName="employeeId"
+            [placeholder]="'attendance.overtimeApproval.employeeIdPlaceholder' | translate"
+            (keyup.enter)="onFilterChange()"
+          />
+          <mat-icon matSuffix>person_search</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="filter-field">
+          <mat-label>{{ 'attendance.overtimeApproval.fromDate' | translate }}</mat-label>
+          <input matInput [matDatepicker]="fromPicker" formControlName="from" />
+          <mat-datepicker-toggle matIconSuffix [for]="fromPicker" />
+          <mat-datepicker #fromPicker />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="filter-field">
+          <mat-label>{{ 'attendance.overtimeApproval.toDate' | translate }}</mat-label>
+          <input matInput [matDatepicker]="toPicker" formControlName="to" />
+          <mat-datepicker-toggle matIconSuffix [for]="toPicker" />
+          <mat-datepicker #toPicker />
+        </mat-form-field>
+
+        <div class="filter-actions">
+          <button mat-flat-button color="primary" (click)="onFilterChange()">
+            <mat-icon>search</mat-icon> {{ 'attendance.overtimeApproval.search' | translate }}
+          </button>
+          <button mat-stroked-button (click)="onReset()">
+            <mat-icon>refresh</mat-icon> {{ 'attendance.overtimeApproval.reset' | translate }}
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- ── Quick Stats ─────────────────────────────────────── -->
+  <div class="stats-row">
+    <mat-card class="stat-mini">
+      <mat-card-content>
+        <mat-icon style="color: #d97706">pending_actions</mat-icon>
+        <div>
+          <span class="stat-num">{{ pendingInView() }}</span>
+          <span class="stat-lbl">{{
+            'attendance.overtimeApproval.pendingInView' | translate
+          }}</span>
+        </div>
+      </mat-card-content>
+    </mat-card>
+    <mat-card class="stat-mini">
+      <mat-card-content>
+        <mat-icon style="color: #4f46e5">list_alt</mat-icon>
+        <div>
+          <span class="stat-num">{{ totalElements() }}</span>
+          <span class="stat-lbl">{{ 'attendance.overtimeApproval.totalRecords' | translate }}</span>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- ── Table ───────────────────────────────────────────── -->
+  <mat-card class="table-card">
+    <mat-card-content>
+      <div class="table-wrapper">
+        @if (loading()) {
+          <div class="center-spinner">
+            <mat-spinner diameter="44"></mat-spinner>
+            <p>{{ 'attendance.overtimeApproval.loadingRequests' | translate }}</p>
+          </div>
+        }
+
+        @if (!loading()) {
+          <table mat-table [dataSource]="requests()" class="ot-table">
+            <!-- OT ID -->
+            <ng-container matColumnDef="otId">
+              <th mat-header-cell *matHeaderCellDef>
+                {{ 'attendance.overtimeApproval.columns.refNo' | translate }}
+              </th>
+              <td mat-cell *matCellDef="let row">
+                <span class="ref-id">{{ row.otId }}</span>
+              </td>
+            </ng-container>
+            <!-- Employee -->
+            <ng-container matColumnDef="employeeName">
+              <th mat-header-cell *matHeaderCellDef>
+                {{ 'attendance.overtimeApproval.columns.employee' | translate }}
+              </th>
+              <td mat-cell *matCellDef="let row">
+                <div class="emp-cell">
+                  <div class="emp-avatar">{{ row.employeeName.charAt(0).toUpperCase() }}</div>
+                  <div class="emp-info">
+                    <span class="emp-name">{{ row.employeeName }}</span>
+                    <span class="emp-code">{{ row.employeeCode }}</span>
+                  </div>
+                </div>
+              </td>
+            </ng-container>
+            <!-- Date -->
+            <ng-container matColumnDef="otDate">
+              <th mat-header-cell *matHeaderCellDef>
+                {{ 'attendance.overtimeApproval.columns.date' | translate }}
+              </th>
+              <td mat-cell *matCellDef="let row">
+                <span class="date-text">{{ row.otDateFormatted }}</span>
+              </td>
+            </ng-container>
+            <!-- OT Type -->
+            <ng-container matColumnDef="otType">
+              <th mat-header-cell *matHeaderCellDef>
+                {{ 'attendance.overtimeApproval.columns.type' | translate }}
+              </th>
+              <td mat-cell *matCellDef="let row">
+                <span
+                  class="type-chip"
+                  [style.background]="getOtTypeStyle(row.otType).bg"
+                  [style.color]="getOtTypeStyle(row.otType).color"
+                >
+                  {{ getOtTypeStyle(row.otType).label | translate }}
+                </span>
+              </td>
+            </ng-container>
+            <!-- Times -->
+            <ng-container matColumnDef="startTime">
+              <th mat-header-cell *matHeaderCellDef>
+                {{ 'attendance.overtimeApproval.columns.start' | translate }}
+              </th>
+              <td mat-cell *matCellDef="let row">
+                <span class="time-chip in">{{ formatTime(row.startTime) }}</span>
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="endTime">
+              <th mat-header-cell *matHeaderCellDef>
+                {{ 'attendance.overtimeApproval.columns.end' | translate }}
+              </th>
+              <td mat-cell *matCellDef="let row">
+                <span class="time-chip out">{{ formatTime(row.endTime) }}</span>
+              </td>
+            </ng-container>
+            <!-- Duration -->
+            <ng-container matColumnDef="duration">
+              <th mat-header-cell *matHeaderCellDef>
+                {{ 'attendance.overtimeApproval.columns.duration' | translate }}
+              </th>
+              <td mat-cell *matCellDef="let row">
+                <span class="duration-badge">{{ row.durationFormatted }}</span>
+              </td>
+            </ng-container>
+            <!-- Reason -->
+            <ng-container matColumnDef="reason">
+              <th mat-header-cell *matHeaderCellDef>
+                {{ 'attendance.overtimeApproval.columns.reason' | translate }}
+              </th>
+              <td mat-cell *matCellDef="let row">
+                <span class="reason-text" [matTooltip]="row.reason" matTooltipPosition="above">
+                  {{ row.reason.length > 40 ? row.reason.slice(0, 40) + '...' : row.reason }}
+                </span>
+                @if (row.projectCode) {
+                  <span class="project-code"> <mat-icon>work</mat-icon>{{ row.projectCode }} </span>
+                }
+              </td>
+            </ng-container>
+            <!-- Status -->
+            <ng-container matColumnDef="status">
+              <th mat-header-cell *matHeaderCellDef>
+                {{ 'attendance.overtimeApproval.columns.status' | translate }}
+              </th>
+              <td mat-cell *matCellDef="let row">
+                <div class="status-col">
+                  <span
+                    class="status-chip"
+                    [style.background]="getStatusStyle(row.status).bg"
+                    [style.color]="getStatusStyle(row.status).color"
+                  >
+                    <mat-icon class="status-icon">{{ getStatusStyle(row.status).icon }}</mat-icon>
+                    {{ getStatusStyle(row.status).label | translate }}
+                  </span>
+                  @if (row.reviewedByName) {
+                    <span class="reviewer-note">
+                      <mat-icon>person</mat-icon>{{ row.reviewedByName }}
+                    </span>
+                  }
+                  @if (row.rejectionReason) {
+                    <span class="rejection-note" [matTooltip]="row.rejectionReason">
+                      <mat-icon>error_outline</mat-icon>
+                      {{ row.rejectionReason.slice(0, 25) }}...
+                    </span>
+                  }
+                </div>
+              </td>
+            </ng-container>
+            <!-- Submitted At -->
+            <ng-container matColumnDef="submittedAt">
+              <th mat-header-cell *matHeaderCellDef>
+                {{ 'attendance.overtimeApproval.columns.submitted' | translate }}
+              </th>
+              <td mat-cell *matCellDef="let row">
+                <span class="datetime-text">{{ formatDateTime(row.createdAt) }}</span>
+              </td>
+            </ng-container>
+            <!-- Actions -->
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef>
+                {{ 'attendance.overtimeApproval.columns.actions' | translate }}
+              </th>
+              <td mat-cell *matCellDef="let row">
+                @if (row.status === 'PENDING') {
+                  <div class="action-col">
+                    <button
+                      mat-flat-button
+                      disabledInteractive
+                      color="primary"
+                      class="action-btn"
+                      [disabled]="isProcessing(row.otId)"
+                      (click)="onApprove(row)"
+                      [attr.aria-label]="
+                        'attendance.overtimeApproval.approveFor'
+                          | translate: { name: row.employeeName, date: row.otDateFormatted }
+                      "
+                    >
+                      @if (isProcessing(row.otId)) {
+                        <mat-spinner diameter="16"></mat-spinner>
+                      }
+                      @if (!isProcessing(row.otId)) {
+                        <mat-icon>check</mat-icon>
+                      }
+                      @if (!isProcessing(row.otId)) {
+                        {{ 'attendance.overtimeApproval.approve' | translate }}
+                      }
+                    </button>
+                    <button
+                      mat-stroked-button
+                      disabledInteractive
+                      color="warn"
+                      class="action-btn"
+                      [disabled]="isProcessing(row.otId)"
+                      (click)="openRejectDialog(row)"
+                      [attr.aria-label]="
+                        'attendance.overtimeApproval.rejectFor'
+                          | translate: { name: row.employeeName, date: row.otDateFormatted }
+                      "
+                    >
+                      <mat-icon>close</mat-icon>
+                      {{ 'attendance.overtimeApproval.reject' | translate }}
+                    </button>
+                  </div>
+                }
+                @if (row.status !== 'PENDING') {
+                  <span class="acted-at">
+                    {{ formatDateTime(row.reviewedAt) }}
+                  </span>
+                }
+              </td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+            <tr
+              mat-row
+              *matRowDef="let row; columns: displayedColumns"
+              [class.pending-row]="row.status === 'PENDING'"
+              [class.approved-row]="row.status === 'APPROVED'"
+              [class.rejected-row]="row.status === 'REJECTED'"
+            ></tr>
+            <tr class="mat-row" *matNoDataRow>
+              <td class="mat-cell empty-cell" [attr.colspan]="displayedColumns.length">
+                <div class="empty-state">
+                  <mat-icon>inbox</mat-icon>
+                  <p>{{ 'attendance.overtimeApproval.emptyTitle' | translate }}</p>
+                  <span>{{ 'attendance.overtimeApproval.emptyHint' | translate }}</span>
+                </div>
+              </td>
+            </tr>
+          </table>
+        }
+      </div>
+
+      <mat-paginator
+        [length]="totalElements()"
+        [pageSize]="pageSize"
+        [pageSizeOptions]="[10, 20, 50]"
+        (page)="onPageChange($event)"
+        showFirstLastButtons
+      >
+      </mat-paginator>
+    </mat-card-content>
+  </mat-card>
+</div>
+
+<!-- ── Reject Dialog ────────────────────────────────────── -->
+@if (showRejectDialog()) {
+  <div class="dialog-overlay" (click)="closeRejectDialog()">
+    <div
+      class="dialog-box"
+      (click)="$event.stopPropagation()"
+      [appAccessibleDialog]="'reject-dialog-title'"
+      (dialogClosed)="closeRejectDialog()"
+      cdkTrapFocus
+      cdkTrapFocusAutoCapture
+    >
+      <div class="dialog-header">
+        <mat-icon class="warn-icon">warning_amber</mat-icon>
+        <h3 id="reject-dialog-title">
+          {{ 'attendance.overtimeApproval.rejectDialogTitle' | translate }}
+        </h3>
+        <button
+          mat-icon-button
+          [attr.aria-label]="'common.close' | translate"
+          (click)="closeRejectDialog()"
+        >
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+      <mat-divider></mat-divider>
+      @if (rejectingRequest()) {
+        <div class="dialog-body">
+          <div class="info-row">
+            <span class="info-label">{{ 'attendance.overtimeApproval.employee' | translate }}</span>
+            <span class="info-value">{{ rejectingRequest()!.employeeName }}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">{{
+              'attendance.overtimeApproval.columns.date' | translate
+            }}</span>
+            <span class="info-value">{{ rejectingRequest()!.otDateFormatted }}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">{{
+              'attendance.overtimeApproval.columns.duration' | translate
+            }}</span>
+            <span class="info-value">{{ rejectingRequest()!.durationFormatted }}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">{{
+              'attendance.overtimeApproval.columns.reason' | translate
+            }}</span>
+            <span class="info-value italic">{{ rejectingRequest()!.reason }}</span>
+          </div>
+          <mat-divider style="margin: 10px 0"></mat-divider>
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>{{
+              'attendance.overtimeApproval.rejectionReasonLabel' | translate
+            }}</mat-label>
+            <textarea
+              matInput
+              rows="3"
+              [value]="rejectionReason()"
+              (input)="onRejectReasonChange($any($event.target).value)"
+              [placeholder]="'attendance.overtimeApproval.rejectionReasonPlaceholder' | translate"
+            >
+            </textarea>
+            <mat-hint align="end">{{ rejectionReason().length }}/500</mat-hint>
+          </mat-form-field>
+          @if (rejectionError()) {
+            <div class="error-msg"><mat-icon>error</mat-icon> {{ rejectionError() }}</div>
+          }
+        </div>
+      }
+      <mat-divider></mat-divider>
+      <div class="dialog-actions">
+        <button mat-stroked-button (click)="closeRejectDialog()">
+          {{ 'attendance.overtimeApproval.cancel' | translate }}
+        </button>
+        <button
+          mat-flat-button
+          disabledInteractive
+          color="warn"
+          (click)="onConfirmReject()"
+          [disabled]="isProcessing(rejectingRequest()?.otId ?? '')"
+        >
+          @if (isProcessing(rejectingRequest()?.otId ?? '')) {
+            <mat-spinner diameter="18"></mat-spinner>
+          }
+          @if (!isProcessing(rejectingRequest()?.otId ?? '')) {
+            <span>
+              <mat-icon>cancel</mat-icon>
+              {{ 'attendance.overtimeApproval.confirmReject' | translate }}
+            </span>
+          }
+        </button>
+      </div>
+    </div>
+  </div>
+}

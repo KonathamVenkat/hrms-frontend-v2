@@ -1,0 +1,484 @@
+/* Leave approval: Aurora Glass. Alerts, spinner, empty state, status badges, modal shell and form fields
+   come from the shared kit in styles.css; this file keeps layout only. */
+
+.approval-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+/* ── Header ──────────────────────────────────────────────── */
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+.page-title {
+  margin: 0;
+  font-size: 28px;
+  line-height: 1.25;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.count-badge {
+  padding: 2px var(--space-3);
+  border-radius: 999px;
+  background: var(--mat-sys-primary-container);
+  color: var(--mat-sys-on-primary-container);
+  font-size: 12px;
+  font-weight: 700;
+}
+.pending-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 3px var(--space-3);
+  border-radius: 999px;
+  background: var(--status-pending-bg);
+  color: var(--status-pending-fg);
+  font-size: 12px;
+  font-weight: 700;
+}
+.pending-chip .material-icons {
+  font-size: 14px;
+}
+
+/* ── Filter bar (glass) ──────────────────────────────────── */
+.filter-bar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background: var(--glass-bg);
+  border: var(--glass-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--glass-shine), var(--glass-shadow);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+}
+.filter-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+}
+.status-filter-btn {
+  min-block-size: 44px;
+  padding-inline: var(--space-4);
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: 999px;
+  background: var(--table-surface);
+  color: var(--mat-sys-on-surface-variant);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--motion-fast);
+}
+.status-filter-btn:hover {
+  border-color: var(--mat-sys-primary);
+  color: var(--mat-sys-primary);
+}
+.status-filter-btn.active {
+  background-image: var(--grad-primary);
+  border-color: transparent;
+  color: #fff;
+  box-shadow: var(--primary-shadow);
+}
+.filter-select {
+  block-size: 44px;
+  padding-inline: var(--space-3);
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: var(--radius-md);
+  background: var(--table-surface);
+  color: var(--mat-sys-on-surface);
+  font: inherit;
+  cursor: pointer;
+}
+.filter-select:focus-visible,
+.status-filter-btn:focus-visible,
+.btn-reject:focus-visible,
+.btn-approve:focus-visible,
+.attachment-link:focus-visible,
+.pag-btn:focus-visible {
+  outline: 2px solid var(--mat-sys-primary);
+  outline-offset: 2px;
+}
+
+/* ── Leave cards: one compact row + one details line ─────── */
+.leaves-grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.leave-card {
+  overflow: hidden;
+  background: var(--table-surface);
+  border: var(--glass-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--glass-shine), var(--glass-shadow);
+}
+/* The inline edge shows the status only. */
+.card-pending {
+  border-inline-start: 4px solid var(--status-pending-fg);
+}
+.card-approved {
+  border-inline-start: 4px solid var(--status-approved-fg);
+}
+.card-rejected {
+  border-inline-start: 4px solid var(--status-rejected-fg);
+}
+.card-cancelled {
+  border-inline-start: 4px solid var(--mat-sys-outline);
+}
+.card-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+}
+.visually-hidden {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.card-main {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-4);
+}
+.card-emp {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-inline-size: 200px;
+}
+.emp-avatar {
+  inline-size: 40px;
+  block-size: 40px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--grad-primary);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  box-shadow: var(--shadow-1);
+}
+.emp-info {
+  display: flex;
+  flex-direction: column;
+}
+.emp-name {
+  font-weight: 700;
+}
+.emp-code {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--mat-sys-primary);
+}
+.leave-type-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-inline-size: 128px;
+}
+.type-dot {
+  inline-size: 8px;
+  block-size: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.type-name {
+  font-weight: 700;
+}
+.dates-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.date-val {
+  font-weight: 700;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.date-arrow {
+  font-size: 16px;
+  color: var(--mat-sys-on-surface-variant);
+}
+:host-context([dir='rtl']) .date-arrow {
+  transform: scaleX(-1);
+}
+.days-chip,
+.days-tag {
+  padding: 4px var(--space-3);
+  border-radius: 999px;
+  background: var(--status-approved-bg);
+  color: var(--status-approved-fg);
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.days-tag {
+  margin-inline-start: var(--space-2);
+  padding-block: 1px;
+}
+.card-end {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-inline-start: auto;
+}
+/* The icon already carries the status; skip the global dot. */
+.status-badge::before {
+  display: none;
+}
+.status-badge .material-icons {
+  font-size: 14px;
+}
+/* Cancelled has no global colour. */
+.status-cancelled {
+  background: var(--mat-sys-surface-container-high);
+  color: var(--mat-sys-on-surface-variant);
+}
+
+/* Row actions: outline reject, solid approve. 44px targets. */
+.btn-reject,
+.btn-approve {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  min-block-size: 44px;
+  padding-inline: var(--space-4);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--motion-fast);
+}
+.btn-reject {
+  border-color: var(--status-rejected-fg);
+  background: var(--table-surface);
+  color: var(--status-rejected-fg);
+}
+.btn-reject:hover:not(:disabled) {
+  background: var(--status-rejected-bg);
+}
+.btn-approve {
+  background: #047857; /* darker than the token so white text keeps 4.5:1 in both themes */
+  color: #fff;
+}
+.btn-approve:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+.btn-reject:disabled,
+.btn-approve:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.btn-reject .material-icons,
+.btn-approve .material-icons {
+  font-size: 18px;
+}
+
+/* Details line */
+.card-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-4);
+  padding-block-start: var(--space-2);
+  border-block-start: 1px solid var(--mat-sys-outline-variant);
+  font-size: 13px;
+  color: var(--mat-sys-on-surface-variant);
+}
+.reason-text {
+  flex: 1 1 200px;
+  min-inline-size: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.submitted-date {
+  margin-inline-start: auto;
+}
+.approval-info {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+.approval-info .material-icons {
+  font-size: 16px;
+}
+.approval-info strong {
+  color: var(--mat-sys-on-surface);
+}
+.approval-remarks {
+  font-style: italic;
+}
+.attachment-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-block-size: 44px;
+  padding-inline: var(--space-1);
+  border: 0;
+  background: transparent;
+  color: var(--mat-sys-primary);
+  font: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+}
+.attachment-link .material-icons {
+  font-size: 16px;
+}
+
+/* ── Pagination ──────────────────────────────────────────── */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+.pag-info {
+  font-size: 13px;
+  color: var(--mat-sys-on-surface-variant);
+}
+.pag-btns {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+.pag-btn {
+  min-inline-size: 44px;
+  block-size: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: var(--radius-md);
+  background: var(--table-surface);
+  color: var(--mat-sys-on-surface);
+  font: inherit;
+  cursor: pointer;
+  transition: var(--motion-fast);
+}
+.pag-btn .material-icons {
+  font-size: 20px;
+}
+:host-context([dir='rtl']) .pag-btn .material-icons {
+  transform: scaleX(-1);
+}
+.pag-btn:hover:not(:disabled) {
+  border-color: var(--mat-sys-primary);
+  color: var(--mat-sys-primary);
+}
+.pag-btn.active {
+  background-image: var(--grad-primary);
+  border-color: transparent;
+  color: #fff;
+  font-weight: 700;
+  box-shadow: var(--primary-shadow);
+}
+.pag-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ── Approve / reject modal (shell is in the kit) ────────── */
+.modal {
+  max-inline-size: 520px;
+}
+.modal-header {
+  justify-content: flex-start;
+}
+.modal-header .modal-close {
+  margin-inline-start: auto;
+}
+.header-approve {
+  background: var(--status-active-bg);
+  color: var(--status-active-fg);
+}
+.header-reject {
+  background: var(--status-rejected-bg);
+  color: var(--status-rejected-fg);
+}
+.modal-header-icon .material-icons {
+  font-size: 32px;
+}
+.header-approve .modal-title,
+.header-reject .modal-title {
+  color: inherit;
+}
+.modal-sub {
+  margin: 2px 0 0;
+  font-size: 13px;
+}
+.modal-summary {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-4) var(--space-5);
+  border-block-end: 1px solid var(--mat-sys-outline-variant);
+  background: var(--table-header-bg);
+}
+.summary-row {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+}
+.summary-label {
+  inline-size: 88px;
+  flex-shrink: 0;
+  padding-block-start: 2px;
+  color: var(--mat-sys-on-surface-variant);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.summary-val {
+  flex: 1;
+}
+.opt {
+  margin-inline-start: var(--space-1);
+  color: var(--mat-sys-on-surface-variant);
+  font-weight: 400;
+}
+/* The footer sits inside the padded form body, so drop its own padding and rule. */
+.modal-body > .modal-footer {
+  padding: 0;
+  border: 0;
+}
+
+@media (max-width: 768px) {
+  .card-end,
+  .submitted-date {
+    margin-inline-start: 0;
+  }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .filter-bar {
+    background: var(--mat-sys-surface-container);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .btn-approve,
+  .status-filter-btn {
+    transition: none;
+  }
+}

@@ -1,0 +1,124 @@
+/* Audit events: Material filter form and table on glass cards. */
+
+.audit-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+.page-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+.header-icon {
+  inline-size: 40px;
+  block-size: 40px;
+  font-size: 40px;
+  color: var(--mat-sys-primary);
+}
+.page-title {
+  margin: 0;
+  font-size: 28px;
+  line-height: 1.25;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.subtitle {
+  margin: 2px 0 0;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.filter-card,
+.table-card {
+  background: var(--table-surface);
+  border: var(--glass-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--glass-shine), var(--glass-shadow);
+}
+.filter-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0 var(--space-4);
+  align-items: start;
+}
+.filter-actions {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+.filter-actions button {
+  --mat-button-filled-container-height: 44px;
+  --mat-button-text-container-height: 44px;
+}
+.alert-error {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  background: var(--status-rejected-bg);
+  color: var(--status-rejected-fg);
+}
+
+.table-wrapper {
+  position: relative;
+  overflow: auto;
+  max-block-size: 65vh;
+}
+.table-spinner {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--glass-bg-strong);
+}
+.audit-table {
+  inline-size: 100%;
+  background: transparent;
+}
+.audit-table th {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--mat-sys-on-surface-variant);
+}
+.nowrap {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.detail-cell {
+  max-inline-size: 420px;
+  overflow-wrap: anywhere;
+}
+.action-tag {
+  display: inline-block;
+  padding: 2px var(--space-3);
+  border-radius: 999px;
+  background: var(--mat-sys-secondary-container);
+  color: var(--mat-sys-on-secondary-container);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+.empty-cell {
+  padding: 48px var(--space-4);
+}
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+  color: var(--mat-sys-on-surface-variant);
+}
+.empty-state mat-icon {
+  inline-size: 48px;
+  block-size: 48px;
+  font-size: 48px;
+  color: var(--mat-sys-primary);
+  opacity: 0.4;
+}

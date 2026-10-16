@@ -1,0 +1,306 @@
+<!-- leave-apply.html -->
+<div class="apply-page">
+  <!-- ── Header ──────────────────────────────────────────── -->
+  <div class="page-header">
+    <button class="back-btn" [attr.aria-label]="'common.back' | translate" (click)="onCancel()">
+      <span aria-hidden="true" class="material-icons mirror-rtl">arrow_back</span>
+    </button>
+    <div>
+      <h1 class="page-title">{{ 'leave.apply.title' | translate }}</h1>
+      <p class="page-sub">{{ 'leave.apply.subtitle' | translate: { year: currentYear } }}</p>
+    </div>
+  </div>
+
+  <!-- ── Alerts ─────────────────────────────────────────── -->
+  @if (successMsg()) {
+    <div class="alert alert-success">
+      <span aria-hidden="true" class="material-icons">check_circle</span>
+      {{ successMsg() }}
+    </div>
+  }
+  @if (error()) {
+    <div class="alert alert-error">
+      <span aria-hidden="true" class="material-icons">error_outline</span>
+      {{ error() }}
+    </div>
+  }
+
+  <!-- ── Loading ────────────────────────────────────────── -->
+  @if (loading()) {
+    <div class="loading-wrap">
+      <div class="spinner"></div>
+      <span>{{ 'leave.apply.loadingText' | translate }}</span>
+    </div>
+  }
+
+  @if (!loading()) {
+    <div class="apply-layout">
+      <!-- ════════════════════════════════════════════════ -->
+      <!-- LEFT — Form                                     -->
+      <!-- ════════════════════════════════════════════════ -->
+      <div class="form-card">
+        <div class="form-card-header">
+          <span aria-hidden="true" class="material-icons">event_available</span>
+          {{ 'leave.apply.formTitle' | translate }}
+        </div>
+
+        <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate class="form-body">
+          <!-- ── Leave type ─────────────────────────────── -->
+          <div class="field">
+            <label>{{ 'leave.apply.leaveTypeLabel' | translate }} <span class="req">*</span></label>
+
+            @if (balances().length === 0) {
+              <div class="no-balance-warn">
+                <span aria-hidden="true" class="material-icons">warning</span>
+                {{ 'leave.apply.noBalanceWarn' | translate: { year: currentYear } }}
+              </div>
+            } @else {
+              <div class="type-grid">
+                @for (b of balances(); track b.leaveType) {
+                  <label
+                    class="type-card"
+                    [class.type-selected]="ctrl('leaveTypeCode').value === b.leaveType"
+                    [class.type-empty]="b.availableDays <= 0"
+                  >
+                    <input type="radio" formControlName="leaveTypeCode" [value]="b.leaveType" />
+                    <div class="type-dot" [style.background]="getTypeColor(b.leaveType)"></div>
+                    <div class="type-info">
+                      <span class="type-name">{{ b.leaveTypeName }}</span>
+                      <span class="type-avail">
+                        {{ b.availableDays.toFixed(1) }} / {{ b.totalDays.toFixed(1) }}
+                        {{ 'leave.list.daysPlural' | translate }}
+                      </span>
+                    </div>
+                    <div class="type-mini-bar">
+                      <div
+                        class="type-mini-fill"
+                        [style.width.%]="
+                          b.totalDays > 0 ? (b.availableDays / b.totalDays) * 100 : 0
+                        "
+                        [style.background]="getBalanceBarColor(b.availableDays, b.totalDays)"
+                      ></div>
+                    </div>
+                  </label>
+                }
+              </div>
+            }
+            @if (isInvalid('leaveTypeCode')) {
+              <span class="field-error">{{ 'leave.apply.selectLeaveTypeError' | translate }}</span>
+            }
+          </div>
+
+          <!-- ── Date range ─────────────────────────────── -->
+          <div class="field-row">
+            <div class="field">
+              <label for="la-start-date"
+                >{{ 'leave.apply.startDateLabel' | translate }} <span class="req">*</span></label
+              >
+              <input
+                id="la-start-date"
+                type="date"
+                formControlName="startDate"
+                [min]="getMinDate()"
+              />
+              @if (isInvalid('startDate')) {
+                <span class="field-error">{{ getError('startDate') }}</span>
+              }
+            </div>
+            <div class="field">
+              <label for="la-end-date"
+                >{{ 'leave.apply.endDateLabel' | translate }} <span class="req">*</span></label
+              >
+              <input
+                id="la-end-date"
+                type="date"
+                formControlName="endDate"
+                [min]="ctrl('startDate').value || getMinDate()"
+              />
+              @if (isInvalid('endDate')) {
+                <span class="field-error">{{ getError('endDate') }}</span>
+              }
+            </div>
+          </div>
+
+          <!-- Date range error -->
+          @if (form.errors?.['dateRange'] && form.touched) {
+            <div class="field-alert">
+              <span aria-hidden="true" class="material-icons">warning</span>
+              {{ form.errors?.['dateRange'] | translate }}
+            </div>
+          }
+
+          @if (daysError()) {
+            <div class="field-alert" role="alert">
+              <span aria-hidden="true" class="material-icons">warning</span>
+              {{ daysError() }}
+            </div>
+          }
+
+          <!-- ── Working days preview ───────────────────── -->
+          @if (calculatedDays() > 0) {
+            <div class="days-preview" [class.days-warn]="!isBalanceSufficient()">
+              <div class="days-icon">
+                <span aria-hidden="true" class="material-icons">
+                  {{ isBalanceSufficient() ? 'event_available' : 'event_busy' }}
+                </span>
+              </div>
+              <div class="days-info">
+                <span class="days-count">
+                  {{ 'leave.apply.workingDaysCount' | translate: { count: calculatedDays() } }}
+                </span>
+                @if (selectedBalance()) {
+                  <span class="days-remaining">
+                    @if (isBalanceSufficient()) {
+                      {{
+                        'leave.apply.daysRemainingAfter'
+                          | translate
+                            : {
+                                days: (selectedBalance()!.availableDays - calculatedDays()).toFixed(
+                                  1
+                                ),
+                              }
+                      }}
+                    } @else {
+                      {{
+                        'leave.apply.insufficientBalance'
+                          | translate
+                            : {
+                                need: calculatedDays(),
+                                have: selectedBalance()!.availableDays.toFixed(1),
+                              }
+                      }}
+                    }
+                  </span>
+                }
+              </div>
+            </div>
+          }
+
+          <!-- ── Reason ─────────────────────────────────── -->
+          <div class="field">
+            <label for="la-reason"
+              >{{ 'leave.apply.reasonLabel' | translate }} <span class="req">*</span></label
+            >
+            <textarea
+              id="la-reason"
+              formControlName="reason"
+              rows="3"
+              [placeholder]="'leave.apply.reasonPlaceholder' | translate"
+            >
+            </textarea>
+            <span class="char-count"> {{ ctrl('reason').value?.length ?? 0 }}/500 </span>
+            @if (isInvalid('reason')) {
+              <span class="field-error">{{ getError('reason') }}</span>
+            }
+          </div>
+
+          <!-- ── Supporting document ───────────────────── -->
+          @if (requiresDocument() || attachment()) {
+            <div class="field">
+              <label for="la-attachment">
+                {{ 'leave.apply.attachmentLabel' | translate }}
+                @if (requiresDocument()) {
+                  <span class="req">*</span>
+                }
+              </label>
+              <input
+                id="la-attachment"
+                type="file"
+                class="file-input"
+                [accept]="attachmentAccept()"
+                aria-describedby="la-attachment-hint"
+                [attr.aria-invalid]="attachmentError() ? 'true' : null"
+                (change)="onFileSelected($event)"
+              />
+              <span id="la-attachment-hint" class="char-count">
+                {{
+                  'leave.apply.attachmentHint'
+                    | translate: { types: attachmentTypesLabel(), size: attachmentMaxMb() }
+                }}
+              </span>
+              @if (attachment(); as file) {
+                <div class="file-chip">
+                  <span class="material-icons" aria-hidden="true">attach_file</span>
+                  <span class="file-chip-name">{{ file.name }}</span>
+                  <button
+                    type="button"
+                    class="file-chip-remove"
+                    [attr.aria-label]="'leave.apply.attachmentRemove' | translate"
+                    (click)="removeAttachment()"
+                  >
+                    <span class="material-icons" aria-hidden="true">close</span>
+                  </button>
+                </div>
+              }
+              @if (attachmentError()) {
+                <span class="field-error" role="alert">{{ attachmentError() }}</span>
+              }
+            </div>
+          }
+
+          <!-- ── Actions ───────────────────────────────── -->
+          <div class="form-actions">
+            <button type="button" class="btn-cancel" (click)="onCancel()">
+              {{ 'common.cancel' | translate }}
+            </button>
+            <button
+              type="submit"
+              class="btn-save"
+              [disabled]="submitting() || !isBalanceSufficient() || balances().length === 0"
+            >
+              @if (submitting()) {
+                <div class="btn-spinner"></div>
+                <span>{{ 'leave.apply.submittingText' | translate }}</span>
+              } @else {
+                <span aria-hidden="true" class="material-icons">send</span>
+                <span>{{ 'leave.apply.submitButton' | translate }}</span>
+              }
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- ════════════════════════════════════════════════ -->
+      <!-- RIGHT — Balance sidebar                         -->
+      <!-- ════════════════════════════════════════════════ -->
+      <div class="balance-sidebar">
+        <div class="sidebar-header">
+          <span aria-hidden="true" class="material-icons">account_balance_wallet</span>
+          {{ 'leave.apply.sidebarTitle' | translate: { year: currentYear } }}
+        </div>
+        <div class="balance-list">
+          @for (b of balances(); track b.leaveType) {
+            <div
+              class="bal-item"
+              [class.bal-selected]="ctrl('leaveTypeCode').value === b.leaveType"
+            >
+              <div class="bal-item-header">
+                <div class="bal-type-dot" [style.background]="getTypeColor(b.leaveType)"></div>
+                <span class="bal-type-name">{{ b.leaveTypeName }}</span>
+                <span class="bal-avail">{{ b.availableDays.toFixed(1) }}d</span>
+              </div>
+              <div class="bal-bar">
+                <div
+                  class="bal-bar-fill"
+                  [style.width.%]="b.totalDays > 0 ? (b.availableDays / b.totalDays) * 100 : 0"
+                  [style.background]="getBalanceBarColor(b.availableDays, b.totalDays)"
+                ></div>
+              </div>
+              <div class="bal-breakdown">
+                <span>{{ 'leave.apply.usedLabel' | translate }}: {{ b.usedDays.toFixed(1) }}</span>
+                @if (b.pendingDays > 0) {
+                  <span class="pending-text">
+                    {{ 'leave.apply.pendingLabel' | translate }}: {{ b.pendingDays.toFixed(1) }}
+                  </span>
+                }
+                <span
+                  >{{ 'leave.apply.totalLabel' | translate }}: {{ b.totalDays.toFixed(1) }}</span
+                >
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  }
+</div>

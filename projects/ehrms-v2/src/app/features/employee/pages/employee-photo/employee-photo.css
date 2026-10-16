@@ -1,0 +1,99 @@
+/* Employee photo: avatar with a gradient ring, glass-outline controls. Tokens only, so light/dark and RTL follow. */
+:host {
+  display: block;
+  inline-size: 160px;
+  flex-shrink: 0;
+}
+
+/* Avatar on top, its controls stacked underneath and centred on it. */
+.photo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.avatar {
+  inline-size: 96px;
+  block-size: 96px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--mat-sys-primary-container);
+  box-shadow: var(--shadow-2);
+}
+.avatar-text {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--grad-primary);
+  border-color: transparent;
+  color: #fff;
+  font-size: 30px;
+  font-weight: 700;
+}
+
+.controls {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--space-2);
+  inline-size: 100%;
+  text-align: center;
+}
+.file-input {
+  display: none;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  min-block-size: 44px;
+  padding-inline: var(--space-3);
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: var(--radius-md);
+  background: var(--table-surface);
+  color: var(--mat-sys-on-surface);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--motion-fast);
+}
+.btn .material-icons {
+  font-size: 18px;
+}
+.btn:hover:not(:disabled) {
+  border-color: var(--mat-sys-primary);
+  color: var(--mat-sys-primary);
+}
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.btn:focus-visible {
+  outline: 2px solid var(--mat-sys-primary);
+  outline-offset: 2px;
+}
+.btn-danger {
+  background: #b91c1c;
+  border-color: #b91c1c;
+  color: #fff;
+}
+.btn-danger:hover:not(:disabled) {
+  color: #fff;
+  border-color: #b91c1c;
+}
+
+.confirm-text,
+.hint {
+  font-size: 13px;
+  color: var(--mat-sys-on-surface-variant);
+}
+.error {
+  margin: 0;
+  font-size: 13px;
+  color: var(--status-rejected-fg);
+}

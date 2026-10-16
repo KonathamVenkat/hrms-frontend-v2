@@ -1,0 +1,268 @@
+/* Top bar: menu toggle, brand, clock, theme + language, user menu. Theme tokens only. */
+
+.topbar {
+  block-size: var(--header-height);
+  margin: 12px 12px 0;
+  border: var(--glass-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--glass-shine), var(--glass-shadow);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-inline: var(--space-3) var(--space-4);
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 50;
+  gap: var(--space-3);
+}
+/* Glass on a pseudo-element so the profile menu's fixed positioning is unaffected. */
+.topbar::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: var(--glass-bg);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  pointer-events: none;
+}
+@media (prefers-reduced-transparency: reduce) {
+  .topbar::before {
+    background: var(--mat-sys-surface-container);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+
+.topbar-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.brand-name {
+  font: var(--mat-sys-title-medium);
+  font-weight: 700;
+  color: var(--mat-sys-primary);
+  letter-spacing: 0.05em;
+}
+:lang(ar) .brand-name {
+  letter-spacing: 0;
+}
+
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-inline-start: auto;
+}
+
+/* Desktop shows the rail toggle, mobile shows the drawer toggle. */
+.icon-btn.drawer-toggle {
+  display: none;
+}
+
+.clock-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px var(--space-3);
+  border-radius: 999px;
+  background: var(--mat-sys-primary-container);
+  color: var(--mat-sys-on-primary-container);
+}
+.clock-icon {
+  font-size: 16px;
+}
+.clock-time {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+}
+
+.icon-btn {
+  inline-size: 44px;
+  block-size: 44px;
+  border: 0;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--mat-sys-on-surface-variant);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition:
+    background var(--motion-fast),
+    color var(--motion-fast);
+}
+.icon-btn:hover {
+  background: var(--mat-sys-surface-container-high);
+  color: var(--mat-sys-primary);
+}
+.icon-btn .material-icons {
+  font-size: 22px;
+}
+
+/* ── User menu ── */
+.profile-wrap {
+  position: relative;
+}
+.profile-trigger {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-block-size: 44px;
+  padding-inline: var(--space-2);
+  border: 0;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  transition: background var(--motion-fast);
+}
+.profile-trigger:hover {
+  background: var(--mat-sys-surface-container-high);
+}
+.avatar {
+  overflow: hidden;
+  inline-size: 34px;
+  block-size: 34px;
+  border-radius: 50%;
+  background: var(--grad-primary);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.profile-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1px;
+}
+.profile-name {
+  font: var(--mat-sys-label-large);
+  font-weight: 600;
+  color: var(--mat-sys-on-surface);
+  white-space: nowrap;
+}
+.profile-status {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font: var(--mat-sys-label-small);
+}
+.status-dot {
+  inline-size: 7px;
+  block-size: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: currentcolor;
+}
+.profile-status.online {
+  color: var(--status-active-fg);
+}
+.profile-status.offline {
+  color: var(--mat-sys-on-surface-variant);
+}
+.chevron {
+  font-size: 18px;
+  color: var(--mat-sys-on-surface-variant);
+  transition: transform var(--motion-base);
+}
+.chevron.rotated {
+  transform: rotate(180deg);
+}
+
+/* position is set inline by the component (fixed, anchored to the trigger's trailing edge) */
+.profile-dropdown {
+  position: fixed;
+  inline-size: 220px;
+  background: var(--glass-bg-strong);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  border: var(--glass-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-3);
+  z-index: 9999;
+  overflow: hidden;
+  padding-block: var(--space-1);
+  animation: dropIn var(--motion-fast) var(--motion-ease);
+}
+@keyframes dropIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+.dropdown-item {
+  inline-size: 100%;
+  min-block-size: 44px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-inline: var(--space-4);
+  border: 0;
+  background: transparent;
+  color: var(--mat-sys-on-surface);
+  font: var(--mat-sys-body-medium);
+  text-align: start;
+  cursor: pointer;
+}
+.dropdown-item .material-icons {
+  font-size: 18px;
+  color: var(--mat-sys-on-surface-variant);
+}
+.dropdown-item:hover {
+  background: var(--mat-sys-surface-container-high);
+}
+.dropdown-divider {
+  block-size: 1px;
+  background: var(--mat-sys-outline-variant);
+  margin-block: var(--space-1);
+}
+.dropdown-item.logout,
+.dropdown-item.logout .material-icons {
+  color: var(--danger);
+}
+.dropdown-item.logout:hover {
+  background: var(--status-rejected-bg);
+}
+
+.icon-btn:focus-visible,
+.profile-trigger:focus-visible,
+.dropdown-item:focus-visible {
+  outline: 2px solid var(--mat-sys-primary);
+  outline-offset: 2px;
+}
+
+@media (max-width: 767.98px) {
+  .topbar {
+    margin: 8px 8px 0;
+  }
+  .icon-btn.nav-toggle {
+    display: none;
+  }
+  .icon-btn.drawer-toggle {
+    display: flex;
+  }
+}
+
+/* Narrow screens: keep avatar, hide name/status visually (still the button's accessible name) and the clock. */
+@media (max-width: 640px) {
+  .clock-badge {
+    display: none;
+  }
+  .profile-info {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}

@@ -1,0 +1,466 @@
+// src/app/features/employee/pages/employee-documents/employee-documents.ts
+
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  input,
+  signal,
+  inject,
+  computed,
+  DestroyRef,
+} from '@angular/core';
+import {
+  FormBuilder,
+  Validators,
+  ReactiveFormsModule,
+  AbstractControl,
+} from '@angular/forms';
+import { SlicePipe } from '@angular/common';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { CdkTrapFocus } from '@angular/cdk/a11y';
+import { finalize } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+
+import { AccessibleDialogDirective } from '../../../../core/directives/accessible-dialog.directive';
+import { EmployeeDocumentService } from '../../services/document.service';
+import {
+  EmployeeDocument,
+  EmpDocTypeOption, // ← renamed to avoid clash with browser DocumentType
+} from '../../models/document.model';
+import { serverMessage } from '../../../../core/utils/http-error-message';
+import { timedMessage } from '../../../../core/utils/timed-message';
+import { FieldA11yDirective } from '../../../../core/directives/field-a11y.directive';
+import { fieldErrorMessage, isFieldInvalid } from '../../../../core/forms/field-errors';
+
+@Component({
+  selector: 'app-employee-documents',
+  imports: [SlicePipe, ReactiveFormsModule, FieldA11yDirective, TranslatePipe, CdkTrapFocus, AccessibleDialogDirective],
+  templateUrl: './employee-documents.html',
+  styleUrl: './employee-documents.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class EmployeeDocumentsComponent implements OnInit {
+  readonly employeeId = input.required<number>();
+
+  private fb = inject(FormBuilder);
+  private docSvc = inject(EmployeeDocumentService);
+  private destroy = inject(DestroyRef);
+  private translate = inject(TranslateService);
+
+  // ── State ─────────────────────────────────────────────────
+  documents = signal<EmployeeDocument[]>([]);
+  docTypes = signal<EmpDocTypeOption[]>([]); // ← renamed type
+  loading = signal(false);
+  saving = signal(false);
+  error = signal<string | null>(null);
+  successMsg = signal<string | null>(null);
+  private readonly showSuccess = timedMessage(this.successMsg, this.destroy);
+
+  // ── Modal state ───────────────────────────────────────────
+  showModal = signal(false);
+  isEditMode = signal(false);
+  editingId = signal<number | null>(null);
+  showConfirm = signal(false);
+  confirmItem = signal<EmployeeDocument | null>(null);
+  confirmType = signal<'delete' | 'verify'>('delete');
+
+  // ── File upload state ─────────────────────────────────────
+  selectedFile = signal<File | null>(null);
+  dragOver = signal(false);
+
+  // ── Filter ────────────────────────────────────────────────
+  filterCategory = signal('');
+
+  readonly categories = computed(() => {
+    const cats = [...new Set(this.documents().map((d) => d.category))];
+    return cats;
+  });
+
+  readonly filteredDocs = computed(() => {
+    const cat = this.filterCategory();
+    if (!cat) return this.documents();
+    return this.documents().filter((d) => d.category === cat);
+  });
+
+  readonly expiredCount = computed(() => this.documents().filter((d) => d.isExpired).length);
+  readonly expiringSoonCount = computed(
+    () => this.documents().filter((d) => d.isExpiringSoon).length,
+  );
+  readonly verifiedCount = computed(() => this.documents().filter((d) => d.isVerified).length);
+
+  // ── Form ──────────────────────────────────────────────────
+  readonly form = this.fb.group({
+    docTypeId: this.fb.control<number | null>(null, Validators.required),
+    documentName: this.fb.nonNullable.control('', [Validators.required, Validators.maxLength(300)]),
+    documentNumber: this.fb.nonNullable.control('', Validators.maxLength(100)),
+    issueDate: this.fb.nonNullable.control(''),
+    expiryDate: this.fb.nonNullable.control(''),
+    issuedBy: this.fb.nonNullable.control('', Validators.maxLength(200)),
+    notes: this.fb.nonNullable.control('', Validators.maxLength(500)),
+  });
+
+  ngOnInit(): void {
+    this.loadDocuments();
+    this.loadDocTypes();
+  }
+
+  // ── Load ──────────────────────────────────────────────────
+  loadDocuments(): void {
+    this.loading.set(true);
+    this.docSvc
+      .getAll(this.employeeId())
+      .pipe(
+        finalize(() => this.loading.set(false)),
+        takeUntilDestroyed(this.destroy),
+      )
+      .subscribe({
+        next: (res) => {
+          if (res.success) this.documents.set(res.data);
+        },
+        error: (err: unknown) =>
+          this.error.set(this.errorMessage(err, 'employee.documents.errors.loadFailed')),
+      });
+  }
+
+  loadDocTypes(): void {
+    this.docSvc
+      .getDocumentTypes()
+      .pipe(takeUntilDestroyed(this.destroy))
+      .subscribe({
+        next: (res) => {
+          if (res.success) this.docTypes.set(res.data);
+        },
+      });
+  }
+
+  // ── Selected type helper ──────────────────────────────────
+  getSelectedDocType(): EmpDocTypeOption | null {
+    const id = this.ctrl('docTypeId').value;
+    return this.docTypes().find((dt) => dt.docTypeId === +id) ?? null;
+  }
+
+  /** The allowed file types of the chosen document type, e.g. ["PDF", "JPG"]; empty when none is chosen. */
+  private allowedExtensions(): string[] {
+    return (this.getSelectedDocType()?.allowedExtensions ?? '')
+      .split(',')
+      .map((e) => e.trim().toUpperCase())
+      .filter(Boolean);
+  }
+
+  /** The drop-zone hint: the real limits of the chosen document type, or a prompt to choose one. */
+  dropHint(): string {
+    const type = this.getSelectedDocType();
+    const extensions = this.allowedExtensions();
+    if (!type || !extensions.length || !type.maxFileSizeMb) {
+      return this.translate.instant('employee.documents.dropzone.hintNoType');
+    }
+    return this.translate.instant('employee.documents.dropzone.hint', {
+      types: extensions.join(', '),
+      size: type.maxFileSizeMb,
+    });
+  }
+
+  /** Value for the file picker's `accept`: the chosen type's extensions, else the app-wide list. */
+  fileAccept(): string {
+    const extensions = this.allowedExtensions();
+    return extensions.length
+      ? extensions.map((e) => '.' + e.toLowerCase()).join(',')
+      : '.pdf,.jpg,.jpeg,.png,.doc,.docx';
+  }
+
+  // ── File handling ─────────────────────────────────────────
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files[0]) {
+      this.setFile(input.files[0]);
+    }
+  }
+
+  onDrop(event: DragEvent): void {
+    event.preventDefault();
+    this.dragOver.set(false);
+    const file = event.dataTransfer?.files[0];
+    if (file) this.setFile(file);
+  }
+
+  onDragOver(event: DragEvent): void {
+    event.preventDefault();
+    this.dragOver.set(true);
+  }
+
+  onDragLeave(): void {
+    this.dragOver.set(false);
+  }
+
+  private setFile(file: File): void {
+    this.selectedFile.set(file);
+    if (!this.ctrl('documentName').value) {
+      const nameWithoutExt = file.name.replace(/\.[^/.]+$/, '');
+      this.ctrl('documentName').setValue(nameWithoutExt);
+    }
+  }
+
+  removeFile(): void {
+    this.selectedFile.set(null);
+  }
+
+  // ── Modal ─────────────────────────────────────────────────
+  openUpload(): void {
+    this.isEditMode.set(false);
+    this.editingId.set(null);
+    this.selectedFile.set(null);
+    this.form.reset({
+      docTypeId: null,
+      documentName: '',
+      documentNumber: '',
+      issueDate: '',
+      expiryDate: '',
+      issuedBy: '',
+      notes: '',
+    });
+    this.error.set(null);
+    this.showModal.set(true);
+  }
+
+  openEdit(doc: EmployeeDocument): void {
+    this.isEditMode.set(true);
+    this.editingId.set(doc.documentId);
+    this.form.patchValue({
+      docTypeId: doc.docTypeId,
+      documentName: doc.documentName,
+      documentNumber: doc.documentNumber ?? '',
+      issueDate: doc.issueDate ?? '',
+      expiryDate: doc.expiryDate ?? '',
+      issuedBy: doc.issuedBy ?? '',
+      notes: doc.notes ?? '',
+    });
+    this.error.set(null);
+    this.showModal.set(true);
+  }
+
+  closeModal(): void {
+    this.showModal.set(false);
+    this.selectedFile.set(null);
+    this.error.set(null);
+  }
+
+  // ── Submit ────────────────────────────────────────────────
+  onSubmit(): void {
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
+    if (!this.isEditMode() && !this.selectedFile()) {
+      this.error.set(this.translate.instant('employee.documents.errors.selectFile'));
+      return;
+    }
+    this.saving.set(true);
+    this.error.set(null);
+
+    const v = this.form.getRawValue();
+
+    if (this.isEditMode()) {
+      const payload = {
+        docTypeId: Number(v.docTypeId),
+        documentName: v.documentName.trim(),
+        documentNumber: v.documentNumber || undefined,
+        issueDate: v.issueDate || undefined,
+        expiryDate: v.expiryDate || undefined,
+        issuedBy: v.issuedBy || undefined,
+        notes: v.notes || undefined,
+      };
+      this.docSvc
+        .updateInfo(this.employeeId(), this.editingId()!, payload)
+        .pipe(
+          finalize(() => this.saving.set(false)),
+          takeUntilDestroyed(this.destroy),
+        )
+        .subscribe({
+          next: (res) => {
+            if (res.success) {
+              this.showSuccess(this.translate.instant('employee.documents.success.updated'));
+              this.closeModal();
+              this.loadDocuments();
+            } else this.error.set(res.message);
+          },
+          error: (err: unknown) =>
+            this.error.set(this.errorMessage(err, 'employee.documents.errors.updateFailed')),
+        });
+    } else {
+      const formData = new FormData();
+      formData.append('file', this.selectedFile()!);
+      const metadata = JSON.stringify({
+        docTypeId: Number(v.docTypeId),
+        documentName: v.documentName.trim(),
+        documentNumber: v.documentNumber || undefined,
+        issueDate: v.issueDate || undefined,
+        expiryDate: v.expiryDate || undefined,
+        issuedBy: v.issuedBy || undefined,
+        notes: v.notes || undefined,
+      });
+      formData.append('metadata', new Blob([metadata], { type: 'application/json' }));
+
+      this.docSvc
+        .upload(this.employeeId(), formData)
+        .pipe(
+          finalize(() => this.saving.set(false)),
+          takeUntilDestroyed(this.destroy),
+        )
+        .subscribe({
+          next: (res) => {
+            if (res.success) {
+              this.showSuccess(this.translate.instant('employee.documents.success.uploaded'));
+              this.closeModal();
+              this.loadDocuments();
+            } else this.error.set(res.message);
+          },
+          error: (err: unknown) =>
+            this.error.set(this.errorMessage(err, 'employee.documents.errors.uploadFailed')),
+        });
+    }
+  }
+
+  // ── Confirm actions ───────────────────────────────────────
+  openVerify(doc: EmployeeDocument): void {
+    this.confirmItem.set(doc);
+    this.confirmType.set('verify');
+    this.showConfirm.set(true);
+  }
+
+  openDelete(doc: EmployeeDocument): void {
+    this.confirmItem.set(doc);
+    this.confirmType.set('delete');
+    this.showConfirm.set(true);
+  }
+
+  cancelConfirm(): void {
+    this.showConfirm.set(false);
+    this.confirmItem.set(null);
+  }
+
+  confirmAction(): void {
+    const doc = this.confirmItem();
+    if (!doc) return;
+
+    // ── Split into separate subscriptions to avoid union type error ──
+    if (this.confirmType() === 'verify') {
+      this.docSvc
+        .verify(this.employeeId(), doc.documentId)
+        .pipe(takeUntilDestroyed(this.destroy))
+        .subscribe({
+        next: () => {
+          this.showSuccess(
+            this.translate.instant('employee.documents.success.verified', { name: doc.documentName }),
+          );
+          this.cancelConfirm();
+          this.loadDocuments();
+        },
+        error: (err: unknown) => {
+          this.error.set(this.errorMessage(err, 'employee.documents.errors.verifyFailed'));
+          this.cancelConfirm();
+        },
+      });
+    } else {
+      this.docSvc
+        .delete(this.employeeId(), doc.documentId)
+        .pipe(takeUntilDestroyed(this.destroy))
+        .subscribe({
+        next: () => {
+          this.showSuccess(
+            this.translate.instant('employee.documents.success.deleted', { name: doc.documentName }),
+          );
+          this.cancelConfirm();
+          this.loadDocuments();
+        },
+        error: (err: unknown) => {
+          this.error.set(this.errorMessage(err, 'employee.documents.errors.deleteFailed'));
+          this.cancelConfirm();
+        },
+      });
+    }
+  }
+
+  // ── Download ──────────────────────────────────────────────
+  downloadDocument(doc: EmployeeDocument): void {
+    this.docSvc
+      .downloadFile(this.employeeId(), doc.documentId)
+      .pipe(takeUntilDestroyed(this.destroy))
+      .subscribe({
+      next: (blob: Blob) => {
+        // Create temporary object URL and trigger browser download
+        const url = URL.createObjectURL(blob);
+        const anchor = document.createElement('a');
+        anchor.href = url;
+        anchor.download = doc.originalFileName || doc.documentName;
+        anchor.click();
+        // Cleanup
+        URL.revokeObjectURL(url);
+      },
+      error: (err: unknown) =>
+        this.error.set(this.errorMessage(err, 'employee.documents.errors.downloadFailed')),
+    });
+  }
+
+  // ── Helpers ───────────────────────────────────────────────
+  ctrl(name: string): AbstractControl {
+    return this.form.get(name)!;
+  }
+
+  isInvalid(name: string): boolean {
+    return isFieldInvalid(this.form.get(name));
+  }
+
+  getError(name: string): string {
+    return fieldErrorMessage(this.form.get(name), this.translate);
+  }
+
+  getFileIcon(ext: string): string {
+    const map: Record<string, string> = {
+      PDF: 'picture_as_pdf',
+      JPG: 'image',
+      JPEG: 'image',
+      PNG: 'image',
+      DOC: 'description',
+      DOCX: 'description',
+    };
+    return map[ext?.toUpperCase()] ?? 'insert_drive_file';
+  }
+
+  getFileIconColor(ext: string): string {
+    const map: Record<string, string> = {
+      PDF: '#e11d48',
+      JPG: '#06b6d4',
+      JPEG: '#06b6d4',
+      PNG: '#06b6d4',
+      DOC: '#1e40af',
+      DOCX: '#1e40af',
+    };
+    return map[ext?.toUpperCase()] ?? '#64748b';
+  }
+
+  getCategoryBadge(cat: string): string {
+    const map: Record<string, string> = {
+      IDENTITY: 'cat-identity',
+      CONTRACT: 'cat-contract',
+      EDUCATION: 'cat-education',
+      CERTIFICATE: 'cat-cert',
+      MEDICAL: 'cat-medical',
+      FINANCIAL: 'cat-financial',
+      OTHER: 'cat-other',
+    };
+    return map[cat] ?? 'cat-other';
+  }
+
+  formatBytes(bytes: number): string {
+    if (!bytes) return '0 B';
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+  }
+
+  /** The server's own message when it sent one, otherwise the translated fallback. */
+  private errorMessage(err: unknown, fallbackKey: string): string {
+    return serverMessage(err) || this.translate.instant(fallbackKey);
+  }
+}

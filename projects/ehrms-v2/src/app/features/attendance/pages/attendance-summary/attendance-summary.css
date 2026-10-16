@@ -1,0 +1,281 @@
+/* Attendance summary: Aurora Glass. Theme tokens + logical properties only, so Arabic mirrors without overrides. */
+
+.summary-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+/* ── Header ──────────────────────────────────────────────── */
+.page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+}
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+.header-icon {
+  inline-size: 40px;
+  block-size: 40px;
+  font-size: 40px;
+  color: var(--mat-sys-primary);
+}
+.page-header h2 {
+  margin: 0;
+  font-size: 28px;
+  line-height: 1.25;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.subtitle {
+  color: var(--mat-sys-on-surface-variant);
+}
+.filter-form {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+.filter-field {
+  inline-size: 150px;
+}
+
+/* ── Glass cards ─────────────────────────────────────────── */
+.stat-card,
+.trend-card,
+.empty-card,
+.backfill-card {
+  background: var(--table-surface);
+  border: var(--glass-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--glass-shine), var(--glass-shadow);
+}
+
+/* ── Stats grid ──────────────────────────────────────────── */
+.stats-grid {
+  display: grid;
+  grid-template-columns: 240px repeat(7, minmax(0, 1fr));
+  gap: var(--space-3);
+}
+.stat-card {
+  cursor: default;
+}
+.stat-card mat-card-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  block-size: 100%;
+  gap: var(--space-2);
+  padding: var(--space-5) var(--space-3);
+}
+.card-icon {
+  inline-size: 28px;
+  block-size: 28px;
+  font-size: 28px;
+  color: var(--mat-sys-on-surface-variant);
+}
+.stat-num {
+  font-size: 32px;
+  font-weight: 800;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.stat-num.sm {
+  font-size: 22px;
+}
+.stat-lbl,
+.pct-label {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  text-align: center;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+/* Accent colours: status tokens (light/dark aware). */
+.present-card .card-icon,
+.present-card .stat-num {
+  color: var(--status-active-fg);
+}
+.absent-card .card-icon,
+.absent-card .stat-num {
+  color: var(--status-rejected-fg);
+}
+.late-card .card-icon,
+.late-card .stat-num {
+  color: var(--status-pending-fg);
+}
+.half-card .card-icon,
+.half-card .stat-num {
+  color: var(--status-approved-fg);
+}
+.leave-card .card-icon,
+.leave-card .stat-num {
+  color: var(--mat-sys-secondary);
+}
+.hours-card .card-icon,
+.ot-card .card-icon {
+  color: var(--mat-sys-primary);
+}
+
+/* Attendance % card. Ring colour is bound from the component. */
+.highlight-card mat-card-content {
+  padding: var(--space-5);
+}
+.pct-circle {
+  inline-size: 104px;
+  block-size: 104px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-block-end: var(--space-2);
+  border: 6px solid var(--status-active-fg);
+  border-radius: 50%;
+}
+.pct-value {
+  font-size: 24px;
+  font-weight: 800;
+  line-height: 1;
+}
+.stat-detail {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.month-name {
+  font-weight: 600;
+}
+.live-pill {
+  padding: 2px var(--space-3);
+  border-radius: 999px;
+  background: var(--status-active-bg);
+  color: var(--status-active-fg);
+  font-size: 12px;
+  font-weight: 700;
+}
+.att-bar {
+  inline-size: 100%;
+  border-radius: 999px;
+}
+
+/* ── Yearly trend ────────────────────────────────────────── */
+.trend-card mat-card-header {
+  padding: var(--space-4) var(--space-5) 0;
+}
+.trend-card mat-card-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 18px;
+  font-weight: 700;
+}
+.trend-grid {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-2);
+  block-size: 180px;
+  padding: var(--space-5) var(--space-2) var(--space-2);
+}
+.trend-month {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-1);
+  block-size: 100%;
+}
+.trend-month-label,
+.trend-pct {
+  font-size: 12px;
+  color: var(--mat-sys-on-surface-variant);
+  font-variant-numeric: tabular-nums;
+}
+.trend-month.current .trend-month-label {
+  color: var(--mat-sys-primary);
+  font-weight: 700;
+}
+.trend-bar-wrap {
+  flex: 1;
+  inline-size: 100%;
+  min-block-size: 4px;
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+  border-radius: 6px 6px 0 0;
+  background: var(--mat-sys-surface-container-high);
+}
+.trend-bar {
+  inline-size: 100%;
+  min-block-size: 4px;
+  border-radius: 6px 6px 0 0;
+  transition: block-size var(--motion-base);
+}
+
+/* ── Empty / backfill ────────────────────────────────────── */
+.empty-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  padding: 48px var(--space-5);
+  color: var(--mat-sys-on-surface-variant);
+}
+.empty-icon {
+  inline-size: 56px;
+  block-size: 56px;
+  font-size: 56px;
+  color: var(--mat-sys-primary);
+  opacity: 0.4;
+}
+.center-spinner {
+  display: flex;
+  justify-content: center;
+  padding-block: 60px;
+}
+.backfill-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+}
+.backfill-content h3 {
+  margin: 0 0 var(--space-1);
+}
+.backfill-content p {
+  margin: 0;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+@media (max-width: 1024px) {
+  .stats-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .highlight-card {
+    grid-column: span 4;
+  }
+}
+@media (max-width: 640px) {
+  .stats-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .highlight-card {
+    grid-column: span 2;
+  }
+  .filter-form {
+    flex-wrap: wrap;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .trend-bar {
+    transition: none;
+  }
+}

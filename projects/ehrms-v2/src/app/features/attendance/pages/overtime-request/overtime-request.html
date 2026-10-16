@@ -1,0 +1,349 @@
+<div class="ot-container app-page">
+  <!-- ── Header ──────────────────────────────────────────── -->
+  <div class="page-header">
+    <div class="header-left">
+      <mat-icon class="header-icon">more_time</mat-icon>
+      <div>
+        <h2>{{ 'attendance.overtimeRequest.title' | translate }}</h2>
+        <span class="subtitle">{{ 'attendance.overtimeRequest.subtitle' | translate }}</span>
+      </div>
+    </div>
+    <button mat-flat-button color="primary" (click)="toggleForm()">
+      <mat-icon>{{ showForm() ? 'close' : 'add' }}</mat-icon>
+      {{
+        (showForm() ? 'attendance.overtimeRequest.cancel' : 'attendance.overtimeRequest.newRequest')
+          | translate
+      }}
+    </button>
+  </div>
+
+  <!-- ── Submit Form ─────────────────────────────────────── -->
+  @if (showForm()) {
+    <mat-card class="form-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>edit_calendar</mat-icon>
+          {{ 'attendance.overtimeRequest.formTitle' | translate }}
+        </mat-card-title>
+        <mat-card-subtitle>
+          {{ 'attendance.overtimeRequest.formSubtitle' | translate }}
+        </mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <form [formGroup]="submitForm" class="ot-form">
+          <div class="form-row">
+            <!-- OT Date -->
+            <mat-form-field appearance="outline" class="field-md">
+              <mat-label>{{ 'attendance.overtimeRequest.otDate' | translate }}</mat-label>
+              <input
+                matInput
+                [matDatepicker]="otDatePicker"
+                formControlName="otDate"
+                [max]="maxDate"
+                [min]="minDate"
+              />
+              <mat-datepicker-toggle matIconSuffix [for]="otDatePicker" />
+              <mat-datepicker #otDatePicker />
+              @if (submitForm.get('otDate')?.hasError('required')) {
+                <mat-error>
+                  {{ 'attendance.overtimeRequest.dateRequired' | translate }}
+                </mat-error>
+              }
+            </mat-form-field>
+            <!-- OT Type -->
+            <mat-form-field appearance="outline" class="field-md">
+              <mat-label>{{ 'attendance.overtimeRequest.otType' | translate }}</mat-label>
+              <mat-select formControlName="otType">
+                @for (opt of otTypeOptions; track opt) {
+                  <mat-option [value]="opt.value">
+                    {{ opt.label | translate }}
+                  </mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div class="form-row">
+            <!-- Start Time -->
+            <mat-form-field appearance="outline" class="field-sm">
+              <mat-label>{{ 'attendance.overtimeRequest.startTime' | translate }}</mat-label>
+              <input matInput type="time" formControlName="startTime" />
+              <mat-icon matSuffix>login</mat-icon>
+              @if (submitForm.get('startTime')?.hasError('required')) {
+                <mat-error>
+                  {{ 'attendance.overtimeRequest.startTimeRequired' | translate }}
+                </mat-error>
+              }
+            </mat-form-field>
+            <!-- End Time -->
+            <mat-form-field appearance="outline" class="field-sm">
+              <mat-label>{{ 'attendance.overtimeRequest.endTime' | translate }}</mat-label>
+              <input matInput type="time" formControlName="endTime" />
+              <mat-icon matSuffix>logout</mat-icon>
+              @if (submitForm.get('endTime')?.hasError('required')) {
+                <mat-error>
+                  {{ 'attendance.overtimeRequest.endTimeRequired' | translate }}
+                </mat-error>
+              }
+            </mat-form-field>
+            <!-- Project Code (optional) -->
+            <mat-form-field appearance="outline" class="field-md">
+              <mat-label>{{ 'attendance.overtimeRequest.projectCode' | translate }}</mat-label>
+              <input
+                matInput
+                formControlName="projectCode"
+                [placeholder]="'attendance.overtimeRequest.projectCodePlaceholder' | translate"
+              />
+              <mat-icon matSuffix>work</mat-icon>
+            </mat-form-field>
+          </div>
+          <!-- Reason -->
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>{{ 'attendance.overtimeRequest.reason' | translate }}</mat-label>
+            <textarea
+              matInput
+              formControlName="reason"
+              rows="3"
+              [placeholder]="'attendance.overtimeRequest.reasonPlaceholder' | translate"
+            >
+            </textarea>
+            <mat-hint align="end">
+              {{ submitForm.get('reason')?.value?.length || 0 }}/500
+            </mat-hint>
+            @if (submitForm.get('reason')?.hasError('required')) {
+              <mat-error>
+                {{ 'attendance.overtimeRequest.reasonRequired' | translate }}
+              </mat-error>
+            }
+            @if (submitForm.get('reason')?.hasError('minlength')) {
+              <mat-error>
+                {{ 'attendance.overtimeRequest.reasonMinLength' | translate }}
+              </mat-error>
+            }
+          </mat-form-field>
+        </form>
+      </mat-card-content>
+      <mat-card-actions align="end">
+        <button
+          mat-stroked-button
+          disabledInteractive
+          (click)="toggleForm()"
+          [disabled]="submitting()"
+        >
+          {{ 'attendance.overtimeRequest.discard' | translate }}
+        </button>
+        <button
+          mat-flat-button
+          disabledInteractive
+          color="primary"
+          (click)="onSubmit()"
+          [disabled]="submitting()"
+        >
+          @if (submitting()) {
+            <mat-spinner diameter="18"></mat-spinner>
+          }
+          @if (!submitting()) {
+            <span>
+              <mat-icon>send</mat-icon> {{ 'attendance.overtimeRequest.submitRequest' | translate }}
+            </span>
+          }
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  }
+
+  <!-- ── Stats Row ───────────────────────────────────────── -->
+  <div class="stats-row">
+    <mat-card class="stat-card pending-stat">
+      <mat-card-content>
+        <mat-icon>pending</mat-icon>
+        <span class="stat-num">{{ pendingCount() }}</span>
+        <span class="stat-lbl">{{ 'attendance.overtimeRequest.pending' | translate }}</span>
+      </mat-card-content>
+    </mat-card>
+    <mat-card class="stat-card approved-stat">
+      <mat-card-content>
+        <mat-icon>check_circle</mat-icon>
+        <span class="stat-num">{{ approvedCount() }}</span>
+        <span class="stat-lbl">{{ 'attendance.overtimeRequest.approved' | translate }}</span>
+      </mat-card-content>
+    </mat-card>
+    <mat-card class="stat-card rejected-stat">
+      <mat-card-content>
+        <mat-icon>cancel</mat-icon>
+        <span class="stat-num">{{ rejectedCount() }}</span>
+        <span class="stat-lbl">{{ 'attendance.overtimeRequest.rejected' | translate }}</span>
+      </mat-card-content>
+    </mat-card>
+    <mat-card class="stat-card hours-stat">
+      <mat-card-content>
+        <mat-icon>timer</mat-icon>
+        <span class="stat-num sm">{{ totalOtFormatted() }}</span>
+        <span class="stat-lbl">{{ 'attendance.overtimeRequest.approvedOt' | translate }}</span>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- ── My Requests Table ───────────────────────────────── -->
+  <mat-card class="table-card">
+    <mat-card-header>
+      <mat-card-title>
+        <mat-icon>list_alt</mat-icon> {{ 'attendance.overtimeRequest.myRequests' | translate }}
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="table-wrapper">
+        @if (loading()) {
+          <div class="center-spinner">
+            <mat-spinner diameter="40"></mat-spinner>
+          </div>
+        }
+
+        @if (!loading()) {
+          <table mat-table [dataSource]="myRequests()" class="ot-table">
+            <!-- OT ID -->
+            <ng-container matColumnDef="otId">
+              <th mat-header-cell *matHeaderCellDef>
+                {{ 'attendance.overtimeRequest.columns.refNo' | translate }}
+              </th>
+              <td mat-cell *matCellDef="let row">
+                <span class="ref-id">{{ row.otId }}</span>
+              </td>
+            </ng-container>
+            <!-- Date -->
+            <ng-container matColumnDef="otDate">
+              <th mat-header-cell *matHeaderCellDef>
+                {{ 'attendance.overtimeRequest.columns.date' | translate }}
+              </th>
+              <td mat-cell *matCellDef="let row">
+                <span class="date-text">{{ row.otDateFormatted }}</span>
+              </td>
+            </ng-container>
+            <!-- OT Type -->
+            <ng-container matColumnDef="otType">
+              <th mat-header-cell *matHeaderCellDef>
+                {{ 'attendance.overtimeRequest.columns.type' | translate }}
+              </th>
+              <td mat-cell *matCellDef="let row">
+                <span
+                  class="type-chip"
+                  [style.background]="getOtTypeStyle(row.otType).bg"
+                  [style.color]="getOtTypeStyle(row.otType).color"
+                >
+                  {{ getOtTypeStyle(row.otType).label | translate }}
+                </span>
+              </td>
+            </ng-container>
+            <!-- Start Time -->
+            <ng-container matColumnDef="startTime">
+              <th mat-header-cell *matHeaderCellDef>
+                {{ 'attendance.overtimeRequest.columns.start' | translate }}
+              </th>
+              <td mat-cell *matCellDef="let row">
+                <span class="time-chip in">{{ formatTime(row.startTime) }}</span>
+              </td>
+            </ng-container>
+            <!-- End Time -->
+            <ng-container matColumnDef="endTime">
+              <th mat-header-cell *matHeaderCellDef>
+                {{ 'attendance.overtimeRequest.columns.end' | translate }}
+              </th>
+              <td mat-cell *matCellDef="let row">
+                <span class="time-chip out">{{ formatTime(row.endTime) }}</span>
+              </td>
+            </ng-container>
+            <!-- Duration -->
+            <ng-container matColumnDef="duration">
+              <th mat-header-cell *matHeaderCellDef>
+                {{ 'attendance.overtimeRequest.columns.duration' | translate }}
+              </th>
+              <td mat-cell *matCellDef="let row">
+                <span class="duration-badge">{{ row.durationFormatted }}</span>
+              </td>
+            </ng-container>
+            <!-- Reason -->
+            <ng-container matColumnDef="reason">
+              <th mat-header-cell *matHeaderCellDef>
+                {{ 'attendance.overtimeRequest.columns.reason' | translate }}
+              </th>
+              <td mat-cell *matCellDef="let row">
+                <span class="reason-text" [matTooltip]="row.reason" matTooltipPosition="above">
+                  {{ row.reason.length > 40 ? row.reason.slice(0, 40) + '...' : row.reason }}
+                </span>
+              </td>
+            </ng-container>
+            <!-- Status -->
+            <ng-container matColumnDef="status">
+              <th mat-header-cell *matHeaderCellDef>
+                {{ 'attendance.overtimeRequest.columns.status' | translate }}
+              </th>
+              <td mat-cell *matCellDef="let row">
+                <div class="status-col">
+                  <span
+                    class="status-chip"
+                    [style.background]="getStatusStyle(row.status).bg"
+                    [style.color]="getStatusStyle(row.status).color"
+                  >
+                    <mat-icon class="status-icon">
+                      {{ getStatusStyle(row.status).icon }}
+                    </mat-icon>
+                    {{ getStatusStyle(row.status).label | translate }}
+                  </span>
+                  @if (row.rejectionReason) {
+                    <span class="rejection-note" [matTooltip]="row.rejectionReason">
+                      <mat-icon>error_outline</mat-icon>
+                      {{ row.rejectionReason.slice(0, 25) }}...
+                    </span>
+                  }
+                </div>
+              </td>
+            </ng-container>
+            <!-- Actions -->
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef></th>
+              <td mat-cell *matCellDef="let row">
+                @if (row.status === 'PENDING') {
+                  <button
+                    mat-icon-button
+                    color="warn"
+                    (click)="onCancel(row.otId)"
+                    [matTooltip]="'attendance.overtimeRequest.cancelRequest' | translate"
+                    [attr.aria-label]="'attendance.overtimeRequest.cancelRequest' | translate"
+                  >
+                    <mat-icon>close</mat-icon>
+                  </button>
+                }
+              </td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+            <tr
+              mat-row
+              *matRowDef="let row; columns: displayedColumns"
+              [class.approved-row]="row.status === 'APPROVED'"
+              [class.rejected-row]="row.status === 'REJECTED'"
+            ></tr>
+            <tr class="mat-row" *matNoDataRow>
+              <td class="mat-cell empty-cell" [attr.colspan]="displayedColumns.length">
+                <div class="empty-state">
+                  <mat-icon>more_time</mat-icon>
+                  <p>{{ 'attendance.overtimeRequest.emptyTitle' | translate }}</p>
+                  <button mat-stroked-button (click)="toggleForm()">
+                    {{ 'attendance.overtimeRequest.emptyAction' | translate }}
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </table>
+        }
+      </div>
+
+      <mat-paginator
+        [length]="totalElements()"
+        [pageSize]="pageSize"
+        [pageSizeOptions]="[5, 10, 20]"
+        (page)="onPageChange($event)"
+        showFirstLastButtons
+      >
+      </mat-paginator>
+    </mat-card-content>
+  </mat-card>
+</div>

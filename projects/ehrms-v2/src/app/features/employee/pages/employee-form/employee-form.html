@@ -1,0 +1,414 @@
+<!-- employee-form.html — handles both Create and Edit -->
+<div class="form-page">
+  <!-- ── Header ──────────────────────────────────────────── -->
+  <div class="page-header">
+    <button type="button" class="back-btn" [attr.aria-label]="'common.cancel' | translate" (click)="cancel()">
+      <span class="material-icons mirror-rtl" aria-hidden="true">arrow_back</span>
+    </button>
+    <div>
+      <h1 class="page-title">
+        {{ (isEdit() ? 'employee.form.editTitle' : 'employee.form.createTitle') | translate }}
+      </h1>
+      <p class="page-sub">
+        @if (isEdit() && employeeCode()) {
+          <span class="emp-code-display">{{ employeeCode() }}</span>
+          · {{ workEmailReadOnly() }}
+        } @else {
+          {{ 'employee.form.createSub' | translate }}
+        }
+      </p>
+    </div>
+  </div>
+
+  <!-- ── Loading employee data (edit mode) ─────────────────── -->
+  @if (loadingEmployee()) {
+    <div class="loading-bar">
+      <div class="loading-inner"></div>
+    </div>
+  }
+
+  <!-- ── Alerts ────────────────────────────────────────────── -->
+  @if (error()) {
+    <div class="alert alert-error" role="alert">
+      <span class="material-icons" aria-hidden="true">error_outline</span>
+      <span>{{ error() }}</span>
+    </div>
+  }
+  @if (success()) {
+    <div class="alert alert-success" role="status">
+      <span class="material-icons" aria-hidden="true">check_circle</span>
+      <span>{{ (isEdit() ? 'employee.form.successUpdate' : 'employee.form.successCreate') | translate }}</span>
+    </div>
+  }
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+    <div class="cards-grid">
+      <!-- ══════════════════════════════════════════════════ -->
+      <!-- CARD 1 — Personal Information (full width)        -->
+      <!-- ══════════════════════════════════════════════════ -->
+      <div class="card full-width">
+        <div class="card-header">
+          <span class="material-icons" aria-hidden="true">person</span>
+          {{ 'employee.form.personalInfoTitle' | translate }}
+        </div>
+        <div class="card-body">
+          <div class="field-row">
+            <div class="field">
+              <label for="ef-first-name">{{ 'employee.form.firstName' | translate }} <span class="req">*</span></label>
+              <input id="ef-first-name" formControlName="firstName" [placeholder]="'employee.form.placeholders.firstName' | translate" />
+              @if (isInvalid('firstName')) {
+                <span class="field-error" id="fe-firstName">{{ getError('firstName') }}</span>
+              }
+            </div>
+            <div class="field">
+              <label for="ef-first-name-ar">{{ 'employee.form.firstNameAr' | translate }} <span class="req">*</span></label>
+              <input id="ef-first-name-ar" formControlName="firstNameAr" [placeholder]="'employee.form.placeholders.firstNameAr' | translate" dir="rtl" />
+              @if (isInvalid('firstNameAr')) {
+                <span class="field-error" id="fe-firstNameAr">{{ getError('firstNameAr') }}</span>
+              }
+            </div>
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label for="ef-middle-name">{{ 'employee.form.middleName' | translate }}</label>
+              <input id="ef-middle-name" formControlName="middleName" [placeholder]="'employee.form.placeholders.middleName' | translate" />
+            </div>
+            <div class="field">
+              <label for="ef-middle-name-ar">{{ 'employee.form.middleNameAr' | translate }}</label>
+              <input id="ef-middle-name-ar" formControlName="middleNameAr" [placeholder]="'employee.form.placeholders.middleNameAr' | translate" dir="rtl" />
+            </div>
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label for="ef-last-name">{{ 'employee.form.lastName' | translate }} <span class="req">*</span></label>
+              <input id="ef-last-name" formControlName="lastName" [placeholder]="'employee.form.placeholders.lastName' | translate" />
+              @if (isInvalid('lastName')) {
+                <span class="field-error" id="fe-lastName">{{ getError('lastName') }}</span>
+              }
+            </div>
+            <div class="field">
+              <label for="ef-last-name-ar">{{ 'employee.form.lastNameAr' | translate }} <span class="req">*</span></label>
+              <input id="ef-last-name-ar" formControlName="lastNameAr" [placeholder]="'employee.form.placeholders.lastNameAr' | translate" dir="rtl" />
+              @if (isInvalid('lastNameAr')) {
+                <span class="field-error" id="fe-lastNameAr">{{ getError('lastNameAr') }}</span>
+              }
+            </div>
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label for="ef-date-of-birth">{{ 'employee.form.dateOfBirth' | translate }} <span class="req">*</span></label>
+              <input id="ef-date-of-birth" type="date" formControlName="dateOfBirth" />
+              @if (isInvalid('dateOfBirth')) {
+                <span class="field-error" id="fe-dateOfBirth">{{ getError('dateOfBirth') }}</span>
+              }
+            </div>
+            <div class="field">
+              <label for="ef-gender">{{ 'employee.form.gender' | translate }} <span class="req">*</span></label>
+              <select id="ef-gender" formControlName="gender">
+                <option value="">{{ 'employee.form.selectGender' | translate }}</option>
+                @for (g of genders; track g) {
+                  <option [value]="g">{{ 'common.enums.gender.' + g | translate }}</option>
+                }
+              </select>
+              @if (isInvalid('gender')) {
+                <span class="field-error" id="fe-gender">{{ getError('gender') }}</span>
+              }
+            </div>
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label for="ef-blood-group">{{ 'employee.form.bloodGroup' | translate }}</label>
+              <select id="ef-blood-group" formControlName="bloodGroup">
+                <option value="">{{ 'employee.form.selectBloodGroup' | translate }}</option>
+                @for (b of bloodGroups; track b) {
+                  <option [value]="b">{{ b }}</option>
+                }
+              </select>
+            </div>
+            <div class="field">
+              <label for="ef-marital-status">{{ 'employee.form.maritalStatus' | translate }}</label>
+              <select id="ef-marital-status" formControlName="maritalStatus">
+                <option value="">{{ 'employee.form.selectMaritalStatus' | translate }}</option>
+                @for (m of maritalStatuses; track m) {
+                  <option [value]="m">{{ 'common.enums.maritalStatus.' + m | translate }}</option>
+                }
+              </select>
+            </div>
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label for="ef-nationality">{{ 'employee.form.nationality' | translate }}</label>
+              <input id="ef-nationality" formControlName="nationality" [placeholder]="'employee.form.placeholders.nationality' | translate" />
+            </div>
+            <div class="field">
+              <label for="ef-religion">{{ 'employee.form.religion' | translate }}</label>
+              <input id="ef-religion" formControlName="religion" [placeholder]="'employee.form.placeholders.religion' | translate" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════════════════ -->
+      <!-- CARD 2 — Contact Details                          -->
+      <!-- ══════════════════════════════════════════════════ -->
+      <div class="card">
+        <div class="card-header">
+          <span class="material-icons" aria-hidden="true">contact_phone</span>
+          {{ 'employee.form.contactDetailsTitle' | translate }}
+        </div>
+        <div class="card-body">
+          <!-- Work email — never user-entered; server auto-generates it on create,
+               and it can't be changed afterward. There is no form control for it. -->
+          <div class="field">
+            <label>{{ 'employee.form.workEmail' | translate }}</label>
+            @if (isEdit()) {
+              <div class="readonly-field">
+                <span class="material-icons readonly-icon" aria-hidden="true">lock</span>
+                <span class="readonly-value">{{ workEmailReadOnly() }}</span>
+              </div>
+              <span class="field-hint">{{ 'employee.form.workEmailCannotChange' | translate }}</span>
+            } @else {
+              <div class="readonly-field">
+                <span class="material-icons readonly-icon" aria-hidden="true">auto_awesome</span>
+                <span class="readonly-value">{{ 'employee.form.workEmailAutoGen' | translate }}</span>
+              </div>
+              <span class="field-hint">{{ 'employee.form.workEmailAutoGenHint' | translate }}</span>
+            }
+          </div>
+
+          <div class="field">
+            <label for="ef-personal-email">{{ 'employee.form.personalEmail' | translate }} <span class="req">*</span></label>
+            <input
+              id="ef-personal-email"
+              type="email"
+              formControlName="personalEmail"
+              [placeholder]="'employee.form.placeholders.personalEmail' | translate"
+            />
+            @if (isInvalid('personalEmail')) {
+              <span class="field-error" id="fe-personalEmail">{{ getError('personalEmail') }}</span>
+            }
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label for="ef-personal-phone">{{ 'employee.form.personalPhone' | translate }}</label>
+              <input id="ef-personal-phone" type="tel" formControlName="personalPhone" [placeholder]="'employee.form.placeholders.personalPhone' | translate" />
+            </div>
+            <div class="field">
+              <label for="ef-work-phone">{{ 'employee.form.workPhone' | translate }}</label>
+              <input id="ef-work-phone" type="tel" formControlName="workPhone" [placeholder]="'employee.form.placeholders.workPhone' | translate" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════════════════ -->
+      <!-- CARD 3 — Employment Details                       -->
+      <!-- ══════════════════════════════════════════════════ -->
+      <div class="card">
+        <div class="card-header">
+          <span class="material-icons" aria-hidden="true">work</span>
+          {{ 'employee.form.employmentDetailsTitle' | translate }}
+        </div>
+        <div class="card-body">
+          <!-- Department -->
+          <!--
+          <div class="field">
+            <label>Department <span class="req">*</span></label>
+            @if (loadingLookup()) {
+              <select disabled>
+                <option>Loading...</option>
+              </select>
+            } @else {
+              <select formControlName="departmentId">
+                <option value="">Select department</option>
+                @for (d of departments(); track d.id) {
+                  <option [value]="d.id">{{ d.name }}</option>
+                }
+              </select>
+            }
+            @if (isInvalid('departmentId')) {
+              <span class="field-error" id="fe-departmentId">{{ getError('departmentId') }}</span>
+            }
+          </div>
+          -->
+          <!-- Designation — filtered by department -->
+          <!-- 
+          <div class="field">
+            <label>Designation</label>
+            @if (loadingLookup()) {
+              <select disabled>
+                <option>Loading...</option>
+              </select>
+            } @else {
+              <select formControlName="designationId">
+                <option value="">Select designation</option>
+                @for (d of filteredDesignations(); track d.id) {
+                  <option [value]="d.id">
+                    {{ d.title }}
+                    @if (d.gradeLevel) {
+                      ({{ d.gradeLevel }})
+                    }
+                  </option>
+                }
+              </select>
+            }
+          </div>
+            -->
+          <div class="field-row">
+            <div class="field">
+              <label for="ef-employment-type">{{ 'employee.form.employmentType' | translate }} <span class="req">*</span></label>
+              <select id="ef-employment-type" formControlName="employmentType">
+                @for (t of empTypes; track t) {
+                  <option [value]="t">{{ 'common.enums.employmentType.' + t | translate }}</option>
+                }
+              </select>
+            </div>
+            <div class="field">
+              <label for="ef-employment-status">{{ 'employee.form.employmentStatus' | translate }} <span class="req">*</span></label>
+              <select id="ef-employment-status" formControlName="employmentStatus">
+                @for (s of statusOptions; track s) {
+                  <option [value]="s">{{ 'common.enums.employmentStatus.' + s | translate }}</option>
+                }
+              </select>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="ef-hire-date">{{ 'employee.form.hireDate' | translate }} <span class="req">*</span></label>
+            <input id="ef-hire-date" type="date" formControlName="hireDate" />
+            @if (isInvalid('hireDate')) {
+              <span class="field-error" id="fe-hireDate">{{ getError('hireDate') }}</span>
+            }
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label for="ef-probation-end-date">{{ 'employee.form.probationEndDate' | translate }}</label>
+              <input id="ef-probation-end-date" type="date" formControlName="probationEndDate" />
+              @if (isInvalid('probationEndDate')) {
+                <span class="field-error" id="fe-probationEndDate">{{ getError('probationEndDate') }}</span>
+              }
+            </div>
+            <div class="field">
+              <label for="ef-confirmation-date">{{ 'employee.form.confirmationDate' | translate }}</label>
+              <input id="ef-confirmation-date" type="date" formControlName="confirmationDate" />
+              @if (isInvalid('confirmationDate')) {
+                <span class="field-error" id="fe-confirmationDate">{{ getError('confirmationDate') }}</span>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════════════════ -->
+      <!-- CARD 4 — System Access                            -->
+      <!-- Create: full auth fields / Edit: role only        -->
+      <!-- ══════════════════════════════════════════════════ -->
+      <div class="card full-width">
+        <div class="card-header">
+          <span class="material-icons" aria-hidden="true">manage_accounts</span>
+          {{ 'employee.form.systemAccessTitle' | translate }}
+          @if (isEdit()) {
+            <span class="card-hint">{{ 'employee.form.systemAccessHintEdit' | translate }}</span>
+          } @else {
+            <span class="card-hint">{{ 'employee.form.systemAccessHintCreate' | translate }}</span>
+          }
+        </div>
+        <div class="card-body">
+          <div class="field-row">
+            <!-- Role — editable on create; on edit, HR_ADMIN only -->
+            <div class="field">
+              <label for="ef-role">{{ 'employee.form.role' | translate }} <span class="req">*</span></label>
+              <select id="ef-role" formControlName="role">
+                @for (r of roles; track r) {
+                  <option [value]="r">{{ 'common.enums.role.' + r | translate }}</option>
+                }
+              </select>
+              @if (isEdit() && !hasLogin()) {
+                <span class="field-hint">{{ 'employee.form.noLoginHint' | translate }}</span>
+              } @else if (!isHrAdmin()) {
+                <span class="field-hint">
+                  {{ (isEdit() ? 'employee.form.roleHrAdminOnlyHint' : 'employee.form.roleCreateHrAdminOnlyHint') | translate }}
+                </span>
+              }
+            </div>
+
+            <!-- Username — create only -->
+            @if (!isEdit()) {
+              <div class="field">
+                <label for="ef-username">{{ 'employee.form.username' | translate }} <span class="req">*</span></label>
+                <input
+                  id="ef-username"
+                  formControlName="username"
+                  [placeholder]="'employee.form.placeholders.username' | translate"
+                  autocomplete="new-password"
+                />
+                @if (isInvalid('username')) {
+                  <span class="field-error" id="fe-username">{{ getError('username') }}</span>
+                }
+                <span class="field-hint">{{ 'employee.form.usernameHint' | translate }}</span>
+              </div>
+            }
+          </div>
+
+          <!-- Password — create only -->
+          @if (!isEdit()) {
+            <div class="field" style="max-width: 480px">
+              <label for="ef-password">{{ 'employee.form.password' | translate }} <span class="req">*</span></label>
+              <div class="password-wrap">
+                <input
+                  id="ef-password"
+                  [type]="hidePassword() ? 'password' : 'text'"
+                  formControlName="password"
+                  aria-describedby="ef-password-hint"
+                  [placeholder]="'employee.form.passwordPlaceholder' | translate"
+                  autocomplete="new-password"
+                />
+                <button
+                  type="button"
+                  class="eye-btn"
+                  [attr.aria-label]="(hidePassword() ? 'auth.login.showPassword' : 'auth.login.hidePassword') | translate"
+                  [attr.aria-pressed]="!hidePassword()"
+                  (click)="togglePassword()"
+                >
+                  <span class="material-icons" aria-hidden="true">
+                    {{ hidePassword() ? 'visibility_off' : 'visibility' }}
+                  </span>
+                </button>
+              </div>
+              @if (isInvalid('password')) {
+                <span class="field-error" id="fe-password" role="alert">{{ getError('password') }}</span>
+              }
+              <span id="ef-password-hint" class="field-hint">
+                {{ 'auth.changePassword.policyHint' | translate: { count: passwordMinLength } }}
+              </span>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+    <!-- end cards-grid -->
+
+    <!-- ── Form footer ───────────────────────────────────── -->
+    <div class="form-footer">
+      <button type="button" class="btn-cancel" (click)="cancel()">
+        {{ 'common.cancel' | translate }}
+      </button>
+      <button type="submit" class="btn-save" [disabled]="loading()">
+        @if (loading()) {
+          <div class="btn-spinner"></div>
+          <span>{{ (isEdit() ? 'employee.form.updating' : 'employee.form.saving') | translate }}</span>
+        } @else {
+          <span class="material-icons" aria-hidden="true">save</span>
+          <span>{{ (isEdit() ? 'employee.form.updateButton' : 'employee.form.createButton') | translate }}</span>
+        }
+      </button>
+    </div>
+  </form>
+</div>

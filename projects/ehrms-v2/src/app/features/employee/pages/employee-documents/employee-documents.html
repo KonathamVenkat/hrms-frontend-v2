@@ -1,0 +1,387 @@
+<div class="docs-section">
+  <!-- ── Header ──────────────────────────────────────────── -->
+  <div class="section-header">
+    <div class="header-left">
+      <h2 class="section-title">{{ 'employee.documents.title' | translate }}</h2>
+      <div class="doc-stats">
+        <span class="stat-chip chip-total"> {{ 'employee.documents.uploadedCount' | translate: { count: documents().length } }} </span>
+        @if (expiredCount() > 0) {
+          <span class="stat-chip chip-expired">
+            <span class="material-icons" aria-hidden="true">warning</span>
+            {{ 'employee.documents.expiredCount' | translate: { count: expiredCount() } }}
+          </span>
+        }
+        @if (expiringSoonCount() > 0) {
+          <span class="stat-chip chip-expiring">
+            <span class="material-icons" aria-hidden="true">schedule</span>
+            {{ 'employee.documents.expiringSoonCount' | translate: { count: expiringSoonCount() } }}
+          </span>
+        }
+        <span class="stat-chip chip-verified">
+          <span class="material-icons" aria-hidden="true">verified</span>
+          {{ 'employee.documents.verifiedCount' | translate: { count: verifiedCount() } }}
+        </span>
+      </div>
+    </div>
+    <button class="btn-upload" (click)="openUpload()">
+      <span class="material-icons" aria-hidden="true">upload_file</span>
+      {{ 'employee.documents.uploadDocument' | translate }}
+    </button>
+  </div>
+
+  <!-- ── Alerts ─────────────────────────────────────────── -->
+  @if (successMsg()) {
+    <div class="alert alert-success" role="status">
+      <span class="material-icons" aria-hidden="true">check_circle</span>{{ successMsg() }}
+    </div>
+  }
+  @if (error() && !showModal() && !showConfirm()) {
+    <div class="alert alert-error" role="alert">
+      <span class="material-icons" aria-hidden="true">error_outline</span>{{ error() }}
+    </div>
+  }
+
+  <!-- ── Category filter ────────────────────────────────── -->
+  @if (documents().length > 0) {
+    <div class="filter-bar">
+      <button
+        class="cat-btn"
+        [class.active]="filterCategory() === ''"
+        (click)="filterCategory.set('')"
+      >
+        {{ 'common.all' | translate }}
+      </button>
+      @for (cat of categories(); track cat) {
+        <button
+          class="cat-btn"
+          [class.active]="filterCategory() === cat"
+          (click)="filterCategory.set(cat)"
+        >
+          {{ cat }}
+        </button>
+      }
+    </div>
+  }
+
+  <!-- ── Loading ────────────────────────────────────────── -->
+  @if (loading()) {
+    <div class="loading-wrap" role="status">
+      <div class="spinner"></div>
+      <span>{{ 'employee.documents.loading' | translate }}</span>
+    </div>
+  }
+
+  <!-- ── Empty state ────────────────────────────────────── -->
+  @if (!loading() && documents().length === 0) {
+    <div class="empty-state">
+      <span class="material-icons" aria-hidden="true">folder_open</span>
+      <p>{{ 'employee.documents.emptyTitle' | translate }}</p>
+      <small>{{ 'employee.documents.emptyHint' | translate }}</small>
+      <button class="btn-upload-sm" (click)="openUpload()">
+        <span class="material-icons" aria-hidden="true">upload_file</span>
+        {{ 'employee.documents.uploadDocument' | translate }}
+      </button>
+    </div>
+  }
+
+  <!-- ── Document cards ─────────────────────────────────── -->
+  @if (!loading() && filteredDocs().length > 0) {
+    <div class="docs-grid">
+      @for (doc of filteredDocs(); track doc.documentId) {
+        <div
+          class="doc-card"
+          [class.card-expired]="doc.isExpired"
+          [class.card-expiring]="doc.isExpiringSoon && !doc.isExpired"
+        >
+          <!-- File icon + type -->
+          <div class="doc-card-top">
+            <div class="file-icon-wrap" [style.color]="getFileIconColor(doc.fileExtension)">
+              <span class="material-icons file-icon" aria-hidden="true">
+                {{ getFileIcon(doc.fileExtension) }}
+              </span>
+              <span class="ext-badge">{{ doc.fileExtension }}</span>
+            </div>
+            <div class="doc-badges">
+              <span class="cat-badge" [class]="getCategoryBadge(doc.category)">
+                {{ doc.category }}
+              </span>
+              @if (doc.isVerified) {
+                <span class="verified-badge">
+                  <span class="material-icons" aria-hidden="true">verified</span>
+                </span>
+              }
+              @if (doc.isExpired) {
+                <span class="expiry-badge badge-expired">{{ 'employee.documents.expiredBadge' | translate }}</span>
+              } @else if (doc.isExpiringSoon) {
+                <span class="expiry-badge badge-soon">{{ 'employee.documents.expiringSoonBadge' | translate }}</span>
+              }
+            </div>
+            <div class="doc-actions">
+              <button type="button" class="act-btn btn-download" [title]="'employee.documents.download' | translate" [attr.aria-label]="('employee.documents.download' | translate) + ': ' + doc.documentName" (click)="downloadDocument(doc)">
+                <span class="material-icons" aria-hidden="true">download</span>
+              </button>
+              <button type="button" class="act-btn btn-edit" [title]="'common.edit' | translate" [attr.aria-label]="('common.edit' | translate) + ': ' + doc.documentName" (click)="openEdit(doc)">
+                <span class="material-icons" aria-hidden="true">edit</span>
+              </button>
+              @if (!doc.isVerified) {
+                <button type="button" class="act-btn btn-verify" [title]="'employee.documents.verify' | translate" [attr.aria-label]="('employee.documents.verify' | translate) + ': ' + doc.documentName" (click)="openVerify(doc)">
+                  <span class="material-icons" aria-hidden="true">verified_user</span>
+                </button>
+              }
+              <button type="button" class="act-btn btn-delete" [title]="'employee.documents.delete' | translate" [attr.aria-label]="('employee.documents.delete' | translate) + ': ' + doc.documentName" (click)="openDelete(doc)">
+                <span class="material-icons" aria-hidden="true">delete_outline</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Document info -->
+          <div class="doc-info">
+            <p class="doc-name">{{ doc.documentName }}</p>
+            <p class="doc-type">{{ doc.docTypeName }}</p>
+            @if (doc.documentNumber) {
+              <p class="doc-number">
+                <span class="material-icons" aria-hidden="true">tag</span>
+                {{ doc.documentNumber }}
+              </p>
+            }
+          </div>
+
+          <!-- Dates -->
+          @if (doc.issueDate || doc.expiryDate) {
+            <div class="doc-dates">
+              @if (doc.issueDate) {
+                <div class="date-item">
+                  <span class="date-label">{{ 'employee.documents.issued' | translate }}</span>
+                  <span class="date-val">{{ doc.issueDate }}</span>
+                </div>
+              }
+              @if (doc.expiryDate) {
+                <div class="date-item">
+                  <span class="date-label">{{ 'employee.documents.expires' | translate }}</span>
+                  <span
+                    class="date-val"
+                    [class.text-danger]="doc.isExpired"
+                    [class.text-warn]="doc.isExpiringSoon && !doc.isExpired"
+                  >
+                    {{ doc.expiryDate }}
+                  </span>
+                </div>
+              }
+            </div>
+          }
+
+          <!-- Footer -->
+          <div class="doc-footer">
+            <span class="file-size">{{ doc.fileSizeFormatted }}</span>
+            <span class="upload-date">
+              {{ doc.createdAt | slice: 0 : 10 }}
+            </span>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!-- MODAL — Upload / Edit Document                            -->
+<!-- ══════════════════════════════════════════════════════════ -->
+@if (showModal()) {
+  <div class="modal-backdrop">
+    <div
+      class="modal"
+      [appAccessibleDialog]="'doc-modal-title'"
+      (dialogClosed)="closeModal()"
+      cdkTrapFocus
+      cdkTrapFocusAutoCapture
+    >
+      <div class="modal-header">
+        <h2 id="doc-modal-title" class="modal-title">
+          {{ (isEditMode() ? 'employee.documents.modal.editTitle' : 'employee.documents.modal.uploadTitle') | translate }}
+        </h2>
+        <button type="button" class="modal-close" [attr.aria-label]="'common.close' | translate" (click)="closeModal()">
+          <span class="material-icons" aria-hidden="true">close</span>
+        </button>
+      </div>
+
+      @if (error()) {
+        <div class="modal-alert" role="alert">
+          <span class="material-icons" aria-hidden="true">error_outline</span>{{ error() }}
+        </div>
+      }
+
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+        <div class="modal-body">
+          <!-- File drop zone (upload only) -->
+          @if (!isEditMode()) {
+            <div
+              class="drop-zone"
+              [class.drag-active]="dragOver()"
+              [class.file-selected]="selectedFile() !== null"
+              (dragover)="onDragOver($event)"
+              (dragleave)="onDragLeave()"
+              (drop)="onDrop($event)"
+              (click)="fileInput.click()"
+              [attr.role]="selectedFile() ? null : 'button'"
+              [attr.tabindex]="selectedFile() ? null : 0"
+              [attr.aria-label]="selectedFile() ? null : (('employee.documents.dropzone.text' | translate) + '. ' + dropHint())"
+              (keydown.enter)="!selectedFile() && $event.preventDefault(); !selectedFile() && fileInput.click()"
+              (keydown.space)="!selectedFile() && $event.preventDefault(); !selectedFile() && fileInput.click()"
+            >
+              @if (!selectedFile()) {
+                <span class="material-icons drop-icon" aria-hidden="true">upload_file</span>
+                <p class="drop-text">{{ 'employee.documents.dropzone.text' | translate }}</p>
+                <small class="drop-hint">{{ dropHint() }}</small>
+              } @else {
+                <div class="selected-file">
+                  <span aria-hidden="true"
+                    class="material-icons"
+                    [style.color]="getFileIconColor(selectedFile()!.name.split('.').pop()!)"
+                  >
+                    {{ getFileIcon(selectedFile()!.name.split('.').pop()!.toUpperCase()) }}
+                  </span>
+                  <div class="selected-info">
+                    <span class="selected-name">{{ selectedFile()!.name }}</span>
+                    <span class="selected-size">{{ formatBytes(selectedFile()!.size) }}</span>
+                  </div>
+                  <button
+                    type="button"
+                    class="remove-file"
+                    [attr.aria-label]="'employee.documents.dropzone.removeFile' | translate"
+                    (click)="$event.stopPropagation(); removeFile()"
+                  >
+                    <span class="material-icons" aria-hidden="true">close</span>
+                  </button>
+                </div>
+              }
+
+              <input
+                #fileInput
+                type="file"
+                [attr.accept]="fileAccept()"
+                style="display: none"
+                (change)="onFileSelected($event)"
+              />
+            </div>
+          }
+
+          <!-- Document Type -->
+          <div class="field-row">
+            <div class="field">
+              <label for="doc-type-id">{{ 'employee.documents.fields.documentType' | translate }} <span class="req">*</span></label>
+              <select id="doc-type-id" formControlName="docTypeId" [attr.disabled]="isEditMode() ? true : null">
+                <option value="">{{ 'employee.documents.fields.selectType' | translate }}</option>
+                @for (dt of docTypes(); track dt.docTypeId) {
+                  <option [value]="dt.docTypeId">{{ dt.docTypeName }} ({{ dt.category }})</option>
+                }
+              </select>
+              @if (isInvalid('docTypeId')) {
+                <span class="field-error" id="fe-docTypeId">{{ getError('docTypeId') }}</span>
+              }
+            </div>
+            <div class="field">
+              <label for="doc-name">{{ 'employee.documents.fields.documentName' | translate }} <span class="req">*</span></label>
+              <input id="doc-name" formControlName="documentName" [placeholder]="'employee.documents.fields.documentNamePlaceholder' | translate" />
+              @if (isInvalid('documentName')) {
+                <span class="field-error" id="fe-documentName">{{ getError('documentName') }}</span>
+              }
+            </div>
+          </div>
+
+          <!-- Document number + Issued by -->
+          <div class="field-row">
+            <div class="field">
+              <label for="doc-number">{{ 'employee.documents.fields.documentNumber' | translate }}</label>
+              <input id="doc-number" formControlName="documentNumber" [placeholder]="'employee.documents.fields.documentNumberPlaceholder' | translate" />
+            </div>
+            <div class="field">
+              <label for="doc-issued-by">{{ 'employee.documents.fields.issuedBy' | translate }}</label>
+              <input id="doc-issued-by" formControlName="issuedBy" [placeholder]="'employee.documents.fields.issuedByPlaceholder' | translate" />
+            </div>
+          </div>
+
+          <!-- Dates -->
+          <div class="field-row">
+            <div class="field">
+              <label for="doc-issue-date">{{ 'employee.documents.fields.issueDate' | translate }}</label>
+              <input id="doc-issue-date" type="date" formControlName="issueDate" />
+            </div>
+            <div class="field">
+              <label for="doc-expiry-date">{{ 'employee.documents.fields.expiryDate' | translate }}</label>
+              <input id="doc-expiry-date" type="date" formControlName="expiryDate" />
+            </div>
+          </div>
+
+          <!-- Notes -->
+          <div class="field">
+            <label for="doc-notes">{{ 'employee.documents.fields.notes' | translate }}</label>
+            <textarea id="doc-notes" formControlName="notes" [placeholder]="'employee.documents.fields.notesPlaceholder' | translate" rows="2"></textarea>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-cancel" (click)="closeModal()">{{ 'common.cancel' | translate }}</button>
+          <button type="submit" class="btn-save" [disabled]="saving()">
+            @if (saving()) {
+              <div class="btn-spinner"></div>
+              <span>{{ (isEditMode() ? 'employee.documents.saving' : 'employee.documents.uploading') | translate }}</span>
+            } @else {
+              <span class="material-icons" aria-hidden="true">
+                {{ isEditMode() ? 'save' : 'upload_file' }}
+              </span>
+              <span>{{ (isEditMode() ? 'employee.documents.saveChanges' : 'employee.documents.upload') | translate }}</span>
+            }
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!-- CONFIRM DIALOG                                            -->
+<!-- ══════════════════════════════════════════════════════════ -->
+@if (showConfirm()) {
+  <div class="modal-backdrop">
+    <div
+      class="confirm-dialog"
+      [appAccessibleDialog]="'doc-confirm-title'"
+      (dialogClosed)="cancelConfirm()"
+      cdkTrapFocus
+      cdkTrapFocusAutoCapture
+    >
+      <div
+        class="confirm-icon"
+        [class.icon-verify]="confirmType() === 'verify'"
+        [class.icon-warn]="confirmType() === 'delete'"
+      >
+        <span class="material-icons" aria-hidden="true">
+          {{ confirmType() === 'verify' ? 'verified_user' : 'delete_outline' }}
+        </span>
+      </div>
+      <h3 id="doc-confirm-title" class="confirm-title">
+        {{ (confirmType() === 'verify' ? 'employee.documents.confirm.verifyTitle' : 'employee.documents.confirm.deleteTitle') | translate }}
+      </h3>
+      <p class="confirm-msg">
+        <strong>{{ confirmItem()?.documentName }}</strong>
+        @if (confirmType() === 'verify') {
+          <br /><small>{{ 'employee.documents.confirm.verifyHint' | translate }}</small>
+        } @else {
+          <br /><small>{{ 'employee.documents.confirm.deleteHint' | translate }}</small>
+        }
+      </p>
+      <div class="confirm-actions">
+        <button type="button" class="btn-cancel" (click)="cancelConfirm()">{{ 'common.cancel' | translate }}</button>
+        <button
+          type="button"
+          class="btn-confirm"
+          [class.btn-verify-confirm]="confirmType() === 'verify'"
+          [class.btn-danger]="confirmType() === 'delete'"
+          (click)="confirmAction()"
+        >
+          {{ (confirmType() === 'verify' ? 'employee.documents.confirm.verifyAction' : 'employee.documents.confirm.deleteAction') | translate }}
+        </button>
+      </div>
+    </div>
+  </div>
+}

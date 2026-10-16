@@ -1,0 +1,23 @@
+<div class="app-shell" [class.nav-expanded]="navExpanded()" [class.drawer-open]="drawerOpen()">
+  <app-sidebar />
+
+  <!-- Mobile only: dims the page behind the open drawer; Escape and navigation also close it -->
+  <button
+    class="scrim"
+    type="button"
+    tabindex="-1"
+    [attr.aria-label]="'layout.toolbar.toggleMenu' | translate"
+    (click)="drawerOpen.set(false)"
+  ></button>
+
+  <div class="main-area">
+    <app-toolbar
+      (navToggle)="navExpanded.update((v) => !v)"
+      (drawerToggle)="drawerOpen.update((v) => !v)"
+    />
+
+    <main class="page-content" id="main-content">
+      <router-outlet />
+    </main>
+  </div>
+</div>

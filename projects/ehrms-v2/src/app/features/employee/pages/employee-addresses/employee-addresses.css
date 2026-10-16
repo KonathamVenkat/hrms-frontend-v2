@@ -1,0 +1,202 @@
+/* Employee addresses: glass address cards. Buttons, alerts, modal, fields, toggle, empty state and the confirm
+   dialog come from the shared kit in styles.css; this file keeps only the cards and the type selector. */
+
+.addr-section {
+  display: block;
+}
+
+.addr-count {
+  padding: 2px var(--space-3);
+  border-radius: 999px;
+  background: var(--mat-sys-primary-container);
+  color: var(--mat-sys-on-primary-container);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* ── Cards ───────────────────────────────────────────────── */
+.addresses-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: var(--space-4);
+}
+.addr-card {
+  overflow: hidden;
+  background: var(--glass-bg);
+  border: var(--glass-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--glass-shine), var(--glass-shadow);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  transition: box-shadow var(--motion-base);
+}
+.addr-card:hover {
+  box-shadow: var(--glass-shine), var(--shadow-3);
+}
+/* Primary address: a gradient accent along the start edge, not colour alone (the badge also says "Primary"). */
+.addr-card.primary-card {
+  border-inline-start: 4px solid var(--mat-sys-primary);
+}
+.addr-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding-block: var(--space-2);
+  padding-inline: var(--space-4) var(--space-2);
+  background: var(--table-header-bg);
+}
+.addr-type-wrap {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+.type-icon {
+  font-size: 20px;
+  color: var(--mat-sys-primary);
+}
+.addr-type-badge {
+  padding: 2px var(--space-3);
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.type-permanent {
+  background: var(--status-approved-bg);
+  color: var(--status-approved-fg);
+}
+.type-current {
+  background: var(--status-active-bg);
+  color: var(--status-active-fg);
+}
+.type-emergency {
+  background: var(--status-rejected-bg);
+  color: var(--status-rejected-fg);
+}
+.type-mailing {
+  background: var(--status-pending-bg);
+  color: var(--status-pending-fg);
+}
+.primary-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 2px var(--space-2);
+  border-radius: 999px;
+  background: var(--status-pending-bg);
+  color: var(--status-pending-fg);
+  font-size: 12px;
+  font-weight: 700;
+}
+.primary-badge .material-icons {
+  font-size: 14px;
+}
+.card-actions {
+  display: flex;
+}
+
+.addr-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-4);
+  background: var(--table-surface);
+}
+.addr-line {
+  color: var(--mat-sys-on-surface-variant);
+}
+.addr-main {
+  color: var(--mat-sys-on-surface);
+  font-weight: 700;
+}
+.city-line {
+  color: var(--mat-sys-on-surface);
+}
+.country-line {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  margin-block-start: var(--space-1);
+  font-weight: 600;
+}
+.country-icon {
+  font-size: 16px;
+  color: var(--mat-sys-primary);
+}
+
+.inactive-section {
+  margin-block-start: var(--space-4);
+}
+.inactive-label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0;
+  color: var(--mat-sys-on-surface-variant);
+}
+.inactive-label .material-icons {
+  font-size: 18px;
+}
+
+/* ── Address type selector (modal) ───────────────────────── */
+.type-selector {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: var(--space-2);
+}
+.type-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  min-block-size: 44px;
+  padding-inline: var(--space-3);
+  border: 1px solid var(--mat-sys-outline);
+  border-radius: var(--radius-md);
+  background: var(--table-surface);
+  color: var(--mat-sys-on-surface);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--motion-fast);
+}
+.type-btn .material-icons {
+  font-size: 18px;
+}
+.type-btn:hover:not(:disabled) {
+  border-color: var(--mat-sys-primary);
+  color: var(--mat-sys-primary);
+}
+.type-btn.type-selected {
+  background-image: var(--grad-primary);
+  border-color: transparent;
+  color: #fff;
+  box-shadow: var(--primary-shadow);
+}
+.type-btn.type-disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+.type-btn:focus-visible {
+  outline: 2px solid var(--mat-sys-primary);
+  outline-offset: 2px;
+}
+.used-tag {
+  padding: 0 var(--space-2);
+  border-radius: 999px;
+  background: var(--mat-sys-surface-container-high);
+  color: var(--mat-sys-on-surface-variant);
+  font-size: 11px;
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .addr-card {
+    background: var(--mat-sys-surface-container);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}

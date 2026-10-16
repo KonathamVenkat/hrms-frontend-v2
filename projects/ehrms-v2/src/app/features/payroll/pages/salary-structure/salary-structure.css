@@ -1,0 +1,222 @@
+/* Salary structures. Header, cards, form actions, chips and spinner come from the shared .app-page block. */
+
+.structure-details {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: var(--space-3);
+  padding-block: var(--space-4) var(--space-1);
+}
+.full-col {
+  grid-column: 1 / -1;
+}
+.form-divider {
+  margin-block: var(--space-4);
+}
+.items-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-block-end: var(--space-3);
+}
+.items-header h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+/* ── Items (inline form table) ───────────────────────────── */
+.items-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: var(--radius-md);
+}
+.items-table {
+  inline-size: 100%;
+  border-collapse: collapse;
+}
+.items-table th {
+  padding: var(--space-3);
+  background: var(--table-header-bg);
+  border-block-end: 1px solid var(--mat-sys-outline-variant);
+  color: var(--mat-sys-on-surface-variant);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  text-align: start;
+}
+.items-table td {
+  padding: var(--space-2) var(--space-3);
+  border-block-end: 1px solid var(--mat-sys-outline-variant);
+  vertical-align: middle;
+}
+.items-table tr:last-child td {
+  border-block-end: 0;
+}
+.items-table tr:hover td {
+  background: color-mix(in srgb, var(--mat-sys-primary) 5%, transparent);
+}
+.compact-field {
+  inline-size: 100%;
+}
+.compact-field .mat-mdc-form-field-subscript-wrapper {
+  display: none;
+}
+.sort-col {
+  inline-size: 40px;
+  text-align: center;
+  color: var(--mat-sys-on-surface-variant);
+}
+.comp-col {
+  min-inline-size: 200px;
+}
+.type-col {
+  inline-size: 110px;
+}
+.calc-col {
+  min-inline-size: 160px;
+}
+.num-col {
+  inline-size: 130px;
+}
+.action-col {
+  inline-size: 56px;
+}
+.empty-items {
+  padding: var(--space-5);
+  text-align: center;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+/* ── Accordion list ──────────────────────────────────────── */
+.structures-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.structure-panel {
+  overflow: hidden;
+  background: var(--table-surface);
+  border: var(--glass-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--glass-shine), var(--glass-shadow);
+}
+.inactive-panel {
+  opacity: 0.7;
+}
+.code-chip {
+  margin-inline-end: var(--space-3);
+}
+.structure-name {
+  font-weight: 700;
+}
+mat-panel-description {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  color: var(--mat-sys-on-surface-variant);
+}
+.emp-count,
+.item-count {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+.emp-count mat-icon,
+.item-count mat-icon {
+  inline-size: 16px;
+  block-size: 16px;
+  font-size: 16px;
+}
+
+/* ── Panel body ──────────────────────────────────────────── */
+.panel-body {
+  padding: 0 var(--space-1) var(--space-3);
+}
+.description {
+  margin-block-end: var(--space-4);
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--mat-sys-surface-container);
+  color: var(--mat-sys-on-surface-variant);
+}
+.component-section {
+  margin-block-end: var(--space-4);
+}
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0 0 var(--space-2);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.section-title mat-icon {
+  inline-size: 18px;
+  block-size: 18px;
+  font-size: 18px;
+}
+.section-title.earning,
+.earning-val {
+  color: var(--status-active-fg);
+}
+.section-title.deduction,
+.deduction-val {
+  color: var(--status-rejected-fg);
+}
+.section-title.statutory,
+.statutory-val {
+  color: var(--status-pending-fg);
+}
+.comp-rows {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+.comp-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--mat-sys-surface-container);
+}
+.comp-name {
+  flex: 1;
+  font-weight: 600;
+}
+.comp-ar,
+.comp-basis {
+  min-inline-size: 110px;
+  font-size: 13px;
+  color: var(--mat-sys-on-surface-variant);
+}
+.comp-ar {
+  text-align: start;
+}
+.comp-value {
+  min-inline-size: 110px;
+  font-weight: 700;
+  text-align: end;
+  font-variant-numeric: tabular-nums;
+}
+.panel-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-block-start: var(--space-3);
+  padding-block-start: var(--space-3);
+  border-block-start: 1px solid var(--mat-sys-outline-variant);
+}
+
+@media (max-width: 768px) {
+  .structure-details {
+    grid-template-columns: 1fr;
+  }
+}

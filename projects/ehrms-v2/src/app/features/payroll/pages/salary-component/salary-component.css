@@ -1,0 +1,33 @@
+/* Salary components. Header, cards, table, chips and spinner come from the shared .app-page block in styles.css. */
+
+.form-grid {
+  --form-cols: 3;
+}
+.toggle-row {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-5);
+  padding-block: var(--space-2);
+}
+.inactive-row td {
+  opacity: 0.55;
+}
+.name-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.name-en {
+  font-weight: 600;
+}
+.name-ar {
+  font-size: 12px;
+  color: var(--mat-sys-on-surface-variant);
+  text-align: start;
+}
+.amount {
+  font-weight: 700;
+  color: var(--status-active-fg);
+}

@@ -1,0 +1,152 @@
+/* Work shifts: time block, stats and the working-days picker. Cards, grid and badges are shared (styles.css). */
+
+/* Time display */
+.time-display {
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  background: var(--mat-sys-surface-container);
+}
+.time-flex {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-weight: 600;
+  color: var(--mat-sys-primary);
+}
+.time-flex .material-icons {
+  font-size: 20px;
+}
+.time-range {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+.time-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+.time-label,
+.stat-lbl {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--mat-sys-on-surface-variant);
+}
+.time-val {
+  font-family: monospace;
+  font-size: 22px;
+  font-weight: 800;
+}
+.time-arrow {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  color: var(--mat-sys-on-surface-variant);
+}
+.time-arrow .material-icons {
+  font-size: 20px;
+}
+:host-context([dir='rtl']) .time-arrow .material-icons {
+  transform: scaleX(-1);
+}
+
+/* Stats */
+.stats-row {
+  display: flex;
+  justify-content: space-around;
+  padding-block: var(--space-3);
+  border-block: 1px solid var(--mat-sys-outline-variant);
+}
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+.stat-icon {
+  font-size: 18px;
+  color: var(--mat-sys-primary);
+}
+.stat-val {
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Working days */
+.days-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+}
+.day-chip {
+  padding: 3px var(--space-2);
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  font-weight: 700;
+}
+.day-active {
+  background-image: var(--grad-primary);
+  color: #fff;
+}
+.day-off {
+  background: var(--mat-sys-surface-container-high);
+  color: var(--mat-sys-on-surface-variant);
+}
+.shift-desc {
+  margin: 0;
+  font-size: 13px;
+  font-style: italic;
+  line-height: 1.5;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+/* Day picker (in the modal) */
+.days-presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-block-end: var(--space-2);
+}
+.preset-btn,
+.day-pick-btn {
+  min-block-size: 44px;
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: var(--radius-md);
+  background: var(--table-surface);
+  color: var(--mat-sys-on-surface-variant);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--motion-fast);
+}
+.preset-btn {
+  padding-inline: var(--space-3);
+}
+.days-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+.day-pick-btn {
+  min-inline-size: 48px;
+}
+.preset-btn:hover,
+.day-pick-btn:hover {
+  border-color: var(--mat-sys-primary);
+  color: var(--mat-sys-primary);
+}
+.day-pick-btn.day-selected {
+  background-image: var(--grad-primary);
+  border-color: transparent;
+  color: #fff;
+}
+.preset-btn:focus-visible,
+.day-pick-btn:focus-visible {
+  outline: 2px solid var(--mat-sys-primary);
+  outline-offset: 2px;
+}

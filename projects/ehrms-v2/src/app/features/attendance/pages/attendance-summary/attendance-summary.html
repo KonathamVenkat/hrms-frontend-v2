@@ -1,0 +1,204 @@
+<!-- attendance-summary.component.html -->
+
+<div class="summary-container">
+  <!-- ── Page Header ─────────────────────────────────────── -->
+  <div class="page-header">
+    <div class="header-left">
+      <mat-icon class="header-icon">bar_chart</mat-icon>
+      <div>
+        <h2>{{ 'attendance.summary.title' | translate }}</h2>
+        <span class="subtitle">{{ 'attendance.summary.subtitle' | translate }}</span>
+      </div>
+    </div>
+
+    <!-- Month/Year Filter -->
+    <div class="filter-bar">
+      <form [formGroup]="filterForm" class="filter-form">
+        <mat-form-field appearance="outline" class="filter-field">
+          <mat-label>{{ 'attendance.summary.month' | translate }}</mat-label>
+          <mat-select formControlName="month" (selectionChange)="onFilterChange()">
+            @for (m of months; track m) {
+              <mat-option [value]="m.value">
+                {{ m.label | translate }}
+              </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="filter-field">
+          <mat-label>{{ 'attendance.summary.year' | translate }}</mat-label>
+          <mat-select formControlName="year" (selectionChange)="onFilterChange()">
+            @for (y of years; track y) {
+              <mat-option [value]="y">{{ y }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </form>
+    </div>
+  </div>
+
+  <!-- ── Loading Spinner ─────────────────────────────────── -->
+  @if (loading()) {
+    <div class="center-spinner">
+      <mat-spinner diameter="48"></mat-spinner>
+    </div>
+  }
+
+  @if (!loading() && mySummary()) {
+    <!-- ── Summary Stats Cards ───────────────────────────── -->
+    <div class="stats-grid">
+      <!-- Attendance % card -->
+      <mat-card class="stat-card highlight-card">
+        <mat-card-content>
+          <div class="pct-circle" [style.border-color]="attendanceColor()">
+            <span class="pct-value" [style.color]="attendanceColor()">
+              {{ formatPct(mySummary()!.attendancePercentage) }}
+            </span>
+            <span class="pct-label">{{ 'attendance.summary.attendance' | translate }}</span>
+          </div>
+          <div class="stat-detail">
+            <span class="month-name">{{ mySummary()!.monthLabel }}</span>
+            @if (mySummary()!.isCurrentMonth) {
+              <span class="live-pill">● {{ 'attendance.summary.live' | translate }}</span>
+            }
+          </div>
+          <mat-progress-bar
+            [mode]="'determinate'"
+            [attr.aria-label]="'attendance.summary.attendance' | translate"
+            [value]="mySummary()!.attendancePercentage"
+            [color]="getProgressColor(mySummary()!.attendancePercentage)"
+            class="att-bar"
+          >
+          </mat-progress-bar>
+        </mat-card-content>
+      </mat-card>
+      <!-- Present -->
+      <mat-card class="stat-card present-card">
+        <mat-card-content>
+          <mat-icon class="card-icon">check_circle</mat-icon>
+          <span class="stat-num">{{ mySummary()!.presentDays }}</span>
+          <span class="stat-lbl">{{ 'attendance.summary.presentDays' | translate }}</span>
+        </mat-card-content>
+      </mat-card>
+      <!-- Absent -->
+      <mat-card class="stat-card absent-card">
+        <mat-card-content>
+          <mat-icon class="card-icon">cancel</mat-icon>
+          <span class="stat-num">{{ mySummary()!.absentDays }}</span>
+          <span class="stat-lbl">{{ 'attendance.summary.absentDays' | translate }}</span>
+        </mat-card-content>
+      </mat-card>
+      <!-- Late -->
+      <mat-card class="stat-card late-card">
+        <mat-card-content>
+          <mat-icon class="card-icon">schedule</mat-icon>
+          <span class="stat-num">{{ mySummary()!.lateDays }}</span>
+          <span class="stat-lbl">{{ 'attendance.summary.lateDays' | translate }}</span>
+        </mat-card-content>
+      </mat-card>
+      <!-- Half Days -->
+      <mat-card class="stat-card half-card">
+        <mat-card-content>
+          <mat-icon class="card-icon">brightness_5</mat-icon>
+          <span class="stat-num">{{ mySummary()!.halfDays }}</span>
+          <span class="stat-lbl">{{ 'attendance.summary.halfDays' | translate }}</span>
+        </mat-card-content>
+      </mat-card>
+      <!-- Leave -->
+      <mat-card class="stat-card leave-card">
+        <mat-card-content>
+          <mat-icon class="card-icon">beach_access</mat-icon>
+          <span class="stat-num">{{ mySummary()!.leaveDays }}</span>
+          <span class="stat-lbl">{{ 'attendance.summary.leaveDays' | translate }}</span>
+        </mat-card-content>
+      </mat-card>
+      <!-- Working Hours -->
+      <mat-card class="stat-card hours-card">
+        <mat-card-content>
+          <mat-icon class="card-icon">work_history</mat-icon>
+          <span class="stat-num sm">{{ mySummary()!.totalWorkingHours }}</span>
+          <span class="stat-lbl">{{ 'attendance.summary.workingHours' | translate }}</span>
+        </mat-card-content>
+      </mat-card>
+      <!-- Overtime -->
+      <mat-card class="stat-card ot-card">
+        <mat-card-content>
+          <mat-icon class="card-icon">more_time</mat-icon>
+          <span class="stat-num sm">{{ mySummary()!.totalOvertimeHours }}</span>
+          <span class="stat-lbl">{{ 'attendance.summary.overtime' | translate }}</span>
+        </mat-card-content>
+      </mat-card>
+    </div>
+    <!-- ── Yearly Trend Table ─────────────────────────────── -->
+    @if (yearlySummary().length > 0) {
+      <mat-card class="trend-card">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon>trending_up</mat-icon>
+            {{ 'attendance.summary.yearlyTrend' | translate: { year: filterForm.value.year } }}
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="trend-grid">
+            @for (s of yearlySummary(); track s) {
+              <div class="trend-month" [class.current]="s.isCurrentMonth">
+                <span class="trend-month-label">
+                  {{ s.monthLabel.split(' ')[0].slice(0, 3) }}
+                </span>
+                <div class="trend-bar-wrap">
+                  <div
+                    class="trend-bar"
+                    [style.height.%]="s.attendancePercentage"
+                    [style.background]="
+                      s.attendancePercentage >= 90
+                        ? 'var(--status-active-fg)'
+                        : s.attendancePercentage >= 75
+                          ? 'var(--warning)'
+                          : 'var(--danger)'
+                    "
+                  ></div>
+                </div>
+                <span class="trend-pct">{{ formatPct(s.attendancePercentage) }}</span>
+              </div>
+            }
+          </div>
+        </mat-card-content>
+      </mat-card>
+    }
+  }
+
+  <!-- ── Empty State ──────────────────────────────────────── -->
+  @if (!loading() && !mySummary()) {
+    <mat-card class="empty-card">
+      <mat-card-content class="empty-content">
+        <mat-icon class="empty-icon">event_busy</mat-icon>
+        <p>{{ 'attendance.summary.emptyTitle' | translate }}</p>
+        <button mat-stroked-button (click)="loadMySummary()">
+          <mat-icon>refresh</mat-icon> {{ 'attendance.summary.refresh' | translate }}
+        </button>
+      </mat-card-content>
+    </mat-card>
+  }
+
+  <!-- ── HR_ADMIN: regenerate day records ─────────────────── -->
+  @if (isHrAdmin) {
+    <mat-card class="backfill-card">
+      <mat-card-content class="backfill-content">
+        <div>
+          <h3>{{ 'attendance.summary.backfill.title' | translate }}</h3>
+          <p>{{ 'attendance.summary.backfill.hint' | translate }}</p>
+        </div>
+        <!-- disabledInteractive: stays focusable while busy, so a keyboard user does not lose their place -->
+        <button
+          mat-stroked-button
+          disabledInteractive
+          (click)="regenerateDayRecords()"
+          [disabled]="regenerating()"
+        >
+          <mat-icon>autorenew</mat-icon>
+          {{ 'attendance.summary.backfill.button' | translate }}
+        </button>
+      </mat-card-content>
+    </mat-card>
+  }
+</div>

@@ -1,0 +1,2040 @@
+/* Global styles. Tokens and Material theming live in material-theme.scss. */
+
+/* Keyboard focus on Material buttons: their own state layer is only a faint tint, so draw the same ring
+   the toolbar and sidebar use. */
+.mat-mdc-button-base:focus-visible {
+  outline: 2px solid var(--mat-sys-primary);
+  outline-offset: 2px;
+}
+
+/* Arabic / RTL typography. Arabic joins letters, so no tracking anywhere (Material sets its own per-token
+   tracking, hence the * selector), and taller line heights because Arabic ascenders and diacritics are taller.
+   Arabic glyphs fall through the font stack to Noto Sans Arabic. Scope rules to html: :lang() matches every
+   descendant and would override the icon font. */
+html:lang(ar),
+html[dir='rtl'] {
+  --mat-sys-body-large-line-height: 1.75rem;
+  --mat-sys-body-medium-line-height: 1.5rem;
+  --mat-sys-body-small-line-height: 1.25rem;
+  --mat-sys-label-large-line-height: 1.5rem;
+  --mat-sys-label-medium-line-height: 1.25rem;
+  --mat-sys-label-small-line-height: 1.125rem;
+  --mat-sys-title-large-line-height: 2rem;
+  --mat-sys-title-medium-line-height: 1.75rem;
+  --mat-sys-title-small-line-height: 1.5rem;
+  line-height: 1.7;
+}
+html:lang(ar) *,
+html[dir='rtl'] * {
+  letter-spacing: 0 !important;
+}
+/* Emails, phones, numbers and URLs are always left-to-right data, even inside an RTL form. */
+[dir='rtl'] input[type='email'],
+[dir='rtl'] input[type='tel'],
+[dir='rtl'] input[type='url'],
+[dir='rtl'] input[type='number'] {
+  direction: ltr;
+  text-align: end;
+}
+/* Digits line up in tables and KPI figures. */
+.mat-mdc-cell,
+.mat-mdc-header-cell,
+.status-badge {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Filled buttons: blue-to-violet gradient (flips with dir). color="tertiary" is the orange call-to-action. */
+.mat-mdc-unelevated-button {
+  /* White on both gradient stops in light and dark (Material flips its label to dark navy in dark mode). */
+  --mat-button-filled-label-text-color: #fff;
+}
+.mat-mdc-unelevated-button:not(:disabled) {
+  background-image: var(--grad-primary);
+  box-shadow: var(--primary-shadow);
+}
+.mat-mdc-unelevated-button.mat-tertiary:not(:disabled) {
+  background-image: var(--grad-cta);
+  box-shadow: var(--cta-shadow);
+}
+.mat-mdc-outlined-button:not(:disabled) {
+  background: var(--glass-bg);
+}
+
+/* Chips are pills. */
+.mat-mdc-chip {
+  --mat-chip-container-shape-radius: 999px;
+}
+
+/* Tables: nearly opaque surface on the glass, tinted header, subtle row dividers. */
+.mat-mdc-table {
+  background: var(--table-surface);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+.mat-mdc-header-row,
+.mat-mdc-header-cell {
+  background: var(--table-header-bg);
+}
+.mat-mdc-row:hover {
+  background: color-mix(in srgb, var(--mat-sys-primary) 6%, transparent);
+}
+
+/* Status badges: <span class="status-badge status-active">Active</span>. Always pair with text, never color alone. */
+.status-badge:not(:has(.status-dot))::before {
+  content: '';
+  inline-size: 6px;
+  block-size: 6px;
+  border-radius: 50%;
+  background: currentcolor;
+}
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding-block: 2px;
+  padding-inline: var(--space-3);
+  border-radius: 999px;
+  font: var(--mat-sys-label-medium);
+  font-weight: 600;
+  white-space: nowrap;
+}
+.status-active {
+  color: var(--status-active-fg);
+  background: var(--status-active-bg);
+}
+.status-pending {
+  color: var(--status-pending-fg);
+  background: var(--status-pending-bg);
+}
+.status-approved {
+  color: var(--status-approved-fg);
+  background: var(--status-approved-bg);
+}
+.status-rejected {
+  color: var(--status-rejected-fg);
+  background: var(--status-rejected-bg);
+}
+
+/* Employment status variants (employee screens). Probation = blue, notice = amber, ended = red. */
+.status-probation {
+  color: var(--status-approved-fg);
+  background: var(--status-approved-bg);
+}
+.status-notice {
+  color: var(--status-pending-fg);
+  background: var(--status-pending-bg);
+}
+.status-terminated {
+  color: var(--status-rejected-fg);
+  background: var(--status-rejected-bg);
+}
+.status-inactive {
+  color: var(--mat-sys-on-surface-variant);
+  background: var(--mat-sys-surface-container-high);
+}
+.status-badge .status-dot {
+  inline-size: 6px;
+  block-size: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: currentcolor;
+}
+.status-badge.small {
+  padding-block: 1px;
+  font-size: 11px;
+}
+
+/* Sticky header for data tables: add class "sticky-table" to the scroll wrapper. */
+.sticky-table {
+  overflow: auto;
+  max-block-size: 70vh;
+}
+.sticky-table .mat-mdc-header-row {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 1;
+  background: var(--table-header-bg);
+}
+
+/* Mirror directional icons in RTL: add class "mirror-rtl" to the mat-icon. */
+[dir='rtl'] .mirror-rtl {
+  transform: scaleX(-1);
+}
+
+/* Glass surfaces. "panel" = see-through (toolbar, sidebar, cards via class "glass"); dialogs and menus use the
+   stronger variant because they float over arbitrary content. */
+.glass {
+  background: var(--glass-bg) !important;
+  border: var(--glass-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--glass-shine), var(--glass-shadow);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+}
+.mat-mdc-dialog-surface,
+.mat-mdc-menu-panel {
+  background: var(--glass-bg-strong) !important;
+  border: var(--glass-border);
+  box-shadow: var(--shadow-3);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+}
+/* Opaque fallback when blur is unsupported or the user asks for less transparency. */
+@media (prefers-reduced-transparency: reduce) {
+  .glass,
+  .mat-mdc-dialog-surface,
+  .mat-mdc-menu-panel {
+    background: var(--mat-sys-surface-container-high) !important;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+@supports not (backdrop-filter: blur(1px)) {
+  .glass,
+  .mat-mdc-dialog-surface,
+  .mat-mdc-menu-panel {
+    background: var(--mat-sys-surface-container-high) !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ── Shared UI kit (used by the employee, leave, attendance and admin screens) ─────────────────────────────
+   Tokens only, 44px targets, logical properties. Component CSS keeps only its own layout. */
+
+.loading-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  padding: 80px var(--space-5);
+  color: var(--mat-sys-on-surface-variant);
+}
+.spinner {
+  inline-size: 36px;
+  block-size: 36px;
+  border: 3px solid var(--mat-sys-outline-variant);
+  border-block-start-color: var(--mat-sys-primary);
+  border-radius: 50%;
+  animation: ui-spin 0.7s linear infinite;
+}
+@keyframes ui-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.alert {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  margin-block-end: var(--space-5);
+  border-radius: var(--radius-md);
+}
+.alert .material-icons {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+.alert-error {
+  background: var(--status-rejected-bg);
+  color: var(--status-rejected-fg);
+}
+.alert-back {
+  margin-inline-start: auto;
+  min-block-size: 44px;
+  padding-inline: var(--space-4);
+  border: 1px solid currentcolor;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+/* Buttons. Primary = gradient, secondary = glass outline, danger/success = status colours. */
+.btn-edit:not(.act-btn),
+.btn-deactivate,
+.btn-reactivate,
+.btn-cancel,
+.btn-confirm {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-block-size: 44px;
+  padding-inline: var(--space-5);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    transform var(--motion-fast),
+    background var(--motion-fast);
+}
+.btn-edit:not(.act-btn) .material-icons,
+.btn-deactivate .material-icons,
+.btn-reactivate .material-icons {
+  font-size: 18px;
+}
+.btn-edit:not(.act-btn) {
+  background-image: var(--grad-primary);
+  color: #fff;
+  box-shadow: var(--primary-shadow);
+}
+.btn-edit:not(.act-btn):hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+.btn-edit.btn-secondary,
+.btn-cancel {
+  background: var(--table-surface);
+  border-color: var(--mat-sys-outline-variant);
+  color: var(--mat-sys-on-surface);
+  box-shadow: none;
+  font-weight: 600;
+}
+.btn-edit.btn-secondary {
+  border-color: var(--mat-sys-primary);
+  color: var(--mat-sys-primary);
+}
+.btn-cancel:hover:not(:disabled) {
+  border-color: var(--danger);
+  color: var(--danger);
+}
+.btn-deactivate,
+.btn-reactivate {
+  background: var(--table-surface);
+}
+.btn-deactivate {
+  border-color: var(--status-rejected-fg);
+  color: var(--status-rejected-fg);
+}
+.btn-reactivate {
+  border-color: var(--status-active-fg);
+  color: var(--status-active-fg);
+}
+.btn-deactivate:hover {
+  background: var(--status-rejected-bg);
+}
+.btn-reactivate:hover {
+  background: var(--status-active-bg);
+}
+.btn-confirm {
+  color: #fff;
+}
+/* Solid, darker than the token colours so white text keeps 4.5:1 in both themes. */
+.btn-confirm.btn-danger {
+  background: #b91c1c;
+}
+.btn-confirm.btn-success {
+  background: #047857;
+}
+.btn-confirm:disabled,
+.btn-cancel:disabled,
+.btn-edit:not(.act-btn):disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.btn-edit:focus-visible,
+.btn-deactivate:focus-visible,
+.btn-reactivate:focus-visible,
+.btn-cancel:focus-visible,
+.btn-confirm:focus-visible,
+.alert-back:focus-visible {
+  outline: 2px solid var(--mat-sys-primary);
+  outline-offset: 2px;
+}
+
+/* Modal + confirm dialog (glass, like mat-dialog). */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+  background: rgb(15 23 42 / 45%);
+}
+.confirm-dialog {
+  inline-size: 100%;
+  max-inline-size: 420px;
+  padding: var(--space-6) var(--space-5);
+  text-align: center;
+  background: var(--glass-bg-strong);
+  border: var(--glass-border);
+  border-radius: 20px;
+  box-shadow: var(--shadow-3);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+}
+.confirm-icon {
+  inline-size: 60px;
+  block-size: 60px;
+  margin: 0 auto var(--space-4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+.confirm-icon.icon-warn {
+  background: var(--status-rejected-bg);
+  color: var(--status-rejected-fg);
+}
+.confirm-icon.icon-info {
+  background: var(--status-active-bg);
+  color: var(--status-active-fg);
+}
+.confirm-icon .material-icons {
+  font-size: 30px;
+}
+.confirm-title {
+  margin: 0 0 var(--space-3);
+  font-size: 20px;
+  font-weight: 800;
+}
+.confirm-msg {
+  margin: 0 0 var(--space-5);
+  color: var(--mat-sys-on-surface-variant);
+  line-height: 1.6;
+}
+.confirm-error {
+  margin: 0 0 var(--space-4);
+  font-size: 13px;
+  color: var(--status-rejected-fg);
+}
+.confirm-actions {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+/* Small inline form inside dialogs (reset password, exit status). */
+.reset-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-block: var(--space-4);
+  text-align: start;
+}
+.reset-label {
+  font-weight: 600;
+}
+.reset-input-row {
+  display: flex;
+  gap: var(--space-2);
+}
+.reset-input {
+  flex: 1 1 auto; /* not flex:1, which collapses the height in the column layout */
+  min-inline-size: 0;
+  min-block-size: 44px;
+  padding-inline: var(--space-3);
+  border: 1px solid var(--mat-sys-outline);
+  border-radius: var(--radius-md);
+  background: var(--table-surface);
+  color: var(--mat-sys-on-surface);
+  font: inherit;
+}
+.reset-input:focus-visible {
+  outline: 2px solid var(--mat-sys-primary);
+  outline-offset: 1px;
+}
+.reset-toggle {
+  padding-inline: var(--space-3);
+}
+.reset-hint {
+  margin: 0;
+  font-size: 12px;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .confirm-dialog {
+    background: var(--mat-sys-surface-container-high);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+
+/* ── Shared UI kit, part 2: sections, forms, modal, icon buttons ─────────────────────────────────────────── */
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-block-end: var(--space-4);
+}
+.header-left {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+.section-title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+
+/* Creation actions: orange call-to-action. Save: primary gradient. */
+.btn-add,
+.btn-add-sm,
+.btn-upload,
+.btn-upload-sm,
+.btn-assign,
+.btn-assign-sm,
+.btn-save {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-block-size: 44px;
+  padding-inline: var(--space-5);
+  border: 0;
+  border-radius: var(--radius-md);
+  background-image: var(--grad-cta);
+  color: #fff;
+  font: inherit;
+  font-weight: 700;
+  box-shadow: var(--cta-shadow);
+  cursor: pointer;
+  transition: transform var(--motion-fast);
+}
+.btn-save {
+  background-image: var(--grad-primary);
+  box-shadow: var(--primary-shadow);
+}
+.btn-add:hover:not(:disabled),
+.btn-add-sm:hover:not(:disabled),
+.btn-upload:hover:not(:disabled),
+.btn-upload-sm:hover:not(:disabled),
+.btn-assign:hover:not(:disabled),
+.btn-assign-sm:hover:not(:disabled),
+.btn-save:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+.btn-add:disabled,
+.btn-add-sm:disabled,
+.btn-upload:disabled,
+.btn-assign:disabled,
+.btn-save:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+.btn-add .material-icons,
+.btn-add-sm .material-icons,
+.btn-upload .material-icons,
+.btn-upload-sm .material-icons,
+.btn-assign .material-icons,
+.btn-assign-sm .material-icons,
+.btn-save .material-icons {
+  font-size: 20px;
+}
+.btn-add:focus-visible,
+.btn-add-sm:focus-visible,
+.btn-upload:focus-visible,
+.btn-upload-sm:focus-visible,
+.btn-assign:focus-visible,
+.btn-assign-sm:focus-visible,
+.btn-save:focus-visible {
+  outline: 2px solid var(--mat-sys-primary);
+  outline-offset: 2px;
+}
+.btn-spinner {
+  inline-size: 16px;
+  block-size: 16px;
+  border: 2px solid rgb(255 255 255 / 40%);
+  border-block-start-color: #fff;
+  border-radius: 50%;
+  animation: ui-spin 0.7s linear infinite;
+}
+
+.alert-success {
+  background: var(--status-active-bg);
+  color: var(--status-active-fg);
+}
+.alert-info {
+  background: var(--status-approved-bg);
+  color: var(--status-approved-fg);
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 56px var(--space-5);
+  text-align: center;
+  border: 1px dashed var(--mat-sys-outline-variant);
+  border-radius: var(--radius-lg);
+  background: var(--glass-bg);
+}
+.empty-state > .material-icons {
+  font-size: 56px;
+  color: var(--mat-sys-primary);
+  opacity: 0.4;
+}
+.empty-state p {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+.empty-state small {
+  color: var(--mat-sys-on-surface-variant);
+}
+
+/* Icon buttons in cards and rows (44px targets). */
+.act-btn {
+  inline-size: 44px;
+  block-size: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--mat-sys-on-surface-variant);
+  cursor: pointer;
+  transition: var(--motion-fast);
+}
+.act-btn .material-icons {
+  font-size: 20px;
+}
+.act-btn:focus-visible {
+  outline: 2px solid var(--mat-sys-primary);
+  outline-offset: 2px;
+}
+.act-btn.btn-edit,
+.act-btn.btn-download {
+  color: var(--status-approved-fg);
+}
+.act-btn.btn-edit:hover,
+.act-btn.btn-download:hover {
+  background: var(--status-approved-bg);
+}
+.act-btn.btn-star {
+  color: var(--status-pending-fg);
+}
+.act-btn.btn-star:hover {
+  background: var(--status-pending-bg);
+}
+.act-btn.btn-delete {
+  color: var(--status-rejected-fg);
+}
+.act-btn.btn-delete:hover {
+  background: var(--status-rejected-bg);
+}
+.act-btn.btn-verify {
+  color: var(--status-active-fg);
+}
+.act-btn.btn-verify:hover {
+  background: var(--status-active-bg);
+}
+
+/* Form fields: <div class="field"><label>..</label><input|select|textarea></div> */
+.field-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+}
+.field {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 200px;
+  gap: 6px;
+  min-inline-size: 0;
+}
+.field > label {
+  font-size: 13px;
+  font-weight: 600;
+}
+.req {
+  color: var(--danger);
+}
+.field input:not([type='checkbox']):not([type='radio']),
+.field select,
+.field textarea {
+  min-block-size: 44px;
+  padding-inline: var(--space-3);
+  border: 1px solid var(--mat-sys-outline);
+  border-radius: var(--radius-md);
+  background: var(--table-surface);
+  color: var(--mat-sys-on-surface);
+  font: inherit;
+}
+.field textarea {
+  padding-block: var(--space-3);
+  min-block-size: 88px;
+  resize: vertical;
+}
+.field input:focus-visible,
+.field select:focus-visible,
+.field textarea:focus-visible {
+  outline: 2px solid var(--mat-sys-primary);
+  outline-offset: 1px;
+}
+.field input.ng-invalid.ng-touched,
+.field select.ng-invalid.ng-touched,
+.field textarea.ng-invalid.ng-touched {
+  border-color: var(--danger);
+}
+.field input:disabled,
+.field select:disabled,
+.field textarea:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.field-error {
+  font-size: 12px;
+  color: var(--status-rejected-fg);
+}
+.field-hint {
+  font-size: 12px;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+/* Switch: <label class="toggle-item"> .toggle-info + .toggle-wrap(input.toggle-inp + span.toggle-slider) */
+.toggle-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+}
+.toggle-item:hover {
+  background: color-mix(in srgb, var(--mat-sys-primary) 6%, transparent);
+}
+.toggle-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.toggle-label {
+  font-weight: 600;
+}
+.toggle-hint {
+  font-size: 12px;
+  color: var(--mat-sys-on-surface-variant);
+}
+.toggle-wrap {
+  position: relative;
+  inline-size: 44px;
+  block-size: 24px;
+  flex-shrink: 0;
+}
+.toggle-inp {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+.toggle-slider {
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  background: var(--mat-sys-outline);
+  transition: background var(--motion-fast);
+}
+.toggle-slider::after {
+  content: '';
+  position: absolute;
+  inset-block-start: 3px;
+  inset-inline-start: 3px;
+  inline-size: 18px;
+  block-size: 18px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: var(--shadow-1);
+  transition: inset-inline-start var(--motion-fast);
+}
+.toggle-inp:checked + .toggle-slider {
+  background-image: var(--grad-primary);
+}
+.toggle-inp:checked + .toggle-slider::after {
+  inset-inline-start: 23px;
+}
+.toggle-inp:focus-visible + .toggle-slider {
+  outline: 2px solid var(--mat-sys-primary);
+  outline-offset: 2px;
+}
+
+/* Form modal: header / scrolling body / footer. Same glass as the confirm dialog. */
+.modal {
+  inline-size: 100%;
+  max-inline-size: 560px;
+  max-block-size: calc(100vh - 32px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--glass-bg-strong);
+  border: var(--glass-border);
+  border-radius: 20px;
+  box-shadow: var(--shadow-3);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+}
+.modal > form {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-block-size: 0;
+}
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+  border-block-end: 1px solid var(--mat-sys-outline-variant);
+}
+.modal-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 800;
+}
+.modal-close {
+  inline-size: 44px;
+  block-size: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--mat-sys-on-surface-variant);
+  cursor: pointer;
+}
+.modal-close:hover {
+  background: var(--mat-sys-surface-container-high);
+}
+.modal-close:focus-visible {
+  outline: 2px solid var(--mat-sys-primary);
+  outline-offset: 2px;
+}
+.modal-alert {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: var(--space-3) var(--space-5) 0;
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--status-rejected-bg);
+  color: var(--status-rejected-fg);
+}
+.modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-5);
+  overflow-y: auto;
+}
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+  border-block-start: 1px solid var(--mat-sys-outline-variant);
+}
+.confirm-icon.icon-star {
+  background: var(--status-pending-bg);
+  color: var(--status-pending-fg);
+}
+.btn-confirm.btn-star-confirm {
+  background: #b45309;
+}
+.confirm-msg small {
+  color: var(--mat-sys-on-surface-variant);
+}
+@media (prefers-reduced-transparency: reduce) {
+  .modal,
+  .empty-state {
+    background: var(--mat-sys-surface-container-high);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+
+/* ── Attendance approval + overtime screens (shared) ─────────────────────────────────────────────────────
+   Scoped to .app-page (attendance approval + overtime, and payroll pages) so nothing leaks to other features. The colours of
+   .status-chip come from the component (getStatusStyle); everything else is tokens + logical properties. */
+
+.app-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+.app-page .page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+.app-page .header-left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+.app-page .header-icon {
+  inline-size: 40px;
+  block-size: 40px;
+  font-size: 40px;
+  color: var(--mat-sys-primary);
+}
+.app-page .page-header h2 {
+  margin: 0;
+  font-size: 28px;
+  line-height: 1.25;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.app-page .subtitle {
+  color: var(--mat-sys-on-surface-variant);
+}
+.app-page .header-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+.app-page .badge-pill {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  border-radius: 999px;
+  font-weight: 700;
+}
+.app-page .badge-pill mat-icon {
+  inline-size: 18px;
+  block-size: 18px;
+  font-size: 18px;
+}
+.app-page .pending-pill {
+  background: var(--status-pending-bg);
+  color: var(--status-pending-fg);
+}
+.app-page .approved-pill {
+  background: var(--status-active-bg);
+  color: var(--status-active-fg);
+}
+
+/* Glass cards */
+.app-page :is(.filter-card, .stat-mini, .stat-card, .table-card, .form-card) {
+  background: var(--table-surface);
+  border: var(--glass-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--glass-shine), var(--glass-shadow);
+}
+.app-page :is(.form-card, .table-card) mat-card-header {
+  padding: var(--space-4) var(--space-5) 0;
+}
+.app-page :is(.form-card, .table-card) mat-card-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 18px;
+  font-weight: 700;
+}
+
+/* Filters + forms */
+.app-page .filter-form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding-block: var(--space-1);
+}
+.app-page .filter-field {
+  flex: 1;
+  min-inline-size: 160px;
+}
+.app-page .filter-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding-block-start: var(--space-1);
+}
+.app-page .ot-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding-block-start: var(--space-4);
+}
+.app-page .form-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+}
+.app-page .field-sm {
+  flex: 1;
+  min-inline-size: 140px;
+}
+.app-page .field-md {
+  flex: 1;
+  min-inline-size: 200px;
+}
+.app-page .full-width,
+.dialog-box .full-width {
+  inline-size: 100%;
+}
+
+/* Stats */
+.app-page .stats-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+.app-page :is(.stat-mini, .stat-card) {
+  flex: 1;
+  min-inline-size: 160px;
+}
+.app-page :is(.stat-mini, .stat-card) mat-card-content {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4);
+}
+.app-page :is(.stat-mini, .stat-card) mat-icon {
+  inline-size: 28px;
+  block-size: 28px;
+  font-size: 28px;
+}
+.app-page .stat-num {
+  display: block;
+  font-size: 28px;
+  font-weight: 800;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.app-page .stat-num.sm {
+  font-size: 22px;
+}
+.app-page .stat-lbl {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--mat-sys-on-surface-variant);
+}
+.app-page .pending-stat :is(mat-icon, .stat-num) {
+  color: var(--status-pending-fg);
+}
+.app-page .approved-stat :is(mat-icon, .stat-num) {
+  color: var(--status-approved-fg);
+}
+.app-page .rejected-stat :is(mat-icon, .stat-num) {
+  color: var(--status-rejected-fg);
+}
+.app-page :is(.hours-stat, .total-stat) mat-icon {
+  color: var(--mat-sys-primary);
+}
+
+/* Tables */
+.app-page .table-wrapper {
+  position: relative;
+  overflow: auto;
+  min-block-size: 200px;
+  max-block-size: 70vh;
+}
+.app-page :is(.approval-table, .ot-table) {
+  inline-size: 100%;
+  background: transparent;
+}
+.app-page :is(.approval-table, .ot-table) th {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+  color: var(--mat-sys-on-surface-variant);
+}
+.app-page :is(.approval-table, .ot-table) td {
+  vertical-align: middle;
+  font-variant-numeric: tabular-nums;
+}
+.app-page .pending-row td:first-child {
+  border-inline-start: 3px solid var(--status-pending-fg);
+}
+.app-page .approved-row td {
+  background: color-mix(in srgb, var(--status-approved-fg) 7%, transparent);
+}
+.app-page .approved-row td:first-child {
+  border-inline-start: 3px solid var(--status-approved-fg);
+}
+.app-page .rejected-row td {
+  background: color-mix(in srgb, var(--status-rejected-fg) 7%, transparent);
+}
+.app-page .rejected-row td:first-child {
+  border-inline-start: 3px solid var(--status-rejected-fg);
+}
+.app-page .emp-cell {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+.app-page .emp-avatar {
+  inline-size: 36px;
+  block-size: 36px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--grad-primary);
+  color: #fff;
+  font-weight: 700;
+  box-shadow: var(--shadow-1);
+}
+.app-page .emp-info {
+  display: flex;
+  flex-direction: column;
+}
+.app-page .emp-name {
+  font-weight: 700;
+}
+.app-page .emp-code {
+  font-size: 12px;
+  color: var(--mat-sys-on-surface-variant);
+}
+.app-page :is(.reg-id, .ref-id) {
+  padding: 3px var(--space-2);
+  border-radius: var(--radius-sm);
+  background: var(--mat-sys-surface-container-high);
+  color: var(--mat-sys-on-surface-variant);
+  font-family: monospace;
+  font-size: 12px;
+  white-space: nowrap;
+}
+.app-page :is(.date-text, .datetime-text) {
+  white-space: nowrap;
+}
+.app-page :is(.datetime-text, .acted-at) {
+  font-size: 12px;
+  color: var(--mat-sys-on-surface-variant);
+}
+.app-page .muted {
+  color: var(--mat-sys-on-surface-variant);
+}
+.app-page :is(.time-chip, .type-chip, .duration-badge, .status-chip) {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 3px var(--space-3);
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.app-page .time-chip.in {
+  background: var(--status-approved-bg);
+  color: var(--status-approved-fg);
+}
+.app-page .time-chip.out,
+.app-page .duration-badge {
+  background: var(--mat-sys-secondary-container);
+  color: var(--mat-sys-on-secondary-container);
+}
+.app-page .status-col {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-1);
+}
+.app-page .status-icon {
+  inline-size: 14px;
+  block-size: 14px;
+  font-size: 14px;
+}
+.app-page :is(.rejection-note, .reviewer-note, .project-code) {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: 12px;
+  color: var(--mat-sys-on-surface-variant);
+}
+.app-page .rejection-note {
+  color: var(--status-rejected-fg);
+}
+.app-page :is(.rejection-note, .reviewer-note, .project-code) mat-icon {
+  inline-size: 14px;
+  block-size: 14px;
+  font-size: 14px;
+}
+.app-page .action-col {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.app-page .action-btn {
+  --mat-button-filled-container-height: 44px;
+  --mat-button-outlined-container-height: 44px;
+  white-space: nowrap;
+}
+.app-page :is(.approve-btn, .reject-btn) mat-icon {
+  inline-size: 18px;
+  block-size: 18px;
+  font-size: 18px;
+}
+.app-page .empty-cell {
+  padding-block: 56px;
+  text-align: center;
+}
+.app-page .empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--mat-sys-on-surface-variant);
+}
+.app-page .empty-state mat-icon {
+  inline-size: 56px;
+  block-size: 56px;
+  font-size: 56px;
+  color: var(--mat-sys-primary);
+  opacity: 0.4;
+}
+.app-page .empty-state p {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--mat-sys-on-surface);
+}
+.app-page .center-spinner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  padding-block: 56px;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+/* Reject dialog (inline, used by both approval screens). Same glass as the kit modal. */
+.dialog-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+  background: rgb(15 23 42 / 45%);
+}
+.dialog-box {
+  inline-size: 100%;
+  max-inline-size: 520px;
+  max-block-size: calc(100vh - 32px);
+  overflow: auto;
+  background: var(--glass-bg-strong);
+  border: var(--glass-border);
+  border-radius: 20px;
+  box-shadow: var(--shadow-3);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+}
+.dialog-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+}
+.dialog-header h3 {
+  flex: 1;
+  margin: 0;
+  font-size: 18px;
+  font-weight: 800;
+}
+.dialog-header :is(.dialog-icon, .warn-icon) {
+  inline-size: 28px;
+  block-size: 28px;
+  font-size: 28px;
+  color: var(--status-pending-fg);
+}
+.dialog-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+}
+.dialog-info-row,
+.info-row {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+}
+.dialog-label,
+.info-label {
+  flex-shrink: 0;
+  min-inline-size: 88px;
+  padding-block-start: 2px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--mat-sys-on-surface-variant);
+}
+.dialog-value,
+.info-value {
+  font-weight: 500;
+}
+.reason-value,
+.info-value.italic {
+  font-style: italic;
+  line-height: 1.5;
+}
+.rejection-error,
+.error-msg {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: 13px;
+  color: var(--status-rejected-fg);
+}
+.rejection-error mat-icon,
+.error-msg mat-icon {
+  inline-size: 16px;
+  block-size: 16px;
+  font-size: 16px;
+}
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+}
+.dialog-actions button {
+  --mat-button-filled-container-height: 44px;
+  --mat-button-outlined-container-height: 44px;
+}
+
+@media (max-width: 768px) {
+  .app-page :is(.filter-form, .form-row) {
+    flex-direction: column;
+  }
+  .app-page .filter-field {
+    inline-size: 100%;
+  }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .dialog-box {
+    background: var(--mat-sys-surface-container-high);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+.app-page .form-card mat-card-actions {
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+}
+.app-page .form-card mat-card-actions button {
+  --mat-button-filled-container-height: 44px;
+  --mat-button-outlined-container-height: 44px;
+}
+.app-page .form-card mat-card-actions button span {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* Approval tables: keep names on one line, give the reason column room, drop the unused hint row in filters. */
+.app-page .emp-name {
+  white-space: nowrap;
+}
+.app-page .reason-text {
+  display: inline-block;
+  min-inline-size: 220px;
+  max-inline-size: 320px;
+  line-height: 1.4;
+}
+.app-page .filter-card .mat-mdc-form-field-subscript-wrapper {
+  display: none;
+}
+/* Reject dialog: the destructive action is solid red, not the primary gradient; icon and label share a baseline. */
+.dialog-actions .mat-mdc-unelevated-button.mat-warn:not(:disabled) {
+  background-image: none;
+  background-color: #b91c1c;
+  box-shadow: none;
+}
+.dialog-actions button span {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* Paginator icon buttons: 44px touch targets (Material default is 32px at this density). */
+.mat-mdc-paginator .mat-mdc-icon-button {
+  --mat-icon-button-state-layer-size: 44px;
+  inline-size: 44px;
+  block-size: 44px;
+  padding: 10px;
+}
+
+/* ── Payroll screens: extras on top of the shared .app-page block above ──────────────────────────────────── */
+
+.app-page :is(.comp-table, .salary-table) {
+  inline-size: 100%;
+  background: transparent;
+}
+.app-page :is(.comp-table, .salary-table) th {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+  color: var(--mat-sys-on-surface-variant);
+}
+.app-page :is(.comp-table, .salary-table) td {
+  font-variant-numeric: tabular-nums;
+}
+.app-page .form-grid {
+  display: grid;
+  grid-template-columns: repeat(var(--form-cols, 2), 1fr);
+  gap: var(--space-3);
+  padding-block-start: var(--space-4);
+}
+.app-page .full-col {
+  grid-column: 1 / -1;
+}
+.app-page .code-chip {
+  padding: 3px var(--space-2);
+  border-radius: var(--radius-sm);
+  background: var(--mat-sys-surface-container-high);
+  color: var(--mat-sys-on-surface-variant);
+  font-family: monospace;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.app-page :is(.type-chip, .status-chip, .structure-pill) {
+  display: inline-block;
+  padding: 3px var(--space-3);
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.app-page .structure-pill {
+  background: var(--mat-sys-secondary-container);
+  color: var(--mat-sys-on-secondary-container);
+}
+.app-page .empty-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  padding: 48px var(--space-5);
+  color: var(--mat-sys-on-surface-variant);
+}
+.app-page .empty-content mat-icon {
+  inline-size: 56px;
+  block-size: 56px;
+  font-size: 56px;
+  color: var(--mat-sys-primary);
+  opacity: 0.4;
+}
+.app-page .empty-content p {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--mat-sys-on-surface);
+}
+.app-page :is(.history-card, .empty-card) {
+  background: var(--table-surface);
+  border: var(--glass-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--glass-shine), var(--glass-shadow);
+}
+.app-page .history-card mat-card-header {
+  padding: var(--space-4) var(--space-5) 0;
+}
+.app-page .history-card mat-card-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 18px;
+  font-weight: 700;
+}
+.app-page .visually-hidden {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+/* Icon buttons in table rows and panels: 44px targets. */
+.app-page :is(td, .panel-actions, .items-header) .mat-mdc-icon-button {
+  --mat-icon-button-state-layer-size: 44px;
+  inline-size: 44px;
+  block-size: 44px;
+  padding: 10px;
+}
+.app-page :is(.panel-actions, .items-header) button {
+  --mat-button-outlined-container-height: 44px;
+}
+
+@media (max-width: 768px) {
+  .app-page .form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.app-page .history-card mat-card-actions {
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+}
+.app-page .history-card mat-card-actions button {
+  --mat-button-outlined-container-height: 44px;
+}
+
+.app-page .toggle-row mat-slide-toggle {
+  min-block-size: 44px;
+  display: inline-flex;
+  align-items: center;
+}
+/* Paginator labels mix Latin text and digits: keep each label in its own direction in RTL. */
+.mat-mdc-paginator-page-size-label,
+.mat-mdc-paginator-range-label {
+  unicode-bidi: plaintext;
+}
+
+/* ── Admin screens (document types, holiday calendar, leave types, office locations, work shifts) ──────────
+   Scoped to .admin-page. Buttons, alerts, modal, fields, toggles and the spinner come from the kit above;
+   this block adds the page shell, filter bar, table/card surfaces and the badge palette. */
+
+.admin-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+.admin-page .alert {
+  margin-block-end: 0;
+}
+.admin-page .page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+.admin-page :is(.header-left, .header-right) {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+.admin-page .page-title {
+  margin: 0;
+  font-size: 28px;
+  line-height: 1.25;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.admin-page .stat-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+.admin-page .chip {
+  padding: 3px var(--space-3);
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  background: var(--mat-sys-primary-container);
+  color: var(--mat-sys-on-primary-container);
+}
+
+/* Year navigation (holiday calendar) */
+.admin-page .year-nav {
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  background: var(--table-surface);
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: var(--radius-md);
+}
+.admin-page .year-btn {
+  inline-size: 44px;
+  block-size: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  background: transparent;
+  color: var(--mat-sys-on-surface-variant);
+  cursor: pointer;
+}
+.admin-page .year-btn:hover {
+  background: color-mix(in srgb, var(--mat-sys-primary) 8%, transparent);
+  color: var(--mat-sys-primary);
+}
+.admin-page .year-btn .material-icons {
+  font-size: 20px;
+}
+[dir='rtl'] .admin-page .year-btn .material-icons {
+  transform: scaleX(-1);
+}
+.admin-page .year-select {
+  block-size: 44px;
+  padding-inline: var(--space-2);
+  border: 0;
+  background: transparent;
+  color: var(--mat-sys-on-surface);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* Filter bar (glass) */
+.admin-page .filter-bar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background: var(--glass-bg);
+  border: var(--glass-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--glass-shine), var(--glass-shadow);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+}
+.admin-page .search-wrap {
+  flex: 1;
+  min-inline-size: 220px;
+  block-size: 44px;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding-inline: var(--space-3);
+  background: var(--table-surface);
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: var(--radius-md);
+}
+.admin-page .search-wrap:focus-within {
+  border-color: var(--mat-sys-primary);
+  outline: 2px solid var(--mat-sys-primary);
+  outline-offset: 1px;
+}
+.admin-page .search-wrap .material-icons {
+  font-size: 20px;
+  color: var(--mat-sys-on-surface-variant);
+}
+.admin-page .search-wrap input {
+  flex: 1;
+  min-inline-size: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--mat-sys-on-surface);
+  font: inherit;
+}
+.admin-page .clear-btn {
+  inline-size: 44px;
+  block-size: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-inline-end: calc(-1 * var(--space-3));
+  border: 0;
+  background: none;
+  color: var(--mat-sys-on-surface-variant);
+  cursor: pointer;
+}
+.admin-page .clear-btn .material-icons {
+  font-size: 18px;
+}
+.admin-page .filter-select {
+  block-size: 44px;
+  padding-inline: var(--space-3);
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: var(--radius-md);
+  background: var(--table-surface);
+  color: var(--mat-sys-on-surface);
+  font: inherit;
+  cursor: pointer;
+}
+.admin-page .tab-filter {
+  display: flex;
+  overflow: hidden;
+  background: var(--table-surface);
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: var(--radius-md);
+}
+.admin-page .tab-btn {
+  min-block-size: 44px;
+  padding-inline: var(--space-4);
+  border: 0;
+  border-inline-end: 1px solid var(--mat-sys-outline-variant);
+  background: transparent;
+  color: var(--mat-sys-on-surface-variant);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--motion-fast);
+}
+.admin-page .tab-btn:last-child {
+  border-inline-end: 0;
+}
+.admin-page .tab-btn:hover:not(.active) {
+  background: color-mix(in srgb, var(--mat-sys-primary) 8%, transparent);
+}
+.admin-page .tab-btn.active {
+  background-image: var(--grad-primary);
+  color: #fff;
+}
+.admin-page :is(.filter-select, .tab-btn, .clear-btn, .year-btn):focus-visible {
+  outline: 2px solid var(--mat-sys-primary);
+  outline-offset: -2px;
+}
+
+/* Surfaces */
+.admin-page :is(.table-card, .month-card, .loc-card, .shift-card, .empty-card) {
+  background: var(--table-surface);
+  border: var(--glass-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--glass-shine), var(--glass-shadow);
+}
+.admin-page .table-card {
+  overflow: auto;
+  max-block-size: 70vh;
+}
+.admin-page .data-table {
+  inline-size: 100%;
+  border-collapse: collapse;
+}
+.admin-page .data-table th {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 1;
+  padding: var(--space-3) var(--space-4);
+  background: var(--table-header-bg);
+  color: var(--mat-sys-on-surface-variant);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  text-align: start;
+  white-space: nowrap;
+}
+.admin-page .data-row {
+  border-block-start: 1px solid var(--mat-sys-outline-variant);
+  transition: background var(--motion-fast);
+}
+.admin-page .data-row:hover {
+  background: color-mix(in srgb, var(--mat-sys-primary) 6%, transparent);
+}
+.admin-page .data-table td {
+  padding: var(--space-3) var(--space-4);
+  vertical-align: middle;
+  font-variant-numeric: tabular-nums;
+}
+.admin-page :is(.data-row, .loc-card, .shift-card, .holiday-row).inactive-row,
+.admin-page :is(.loc-card, .shift-card).inactive-card {
+  opacity: 0.7;
+}
+.admin-page .cell-center {
+  text-align: center;
+}
+.admin-page .cell-num {
+  color: var(--mat-sys-on-surface-variant);
+  font-weight: 600;
+}
+.admin-page .empty-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 56px var(--space-5);
+  text-align: center;
+}
+.admin-page .empty-card > .material-icons {
+  font-size: 56px;
+  color: var(--mat-sys-primary);
+  opacity: 0.4;
+}
+.admin-page .empty-card p {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+.admin-page .empty-card small {
+  color: var(--mat-sys-on-surface-variant);
+}
+.admin-page td > .empty-state {
+  border: 0;
+  background: transparent;
+}
+
+/* Card grids (office locations, work shifts) */
+.admin-page :is(.locations-grid, .shifts-grid) {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
+  gap: var(--space-4);
+}
+.admin-page :is(.loc-card, .shift-card) {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-5);
+  transition: transform var(--motion-fast);
+}
+.admin-page :is(.loc-card, .shift-card):hover {
+  transform: translateY(-1px);
+}
+.admin-page .card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+.admin-page :is(.loc-code-wrap, .shift-code-wrap) {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+.admin-page .card-actions,
+.admin-page .holiday-actions,
+.admin-page .action-wrap {
+  display: flex;
+  gap: var(--space-1);
+}
+.admin-page .card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-block-start: var(--space-2);
+  border-block-start: 1px solid var(--mat-sys-outline-variant);
+}
+
+/* Names and codes */
+.admin-page :is(.code-badge, .loc-code, .shift-code) {
+  padding: 3px var(--space-2);
+  border-radius: var(--radius-sm);
+  background: var(--mat-sys-surface-container-high);
+  color: var(--mat-sys-on-surface-variant);
+  font-family: monospace;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.admin-page .name-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.admin-page :is(.name-en, .h-name-en) {
+  font-weight: 700;
+}
+.admin-page :is(.name-ar, .h-name-ar, .loc-name-ar, .shift-name-ar) {
+  margin: 0;
+  font-size: 13px;
+  color: var(--mat-sys-on-surface-variant);
+  text-align: start;
+}
+.admin-page :is(.loc-name, .shift-name) {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+/* Badge palette: one shape, tinted by meaning (status tokens, light/dark aware). */
+.admin-page
+  :is(
+    .cat-badge,
+    .type-badge,
+    .gender-badge,
+    .ext-badge,
+    .tz-badge,
+    .recurring-badge,
+    .month-count,
+    .overnight-tag
+  ) {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 2px var(--space-3);
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+  background: var(--mat-sys-surface-container-high);
+  color: var(--mat-sys-on-surface-variant);
+}
+.admin-page .ext-badge {
+  border-radius: var(--radius-sm);
+  padding-inline: var(--space-2);
+}
+.admin-page
+  :is(
+    .cat-identity,
+    .type-public,
+    .type-hq,
+    .type-morning,
+    .badge-male,
+    .chip-public,
+    .chip-mandatory
+  ) {
+  background: var(--status-approved-bg);
+  color: var(--status-approved-fg);
+}
+.admin-page
+  :is(
+    .cat-contract,
+    .cat-financial,
+    .type-branch,
+    .type-flexible,
+    .badge-all,
+    .chip-active,
+    .recurring-badge
+  ) {
+  background: var(--status-active-bg);
+  color: var(--status-active-fg);
+}
+.admin-page
+  :is(
+    .cat-education,
+    .type-religious,
+    .type-remote,
+    .type-evening,
+    .badge-female,
+    .chip-religious,
+    .overnight-tag
+  ) {
+  background: var(--mat-sys-secondary-container);
+  color: var(--mat-sys-on-secondary-container);
+}
+.admin-page :is(.cat-cert, .type-optional, .type-warehouse, .type-afternoon) {
+  background: var(--status-pending-bg);
+  color: var(--status-pending-fg);
+}
+.admin-page :is(.cat-medical, .type-restricted, .type-split) {
+  background: var(--status-rejected-bg);
+  color: var(--status-rejected-fg);
+}
+.admin-page .type-night {
+  background: var(--mat-sys-inverse-surface);
+  color: var(--mat-sys-inverse-on-surface);
+}
+.admin-page .chip-total {
+  background: var(--mat-sys-primary-container);
+  color: var(--mat-sys-on-primary-container);
+}
+.admin-page .chip-inactive {
+  background: var(--mat-sys-surface-container-high);
+  color: var(--mat-sys-on-surface-variant);
+}
+.admin-page .icon-yes {
+  font-size: 20px;
+  color: var(--status-active-fg);
+}
+.admin-page .icon-no {
+  font-size: 20px;
+  color: var(--mat-sys-outline);
+}
+.admin-page :is(.expiry-info, .carry-info) {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+.admin-page :is(.expiry-days, .carry-days) {
+  font-size: 12px;
+  color: var(--mat-sys-on-surface-variant);
+}
+.admin-page :is(.size-badge, .days-badge) {
+  font-weight: 700;
+  color: var(--mat-sys-primary);
+}
+.admin-page .ext-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+}
+
+/* Icon buttons in rows and cards: status-coloured, 44px (the kit .btn-deactivate is the text button). */
+.admin-page .act-btn:is(.btn-deactivate, .btn-activate) {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.admin-page .act-btn.btn-deactivate {
+  color: var(--status-rejected-fg);
+}
+.admin-page .act-btn.btn-deactivate:hover {
+  background: var(--status-rejected-bg);
+}
+.admin-page .act-btn.btn-activate {
+  color: var(--status-active-fg);
+}
+.admin-page .act-btn.btn-activate:hover {
+  background: var(--status-active-bg);
+}
+
+/* Modal form helpers used by these pages */
+
+.modal .toggles-row,
+.modal .toggles-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--space-3);
+  padding: var(--space-3);
+  background: var(--mat-sys-surface-container);
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: var(--radius-md);
+}
+.modal .field-row-3 {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+}
+.modal .field-sm {
+  flex: 0 1 120px;
+}
+.modal .field-row .field {
+  flex-basis: 220px;
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .admin-page .filter-bar {
+    background: var(--mat-sys-surface-container);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .admin-page :is(.loc-card, .shift-card) {
+    transition: none;
+  }
+}
+
+.modal .field-row .field-sm {
+  flex: 0 1 120px;
+  flex-basis: 120px;
+}

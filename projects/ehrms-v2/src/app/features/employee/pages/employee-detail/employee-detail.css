@@ -1,0 +1,284 @@
+/* Employee detail: Aurora Glass. Buttons, alerts, spinner, status badges and the confirm/reset dialogs come
+   from the shared kit in styles.css; this file keeps only the layout. Logical properties throughout. */
+
+.detail-page {
+  display: block;
+}
+
+/* ── Profile card + tab strip: one glass card ────────────── */
+.profile-card,
+.detail-tabs,
+.info-card {
+  background: var(--glass-bg);
+  border: var(--glass-border);
+  box-shadow: var(--glass-shine), var(--glass-shadow);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+}
+
+.profile-card {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-5);
+  padding: var(--space-5);
+  /* Square bottom corners: the tab strip below closes the same card. */
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+
+.back-btn {
+  position: absolute;
+  inset-block-start: var(--space-4);
+  inset-inline-start: var(--space-4);
+  inline-size: 44px;
+  block-size: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: var(--radius-md);
+  background: var(--table-surface);
+  color: var(--mat-sys-on-surface-variant);
+  cursor: pointer;
+  transition: var(--motion-fast);
+}
+.back-btn:hover {
+  border-color: var(--mat-sys-primary);
+  color: var(--mat-sys-primary);
+}
+.back-btn:focus-visible {
+  outline: 2px solid var(--mat-sys-primary);
+  outline-offset: 2px;
+}
+
+.profile-identity {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-5);
+  margin-inline-start: 60px;
+  flex: 1;
+  min-inline-size: 0;
+}
+.profile-info {
+  flex: 1;
+  min-inline-size: 0;
+  padding-block-start: var(--space-2);
+}
+.profile-name {
+  margin: 0 0 var(--space-3);
+  font-size: 26px;
+  line-height: 1.25;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.profile-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-block-end: var(--space-2);
+}
+.emp-code {
+  padding: 2px var(--space-3);
+  border-radius: 999px;
+  background: var(--mat-sys-primary-container);
+  color: var(--mat-sys-on-primary-container);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  font-weight: 600;
+}
+.sep {
+  color: var(--mat-sys-on-surface-variant);
+}
+.designation {
+  font-weight: 600;
+}
+.grade-badge {
+  padding: 2px var(--space-2);
+  border-radius: 999px;
+  background: var(--status-approved-bg);
+  color: var(--status-approved-fg);
+  font-size: 11px;
+  font-weight: 700;
+}
+.profile-dept {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  color: var(--mat-sys-on-surface-variant);
+}
+.dept-icon {
+  font-size: 16px;
+}
+
+.profile-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--space-3);
+  inline-size: 200px;
+  flex-shrink: 0;
+}
+.profile-actions .status-badge {
+  align-self: center;
+}
+
+/* ── Tab strip ───────────────────────────────────────────── */
+.detail-tabs {
+  display: flex;
+  margin-block-end: var(--space-5);
+  padding-inline: var(--space-4);
+  border-block-start: 0;
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  overflow-x: auto;
+}
+.detail-tab {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-block-size: 48px;
+  padding-inline: var(--space-5);
+  border: 0;
+  border-block-end: 3px solid transparent;
+  background: transparent;
+  color: var(--mat-sys-on-surface-variant);
+  font: inherit;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: var(--motion-fast);
+}
+.detail-tab .material-icons {
+  font-size: 18px;
+}
+.detail-tab:hover {
+  color: var(--mat-sys-primary);
+  background: color-mix(in srgb, var(--mat-sys-primary) 8%, transparent);
+}
+.detail-tab.active {
+  color: var(--mat-sys-primary);
+  border-block-end-color: var(--mat-sys-primary);
+  background: color-mix(in srgb, var(--mat-sys-primary) 10%, transparent);
+}
+.detail-tab:focus-visible {
+  outline: 2px solid var(--mat-sys-primary);
+  outline-offset: -2px;
+}
+
+/* ── Info cards ──────────────────────────────────────────── */
+.cards-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+}
+.info-card {
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+}
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-5);
+  background: var(--table-header-bg);
+  color: var(--mat-sys-on-surface-variant);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.card-header .material-icons {
+  font-size: 18px;
+  color: var(--mat-sys-primary);
+}
+.card-body {
+  padding-block: var(--space-1);
+  background: var(--table-surface);
+}
+.info-row {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-5);
+  border-block-end: 1px solid var(--mat-sys-outline-variant);
+}
+.info-row:last-child {
+  border-block-end: 0;
+}
+.info-label {
+  inline-size: 140px;
+  flex-shrink: 0;
+  color: var(--mat-sys-on-surface-variant);
+  font-size: 13px;
+  font-weight: 600;
+}
+.info-value {
+  flex: 1;
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
+}
+/* The Arabic name always reads right-to-left, whatever the UI language. */
+.info-value.arabic {
+  direction: rtl;
+  text-align: start;
+}
+/* Emails and phones are wrapped in <bdi> in the template, so they stay intact inside an RTL row. */
+.info-value.link {
+  color: var(--mat-sys-primary);
+  text-decoration: none;
+}
+.info-value.link:hover {
+  text-decoration: underline;
+}
+.info-value.link:focus-visible {
+  outline: 2px solid var(--mat-sys-primary);
+  outline-offset: 2px;
+}
+.sub-text {
+  margin-inline-start: var(--space-1);
+  font-size: 12px;
+  color: var(--mat-sys-on-surface-variant);
+}
+.grade-inline {
+  margin-inline-start: var(--space-2);
+  padding: 1px var(--space-2);
+  border-radius: 999px;
+  background: var(--status-approved-bg);
+  color: var(--status-approved-fg);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+/* ── Responsive ──────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .cards-grid {
+    grid-template-columns: 1fr;
+  }
+  .profile-card {
+    flex-wrap: wrap;
+  }
+  .profile-actions {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    inline-size: 100%;
+  }
+  .profile-actions .btn-edit,
+  .profile-actions .btn-deactivate,
+  .profile-actions .btn-reactivate {
+    flex: 1 1 140px;
+  }
+  .info-label {
+    inline-size: 110px;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .profile-card,
+  .detail-tabs,
+  .info-card {
+    background: var(--mat-sys-surface-container);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}

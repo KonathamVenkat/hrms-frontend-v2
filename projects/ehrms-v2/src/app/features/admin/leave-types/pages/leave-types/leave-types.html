@@ -1,0 +1,578 @@
+<div class="admin-page">
+  <!-- ── Page Header ──────────────────────────────────────── -->
+  <div class="page-header">
+    <div class="header-left">
+      <h1 class="page-title">{{ 'admin.leaveTypes.title' | translate }}</h1>
+      <div class="stat-chips">
+        <span class="chip chip-total">{{
+          'admin.leaveTypes.totalChip' | translate: { count: leaveTypes().length }
+        }}</span>
+        <span class="chip chip-active">{{
+          'admin.leaveTypes.activeChip' | translate: { count: activeCount() }
+        }}</span>
+        @if (inactiveCount() > 0) {
+          <span class="chip chip-inactive">{{
+            'admin.leaveTypes.inactiveChip' | translate: { count: inactiveCount() }
+          }}</span>
+        }
+      </div>
+    </div>
+    <button class="btn-add" (click)="openCreate()">
+      <span aria-hidden="true" class="material-icons">add</span>
+      {{ 'admin.leaveTypes.addLeaveType' | translate }}
+    </button>
+  </div>
+
+  <!-- ── Alerts ─────────────────────────────────────────────── -->
+  @if (successMsg()) {
+    <div class="alert alert-success">
+      <span aria-hidden="true" class="material-icons">check_circle</span>
+      {{ successMsg() }}
+    </div>
+  }
+  @if (error() && !showModal()) {
+    <div class="alert alert-error">
+      <span aria-hidden="true" class="material-icons">error_outline</span>
+      {{ error() }}
+    </div>
+  }
+
+  <!-- ── Filter Bar ─────────────────────────────────────────── -->
+  <div class="filter-bar">
+    <div class="search-wrap">
+      <span aria-hidden="true" class="material-icons">search</span>
+      <input
+        type="text"
+        [placeholder]="'admin.leaveTypes.searchPlaceholder' | translate"
+        [attr.aria-label]="'admin.leaveTypes.searchPlaceholder' | translate"
+        [value]="filterText()"
+        (input)="filterText.set($any($event.target).value)"
+      />
+      @if (filterText()) {
+        <button
+          class="clear-btn"
+          [attr.aria-label]="'common.clear' | translate"
+          (click)="filterText.set('')"
+        >
+          <span aria-hidden="true" class="material-icons">close</span>
+        </button>
+      }
+    </div>
+
+    <div class="tab-filter">
+      <button
+        class="tab-btn"
+        [class.active]="filterActive() === 'all'"
+        (click)="filterActive.set('all')"
+      >
+        {{ 'common.all' | translate }}
+      </button>
+      <button
+        class="tab-btn"
+        [class.active]="filterActive() === 'active'"
+        (click)="filterActive.set('active')"
+      >
+        {{ 'common.active' | translate }}
+      </button>
+      <button
+        class="tab-btn"
+        [class.active]="filterActive() === 'inactive'"
+        (click)="filterActive.set('inactive')"
+      >
+        {{ 'common.inactive' | translate }}
+      </button>
+    </div>
+  </div>
+
+  <!-- ── Table ─────────────────────────────────────────────── -->
+  <div class="table-card">
+    @if (loading()) {
+      <div class="loading-wrap">
+        <div class="spinner"></div>
+        <span>{{ 'admin.leaveTypes.loading' | translate }}</span>
+      </div>
+    }
+
+    @if (!loading()) {
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>{{ 'admin.leaveTypes.columns.code' | translate }}</th>
+            <th>{{ 'admin.leaveTypes.columns.name' | translate }}</th>
+            <th>{{ 'admin.leaveTypes.columns.days' | translate }}</th>
+            <th>{{ 'admin.leaveTypes.columns.paid' | translate }}</th>
+            <th>{{ 'admin.leaveTypes.columns.carryFwd' | translate }}</th>
+            <th>{{ 'admin.leaveTypes.columns.docReq' | translate }}</th>
+            <th>{{ 'admin.leaveTypes.columns.gender' | translate }}</th>
+            <th>{{ 'admin.leaveTypes.columns.status' | translate }}</th>
+            <th>{{ 'admin.leaveTypes.columns.actions' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (filteredTypes().length === 0) {
+            <tr>
+              <td colspan="10">
+                <div class="empty-state">
+                  <span aria-hidden="true" class="material-icons">event_busy</span>
+                  <p>{{ 'admin.leaveTypes.emptyTitle' | translate }}</p>
+                  <small>{{ 'admin.leaveTypes.emptyHint' | translate }}</small>
+                </div>
+              </td>
+            </tr>
+          }
+
+          @for (lt of filteredTypes(); track lt.leaveTypeId; let i = $index) {
+            <tr class="data-row" [class.inactive-row]="!lt.isActive">
+              <td class="cell-num">{{ i + 1 }}</td>
+
+              <td>
+                <span class="code-badge">{{ lt.code }}</span>
+              </td>
+
+              <td>
+                <div class="name-cell">
+                  <span class="name-en">{{ lt.nameEn }}</span>
+                  <span class="name-ar">{{ lt.nameAr }}</span>
+                </div>
+              </td>
+
+              <td class="cell-center">
+                <span class="days-badge">{{ lt.defaultDays }}</span>
+              </td>
+
+              <td class="cell-center">
+                @if (lt.isPaid) {
+                  <span aria-hidden="true" class="material-icons icon-yes">check_circle</span>
+                } @else {
+                  <span aria-hidden="true" class="material-icons icon-no">cancel</span>
+                }
+              </td>
+
+              <td class="cell-center">
+                @if (lt.isCarryForward) {
+                  <div class="carry-info">
+                    <span aria-hidden="true" class="material-icons icon-yes">check_circle</span>
+                    <span class="carry-days">{{
+                      'admin.leaveTypes.maxDays' | translate: { days: lt.maxCarryDays }
+                    }}</span>
+                  </div>
+                } @else {
+                  <span aria-hidden="true" class="material-icons icon-no">cancel</span>
+                }
+              </td>
+
+              <td class="cell-center">
+                @if (lt.requiresDocument) {
+                  <span aria-hidden="true" class="material-icons icon-yes">check_circle</span>
+                } @else {
+                  <span aria-hidden="true" class="material-icons icon-no">cancel</span>
+                }
+              </td>
+
+              <td class="cell-center">
+                <span class="gender-badge" [class]="getGenderBadge(lt.applicableGender)">
+                  {{ lt.applicableGender }}
+                </span>
+              </td>
+
+              <td>
+                <span
+                  class="status-badge"
+                  [class.status-active]="lt.isActive"
+                  [class.status-inactive]="!lt.isActive"
+                >
+                  <span class="status-dot"></span>
+                  {{ (lt.isActive ? 'common.active' : 'common.inactive') | translate }}
+                </span>
+              </td>
+
+              <td>
+                <div class="action-wrap">
+                  <button
+                    class="act-btn btn-edit"
+                    [title]="'common.edit' | translate"
+                    [attr.aria-label]="'common.edit' | translate"
+                    (click)="openEdit(lt)"
+                  >
+                    <span aria-hidden="true" class="material-icons">edit</span>
+                  </button>
+                  <button
+                    class="act-btn"
+                    [class.btn-deactivate]="lt.isActive"
+                    [class.btn-activate]="!lt.isActive"
+                    [title]="
+                      (lt.isActive ? 'admin.leaveTypes.deactivate' : 'admin.leaveTypes.activate')
+                        | translate
+                    "
+                    [attr.aria-label]="
+                      (lt.isActive ? 'admin.leaveTypes.deactivate' : 'admin.leaveTypes.activate')
+                        | translate
+                    "
+                    (click)="openConfirm(lt)"
+                  >
+                    <span aria-hidden="true" class="material-icons">
+                      {{ lt.isActive ? 'toggle_off' : 'toggle_on' }}
+                    </span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </div>
+</div>
+<!-- end admin-page -->
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!-- MODAL — Create / Edit Leave Type                          -->
+<!-- ══════════════════════════════════════════════════════════ -->
+@if (showModal()) {
+  <div class="modal-backdrop" (click)="closeModal()">
+    <div
+      class="modal"
+      (click)="$event.stopPropagation()"
+      [appAccessibleDialog]="'lt-modal-title'"
+      (dialogClosed)="closeModal()"
+      cdkTrapFocus
+      cdkTrapFocusAutoCapture
+    >
+      <!-- Modal header -->
+      <div class="modal-header">
+        <h2 id="lt-modal-title" class="modal-title">
+          {{
+            (isEditMode() ? 'admin.leaveTypes.editTitle' : 'admin.leaveTypes.addLeaveType')
+              | translate
+          }}
+        </h2>
+        <button
+          class="modal-close"
+          [attr.aria-label]="'common.close' | translate"
+          (click)="closeModal()"
+        >
+          <span aria-hidden="true" class="material-icons">close</span>
+        </button>
+      </div>
+
+      <!-- Modal error -->
+      @if (error()) {
+        <div class="modal-alert">
+          <span aria-hidden="true" class="material-icons">error_outline</span>
+          {{ error() }}
+        </div>
+      }
+
+      <!-- Form -->
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+        <div class="modal-body">
+          <!-- Row 1: Code + Sort -->
+          <div class="field-row">
+            <div class="field">
+              <label for="lt-code"
+                >{{ 'admin.leaveTypes.code' | translate }} <span class="req">*</span></label
+              >
+              <input
+                id="lt-code"
+                formControlName="code"
+                [placeholder]="'admin.leaveTypes.codePlaceholder' | translate"
+                [class.readonly-inp]="isEditMode()"
+              />
+              @if (isInvalid('code')) {
+                <span class="field-error">{{ getError('code') }}</span>
+              }
+              @if (!isEditMode()) {
+                <span class="field-hint">{{ 'admin.leaveTypes.codeHint' | translate }}</span>
+              }
+            </div>
+            <div class="field field-sm">
+              <label for="lt-sort-order">{{ 'admin.leaveTypes.sortOrder' | translate }}</label>
+              <input id="lt-sort-order" type="number" formControlName="sortOrder" min="0" />
+            </div>
+          </div>
+
+          <!-- Row 2: Names -->
+          <div class="field-row">
+            <div class="field">
+              <label for="lt-name-en"
+                >{{ 'admin.leaveTypes.nameEn' | translate }} <span class="req">*</span></label
+              >
+              <input
+                id="lt-name-en"
+                formControlName="nameEn"
+                [placeholder]="'admin.leaveTypes.nameEnPlaceholder' | translate"
+              />
+              @if (isInvalid('nameEn')) {
+                <span class="field-error">{{ getError('nameEn') }}</span>
+              }
+            </div>
+            <div class="field">
+              <label for="lt-name-ar"
+                >{{ 'admin.leaveTypes.nameAr' | translate }} <span class="req">*</span></label
+              >
+              <input
+                id="lt-name-ar"
+                formControlName="nameAr"
+                placeholder="e.g. إجازة سنوية"
+                dir="rtl"
+              />
+              @if (isInvalid('nameAr')) {
+                <span class="field-error">{{ getError('nameAr') }}</span>
+              }
+            </div>
+          </div>
+
+          <!-- Description -->
+          <div class="field">
+            <label for="lt-description">{{ 'admin.leaveTypes.description' | translate }}</label>
+            <textarea
+              id="lt-description"
+              formControlName="description"
+              [placeholder]="'admin.leaveTypes.descriptionPlaceholder' | translate"
+              rows="2"
+            ></textarea>
+          </div>
+
+          <!-- Row 3: Days -->
+          <div class="field-row">
+            <div class="field">
+              <label for="lt-default-days"
+                >{{ 'admin.leaveTypes.defaultDays' | translate }} <span class="req">*</span></label
+              >
+              <input
+                id="lt-default-days"
+                type="number"
+                formControlName="defaultDays"
+                min="0"
+                max="365"
+              />
+              @if (isInvalid('defaultDays')) {
+                <span class="field-error">{{ getError('defaultDays') }}</span>
+              }
+            </div>
+            <div class="field">
+              <label for="lt-max-consecutive-days">{{
+                'admin.leaveTypes.maxConsecutiveDays' | translate
+              }}</label>
+              <input
+                id="lt-max-consecutive-days"
+                type="number"
+                formControlName="maxConsecutiveDays"
+                min="0"
+              />
+              <span class="field-hint">{{ 'admin.leaveTypes.noLimitHint' | translate }}</span>
+            </div>
+            <div class="field">
+              <label for="lt-min-notice-days">{{
+                'admin.leaveTypes.minNoticeDays' | translate
+              }}</label>
+              <input
+                id="lt-min-notice-days"
+                type="number"
+                formControlName="minNoticeDays"
+                min="0"
+              />
+              <span class="field-hint">{{ 'admin.leaveTypes.minNoticeHint' | translate }}</span>
+            </div>
+          </div>
+
+          <!-- Row 4: Toggles -->
+          <div class="toggles-grid">
+            <label class="toggle-item">
+              <div class="toggle-info">
+                <span class="toggle-label">{{ 'admin.leaveTypes.paidLeave' | translate }}</span>
+                <span class="toggle-hint">{{ 'admin.leaveTypes.paidLeaveHint' | translate }}</span>
+              </div>
+              <div class="toggle-wrap">
+                <input type="checkbox" formControlName="isPaid" class="toggle-inp" />
+                <span class="toggle-slider"></span>
+              </div>
+            </label>
+
+            <label class="toggle-item">
+              <div class="toggle-info">
+                <span class="toggle-label">{{ 'admin.leaveTypes.carryForward' | translate }}</span>
+                <span class="toggle-hint">{{
+                  'admin.leaveTypes.carryForwardHint' | translate
+                }}</span>
+              </div>
+              <div class="toggle-wrap">
+                <input type="checkbox" formControlName="isCarryForward" class="toggle-inp" />
+                <span class="toggle-slider"></span>
+              </div>
+            </label>
+
+            <label class="toggle-item">
+              <div class="toggle-info">
+                <span class="toggle-label">{{
+                  'admin.leaveTypes.requiresDocument' | translate
+                }}</span>
+                <span class="toggle-hint">{{
+                  'admin.leaveTypes.requiresDocumentHint' | translate
+                }}</span>
+              </div>
+              <div class="toggle-wrap">
+                <input type="checkbox" formControlName="requiresDocument" class="toggle-inp" />
+                <span class="toggle-slider"></span>
+              </div>
+            </label>
+
+            @if (isEditMode()) {
+              <label class="toggle-item">
+                <div class="toggle-info">
+                  <span class="toggle-label">{{ 'common.active' | translate }}</span>
+                  <span class="toggle-hint">{{ 'admin.leaveTypes.activeHint' | translate }}</span>
+                </div>
+                <div class="toggle-wrap">
+                  <input type="checkbox" formControlName="isActive" class="toggle-inp" />
+                  <span class="toggle-slider"></span>
+                </div>
+              </label>
+            }
+          </div>
+
+          <!-- Row 4b: Upload limits (only relevant when a document is required) -->
+          @if (ctrl('requiresDocument').value) {
+            <div class="field-row">
+              <div class="field">
+                <label for="lt-doc-extensions">{{
+                  'admin.leaveTypes.docAllowedExtensions' | translate
+                }}</label>
+                <input
+                  id="lt-doc-extensions"
+                  formControlName="docAllowedExtensions"
+                  placeholder="PDF,JPG,PNG"
+                />
+                <span class="field-hint">{{
+                  'admin.leaveTypes.docAllowedExtensionsHint' | translate
+                }}</span>
+                @if (isInvalid('docAllowedExtensions')) {
+                  <span class="field-error">{{ getError('docAllowedExtensions') }}</span>
+                }
+              </div>
+              <div class="field">
+                <label for="lt-doc-max-size">{{
+                  'admin.leaveTypes.docMaxFileSize' | translate
+                }}</label>
+                <input
+                  id="lt-doc-max-size"
+                  type="number"
+                  formControlName="docMaxFileSizeMb"
+                  min="1"
+                />
+                @if (isInvalid('docMaxFileSizeMb')) {
+                  <span class="field-error">{{ getError('docMaxFileSizeMb') }}</span>
+                }
+              </div>
+            </div>
+          }
+
+          <!-- Row 5: Max carry days + gender -->
+          <div class="field-row">
+            <div class="field">
+              <label for="lt-max-carry-days">{{
+                'admin.leaveTypes.maxCarryDays' | translate
+              }}</label>
+              <input id="lt-max-carry-days" type="number" formControlName="maxCarryDays" min="0" />
+              <span class="field-hint">{{ 'admin.leaveTypes.maxCarryDaysHint' | translate }}</span>
+            </div>
+            <div class="field">
+              <label for="lt-applicable-gender"
+                >{{ 'admin.leaveTypes.applicableGender' | translate }}
+                <span class="req">*</span></label
+              >
+              <select id="lt-applicable-gender" formControlName="applicableGender">
+                @for (g of genderOptions; track g) {
+                  <option [value]="g">{{ g }}</option>
+                }
+              </select>
+            </div>
+          </div>
+        </div>
+        <!-- end modal-body -->
+
+        <!-- Modal footer -->
+        <div class="modal-footer">
+          <button type="button" class="btn-cancel" (click)="closeModal()">
+            {{ 'common.cancel' | translate }}
+          </button>
+          <button type="submit" class="btn-save" [disabled]="saving()">
+            @if (saving()) {
+              <div class="btn-spinner"></div>
+              <span>{{ 'admin.leaveTypes.saving' | translate }}</span>
+            } @else {
+              <span aria-hidden="true" class="material-icons">save</span>
+              <span>{{
+                (isEditMode() ? 'admin.leaveTypes.update' : 'admin.leaveTypes.create') | translate
+              }}</span>
+            }
+          </button>
+        </div>
+      </form>
+    </div>
+    <!-- end modal -->
+  </div>
+  <!-- end backdrop -->
+}
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!-- CONFIRM DIALOG — Activate / Deactivate                    -->
+<!-- ══════════════════════════════════════════════════════════ -->
+@if (showConfirm()) {
+  <div class="modal-backdrop" (click)="cancelConfirm()">
+    <div
+      class="confirm-dialog"
+      (click)="$event.stopPropagation()"
+      [appAccessibleDialog]="'lt-confirm-title'"
+      (dialogClosed)="cancelConfirm()"
+      cdkTrapFocus
+      cdkTrapFocusAutoCapture
+    >
+      <div
+        class="confirm-icon"
+        [class.icon-warn]="confirmTarget()?.isActive"
+        [class.icon-info]="!confirmTarget()?.isActive"
+      >
+        <span aria-hidden="true" class="material-icons">
+          {{ confirmTarget()?.isActive ? 'toggle_off' : 'toggle_on' }}
+        </span>
+      </div>
+      <h3 id="lt-confirm-title" class="confirm-title">
+        {{
+          (confirmTarget()?.isActive
+            ? 'admin.leaveTypes.deactivateTitle'
+            : 'admin.leaveTypes.activateTitle'
+          ) | translate
+        }}
+      </h3>
+      <p class="confirm-msg">
+        @if (confirmTarget()?.isActive) {
+          <strong>{{ confirmTarget()?.nameEn }}</strong>
+          {{ 'admin.leaveTypes.deactivateMsg' | translate }}
+        } @else {
+          <strong>{{ confirmTarget()?.nameEn }}</strong>
+          {{ 'admin.leaveTypes.activateMsg' | translate }}
+        }
+      </p>
+      <div class="confirm-actions">
+        <button class="btn-cancel" (click)="cancelConfirm()">
+          {{ 'common.cancel' | translate }}
+        </button>
+        <button
+          class="btn-confirm"
+          [class.btn-danger]="confirmTarget()?.isActive"
+          [class.btn-success]="!confirmTarget()?.isActive"
+          (click)="confirmToggle()"
+        >
+          {{
+            (confirmTarget()?.isActive
+              ? 'admin.leaveTypes.deactivate'
+              : 'admin.leaveTypes.activate'
+            ) | translate
+          }}
+        </button>
+      </div>
+    </div>
+  </div>
+}

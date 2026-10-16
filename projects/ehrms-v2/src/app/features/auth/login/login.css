@@ -1,0 +1,461 @@
+/* Login: Aurora Glass. The body backdrop (material-theme.scss) shows through; panels are glass. Tokens only,
+   logical properties throughout so Arabic mirrors without overrides. */
+
+.login-shell {
+  --flip: 1; /* -1 in RTL: mirrors directional motion and the arrow */
+  display: flex;
+  min-block-size: 100vh;
+}
+:host-context([dir='rtl']) .login-shell {
+  --flip: -1;
+}
+
+/* ── Brand panel ─────────────────────────────── */
+.brand-panel {
+  position: relative;
+  inline-size: 48%;
+  max-inline-size: 620px;
+  flex-shrink: 0;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+}
+
+/* Decorative blobs (.shape) are hidden: the global aurora backdrop already supplies the glow, and clipping
+   them at the panel edge left a visible seam. */
+.shape {
+  display: none;
+}
+
+.brand-content {
+  position: relative;
+  z-index: 1;
+  inline-size: 100%;
+  padding: 64px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.brand-logo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  color: var(--mat-sys-on-surface);
+}
+.brand-logo svg {
+  padding: 8px;
+  box-sizing: content-box;
+  border-radius: var(--radius-md);
+  background: var(--grad-primary);
+  box-shadow: var(--primary-shadow);
+  stroke: #fff;
+}
+.brand-logo svg path:last-child {
+  stroke: #fff;
+}
+.logo-text {
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: 0.22em;
+}
+
+.brand-headline {
+  margin: 0;
+  font-size: 40px;
+  line-height: 1.15;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  color: var(--mat-sys-on-surface);
+}
+.brand-sub {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+/* ── Product tour (4 glass cards, 16 s cycle) ── */
+.tour {
+  position: relative;
+  block-size: 288px;
+  margin-block-start: var(--space-2);
+}
+.slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  animation: slideCycle 16s ease-in-out infinite;
+}
+.t1 {
+  animation-delay: 0s;
+}
+.t2 {
+  animation-delay: -12s;
+}
+.t3 {
+  animation-delay: -8s;
+}
+.t4 {
+  animation-delay: -4s;
+}
+
+.scard {
+  box-sizing: border-box;
+  block-size: 100%;
+  padding: var(--space-5);
+  border-radius: var(--radius-lg);
+  background: var(--glass-bg-strong);
+  border: var(--glass-border);
+  box-shadow: var(--glass-shine), var(--shadow-3);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+}
+.shead {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+.sicon {
+  inline-size: 48px;
+  block-size: 48px;
+  border-radius: var(--radius-md);
+  background: var(--grad-primary);
+  color: #fff;
+  box-shadow: var(--primary-shadow);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.stitle {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--mat-sys-on-surface);
+}
+.ssub {
+  margin-block-start: 2px;
+  font-size: 14px;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.people {
+  margin-block-start: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+.person {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+.avatar {
+  inline-size: 40px;
+  block-size: 40px;
+  border-radius: 50%;
+}
+.lines {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.skel {
+  block-size: 8px;
+  border-radius: 4px;
+  background: var(--mat-sys-outline-variant);
+}
+.skel.faint {
+  background: var(--mat-sys-surface-container-high);
+}
+.pill {
+  inline-size: 56px;
+  block-size: 24px;
+  border-radius: 12px;
+}
+
+.bars {
+  margin-block-start: var(--space-5);
+  block-size: 120px;
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-4);
+  border-block-end: 1px solid var(--mat-sys-outline-variant);
+}
+.bar {
+  flex: 1;
+  border-radius: 8px 8px 4px 4px;
+  background: linear-gradient(180deg, #8b5cf6, #2563eb);
+  transform-origin: bottom;
+  animation: barGrow 16s ease-out infinite;
+  animation-delay: -12s;
+}
+
+.cells {
+  margin-block-start: var(--space-5);
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: var(--space-2);
+}
+.cell {
+  block-size: 24px;
+  border-radius: var(--radius-sm);
+}
+.c0 {
+  background: var(--mat-sys-surface-container-high);
+}
+.c1 {
+  background: var(--grad-primary);
+}
+.c2 {
+  background: var(--mat-sys-primary-container);
+}
+
+.chart {
+  display: block;
+  margin-block-start: var(--space-4);
+}
+.chart path:first-child {
+  stroke: var(--mat-sys-outline-variant);
+}
+.line {
+  stroke: var(--mat-sys-primary);
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: drawLine 16s ease-out infinite;
+  animation-delay: -4s;
+}
+/* Time runs right to left in Arabic, so the trend line mirrors with the layout. */
+:host-context([dir='rtl']) .chart {
+  transform: scaleX(-1);
+}
+
+.dots {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+}
+.dot {
+  block-size: 8px;
+  inline-size: 8px;
+  border-radius: 4px;
+  background: var(--mat-sys-outline-variant);
+  animation: dotc 16s ease-in-out infinite;
+}
+
+@keyframes slideCycle {
+  0% {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  3%,
+  22% {
+    opacity: 1;
+    transform: none;
+  }
+  25%,
+  100% {
+    opacity: 0;
+    transform: translateY(-18px);
+  }
+}
+@keyframes dotc {
+  0%,
+  24% {
+    inline-size: 26px;
+    background: var(--mat-sys-primary);
+  }
+  25%,
+  100% {
+    inline-size: 8px;
+    background: var(--mat-sys-outline-variant);
+  }
+}
+@keyframes barGrow {
+  0% {
+    transform: scaleY(0.15);
+  }
+  5%,
+  100% {
+    transform: scaleY(1);
+  }
+}
+@keyframes drawLine {
+  0% {
+    stroke-dashoffset: 1;
+  }
+  10%,
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+/* ── Form panel: one glass card ──────────────── */
+.form-panel {
+  position: relative;
+  flex: 1;
+  min-inline-size: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 24px;
+}
+
+.lang-switcher-wrap {
+  position: absolute;
+  inset-block-start: var(--space-5);
+  inset-inline-end: var(--space-6);
+}
+
+.form-wrap {
+  box-sizing: border-box;
+  inline-size: 100%;
+  max-inline-size: 440px;
+  padding: 40px;
+  border-radius: 20px;
+  background: var(--glass-bg-strong);
+  border: var(--glass-border);
+  box-shadow: var(--glass-shine), var(--shadow-3);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  --mat-button-filled-container-height: 52px;
+  --mat-button-filled-container-shape: 14px;
+}
+
+.form-header {
+  margin-block-end: var(--space-6);
+}
+.form-header h2 {
+  margin: 0;
+  font-size: 32px;
+  line-height: 1.2;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  color: var(--mat-sys-on-surface);
+}
+.form-header p {
+  margin: 10px 0 0;
+  font-size: 16px;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+/* ── Error banner ────────────────────────────── */
+.error-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  background: var(--status-rejected-bg);
+  border: 1px solid var(--status-rejected-fg);
+  margin-block-end: var(--space-5);
+}
+.error-banner mat-icon {
+  color: var(--status-rejected-fg);
+  flex-shrink: 0;
+}
+.error-banner span {
+  font-size: 14px;
+  color: var(--status-rejected-fg);
+  line-height: 1.5;
+}
+
+.full-width {
+  inline-size: 100%;
+  margin-block-end: var(--space-2); /* keeps the error text clear of the next field */
+}
+
+.forgot-note {
+  margin: 0 0 var(--space-5);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+/* Reserved height so the button does not jump when the progress bar appears. */
+.track {
+  block-size: 4px;
+  margin-block-end: var(--space-4);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+/* ── Submit button: gradient comes from the global theme ── */
+.submit-btn {
+  inline-size: 100%;
+  block-size: 52px;
+  font-size: 16px;
+  font-weight: 700;
+  display: flex;
+  /* Material puts the icon first; reversed so the arrow follows the label. */
+  flex-direction: row-reverse;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  transition:
+    box-shadow var(--motion-base),
+    transform var(--motion-base);
+}
+.submit-btn:not(:disabled):hover {
+  transform: translateY(-1px);
+}
+/* The arrow points toward the reading direction: scaleX(-1) in Arabic, nudge the same way on hover. */
+.submit-btn .arrow {
+  margin: 0;
+  transform: scaleX(var(--flip));
+  transition: translate var(--motion-base);
+}
+.submit-btn:hover .arrow {
+  translate: calc(4px * var(--flip));
+}
+
+.footer-text {
+  text-align: center;
+  font-size: 14px;
+  color: var(--mat-sys-on-surface-variant);
+  margin-block-start: var(--space-6);
+}
+
+/* ── Responsive ──────────────────────────────── */
+@media (max-width: 900px) {
+  .login-shell {
+    flex-direction: column;
+  }
+  .brand-panel {
+    display: none;
+  }
+}
+@media (max-width: 480px) {
+  .form-panel {
+    padding: var(--space-4);
+  }
+  .form-wrap {
+    padding: var(--space-5);
+  }
+  .lang-switcher-wrap {
+    inset-inline-end: var(--space-4);
+  }
+}
+
+/* Reduced motion: still tour (first card), no movement. */
+@media (prefers-reduced-motion: reduce) {
+  .slide,
+  .dot,
+  .bar,
+  .line {
+    animation: none;
+  }
+  .t1 {
+    opacity: 1;
+  }
+  .dot.t1 {
+    inline-size: 26px;
+    background: var(--mat-sys-primary);
+  }
+  .line {
+    stroke-dashoffset: 0;
+  }
+  .submit-btn,
+  .submit-btn .arrow {
+    transition: none;
+  }
+}

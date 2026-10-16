@@ -1,0 +1,464 @@
+<div class="admin-page">
+  <!-- ── Page Header ──────────────────────────────────────── -->
+  <div class="page-header">
+    <div class="header-left">
+      <h1 class="page-title">{{ 'admin.holidayCalendar.title' | translate }}</h1>
+      <div class="stat-chips">
+        <span class="chip chip-total">{{
+          'admin.holidayCalendar.activeChip' | translate: { count: totalActive() }
+        }}</span>
+        <span class="chip chip-public">{{
+          'admin.holidayCalendar.publicChip' | translate: { count: publicCount() }
+        }}</span>
+        <span class="chip chip-religious">{{
+          'admin.holidayCalendar.religiousChip' | translate: { count: religiousCount() }
+        }}</span>
+      </div>
+    </div>
+    <div class="header-right">
+      <!-- Year selector -->
+      <div class="year-nav">
+        <button
+          class="year-btn"
+          [attr.aria-label]="'common.previous' | translate"
+          (click)="onYearChange(selectedYear() - 1)"
+        >
+          <span aria-hidden="true" class="material-icons">chevron_left</span>
+        </button>
+        <select
+          class="year-select"
+          [attr.aria-label]="'admin.holidayCalendar.selectYear' | translate"
+          [value]="selectedYear()"
+          (change)="onYearChange(+$any($event.target).value)"
+        >
+          @for (y of yearOptions; track y) {
+            <option [value]="y">{{ y }}</option>
+          }
+        </select>
+        <button
+          class="year-btn"
+          [attr.aria-label]="'common.next' | translate"
+          (click)="onYearChange(selectedYear() + 1)"
+        >
+          <span aria-hidden="true" class="material-icons">chevron_right</span>
+        </button>
+      </div>
+      <button class="btn-add" (click)="openCreate()">
+        <span aria-hidden="true" class="material-icons">add</span>
+        {{ 'admin.holidayCalendar.addHoliday' | translate }}
+      </button>
+    </div>
+  </div>
+
+  <!-- ── Alerts ─────────────────────────────────────────────── -->
+  @if (successMsg()) {
+    <div class="alert alert-success">
+      <span aria-hidden="true" class="material-icons">check_circle</span>
+      {{ successMsg() }}
+    </div>
+  }
+  @if (error() && !showModal()) {
+    <div class="alert alert-error">
+      <span aria-hidden="true" class="material-icons">error_outline</span>
+      {{ error() }}
+    </div>
+  }
+
+  <!-- ── Filter Bar ─────────────────────────────────────────── -->
+  <div class="filter-bar">
+    <div class="search-wrap">
+      <span aria-hidden="true" class="material-icons">search</span>
+      <input
+        type="text"
+        [placeholder]="'admin.holidayCalendar.searchPlaceholder' | translate"
+        [attr.aria-label]="'admin.holidayCalendar.searchPlaceholder' | translate"
+        [value]="filterText()"
+        (input)="filterText.set($any($event.target).value)"
+      />
+      @if (filterText()) {
+        <button
+          class="clear-btn"
+          [attr.aria-label]="'common.clear' | translate"
+          (click)="filterText.set('')"
+        >
+          <span aria-hidden="true" class="material-icons">close</span>
+        </button>
+      }
+    </div>
+
+    <select
+      class="filter-select"
+      [attr.aria-label]="'admin.holidayCalendar.holidayType' | translate"
+      [value]="filterType()"
+      (change)="filterType.set($any($event.target).value)"
+    >
+      <option value="">{{ 'admin.holidayCalendar.allTypes' | translate }}</option>
+      @for (t of holidayTypes; track t) {
+        <option [value]="t">{{ t }}</option>
+      }
+    </select>
+
+    <div class="tab-filter">
+      <button
+        class="tab-btn"
+        [class.active]="filterActive() === 'all'"
+        (click)="filterActive.set('all')"
+      >
+        {{ 'common.all' | translate }}
+      </button>
+      <button
+        class="tab-btn"
+        [class.active]="filterActive() === 'active'"
+        (click)="filterActive.set('active')"
+      >
+        {{ 'common.active' | translate }}
+      </button>
+      <button
+        class="tab-btn"
+        [class.active]="filterActive() === 'inactive'"
+        (click)="filterActive.set('inactive')"
+      >
+        {{ 'common.inactive' | translate }}
+      </button>
+    </div>
+  </div>
+
+  <!-- ── Loading ───────────────────────────────────────────── -->
+  @if (loading()) {
+    <div class="loading-wrap">
+      <div class="spinner"></div>
+      <span>{{ 'admin.holidayCalendar.loadingFor' | translate: { year: selectedYear() } }}</span>
+    </div>
+  }
+
+  <!-- ── Empty state ───────────────────────────────────────── -->
+  @if (!loading() && filteredHolidays().length === 0) {
+    <div class="empty-card">
+      <span aria-hidden="true" class="material-icons">event_busy</span>
+      <p>{{ 'admin.holidayCalendar.emptyTitle' | translate: { year: selectedYear() } }}</p>
+      <small>{{ 'admin.holidayCalendar.emptyHint' | translate }}</small>
+      <button class="btn-add-sm" (click)="openCreate()">
+        <span aria-hidden="true" class="material-icons">add</span>
+        {{ 'admin.holidayCalendar.addHoliday' | translate }}
+      </button>
+    </div>
+  }
+
+  <!-- ── Month Groups ───────────────────────────────────────── -->
+  @if (!loading() && monthGroups().length > 0) {
+    <div class="months-wrap">
+      @for (group of monthGroups(); track group.month) {
+        <div class="month-card">
+          <!-- Month header -->
+          <div class="month-header">
+            <span class="month-name">{{ group.month }}</span>
+            <span class="month-count">{{
+              'admin.holidayCalendar.holidaysCount' | translate: { count: group.items.length }
+            }}</span>
+          </div>
+
+          <!-- Holidays in this month -->
+          <div class="holiday-list">
+            @for (h of group.items; track h.holidayId) {
+              <div class="holiday-row" [class.inactive-row]="!h.isActive">
+                <!-- Date block -->
+                <div class="date-block">
+                  <span class="date-day">
+                    {{ h.holidayDate | slice: 8 : 10 }}
+                  </span>
+                  <span class="date-dow">{{ getDayOfWeek(h.holidayDate) }}</span>
+                </div>
+
+                <!-- Holiday info -->
+                <div class="holiday-info">
+                  <div class="holiday-names">
+                    <span class="h-name-en">{{ h.holidayName }}</span>
+                    <span class="h-name-ar">{{ h.holidayNameAr }}</span>
+                  </div>
+                  <div class="holiday-meta">
+                    <span class="type-badge" [class]="getTypeBadgeClass(h.holidayType)">
+                      {{ h.holidayType }}
+                    </span>
+                    @if (h.isRecurring) {
+                      <span class="recurring-badge">
+                        <span aria-hidden="true" class="material-icons">event_repeat</span>
+                        {{ 'admin.holidayCalendar.recurring' | translate }}
+                      </span>
+                    }
+                    @if (h.description) {
+                      <span class="h-desc">{{ h.description }}</span>
+                    }
+                  </div>
+                </div>
+
+                <!-- Status -->
+                <div class="holiday-status">
+                  <span
+                    class="status-badge"
+                    [class.status-active]="h.isActive"
+                    [class.status-inactive]="!h.isActive"
+                  >
+                    <span class="status-dot"></span>
+                    {{ (h.isActive ? 'common.active' : 'common.inactive') | translate }}
+                  </span>
+                </div>
+
+                <!-- Actions -->
+                <div class="holiday-actions">
+                  <button
+                    class="act-btn btn-edit"
+                    [title]="'common.edit' | translate"
+                    [attr.aria-label]="'common.edit' | translate"
+                    (click)="openEdit(h)"
+                  >
+                    <span aria-hidden="true" class="material-icons">edit</span>
+                  </button>
+                  <button
+                    class="act-btn"
+                    [class.btn-deactivate]="h.isActive"
+                    [class.btn-activate]="!h.isActive"
+                    [title]="
+                      (h.isActive
+                        ? 'admin.holidayCalendar.deactivate'
+                        : 'admin.holidayCalendar.activate'
+                      ) | translate
+                    "
+                    (click)="openConfirm(h)"
+                  >
+                    <span aria-hidden="true" class="material-icons">
+                      {{ h.isActive ? 'toggle_off' : 'toggle_on' }}
+                    </span>
+                  </button>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!-- MODAL — Add / Edit Holiday                                -->
+<!-- ══════════════════════════════════════════════════════════ -->
+@if (showModal()) {
+  <div class="modal-backdrop" (click)="closeModal()">
+    <div
+      class="modal"
+      (click)="$event.stopPropagation()"
+      [appAccessibleDialog]="'hc-modal-title'"
+      (dialogClosed)="closeModal()"
+      cdkTrapFocus
+      cdkTrapFocusAutoCapture
+    >
+      <div class="modal-header">
+        <h2 id="hc-modal-title" class="modal-title">
+          {{
+            (isEditMode() ? 'admin.holidayCalendar.editTitle' : 'admin.holidayCalendar.addHoliday')
+              | translate
+          }}
+        </h2>
+        <button
+          class="modal-close"
+          [attr.aria-label]="'common.close' | translate"
+          (click)="closeModal()"
+        >
+          <span aria-hidden="true" class="material-icons">close</span>
+        </button>
+      </div>
+
+      @if (error()) {
+        <div class="modal-alert">
+          <span aria-hidden="true" class="material-icons">error_outline</span>
+          {{ error() }}
+        </div>
+      }
+
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+        <div class="modal-body">
+          <!-- Names -->
+          <div class="field-row">
+            <div class="field">
+              <label for="hc-name-en"
+                >{{ 'admin.holidayCalendar.holidayNameEn' | translate }}
+                <span class="req">*</span></label
+              >
+              <input
+                id="hc-name-en"
+                formControlName="holidayName"
+                [placeholder]="'admin.holidayCalendar.holidayNameEnPlaceholder' | translate"
+              />
+              @if (isInvalid('holidayName')) {
+                <span class="field-error">{{ getError('holidayName') }}</span>
+              }
+            </div>
+            <div class="field">
+              <label for="hc-name-ar"
+                >{{ 'admin.holidayCalendar.holidayNameAr' | translate }}
+                <span class="req">*</span></label
+              >
+              <input
+                id="hc-name-ar"
+                formControlName="holidayNameAr"
+                placeholder="e.g. العيد الوطني"
+                dir="rtl"
+              />
+              @if (isInvalid('holidayNameAr')) {
+                <span class="field-error">{{ getError('holidayNameAr') }}</span>
+              }
+            </div>
+          </div>
+
+          <!-- Date + Type -->
+          <div class="field-row">
+            <div class="field">
+              <label for="hc-date"
+                >{{ 'admin.holidayCalendar.holidayDate' | translate }}
+                <span class="req">*</span></label
+              >
+              <input id="hc-date" type="date" formControlName="holidayDate" />
+              @if (isInvalid('holidayDate')) {
+                <span class="field-error">{{ getError('holidayDate') }}</span>
+              }
+            </div>
+            <div class="field">
+              <label for="hc-type"
+                >{{ 'admin.holidayCalendar.holidayType' | translate }}
+                <span class="req">*</span></label
+              >
+              <select id="hc-type" formControlName="holidayType">
+                @for (t of holidayTypes; track t) {
+                  <option [value]="t">{{ t }}</option>
+                }
+              </select>
+            </div>
+          </div>
+
+          <!-- Description -->
+          <div class="field">
+            <label for="hc-description">{{
+              'admin.holidayCalendar.description' | translate
+            }}</label>
+            <textarea
+              id="hc-description"
+              formControlName="description"
+              [placeholder]="'admin.holidayCalendar.descriptionPlaceholder' | translate"
+              rows="2"
+            ></textarea>
+          </div>
+
+          <!-- Toggles -->
+          <div class="toggles-row">
+            <label class="toggle-item">
+              <div class="toggle-info">
+                <span class="toggle-label">{{
+                  'admin.holidayCalendar.recurringYearly' | translate
+                }}</span>
+                <span class="toggle-hint">{{
+                  'admin.holidayCalendar.recurringHint' | translate
+                }}</span>
+              </div>
+              <div class="toggle-wrap">
+                <input type="checkbox" formControlName="isRecurring" class="toggle-inp" />
+                <span class="toggle-slider"></span>
+              </div>
+            </label>
+
+            @if (isEditMode()) {
+              <label class="toggle-item">
+                <div class="toggle-info">
+                  <span class="toggle-label">{{ 'common.active' | translate }}</span>
+                  <span class="toggle-hint">{{
+                    'admin.holidayCalendar.activeHint' | translate
+                  }}</span>
+                </div>
+                <div class="toggle-wrap">
+                  <input type="checkbox" formControlName="isActive" class="toggle-inp" />
+                  <span class="toggle-slider"></span>
+                </div>
+              </label>
+            }
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-cancel" (click)="closeModal()">
+            {{ 'common.cancel' | translate }}
+          </button>
+          <button type="submit" class="btn-save" [disabled]="saving()">
+            @if (saving()) {
+              <div class="btn-spinner"></div>
+              <span>{{ 'admin.holidayCalendar.saving' | translate }}</span>
+            } @else {
+              <span aria-hidden="true" class="material-icons">save</span>
+              <span>{{
+                (isEditMode() ? 'admin.holidayCalendar.update' : 'admin.holidayCalendar.addHoliday')
+                  | translate
+              }}</span>
+            }
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!-- CONFIRM DIALOG                                            -->
+<!-- ══════════════════════════════════════════════════════════ -->
+@if (showConfirm()) {
+  <div class="modal-backdrop" (click)="cancelConfirm()">
+    <div
+      class="confirm-dialog"
+      (click)="$event.stopPropagation()"
+      [appAccessibleDialog]="'hc-confirm-title'"
+      (dialogClosed)="cancelConfirm()"
+      cdkTrapFocus
+      cdkTrapFocusAutoCapture
+    >
+      <div
+        class="confirm-icon"
+        [class.icon-warn]="confirmTarget()?.isActive"
+        [class.icon-info]="!confirmTarget()?.isActive"
+      >
+        <span aria-hidden="true" class="material-icons">event_busy</span>
+      </div>
+      <h3 id="hc-confirm-title" class="confirm-title">
+        {{
+          (confirmTarget()?.isActive
+            ? 'admin.holidayCalendar.deactivateTitle'
+            : 'admin.holidayCalendar.activateTitle'
+          ) | translate
+        }}
+      </h3>
+      <p class="confirm-msg">
+        <strong>{{ confirmTarget()?.holidayName }}</strong>
+        ({{ formatDate(confirmTarget()?.holidayDate ?? '') }})
+        @if (confirmTarget()?.isActive) {
+          {{ 'admin.holidayCalendar.excludedMsg' | translate }}
+        } @else {
+          {{ 'admin.holidayCalendar.includedMsg' | translate }}
+        }
+      </p>
+      <div class="confirm-actions">
+        <button class="btn-cancel" (click)="cancelConfirm()">
+          {{ 'common.cancel' | translate }}
+        </button>
+        <button
+          class="btn-confirm"
+          [class.btn-danger]="confirmTarget()?.isActive"
+          [class.btn-success]="!confirmTarget()?.isActive"
+          (click)="confirmToggle()"
+        >
+          {{
+            (confirmTarget()?.isActive
+              ? 'admin.holidayCalendar.deactivate'
+              : 'admin.holidayCalendar.activate'
+            ) | translate
+          }}
+        </button>
+      </div>
+    </div>
+  </div>
+}

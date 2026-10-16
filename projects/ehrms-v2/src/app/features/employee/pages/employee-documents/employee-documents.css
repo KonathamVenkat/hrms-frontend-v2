@@ -1,0 +1,348 @@
+/* Employee documents: glass document cards, category filter, upload drop zone. Buttons, alerts, modal, fields,
+   empty state and the confirm dialog come from the shared kit in styles.css. Logical properties throughout. */
+
+.docs-section {
+  display: block;
+}
+
+.doc-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+.stat-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 2px var(--space-3);
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+}
+.stat-chip .material-icons {
+  font-size: 14px;
+}
+.chip-total {
+  background: var(--mat-sys-primary-container);
+  color: var(--mat-sys-on-primary-container);
+}
+.chip-expired {
+  background: var(--status-rejected-bg);
+  color: var(--status-rejected-fg);
+}
+.chip-expiring {
+  background: var(--status-pending-bg);
+  color: var(--status-pending-fg);
+}
+.chip-verified {
+  background: var(--status-active-bg);
+  color: var(--status-active-fg);
+}
+
+/* ── Category filter ─────────────────────────────────────── */
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-block-end: var(--space-4);
+}
+.cat-btn {
+  min-block-size: 44px;
+  padding-inline: var(--space-4);
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: 999px;
+  background: var(--table-surface);
+  color: var(--mat-sys-on-surface-variant);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--motion-fast);
+}
+.cat-btn:hover {
+  border-color: var(--mat-sys-primary);
+  color: var(--mat-sys-primary);
+}
+.cat-btn.active {
+  background-image: var(--grad-primary);
+  border-color: transparent;
+  color: #fff;
+  box-shadow: var(--primary-shadow);
+}
+.cat-btn:focus-visible {
+  outline: 2px solid var(--mat-sys-primary);
+  outline-offset: 2px;
+}
+
+/* ── Cards ───────────────────────────────────────────────── */
+.docs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: var(--space-4);
+}
+.doc-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  background: var(--glass-bg);
+  border: var(--glass-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--glass-shine), var(--glass-shadow);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+}
+/* Expiry also shows as a text badge, so the coloured edge is never the only signal. */
+.doc-card.card-expired {
+  border-inline-start: 4px solid var(--status-rejected-fg);
+}
+.doc-card.card-expiring {
+  border-inline-start: 4px solid var(--status-pending-fg);
+}
+.doc-card-top {
+  display: flex;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+.file-icon-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+.file-icon {
+  font-size: 36px;
+}
+.ext-badge {
+  padding: 0 var(--space-2);
+  border-radius: var(--radius-sm);
+  background: var(--mat-sys-surface-container-high);
+  color: var(--mat-sys-on-surface-variant);
+  font-size: 10px;
+  font-weight: 700;
+}
+.doc-badges {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  flex: 1 1 120px;
+}
+.cat-badge,
+.expiry-badge {
+  padding: 2px var(--space-2);
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.cat-identity {
+  background: var(--status-approved-bg);
+  color: var(--status-approved-fg);
+}
+.cat-contract,
+.cat-cert {
+  background: var(--mat-sys-secondary-container);
+  color: var(--mat-sys-on-secondary-container);
+}
+.cat-education,
+.cat-financial {
+  background: var(--status-active-bg);
+  color: var(--status-active-fg);
+}
+.cat-medical {
+  background: var(--status-rejected-bg);
+  color: var(--status-rejected-fg);
+}
+.cat-other {
+  background: var(--mat-sys-surface-container-high);
+  color: var(--mat-sys-on-surface-variant);
+}
+.verified-badge {
+  display: inline-flex;
+  color: var(--status-active-fg);
+}
+.verified-badge .material-icons {
+  font-size: 20px;
+}
+.badge-expired {
+  background: var(--status-rejected-bg);
+  color: var(--status-rejected-fg);
+}
+.badge-soon {
+  background: var(--status-pending-bg);
+  color: var(--status-pending-fg);
+}
+.doc-actions {
+  display: flex;
+  margin-inline-start: auto;
+}
+
+.doc-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.doc-info p {
+  margin: 0;
+}
+.doc-name {
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+.doc-type {
+  color: var(--mat-sys-on-surface-variant);
+  font-size: 13px;
+}
+.doc-number {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  color: var(--mat-sys-primary);
+}
+.doc-number .material-icons {
+  font-size: 14px;
+}
+
+.doc-dates {
+  display: flex;
+  gap: var(--space-5);
+  padding-block: var(--space-2);
+  border-block: 1px solid var(--mat-sys-outline-variant);
+}
+.date-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.date-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--mat-sys-on-surface-variant);
+}
+/* Dates are left-to-right data inside an RTL card. */
+.date-val {
+  font-variant-numeric: tabular-nums;
+  unicode-bidi: plaintext;
+}
+.text-danger {
+  color: var(--status-rejected-fg);
+  font-weight: 700;
+}
+.text-warn {
+  color: var(--status-pending-fg);
+  font-weight: 700;
+}
+
+.doc-footer {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-2);
+  color: var(--mat-sys-on-surface-variant);
+  font-size: 12px;
+}
+.upload-date {
+  unicode-bidi: plaintext;
+}
+
+/* ── Upload drop zone ────────────────────────────────────── */
+.drop-zone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-5);
+  text-align: center;
+  border: 2px dashed var(--mat-sys-outline);
+  border-radius: var(--radius-md);
+  background: var(--table-surface);
+  cursor: pointer;
+  transition: var(--motion-fast);
+}
+.drop-zone:hover,
+.drop-zone.drag-active {
+  border-color: var(--mat-sys-primary);
+  background: color-mix(in srgb, var(--mat-sys-primary) 8%, var(--table-surface));
+}
+.drop-zone.file-selected {
+  border-style: solid;
+  border-color: var(--status-active-fg);
+  cursor: default;
+}
+.drop-zone:focus-visible {
+  outline: 2px solid var(--mat-sys-primary);
+  outline-offset: 2px;
+}
+.drop-icon {
+  font-size: 40px;
+  color: var(--mat-sys-primary);
+}
+.drop-text {
+  margin: 0;
+  font-weight: 600;
+}
+.drop-hint {
+  color: var(--mat-sys-on-surface-variant);
+}
+.selected-file {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  inline-size: 100%;
+  text-align: start;
+}
+.selected-info {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-inline-size: 0;
+}
+.selected-name {
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+.selected-size {
+  color: var(--mat-sys-on-surface-variant);
+  font-size: 12px;
+}
+.remove-file {
+  inline-size: 44px;
+  block-size: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--mat-sys-on-surface-variant);
+  cursor: pointer;
+}
+.remove-file:hover {
+  background: var(--status-rejected-bg);
+  color: var(--status-rejected-fg);
+}
+.remove-file:focus-visible {
+  outline: 2px solid var(--mat-sys-primary);
+  outline-offset: 2px;
+}
+
+.confirm-icon.icon-verify {
+  background: var(--status-active-bg);
+  color: var(--status-active-fg);
+}
+.btn-confirm.btn-verify-confirm {
+  background: #047857;
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .doc-card {
+    background: var(--mat-sys-surface-container);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}

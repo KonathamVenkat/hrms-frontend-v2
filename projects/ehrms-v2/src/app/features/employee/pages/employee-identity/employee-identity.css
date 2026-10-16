@@ -1,0 +1,248 @@
+/* Employee identity: glass info cards + inline edit form. Alerts, fields, buttons, spinner and the empty state
+   come from the shared kit in styles.css. Logical properties throughout. */
+
+.identity-section {
+  display: block;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 2px var(--space-3);
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+}
+.chip .material-icons {
+  font-size: 14px;
+}
+.chip-saved {
+  background: var(--status-active-bg);
+  color: var(--status-active-fg);
+}
+.chip-empty {
+  background: var(--mat-sys-surface-container-high);
+  color: var(--mat-sys-on-surface-variant);
+}
+
+/* Header edit button: same look as the shared primary button. */
+.btn-edit-info {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-block-size: 44px;
+  padding-inline: var(--space-5);
+  border: 0;
+  border-radius: var(--radius-md);
+  background-image: var(--grad-primary);
+  color: #fff;
+  font: inherit;
+  font-weight: 700;
+  box-shadow: var(--primary-shadow);
+  cursor: pointer;
+  transition: transform var(--motion-fast);
+}
+.btn-edit-info:hover {
+  transform: translateY(-1px);
+}
+.btn-edit-info:focus-visible {
+  outline: 2px solid var(--mat-sys-primary);
+  outline-offset: 2px;
+}
+.btn-edit-info .material-icons {
+  font-size: 20px;
+}
+
+/* ── View mode ───────────────────────────────────────────── */
+.identity-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: var(--space-4);
+}
+.info-card {
+  overflow: hidden;
+  background: var(--glass-bg);
+  border: var(--glass-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--glass-shine), var(--glass-shadow);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+}
+/* Expiry states also change the border, and the card header carries a text tag, so colour is never alone. */
+.info-card.card-warning {
+  border-color: var(--status-pending-fg);
+}
+.info-card.card-danger {
+  border-color: var(--status-rejected-fg);
+}
+.info-card-header {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-5);
+  background: var(--table-header-bg);
+  color: var(--mat-sys-on-surface-variant);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.info-card-header .material-icons {
+  font-size: 18px;
+  color: var(--mat-sys-primary);
+}
+.info-card-body {
+  padding-block: var(--space-1);
+  background: var(--table-surface);
+}
+.info-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-block-size: 48px;
+  padding: var(--space-2) var(--space-5);
+  border-block-end: 1px solid var(--mat-sys-outline-variant);
+}
+.info-row:last-child {
+  border-block-end: 0;
+}
+.info-label {
+  inline-size: 140px;
+  flex-shrink: 0;
+  color: var(--mat-sys-on-surface-variant);
+  font-size: 13px;
+  font-weight: 600;
+}
+.info-value {
+  flex: 1;
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
+}
+/* Identifiers are left-to-right data in a monospace face, aligned to the start. */
+.mono {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 13px;
+  unicode-bidi: plaintext;
+}
+.text-danger {
+  color: var(--status-rejected-fg);
+  font-weight: 700;
+}
+.text-warn {
+  color: var(--status-pending-fg);
+  font-weight: 700;
+}
+.expiry-tag {
+  margin-inline-start: auto;
+  padding: 1px var(--space-2);
+  border-radius: 999px;
+  font-size: 11px;
+  letter-spacing: 0;
+  text-transform: none;
+}
+.tag-expired {
+  background: var(--status-rejected-bg);
+  color: var(--status-rejected-fg);
+}
+.tag-soon {
+  background: var(--status-pending-bg);
+  color: var(--status-pending-fg);
+}
+
+/* Reveal / hide toggle for sensitive values. */
+.pii-value {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.pii-toggle {
+  inline-size: 44px;
+  block-size: 44px;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--mat-sys-on-surface-variant);
+  cursor: pointer;
+}
+.pii-toggle:hover {
+  background: var(--mat-sys-surface-container-high);
+  color: var(--mat-sys-primary);
+}
+.pii-toggle:focus-visible {
+  outline: 2px solid var(--mat-sys-primary);
+  outline-offset: 2px;
+}
+.pii-toggle .material-icons {
+  font-size: 20px;
+}
+
+/* ── Edit mode ───────────────────────────────────────────── */
+.form-section {
+  margin-block-end: var(--space-4);
+  padding: var(--space-5);
+  background: var(--glass-bg);
+  border: var(--glass-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--glass-shine), var(--glass-shadow);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+}
+.form-section-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-block-end: var(--space-4);
+  font-weight: 700;
+}
+.form-section-title .material-icons {
+  font-size: 20px;
+  color: var(--mat-sys-primary);
+}
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--space-4);
+}
+.pii-input-wrap {
+  position: relative;
+  display: flex;
+}
+.pii-input-wrap input {
+  flex: 1;
+  min-inline-size: 0;
+  padding-inline-end: 48px;
+}
+.pii-input-wrap .pii-toggle {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-end: 0;
+}
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+@media (max-width: 600px) {
+  .identity-grid {
+    grid-template-columns: 1fr;
+  }
+  .info-label {
+    inline-size: 110px;
+  }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .info-card,
+  .form-section {
+    background: var(--mat-sys-surface-container);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}

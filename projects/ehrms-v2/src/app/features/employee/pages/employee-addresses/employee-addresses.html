@@ -1,0 +1,302 @@
+<div class="addr-section">
+  <!-- ── Header ──────────────────────────────────────────── -->
+  <div class="section-header">
+    <div class="header-left">
+      <h2 class="section-title">{{ 'employee.addresses.title' | translate }}</h2>
+      <span class="addr-count">{{ 'employee.addresses.countOfTypes' | translate: { count: activeAddresses().length } }}</span>
+    </div>
+    <button class="btn-add" (click)="openAdd()" [disabled]="activeAddresses().length >= 4">
+      <span class="material-icons" aria-hidden="true">add</span>
+      {{ 'employee.addresses.addAddress' | translate }}
+    </button>
+  </div>
+
+  <!-- ── Alerts ─────────────────────────────────────────── -->
+  @if (successMsg()) {
+    <div class="alert alert-success" role="status">
+      <span class="material-icons" aria-hidden="true">check_circle</span>{{ successMsg() }}
+    </div>
+  }
+  @if (error() && !showModal() && !showConfirm()) {
+    <div class="alert alert-error" role="alert">
+      <span class="material-icons" aria-hidden="true">error_outline</span>{{ error() }}
+    </div>
+  }
+
+  <!-- ── Loading ────────────────────────────────────────── -->
+  @if (loading()) {
+    <div class="loading-wrap" role="status">
+      <div class="spinner"></div>
+      <span>{{ 'employee.addresses.loading' | translate }}</span>
+    </div>
+  }
+
+  <!-- ── Empty state ────────────────────────────────────── -->
+  @if (!loading() && activeAddresses().length === 0) {
+    <div class="empty-state">
+      <span class="material-icons" aria-hidden="true">location_off</span>
+      <p>{{ 'employee.addresses.emptyTitle' | translate }}</p>
+      <small>{{ 'employee.addresses.emptyHint' | translate }}</small>
+      <button class="btn-add-sm" (click)="openAdd()">
+        <span class="material-icons" aria-hidden="true">add</span> {{ 'employee.addresses.addAddress' | translate }}
+      </button>
+    </div>
+  }
+
+  <!-- ── Active address cards ───────────────────────────── -->
+  @if (!loading() && activeAddresses().length > 0) {
+    <div class="addresses-grid">
+      @for (addr of activeAddresses(); track addr.employeeAddressesId) {
+        <div class="addr-card" [class.primary-card]="addr.isPrimary">
+          <!-- Card header -->
+          <div class="addr-card-header">
+            <div class="addr-type-wrap">
+              <span class="material-icons type-icon" aria-hidden="true">{{ getTypeIcon(addr.addressType) }}</span>
+              <span class="addr-type-badge" [class]="getTypeBadge(addr.addressType)">
+                {{ addr.addressType }}
+              </span>
+              @if (addr.isPrimary) {
+                <span class="primary-badge">
+                  <span class="material-icons" aria-hidden="true">star</span>
+                  {{ 'employee.addresses.primaryBadge' | translate }}
+                </span>
+              }
+            </div>
+            <div class="card-actions">
+              @if (!addr.isPrimary) {
+                <button
+                  type="button"
+                  class="act-btn btn-star"
+                  [title]="'employee.addresses.setPrimary' | translate"
+                  [attr.aria-label]="('employee.addresses.setPrimary' | translate) + ': ' + addr.addressType"
+                  (click)="openSetPrimary(addr)"
+                >
+                  <span class="material-icons" aria-hidden="true">star_outline</span>
+                </button>
+              }
+              <button type="button" class="act-btn btn-edit" [title]="'common.edit' | translate" [attr.aria-label]="('common.edit' | translate) + ': ' + addr.addressType" (click)="openEdit(addr)">
+                <span class="material-icons" aria-hidden="true">edit</span>
+              </button>
+              <button type="button" class="act-btn btn-delete" [title]="'employee.addresses.remove' | translate" [attr.aria-label]="('employee.addresses.remove' | translate) + ': ' + addr.addressType" (click)="openDelete(addr)">
+                <span class="material-icons" aria-hidden="true">delete_outline</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Address body -->
+          <div class="addr-card-body">
+            <div class="addr-line addr-main">{{ addr.addressLine1 }}</div>
+            @if (addr.addressLine2) {
+              <div class="addr-line">{{ addr.addressLine2 }}</div>
+            }
+            <div class="addr-line city-line">
+              {{ addr.city }}
+              @if (addr.stateProvince) {
+                , {{ addr.stateProvince }}
+              }
+              @if (addr.postalCode) {
+                – {{ addr.postalCode }}
+              }
+            </div>
+            <div class="addr-line country-line">
+              <span class="material-icons country-icon" aria-hidden="true">flag</span>
+              {{ addr.country }}
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- ── Inactive addresses (collapsed) ────────────────── -->
+  @if (!loading() && inactiveAddresses().length > 0) {
+    <div class="inactive-section">
+      <p class="inactive-label">
+        <span class="material-icons" aria-hidden="true">history</span>
+        {{ 'employee.addresses.inactiveCount' | translate: { count: inactiveAddresses().length } }}
+      </p>
+    </div>
+  }
+</div>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!-- MODAL — Add / Edit Address                               -->
+<!-- ══════════════════════════════════════════════════════════ -->
+@if (showModal()) {
+  <div class="modal-backdrop">
+    <div
+      class="modal"
+      [appAccessibleDialog]="'addr-modal-title'"
+      (dialogClosed)="closeModal()"
+      cdkTrapFocus
+      cdkTrapFocusAutoCapture
+    >
+      <div class="modal-header">
+        <h2 id="addr-modal-title" class="modal-title">
+          {{ (isEditMode() ? 'employee.addresses.modal.editTitle' : 'employee.addresses.modal.addTitle') | translate }}
+        </h2>
+        <button type="button" class="modal-close" [attr.aria-label]="'common.close' | translate" (click)="closeModal()">
+          <span class="material-icons" aria-hidden="true">close</span>
+        </button>
+      </div>
+
+      @if (error()) {
+        <div class="modal-alert" role="alert">
+          <span class="material-icons" aria-hidden="true">error_outline</span>{{ error() }}
+        </div>
+      }
+
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+        <div class="modal-body">
+          <!-- Address type -->
+          <div class="field">
+            <label>{{ 'employee.addresses.fields.addressType' | translate }} <span class="req">*</span></label>
+            <div class="type-selector">
+              @for (type of addressTypes; track type) {
+                <button
+                  type="button"
+                  class="type-btn"
+                  [class.type-selected]="ctrl('addressType').value === type"
+                  [class.type-disabled]="isTypeUsed(type)"
+                  [disabled]="isTypeUsed(type)"
+                  (click)="ctrl('addressType').setValue(type)"
+                >
+                  <span class="material-icons" aria-hidden="true">{{ getTypeIcon(type) }}</span>
+                  {{ type }}
+                  @if (isTypeUsed(type)) {
+                    <span class="used-tag">{{ 'employee.addresses.addedTag' | translate }}</span>
+                  }
+                </button>
+              }
+            </div>
+            @if (isInvalid('addressType')) {
+              <span class="field-error" id="fe-addressType">{{ getError('addressType') }}</span>
+            }
+          </div>
+
+          <!-- Address lines -->
+          <div class="field">
+            <label for="addr-line1">{{ 'employee.addresses.fields.addressLine1' | translate }} <span class="req">*</span></label>
+            <input id="addr-line1" formControlName="addressLine1" [placeholder]="'employee.addresses.fields.addressLine1Placeholder' | translate" />
+            @if (isInvalid('addressLine1')) {
+              <span class="field-error" id="fe-addressLine1">{{ getError('addressLine1') }}</span>
+            }
+          </div>
+
+          <div class="field">
+            <label for="addr-line2">{{ 'employee.addresses.fields.addressLine2' | translate }}</label>
+            <input id="addr-line2" formControlName="addressLine2" [placeholder]="'employee.addresses.fields.addressLine2Placeholder' | translate" />
+          </div>
+
+          <!-- City + State -->
+          <div class="field-row">
+            <div class="field">
+              <label for="addr-city">{{ 'employee.addresses.fields.city' | translate }} <span class="req">*</span></label>
+              <input id="addr-city" formControlName="city" [placeholder]="'employee.addresses.fields.cityPlaceholder' | translate" />
+              @if (isInvalid('city')) {
+                <span class="field-error" id="fe-city">{{ getError('city') }}</span>
+              }
+            </div>
+            <div class="field">
+              <label for="addr-state">{{ 'employee.addresses.fields.stateProvince' | translate }}</label>
+              <input id="addr-state" formControlName="stateProvince" [placeholder]="'employee.addresses.fields.stateProvincePlaceholder' | translate" />
+            </div>
+          </div>
+
+          <!-- Country + Postal -->
+          <div class="field-row">
+            <div class="field">
+              <label for="addr-country">{{ 'employee.addresses.fields.country' | translate }} <span class="req">*</span></label>
+              <input id="addr-country" formControlName="country" />
+              @if (isInvalid('country')) {
+                <span class="field-error" id="fe-country">{{ getError('country') }}</span>
+              }
+            </div>
+            <div class="field">
+              <label for="addr-postal-code">{{ 'employee.addresses.fields.postalCode' | translate }}</label>
+              <input id="addr-postal-code" formControlName="postalCode" [placeholder]="'employee.addresses.fields.postalCodePlaceholder' | translate" />
+            </div>
+          </div>
+
+          <!-- Primary toggle -->
+          @if (activeAddresses().length > 0 || isEditMode()) {
+            <label class="toggle-item">
+              <div class="toggle-info">
+                <span class="toggle-label">{{ 'employee.addresses.primaryToggle.label' | translate }}</span>
+                <span class="toggle-hint">
+                  {{ 'employee.addresses.primaryToggle.hint' | translate }}
+                </span>
+              </div>
+              <div class="toggle-wrap">
+                <input type="checkbox" formControlName="isPrimary" class="toggle-inp" />
+                <span class="toggle-slider"></span>
+              </div>
+            </label>
+          }
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-cancel" (click)="closeModal()">{{ 'common.cancel' | translate }}</button>
+          <button type="submit" class="btn-save" [disabled]="saving()">
+            @if (saving()) {
+              <div class="btn-spinner"></div>
+              <span>{{ 'employee.addresses.saving' | translate }}</span>
+            } @else {
+              <span class="material-icons" aria-hidden="true">save</span>
+              <span>{{ (isEditMode() ? 'employee.addresses.saveButton.update' : 'employee.addresses.saveButton.add') | translate }}</span>
+            }
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!-- CONFIRM DIALOG                                            -->
+<!-- ══════════════════════════════════════════════════════════ -->
+@if (showConfirm()) {
+  <div class="modal-backdrop">
+    <div
+      class="confirm-dialog"
+      [appAccessibleDialog]="'addr-confirm-title'"
+      (dialogClosed)="cancelConfirm()"
+      cdkTrapFocus
+      cdkTrapFocusAutoCapture
+    >
+      <div
+        class="confirm-icon"
+        [class.icon-star]="confirmType() === 'primary'"
+        [class.icon-warn]="confirmType() === 'delete'"
+      >
+        <span class="material-icons" aria-hidden="true">
+          {{ confirmType() === 'primary' ? 'star' : 'delete_outline' }}
+        </span>
+      </div>
+      <h3 id="addr-confirm-title" class="confirm-title">
+        {{ (confirmType() === 'primary' ? 'employee.addresses.confirm.setPrimaryTitle' : 'employee.addresses.confirm.removeTitle') | translate }}
+      </h3>
+      <p class="confirm-msg">
+        <strong>{{ confirmItem()?.addressType }}</strong> — {{ confirmItem()?.addressLine1 }},
+        {{ confirmItem()?.city }}
+        @if (confirmType() === 'primary') {
+          <br /><small>{{ 'employee.addresses.confirm.setPrimaryHint' | translate }}</small>
+        } @else {
+          <br /><small>{{ 'employee.addresses.confirm.removeHint' | translate }}</small>
+        }
+      </p>
+      <div class="confirm-actions">
+        <button type="button" class="btn-cancel" (click)="cancelConfirm()">{{ 'common.cancel' | translate }}</button>
+        <button
+          type="button"
+          class="btn-confirm"
+          [class.btn-star-confirm]="confirmType() === 'primary'"
+          [class.btn-danger]="confirmType() === 'delete'"
+          (click)="confirmAction()"
+        >
+          {{ (confirmType() === 'primary' ? 'employee.addresses.confirm.setPrimaryAction' : 'employee.addresses.confirm.removeAction') | translate }}
+        </button>
+      </div>
+    </div>
+  </div>
+}

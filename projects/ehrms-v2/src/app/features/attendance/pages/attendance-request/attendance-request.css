@@ -1,0 +1,256 @@
+/* Attendance request: Aurora Glass. Theme tokens + logical properties only, so Arabic mirrors without overrides. */
+
+.request-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+/* ── Header ──────────────────────────────────────────────── */
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+.header-icon {
+  inline-size: 40px;
+  block-size: 40px;
+  font-size: 40px;
+  color: var(--mat-sys-primary);
+}
+.page-header h2 {
+  margin: 0;
+  font-size: 28px;
+  line-height: 1.25;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.subtitle {
+  color: var(--mat-sys-on-surface-variant);
+}
+
+/* ── Glass cards ─────────────────────────────────────────── */
+.form-card,
+.table-card,
+.mini-stat {
+  background: var(--table-surface);
+  border: var(--glass-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--glass-shine), var(--glass-shadow);
+}
+.form-card mat-card-header,
+.table-card mat-card-header {
+  padding: var(--space-4) var(--space-5) 0;
+}
+.form-card mat-card-title,
+.table-card mat-card-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 18px;
+  font-weight: 700;
+}
+
+/* ── Form ────────────────────────────────────────────────── */
+.request-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding-block-start: var(--space-4);
+}
+.full-width {
+  inline-size: 100%;
+}
+.half-width {
+  flex: 1;
+  min-inline-size: 200px;
+}
+.time-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+}
+
+/* ── Stats row ───────────────────────────────────────────── */
+.stats-row {
+  display: flex;
+  gap: var(--space-3);
+}
+.mini-stat {
+  flex: 1;
+}
+.mini-stat mat-card-content {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4);
+}
+.mini-stat mat-icon {
+  inline-size: 28px;
+  block-size: 28px;
+  font-size: 28px;
+}
+.mini-num {
+  font-size: 28px;
+  font-weight: 800;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.mini-label {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--mat-sys-on-surface-variant);
+}
+.mini-stat.pending mat-icon,
+.mini-stat.pending .mini-num {
+  color: var(--status-pending-fg);
+}
+.mini-stat.approved mat-icon,
+.mini-stat.approved .mini-num {
+  color: var(--status-approved-fg);
+}
+.mini-stat.rejected mat-icon,
+.mini-stat.rejected .mini-num {
+  color: var(--status-rejected-fg);
+}
+
+/* ── Table ───────────────────────────────────────────────── */
+.table-wrapper {
+  position: relative;
+  overflow: auto;
+  min-block-size: 160px;
+  max-block-size: 70vh;
+}
+.req-table {
+  inline-size: 100%;
+  background: transparent;
+}
+.req-table th {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--mat-sys-on-surface-variant);
+}
+.req-table td {
+  font-variant-numeric: tabular-nums;
+}
+.approved-row td {
+  background: color-mix(in srgb, var(--status-approved-fg) 7%, transparent);
+}
+.rejected-row td {
+  background: color-mix(in srgb, var(--status-rejected-fg) 7%, transparent);
+}
+/* Colours come from getStatusStyle(); this only sets the shape. */
+.status-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 4px var(--space-3);
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.status-icon,
+.info-icon {
+  font-size: 14px;
+  inline-size: 14px;
+  block-size: 14px;
+}
+.time-chip {
+  display: inline-block;
+  padding: 2px var(--space-3);
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.time-chip.in {
+  background: var(--status-approved-bg);
+  color: var(--status-approved-fg);
+}
+.time-chip.out {
+  background: var(--mat-sys-secondary-container);
+  color: var(--mat-sys-on-secondary-container);
+}
+.rejection-reason {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  margin-block-start: var(--space-1);
+  font-size: 12px;
+  color: var(--status-rejected-fg);
+}
+.muted {
+  color: var(--mat-sys-on-surface-variant);
+}
+
+/* ── Empty / loading ─────────────────────────────────────── */
+.empty-cell {
+  padding-block: 48px;
+  text-align: center;
+}
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  color: var(--mat-sys-on-surface-variant);
+}
+.empty-state mat-icon {
+  inline-size: 56px;
+  block-size: 56px;
+  font-size: 56px;
+  color: var(--mat-sys-primary);
+  opacity: 0.4;
+}
+.center-spinner {
+  display: flex;
+  justify-content: center;
+  padding-block: 40px;
+}
+.visually-hidden {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+  .stats-row {
+    flex-wrap: wrap;
+  }
+  .mini-stat {
+    min-inline-size: 120px;
+  }
+  .time-row {
+    flex-direction: column;
+  }
+}
+
+/* Form actions: padded like the card body, 44px buttons, icon and label on one baseline. */
+.form-card mat-card-actions {
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+}
+.form-card mat-card-actions button {
+  --mat-button-filled-container-height: 44px;
+  --mat-button-outlined-container-height: 44px;
+}
+.form-card mat-card-actions button span {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}

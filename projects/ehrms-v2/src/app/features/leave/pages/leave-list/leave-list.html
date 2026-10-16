@@ -1,0 +1,302 @@
+<!-- leave-list.html -->
+<div class="list-page">
+  <!-- ── Page header ────────────────────────────────────── -->
+  <div class="page-header">
+    <div class="header-left">
+      <h1 class="page-title">{{ 'leave.list.title' | translate }}</h1>
+      @if (totalElements() > 0) {
+        <span class="count-badge">{{ totalElements() }}</span>
+      }
+      @if (pendingCount() > 0) {
+        <span class="pending-chip">
+          <span aria-hidden="true" class="material-icons">hourglass_empty</span>
+          {{ pendingCount() }} {{ 'leave.list.pendingSuffix' | translate }}
+        </span>
+      }
+    </div>
+    <button class="btn-add" (click)="applyNewLeave()">
+      <span aria-hidden="true" class="material-icons">add</span>
+      {{ 'leave.list.applyButton' | translate }}
+    </button>
+  </div>
+
+  <!-- ── Filter bar ─────────────────────────────────────── -->
+  <div class="filter-bar">
+    <select
+      class="filter-select"
+      [attr.aria-label]="'leave.list.statusFilterLabel' | translate"
+      [value]="filterStatus()"
+      (change)="filterStatus.set($any($event.target).value); onFilterChange()"
+    >
+      <option value="">{{ 'leave.list.allStatus' | translate }}</option>
+      <option value="PENDING">{{ 'leave.list.statusPending' | translate }}</option>
+      <option value="APPROVED">{{ 'leave.list.statusApproved' | translate }}</option>
+      <option value="REJECTED">{{ 'leave.list.statusRejected' | translate }}</option>
+      <option value="CANCELLED">{{ 'leave.list.statusCancelled' | translate }}</option>
+    </select>
+
+    <select
+      class="filter-select"
+      [attr.aria-label]="'leave.list.typeFilterLabel' | translate"
+      [value]="filterType()"
+      (change)="filterType.set($any($event.target).value); onFilterChange()"
+    >
+      <option value="">{{ 'leave.list.allTypes' | translate }}</option>
+      @for (lt of leaveTypes; track lt) {
+        <option [value]="lt">{{ lt }}</option>
+      }
+    </select>
+
+    <select
+      class="filter-select"
+      [attr.aria-label]="'leave.list.yearFilterLabel' | translate"
+      [value]="filterYear()"
+      (change)="filterYear.set(+$any($event.target).value); onFilterChange()"
+    >
+      @for (y of yearOptions; track y) {
+        <option [value]="y">{{ y }}</option>
+      }
+    </select>
+
+    @if (filterStatus() || filterType()) {
+      <button class="btn-clear" (click)="clearFilters()">
+        <span aria-hidden="true" class="material-icons">filter_alt_off</span>
+        {{ 'common.clear' | translate }}
+      </button>
+    }
+  </div>
+
+  <!-- ── Alerts ─────────────────────────────────────────── -->
+  @if (successMsg()) {
+    <div class="alert alert-success">
+      <span aria-hidden="true" class="material-icons">check_circle</span>{{ successMsg() }}
+    </div>
+  }
+  @if (error()) {
+    <div class="alert alert-error">
+      <span aria-hidden="true" class="material-icons">error_outline</span>{{ error() }}
+    </div>
+  }
+
+  <!-- ── Loading ────────────────────────────────────────── -->
+  @if (loading()) {
+    <div class="loading-wrap">
+      <div class="spinner"></div>
+      <span>{{ 'leave.list.loadingText' | translate }}</span>
+    </div>
+  }
+
+  <!-- ── Empty ──────────────────────────────────────────── -->
+  @if (!loading() && leaves().length === 0) {
+    <div class="empty-state">
+      <span aria-hidden="true" class="material-icons">event_busy</span>
+      <p>{{ 'leave.list.emptyTitle' | translate }}</p>
+      <small>
+        @if (filterStatus() || filterType()) {
+          {{ 'leave.list.emptyHintFiltered' | translate }}
+        } @else {
+          {{ 'leave.list.emptyHintDefault' | translate }}
+        }
+      </small>
+      <button class="btn-add-sm" (click)="applyNewLeave()">
+        <span aria-hidden="true" class="material-icons">add</span>
+        {{ 'leave.list.applyButton' | translate }}
+      </button>
+    </div>
+  }
+
+  <!-- ── Leave cards ────────────────────────────────────── -->
+  @if (!loading() && leaves().length > 0) {
+    <div class="leaves-list">
+      @for (leave of leaves(); track leave.leaveReqId) {
+        <div class="leave-card" [class]="'card-' + leave.status.toLowerCase()">
+          <div class="card-content">
+            <!-- ── Main row: type, dates, days, status ─── -->
+            <div class="card-main">
+              <div class="card-type">
+                <span
+                  class="type-badge"
+                  [style.background]="getTypeColor(leave.leaveTypeCode) + '18'"
+                  [style.color]="getTypeColor(leave.leaveTypeCode)"
+                  [style.border]="'1px solid ' + getTypeColor(leave.leaveTypeCode) + '40'"
+                >
+                  {{ leave.leaveTypeName }}
+                </span>
+                @if (leave.isPaid === false) {
+                  <span class="unpaid-tag">{{ 'leave.list.unpaidTag' | translate }}</span>
+                }
+              </div>
+
+              <div class="card-dates">
+                <span class="visually-hidden">{{ 'leave.list.dateFrom' | translate }}</span>
+                <span class="date-val">{{ leave.startDate }}</span>
+                <span class="material-icons date-arrow" aria-hidden="true">arrow_forward</span>
+                <span class="visually-hidden">{{ 'leave.list.dateTo' | translate }}</span>
+                <span class="date-val">{{ leave.endDate }}</span>
+              </div>
+
+              <span class="days-chip">
+                <span class="material-icons" aria-hidden="true">calendar_today</span>
+                {{ leave.totalDays }}
+                {{
+                  (leave.totalDays !== 1 ? 'leave.list.daysPlural' : 'leave.list.daySingular')
+                    | translate
+                }}
+              </span>
+
+              <div class="card-top-right">
+                <span class="status-badge" [class]="getStatusClass(leave.status)">
+                  <span class="material-icons status-icon" aria-hidden="true">
+                    {{ getStatusIcon(leave.status) }}
+                  </span>
+                  {{ leave.status }}
+                </span>
+                @if (canCancel(leave)) {
+                  <button
+                    class="btn-cancel-req"
+                    [disabled]="cancelling() === leave.leaveReqId"
+                    (click)="openCancel(leave)"
+                  >
+                    <span class="material-icons" aria-hidden="true">close</span>
+                    {{ 'common.cancel' | translate }}
+                  </button>
+                }
+              </div>
+            </div>
+
+            <!-- ── Details line: reason, decision, attachment, submitted, balance ─── -->
+            <div class="card-meta">
+              @if (leave.reason) {
+                <span class="card-reason" [attr.title]="leave.reason">{{ leave.reason }}</span>
+              }
+
+              @if (leave.hasAttachment) {
+                <button type="button" class="attachment-link" (click)="downloadAttachment(leave)">
+                  <span class="material-icons" aria-hidden="true">attach_file</span>
+                  {{ 'leave.list.attachment' | translate }}: {{ leave.attachmentName }}
+                </button>
+              }
+
+              @if (leave.status === 'APPROVED' || leave.status === 'REJECTED') {
+                <span class="card-approval">
+                  <span class="material-icons" aria-hidden="true">
+                    {{ leave.status === 'APPROVED' ? 'verified_user' : 'block' }}
+                  </span>
+                  {{
+                    (leave.status === 'APPROVED'
+                      ? 'leave.list.statusApproved'
+                      : 'leave.list.statusRejected'
+                    ) | translate
+                  }}
+                  {{ 'leave.list.byConnector' | translate }} <strong>{{ leave.approvedBy }}</strong>
+                  @if (leave.approvedAt) {
+                    {{ 'leave.list.onConnector' | translate }}
+                    <bdi>{{ leave.approvedAt | slice: 0 : 10 }}</bdi>
+                  }
+                  <!-- remarks = rejectionReason from backend -->
+                  @if (leave.remarks) {
+                    <span class="remarks-text">— "{{ leave.remarks }}"</span>
+                  }
+                </span>
+              }
+
+              <span class="card-meta-end">
+                <span class="submitted-date">
+                  {{ 'leave.list.submittedLabel' | translate }}
+                  <bdi>{{ leave.createdAt | slice: 0 : 10 }}</bdi>
+                </span>
+                @if (leave.balanceAvailable != null) {
+                  <span class="balance-snap">
+                    {{ 'leave.list.balanceLabel' | translate }}
+                    {{ leave.balanceAvailable | number: '1.1-1' }}
+                    {{ 'leave.list.daysPlural' | translate }}
+                  </span>
+                }
+              </span>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- ── Pagination ──────────────────────────────────── -->
+    @if (totalPages() > 1) {
+      <div class="pagination">
+        <span class="pag-info">
+          {{
+            'leave.list.showing'
+              | translate: { from: showingFrom, to: showingTo, total: totalElements() }
+          }}
+        </span>
+        <div class="pag-btns">
+          <button
+            class="pag-btn"
+            [attr.aria-label]="'common.previous' | translate"
+            [disabled]="currentPage() === 0"
+            (click)="onPageChange(currentPage() - 1)"
+          >
+            <span aria-hidden="true" class="material-icons">chevron_left</span>
+          </button>
+          @for (p of pages; track p) {
+            <button
+              class="pag-btn num"
+              [class.active]="p === currentPage()"
+              (click)="onPageChange(p)"
+            >
+              {{ p + 1 }}
+            </button>
+          }
+          <button
+            class="pag-btn"
+            [attr.aria-label]="'common.next' | translate"
+            [disabled]="currentPage() === totalPages() - 1"
+            (click)="onPageChange(currentPage() + 1)"
+          >
+            <span aria-hidden="true" class="material-icons">chevron_right</span>
+          </button>
+        </div>
+      </div>
+    }
+  }
+</div>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!-- CONFIRM CANCEL DIALOG                                     -->
+<!-- ══════════════════════════════════════════════════════════ -->
+@if (showConfirm()) {
+  <div class="modal-backdrop" (click)="closeConfirm()">
+    <div
+      class="confirm-dialog"
+      (click)="$event.stopPropagation()"
+      [appAccessibleDialog]="'ll-confirm-title'"
+      (dialogClosed)="closeConfirm()"
+      cdkTrapFocus
+      cdkTrapFocusAutoCapture
+    >
+      <div class="confirm-icon icon-warn">
+        <span aria-hidden="true" class="material-icons">event_busy</span>
+      </div>
+      <h3 id="ll-confirm-title" class="confirm-title">
+        {{ 'leave.list.confirmCancelTitle' | translate }}
+      </h3>
+      <div class="confirm-details">
+        <span class="confirm-type">{{ confirmItem()?.leaveTypeName }}</span>
+        <span class="confirm-dates">
+          <bdi>{{ confirmItem()?.startDate }} → {{ confirmItem()?.endDate }}</bdi>
+        </span>
+        <span class="confirm-days">
+          {{ confirmItem()?.totalDays }} {{ 'leave.list.daysUnitParenthetical' | translate }}
+        </span>
+      </div>
+      <p class="confirm-msg">{{ 'leave.list.confirmCancelMsg' | translate }}</p>
+      <div class="confirm-actions">
+        <button class="btn-cancel" (click)="closeConfirm()">
+          {{ 'leave.list.keepRequestButton' | translate }}
+        </button>
+        <button class="btn-confirm btn-danger" (click)="confirmCancel()">
+          {{ 'leave.list.confirmCancelButton' | translate }}
+        </button>
+      </div>
+    </div>
+  </div>
+}

@@ -1,0 +1,325 @@
+// eHRMS design system "Aurora Glass" (Material 3): blue primary, violet secondary, orange tertiary (CTA).
+// Light glass surfaces over a soft mesh-gradient backdrop; gradients flip with [dir=rtl].
+// Light + dark come from one theme (theme-type: color-scheme); body picks one via color-scheme.
+@use 'sass:map';
+@use '@angular/material' as mat;
+
+// Primary blue: tone 40 (#2563EB) is the filled-button/text colour, 5.2:1 with white.
+// Secondary violet: tone 40 (#7C3AED), 5.7:1 with white. Tertiary orange: tone 40 (#C2410C), 5.2:1 with white
+// (brighter oranges fail 4.5:1 with white text, so the CTA never uses #EA580C as a text background).
+$blue: map.merge(
+  mat.$azure-palette,
+  (
+    0: #000000,
+    10: #0b1b4d,
+    20: #172e86,
+    25: #1b3a9e,
+    30: #1e40af,
+    35: #1d4ed8,
+    40: #2563eb,
+    50: #3b82f6,
+    60: #60a5fa,
+    70: #93c5fd,
+    80: #bfd3ff,
+    90: #dbe7ff,
+    95: #eef3ff,
+    98: #f7f9ff,
+    99: #fbfcff,
+    100: #ffffff,
+    secondary: (
+      0: #000000,
+      10: #1e0a4f,
+      20: #3b0f82,
+      25: #4a17a0,
+      30: #5b21b6,
+      35: #6d28d9,
+      40: #7c3aed,
+      50: #8b5cf6,
+      60: #a78bfa,
+      70: #c4b5fd,
+      80: #ddd1fe,
+      90: #ede9fe,
+      95: #f5f3ff,
+      98: #faf8ff,
+      99: #fdfcff,
+      100: #ffffff,
+    ),
+    neutral: (
+      0: #000000,
+      4: #0a0f24,
+      6: #0e1430,
+      10: #161c3a,
+      12: #1a2142,
+      17: #232a4e,
+      20: #2a3157,
+      22: #2e355c,
+      24: #323a62,
+      25: #343c64,
+      30: #3b4268,
+      35: #46506f,
+      40: #4f5a78,
+      50: #67718e,
+      60: #8089a6,
+      70: #9aa3bd,
+      80: #b6bdd2,
+      87: #cdd3e4,
+      90: #dde2f0,
+      92: #e5e9f5,
+      94: #ebeff9,
+      95: #eef2ff,
+      96: #f1f4fd,
+      98: #f6f8fe,
+      99: #fafbff,
+      100: #ffffff,
+    ),
+    neutral-variant: (
+      0: #000000,
+      10: #131d30,
+      20: #263248,
+      25: #303c52,
+      30: #3f4b5c,
+      35: #4a5668,
+      40: #556175,
+      50: #6b7a8f,
+      60: #8493a8,
+      70: #9eacbf,
+      80: #b8c3d3,
+      90: #d9e0ea,
+      95: #ecf0f5,
+      98: #f6f8fb,
+      99: #fafbfd,
+      100: #ffffff,
+    ),
+  )
+);
+
+$orange: map.merge(
+  mat.$orange-palette,
+  (
+    0: #000000,
+    10: #431407,
+    20: #7c2d12,
+    25: #8a3210,
+    30: #9a3412,
+    35: #ac3a10,
+    40: #c2410c,
+    50: #ea580c,
+    60: #f97316,
+    70: #fb923c,
+    80: #fdba74,
+    90: #ffedd5,
+    95: #fff7ed,
+    98: #fffaf5,
+    99: #fffcf9,
+    100: #ffffff,
+  )
+);
+
+html {
+  height: 100%;
+  @include mat.theme(
+    (
+      color: (
+        primary: $blue,
+        tertiary: $orange,
+        theme-type: color-scheme,
+      ),
+      typography: (
+        plain-family: (
+          'Plus Jakarta Sans',
+          'Noto Sans Arabic',
+          system-ui,
+          sans-serif,
+        ),
+        brand-family: (
+          'Plus Jakarta Sans',
+          'Noto Sans Arabic',
+          system-ui,
+          sans-serif,
+        ),
+        bold-weight: 600,
+        medium-weight: 500,
+        regular-weight: 400,
+      ),
+      density: -2,
+    )
+  );
+
+  // Global component restyle, done once here (44px = minimum touch target).
+  @include mat.button-overrides(
+    (
+      filled-container-height: 44px,
+      outlined-container-height: 44px,
+      text-container-height: 44px,
+      tonal-container-height: 44px,
+      protected-container-height: 44px,
+      filled-container-shape: 12px,
+      outlined-container-shape: 12px,
+      text-container-shape: 12px,
+      tonal-container-shape: 12px,
+      protected-container-shape: 12px,
+    )
+  );
+  @include mat.form-field-overrides(
+    (
+      filled-container-shape: 12px,
+      outlined-container-shape: 12px,
+      outlined-outline-width: 1px,
+      outlined-focus-outline-width: 2px,
+    )
+  );
+  @include mat.table-overrides(
+    (
+      background-color: transparent,
+      header-container-height: 40px,
+      row-item-container-height: 40px,
+      header-headline-weight: 600,
+      footer-container-height: 52px,
+    )
+  );
+  @include mat.dialog-overrides(
+    (
+      container-shape: 20px,
+    )
+  );
+  @include mat.tabs-overrides(
+    (
+      container-height: 44px,
+      active-indicator-height: 3px,
+      active-indicator-shape: 3px,
+    )
+  );
+  @include mat.snack-bar-overrides(
+    (
+      container-shape: 12px,
+    )
+  );
+  @include mat.paginator-overrides(
+    (
+      container-size: 52px,
+      container-background-color: transparent,
+    )
+  );
+}
+
+// Design tokens (spacing, radius, elevation, gradients, glass, status). Colors adapt to the active color-scheme.
+:root {
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+
+  --grid-gap: 16px;
+  --card-padding: 16px;
+  --table-row-height: 40px;
+  --sidebar-width: 248px;
+  --header-height: 64px;
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+
+  --shadow-1: 0 1px 2px light-dark(rgb(37 56 120 / 8%), rgb(0 0 0 / 40%));
+  --shadow-2: 0 4px 14px light-dark(rgb(37 56 120 / 10%), rgb(0 0 0 / 50%));
+  --shadow-3: 0 12px 28px light-dark(rgb(37 56 120 / 16%), rgb(0 0 0 / 60%));
+  --border-subtle: 1px solid light-dark(rgb(255 255 255 / 70%), rgb(255 255 255 / 10%));
+
+  // Gradients. The angle flips under [dir='rtl'] (below) so a "start to end" sweep reads the same in Arabic.
+  --grad-angle: 135deg;
+  --grad-primary: linear-gradient(var(--grad-angle), #2563eb, #7c3aed);
+  // CTA: darkest stop first so white label text stays >= 4.5:1 across the whole button.
+  --grad-cta: linear-gradient(180deg, #d2450b, #b23a09);
+  --cta-shadow: 0 8px 18px rgb(194 65 12 / 35%), inset 0 1px 0 rgb(255 255 255 / 40%);
+  --primary-shadow: 0 8px 18px rgb(79 70 229 / 32%), inset 0 1px 0 rgb(255 255 255 / 40%);
+  // Pastel KPI / feature card tints (dark text on them; see --kpi-fg).
+  --grad-kpi-blue: linear-gradient(
+    var(--grad-angle),
+    light-dark(rgb(147 187 255 / 62%), rgb(59 130 246 / 34%)),
+    light-dark(rgb(255 255 255 / 42%), rgb(255 255 255 / 4%))
+  );
+  --grad-kpi-violet: linear-gradient(
+    var(--grad-angle),
+    light-dark(rgb(196 170 255 / 62%), rgb(139 92 246 / 34%)),
+    light-dark(rgb(255 255 255 / 42%), rgb(255 255 255 / 4%))
+  );
+  --grad-kpi-orange: linear-gradient(
+    var(--grad-angle),
+    light-dark(rgb(255 190 150 / 62%), rgb(249 115 22 / 34%)),
+    light-dark(rgb(255 255 255 / 42%), rgb(255 255 255 / 4%))
+  );
+  --grad-kpi-green: linear-gradient(
+    var(--grad-angle),
+    light-dark(rgb(130 230 190 / 62%), rgb(16 185 129 / 34%)),
+    light-dark(rgb(255 255 255 / 42%), rgb(255 255 255 / 4%))
+  );
+  --grad-icon-blue: linear-gradient(var(--grad-angle), #3b82f6, #2563eb);
+  --grad-icon-violet: linear-gradient(var(--grad-angle), #8b5cf6, #7c3aed);
+  --grad-icon-orange: linear-gradient(var(--grad-angle), #f97316, #ea580c);
+  --grad-icon-green: linear-gradient(var(--grad-angle), #10b981, #047857);
+
+  // Glass. "panel" (sidebar, top bar, cards) is see-through; "strong" (dialogs, menus, flyouts) stays >= 85%
+  // opaque because it sits over arbitrary page content and must keep 4.5:1 text contrast.
+  --glass-bg: light-dark(rgb(255 255 255 / 52%), rgb(22 28 58 / 58%));
+  --glass-bg-strong: light-dark(rgb(255 255 255 / 88%), rgb(22 28 58 / 92%));
+  --glass-blur: blur(22px) saturate(160%);
+  --glass-border: 1px solid light-dark(rgb(37 56 120 / 16%), rgb(255 255 255 / 12%));
+  --glass-shine: inset 0 1px 0 light-dark(rgb(255 255 255 / 80%), rgb(255 255 255 / 10%));
+  --glass-shadow: 0 6px 20px light-dark(rgb(37 56 120 / 16%), rgb(0 0 0 / 40%));
+  // Sidebar tint over the glass (vertical, so it needs no RTL flip).
+  --sidebar-tint: linear-gradient(
+    to bottom,
+    light-dark(rgb(96 140 255 / 30%), rgb(37 99 235 / 24%)),
+    light-dark(rgb(150 100 255 / 26%), rgb(124 58 237 / 24%))
+  );
+  // Data tables stay nearly opaque so dense rows remain readable on the glass.
+  --table-surface: light-dark(rgb(255 255 255 / 78%), rgb(22 28 58 / 80%));
+  --table-header-bg: light-dark(#eef2fb, #232a4e);
+
+  --motion-fast: 120ms;
+  --motion-base: 200ms;
+  --motion-ease: cubic-bezier(0.2, 0, 0, 1);
+
+  --status-active-fg: light-dark(#047857, #6ee7b7);
+  --status-active-bg: light-dark(#d1fae5, #022c22);
+  --status-pending-fg: light-dark(#92400e, #fcd34d);
+  --status-pending-bg: light-dark(#fef3c7, #451a03);
+  --status-approved-fg: light-dark(#1d4ed8, #93c5fd);
+  --status-approved-bg: light-dark(#dbeafe, #172554);
+  --status-rejected-fg: light-dark(#b91c1c, #fca5a5);
+  --status-rejected-bg: light-dark(#fee2e2, #450a0a);
+
+  --success: light-dark(#15803d, #4ade80);
+  --warning: light-dark(#b45309, #fbbf24);
+  --danger: light-dark(#b91c1c, #f87171);
+
+  // Backdrop blob anchors: swapped for RTL so the warm/cool light sources mirror with the layout.
+  --blob-a-x: 0%;
+  --blob-b-x: 100%;
+}
+
+// RTL: mirror the gradient sweep and the backdrop light sources.
+[dir='rtl'] {
+  --grad-angle: 225deg;
+  --blob-a-x: 100%;
+  --blob-b-x: 0%;
+}
+
+body {
+  // Light by default; set data-theme="dark" on <html> (Phase 3 toggle) or switch to `light dark` for OS-driven.
+  color-scheme: light;
+  // Aurora mesh behind everything, so glass surfaces have something to blur.
+  background: light-dark(#fff, var(--mat-sys-surface));
+  color: var(--mat-sys-on-surface);
+  font: var(--mat-sys-body-medium);
+  margin: 0;
+  height: 100%;
+}
+
+// body.dark-mode is what the toolbar's dark-mode button toggles.
+html[data-theme='dark'] body,
+body.dark-mode {
+  color-scheme: dark;
+}

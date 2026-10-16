@@ -1,0 +1,402 @@
+/* Leave list: Aurora Glass. Buttons, alerts, spinner, empty state, status badges and the confirm dialog
+   come from the shared kit in styles.css; this file keeps layout only. */
+
+.list-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+/* ── Header ──────────────────────────────────────────────── */
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+.page-title {
+  margin: 0;
+  font-size: 28px;
+  line-height: 1.25;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.count-badge {
+  padding: 2px var(--space-3);
+  border-radius: 999px;
+  background: var(--mat-sys-primary-container);
+  color: var(--mat-sys-on-primary-container);
+  font-size: 12px;
+  font-weight: 700;
+}
+.pending-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 3px var(--space-3);
+  border-radius: 999px;
+  background: var(--status-pending-bg);
+  color: var(--status-pending-fg);
+  font-size: 12px;
+  font-weight: 700;
+}
+.pending-chip .material-icons {
+  font-size: 14px;
+}
+
+/* ── Filter bar (glass) ──────────────────────────────────── */
+.filter-bar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background: var(--glass-bg);
+  border: var(--glass-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--glass-shine), var(--glass-shadow);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+}
+.filter-select {
+  block-size: 44px;
+  padding-inline: var(--space-3);
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: var(--radius-md);
+  background: var(--table-surface);
+  color: var(--mat-sys-on-surface);
+  font: inherit;
+  cursor: pointer;
+}
+.filter-select:focus-visible,
+.btn-clear:focus-visible,
+.btn-cancel-req:focus-visible,
+.attachment-link:focus-visible,
+.pag-btn:focus-visible {
+  outline: 2px solid var(--mat-sys-primary);
+  outline-offset: 2px;
+}
+.btn-clear {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-block-size: 44px;
+  padding-inline: var(--space-4);
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: var(--radius-md);
+  background: var(--table-surface);
+  color: var(--mat-sys-on-surface-variant);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+.btn-clear:hover {
+  border-color: var(--danger);
+  color: var(--danger);
+}
+.btn-clear .material-icons {
+  font-size: 18px;
+}
+
+/* ── Leave cards: one compact row + one details line ─────── */
+.leaves-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.leave-card {
+  overflow: hidden;
+  background: var(--table-surface);
+  border: var(--glass-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--glass-shine), var(--glass-shadow);
+  transition: transform var(--motion-fast);
+}
+.leave-card:hover {
+  transform: translateY(-1px);
+}
+/* The inline edge shows the status only; the leave type is already in its badge. */
+.card-pending {
+  border-inline-start: 4px solid var(--status-pending-fg);
+}
+.card-approved {
+  border-inline-start: 4px solid var(--status-approved-fg);
+}
+.card-rejected {
+  border-inline-start: 4px solid var(--status-rejected-fg);
+}
+.card-cancelled {
+  border-inline-start: 4px solid var(--mat-sys-outline);
+}
+.card-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+}
+.visually-hidden {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.card-main {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-4);
+}
+.card-type {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-inline-size: 160px;
+}
+.card-top-right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-inline-start: auto;
+}
+.type-badge {
+  padding: 4px var(--space-3);
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.unpaid-tag {
+  padding: 2px var(--space-2);
+  border-radius: 999px;
+  background: var(--mat-sys-surface-container-high);
+  color: var(--mat-sys-on-surface-variant);
+  font-size: 11px;
+  font-weight: 700;
+}
+/* The icon already carries the status; skip the global dot. */
+.status-badge::before {
+  display: none;
+}
+.status-icon {
+  font-size: 14px;
+}
+/* Cancelled has no global colour. */
+.status-cancelled {
+  background: var(--mat-sys-surface-container-high);
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.btn-cancel-req {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-block-size: 44px;
+  padding-inline: var(--space-3);
+  border: 1px solid var(--status-rejected-fg);
+  border-radius: var(--radius-md);
+  background: var(--table-surface);
+  color: var(--status-rejected-fg);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background var(--motion-fast);
+}
+.btn-cancel-req:hover:not(:disabled) {
+  background: var(--status-rejected-bg);
+}
+.btn-cancel-req:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.btn-cancel-req .material-icons {
+  font-size: 18px;
+}
+
+.card-dates {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.date-val {
+  font-weight: 700;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.date-arrow {
+  font-size: 16px;
+  color: var(--mat-sys-on-surface-variant);
+}
+:host-context([dir='rtl']) .date-arrow {
+  transform: scaleX(-1);
+}
+.days-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 4px var(--space-3);
+  border-radius: 999px;
+  background: var(--status-approved-bg);
+  color: var(--status-approved-fg);
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.days-chip .material-icons {
+  font-size: 14px;
+}
+
+/* Details line */
+.card-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-4);
+  padding-block-start: var(--space-2);
+  border-block-start: 1px solid var(--mat-sys-outline-variant);
+  font-size: 13px;
+  color: var(--mat-sys-on-surface-variant);
+}
+.card-reason {
+  flex: 1 1 200px;
+  min-inline-size: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.card-approval {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+.card-approval .material-icons {
+  font-size: 16px;
+}
+.card-approval strong {
+  color: var(--mat-sys-on-surface);
+}
+.remarks-text,
+.balance-snap {
+  font-style: italic;
+}
+.card-meta-end {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-4);
+  margin-inline-start: auto;
+}
+.attachment-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-block-size: 44px;
+  padding-inline: var(--space-1);
+  border: 0;
+  background: transparent;
+  color: var(--mat-sys-primary);
+  font: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+}
+.attachment-link .material-icons {
+  font-size: 16px;
+}
+
+/* ── Pagination ──────────────────────────────────────────── */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+.pag-info {
+  font-size: 13px;
+  color: var(--mat-sys-on-surface-variant);
+}
+.pag-btns {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+.pag-btn {
+  min-inline-size: 44px;
+  block-size: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: var(--radius-md);
+  background: var(--table-surface);
+  color: var(--mat-sys-on-surface);
+  font: inherit;
+  cursor: pointer;
+  transition: var(--motion-fast);
+}
+.pag-btn .material-icons {
+  font-size: 20px;
+}
+:host-context([dir='rtl']) .pag-btn .material-icons {
+  transform: scaleX(-1);
+}
+.pag-btn:hover:not(:disabled) {
+  border-color: var(--mat-sys-primary);
+  color: var(--mat-sys-primary);
+}
+.pag-btn.active {
+  background-image: var(--grad-primary);
+  border-color: transparent;
+  color: #fff;
+  font-weight: 700;
+  box-shadow: var(--primary-shadow);
+}
+.pag-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ── Confirm dialog extras (rest is in the kit) ──────────── */
+.confirm-details {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+  margin-block-end: var(--space-3);
+}
+.confirm-type {
+  font-weight: 700;
+}
+.confirm-dates {
+  font-size: 13px;
+  color: var(--mat-sys-on-surface-variant);
+}
+.confirm-days {
+  padding: 3px var(--space-3);
+  border-radius: 999px;
+  background: var(--status-approved-bg);
+  color: var(--status-approved-fg);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+@media (max-width: 640px) {
+  .card-top-right,
+  .card-meta-end {
+    margin-inline-start: 0;
+  }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .filter-bar {
+    background: var(--mat-sys-surface-container);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .leave-card {
+    transition: none;
+  }
+}

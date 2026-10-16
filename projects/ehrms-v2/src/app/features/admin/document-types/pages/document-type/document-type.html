@@ -1,0 +1,459 @@
+<div class="admin-page">
+  <div class="page-header">
+    <div class="header-left">
+      <h1 class="page-title">{{ 'admin.documentTypes.title' | translate }}</h1>
+      <div class="stat-chips">
+        <span class="chip chip-total">{{
+          'admin.documentTypes.totalChip' | translate: { count: docTypes().length }
+        }}</span>
+        <span class="chip chip-active">{{
+          'admin.documentTypes.activeChip' | translate: { count: activeCount() }
+        }}</span>
+        <span class="chip chip-mandatory">{{
+          'admin.documentTypes.mandatoryChip' | translate: { count: mandatoryCount() }
+        }}</span>
+      </div>
+    </div>
+    <button class="btn-add" (click)="openCreate()">
+      <span aria-hidden="true" class="material-icons">add</span>
+      {{ 'admin.documentTypes.addDocumentType' | translate }}
+    </button>
+  </div>
+
+  @if (successMsg()) {
+    <div class="alert alert-success">
+      <span aria-hidden="true" class="material-icons">check_circle</span>{{ successMsg() }}
+    </div>
+  }
+  @if (error() && !showModal()) {
+    <div class="alert alert-error">
+      <span aria-hidden="true" class="material-icons">error_outline</span>{{ error() }}
+    </div>
+  }
+
+  <div class="filter-bar">
+    <div class="search-wrap">
+      <span aria-hidden="true" class="material-icons">search</span>
+      <input
+        type="text"
+        [placeholder]="'admin.documentTypes.searchPlaceholder' | translate"
+        [attr.aria-label]="'admin.documentTypes.searchPlaceholder' | translate"
+        [value]="filterText()"
+        (input)="filterText.set($any($event.target).value)"
+      />
+    </div>
+    <select
+      class="filter-select"
+      [attr.aria-label]="'admin.documentTypes.category' | translate"
+      [value]="filterCat()"
+      (change)="filterCat.set($any($event.target).value)"
+    >
+      <option value="">{{ 'admin.documentTypes.allCategories' | translate }}</option>
+      @for (c of categories; track c) {
+        <option [value]="c">{{ c }}</option>
+      }
+    </select>
+    <div class="tab-filter">
+      <button
+        class="tab-btn"
+        [class.active]="filterActive() === 'all'"
+        (click)="filterActive.set('all')"
+      >
+        {{ 'common.all' | translate }}
+      </button>
+      <button
+        class="tab-btn"
+        [class.active]="filterActive() === 'active'"
+        (click)="filterActive.set('active')"
+      >
+        {{ 'common.active' | translate }}
+      </button>
+      <button
+        class="tab-btn"
+        [class.active]="filterActive() === 'inactive'"
+        (click)="filterActive.set('inactive')"
+      >
+        {{ 'common.inactive' | translate }}
+      </button>
+    </div>
+  </div>
+
+  @if (loading()) {
+    <div class="loading-wrap">
+      <div class="spinner"></div>
+      <span>{{ 'common.loading' | translate }}</span>
+    </div>
+  }
+
+  @if (!loading()) {
+    <div class="table-card">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>{{ 'admin.documentTypes.columns.code' | translate }}</th>
+            <th>{{ 'admin.documentTypes.columns.name' | translate }}</th>
+            <th>{{ 'admin.documentTypes.columns.category' | translate }}</th>
+            <th>{{ 'admin.documentTypes.columns.mandatory' | translate }}</th>
+            <th>{{ 'admin.documentTypes.columns.hasExpiry' | translate }}</th>
+            <th>{{ 'admin.documentTypes.columns.extensions' | translate }}</th>
+            <th>{{ 'admin.documentTypes.columns.maxSize' | translate }}</th>
+            <th>{{ 'admin.documentTypes.columns.status' | translate }}</th>
+            <th>{{ 'admin.documentTypes.columns.actions' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (filtered().length === 0) {
+            <tr>
+              <td colspan="10">
+                <div class="empty-state">
+                  <span aria-hidden="true" class="material-icons">folder_open</span>
+                  <p>{{ 'admin.documentTypes.emptyTitle' | translate }}</p>
+                </div>
+              </td>
+            </tr>
+          }
+          @for (dt of filtered(); track dt.docTypeId; let i = $index) {
+            <tr class="data-row" [class.inactive-row]="!dt.isActive">
+              <td class="cell-num">{{ i + 1 }}</td>
+              <td>
+                <span class="code-badge">{{ dt.docTypeCode }}</span>
+              </td>
+              <td>
+                <div class="name-cell">
+                  <span class="name-en">{{ dt.docTypeName }}</span>
+                  <span class="name-ar">{{ dt.docTypeNameAr }}</span>
+                </div>
+              </td>
+              <td>
+                <span class="cat-badge" [class]="getCategoryBadge(dt.category)">
+                  {{ dt.category }}
+                </span>
+              </td>
+              <td class="cell-center">
+                @if (dt.isMandatory) {
+                  <span aria-hidden="true" class="material-icons icon-yes">check_circle</span>
+                } @else {
+                  <span aria-hidden="true" class="material-icons icon-no">cancel</span>
+                }
+              </td>
+              <td class="cell-center">
+                @if (dt.hasExpiry) {
+                  <div class="expiry-info">
+                    <span aria-hidden="true" class="material-icons icon-yes">check_circle</span>
+                    <span class="expiry-days">{{
+                      'admin.documentTypes.daysNotice' | translate: { days: dt.expiryNoticeDays }
+                    }}</span>
+                  </div>
+                } @else {
+                  <span aria-hidden="true" class="material-icons icon-no">cancel</span>
+                }
+              </td>
+              <td>
+                <div class="ext-wrap">
+                  @for (ext of getExtensions(dt.allowedExtensions); track ext) {
+                    <span class="ext-badge">{{ ext }}</span>
+                  }
+                </div>
+              </td>
+              <td class="cell-center">
+                <span class="size-badge">{{ dt.maxFileSizeMb }}MB</span>
+              </td>
+              <td>
+                <span
+                  class="status-badge"
+                  [class.status-active]="dt.isActive"
+                  [class.status-inactive]="!dt.isActive"
+                >
+                  <span class="status-dot"></span
+                  >{{ (dt.isActive ? 'common.active' : 'common.inactive') | translate }}
+                </span>
+              </td>
+              <td>
+                <div class="action-wrap">
+                  <button
+                    class="act-btn btn-edit"
+                    [attr.aria-label]="'common.edit' | translate"
+                    (click)="openEdit(dt)"
+                  >
+                    <span aria-hidden="true" class="material-icons">edit</span>
+                  </button>
+                  <button
+                    class="act-btn"
+                    [class.btn-deactivate]="dt.isActive"
+                    [class.btn-activate]="!dt.isActive"
+                    [attr.aria-label]="
+                      (dt.isActive
+                        ? 'admin.documentTypes.deactivate'
+                        : 'admin.documentTypes.activate'
+                      ) | translate
+                    "
+                    (click)="openConfirm(dt)"
+                  >
+                    <span aria-hidden="true" class="material-icons">{{
+                      dt.isActive ? 'toggle_off' : 'toggle_on'
+                    }}</span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>
+
+<!-- MODAL -->
+@if (showModal()) {
+  <div class="modal-backdrop" (click)="closeModal()">
+    <div
+      class="modal"
+      (click)="$event.stopPropagation()"
+      [appAccessibleDialog]="'dt-modal-title'"
+      (dialogClosed)="closeModal()"
+      cdkTrapFocus
+      cdkTrapFocusAutoCapture
+    >
+      <div class="modal-header">
+        <h2 id="dt-modal-title" class="modal-title">
+          {{
+            (isEditMode() ? 'admin.documentTypes.editTitle' : 'admin.documentTypes.addDocumentType')
+              | translate
+          }}
+        </h2>
+        <button
+          class="modal-close"
+          [attr.aria-label]="'common.close' | translate"
+          (click)="closeModal()"
+        >
+          <span aria-hidden="true" class="material-icons">close</span>
+        </button>
+      </div>
+      @if (error()) {
+        <div class="modal-alert">
+          <span aria-hidden="true" class="material-icons">error_outline</span>{{ error() }}
+        </div>
+      }
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+        <div class="modal-body">
+          <div class="field-row">
+            <div class="field">
+              <label for="dt-code"
+                >{{ 'admin.documentTypes.code' | translate }} <span class="req">*</span></label
+              >
+              <input
+                id="dt-code"
+                formControlName="docTypeCode"
+                [placeholder]="'admin.documentTypes.codePlaceholder' | translate"
+              />
+              @if (isInvalid('docTypeCode')) {
+                <span class="field-error">{{ getError('docTypeCode') }}</span>
+              }
+            </div>
+            <div class="field">
+              <label for="dt-category"
+                >{{ 'admin.documentTypes.category' | translate }} <span class="req">*</span></label
+              >
+              <select id="dt-category" formControlName="category">
+                @for (c of categories; track c) {
+                  <option [value]="c">{{ c }}</option>
+                }
+              </select>
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="dt-name-en"
+                >{{ 'admin.documentTypes.nameEn' | translate }} <span class="req">*</span></label
+              >
+              <input
+                id="dt-name-en"
+                formControlName="docTypeName"
+                [placeholder]="'admin.documentTypes.nameEnPlaceholder' | translate"
+              />
+              @if (isInvalid('docTypeName')) {
+                <span class="field-error">{{ getError('docTypeName') }}</span>
+              }
+            </div>
+            <div class="field">
+              <label for="dt-name-ar"
+                >{{ 'admin.documentTypes.nameAr' | translate }} <span class="req">*</span></label
+              >
+              <input
+                id="dt-name-ar"
+                formControlName="docTypeNameAr"
+                placeholder="e.g. بطاقة الهوية"
+                dir="rtl"
+              />
+              @if (isInvalid('docTypeNameAr')) {
+                <span class="field-error">{{ getError('docTypeNameAr') }}</span>
+              }
+            </div>
+          </div>
+          <div class="field">
+            <label for="dt-description">{{ 'admin.documentTypes.description' | translate }}</label>
+            <textarea
+              id="dt-description"
+              formControlName="description"
+              [placeholder]="'admin.documentTypes.descriptionPlaceholder' | translate"
+              rows="2"
+            ></textarea>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="dt-allowed-extensions">{{
+                'admin.documentTypes.allowedExtensions' | translate
+              }}</label>
+              <input
+                id="dt-allowed-extensions"
+                formControlName="allowedExtensions"
+                placeholder="PDF,JPG,PNG"
+              />
+              <span class="field-hint">{{
+                'admin.documentTypes.allowedExtensionsHint' | translate
+              }}</span>
+            </div>
+            <div class="field">
+              <label for="dt-max-file-size">{{
+                'admin.documentTypes.maxFileSize' | translate
+              }}</label>
+              <input id="dt-max-file-size" type="number" formControlName="maxFileSizeMb" min="1" />
+              @if (isInvalid('maxFileSizeMb')) {
+                <span class="field-error">{{ getError('maxFileSizeMb') }}</span>
+              }
+            </div>
+          </div>
+          <div class="toggles-row">
+            <label class="toggle-item">
+              <div class="toggle-info">
+                <span class="toggle-label">{{ 'admin.documentTypes.mandatory' | translate }}</span>
+                <span class="toggle-hint">{{
+                  'admin.documentTypes.mandatoryHint' | translate
+                }}</span>
+              </div>
+              <div class="toggle-wrap">
+                <input type="checkbox" formControlName="isMandatory" class="toggle-inp" />
+                <span class="toggle-slider"></span>
+              </div>
+            </label>
+            <label class="toggle-item">
+              <div class="toggle-info">
+                <span class="toggle-label">{{ 'admin.documentTypes.hasExpiry' | translate }}</span>
+                <span class="toggle-hint">{{
+                  'admin.documentTypes.hasExpiryHint' | translate
+                }}</span>
+              </div>
+              <div class="toggle-wrap">
+                <input type="checkbox" formControlName="hasExpiry" class="toggle-inp" />
+                <span class="toggle-slider"></span>
+              </div>
+            </label>
+            @if (isEditMode()) {
+              <label class="toggle-item">
+                <div class="toggle-info">
+                  <span class="toggle-label">{{ 'common.active' | translate }}</span>
+                  <span class="toggle-hint">{{
+                    'admin.documentTypes.activeHint' | translate
+                  }}</span>
+                </div>
+                <div class="toggle-wrap">
+                  <input type="checkbox" formControlName="isActive" class="toggle-inp" />
+                  <span class="toggle-slider"></span>
+                </div>
+              </label>
+            }
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="dt-expiry-notice-days">{{
+                'admin.documentTypes.expiryNoticeDays' | translate
+              }}</label>
+              <input
+                id="dt-expiry-notice-days"
+                type="number"
+                formControlName="expiryNoticeDays"
+                min="0"
+                max="365"
+              />
+              <span class="field-hint">{{
+                'admin.documentTypes.expiryNoticeDaysHint' | translate
+              }}</span>
+            </div>
+            <div class="field">
+              <label for="dt-sort-order">{{ 'admin.documentTypes.sortOrder' | translate }}</label>
+              <input id="dt-sort-order" type="number" formControlName="sortOrder" min="0" />
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-cancel" (click)="closeModal()">
+            {{ 'common.cancel' | translate }}
+          </button>
+          <button type="submit" class="btn-save" [disabled]="saving()">
+            @if (saving()) {
+              <div class="btn-spinner"></div>
+              <span>{{ 'admin.documentTypes.saving' | translate }}</span>
+            } @else {
+              <span aria-hidden="true" class="material-icons">save</span
+              ><span>{{
+                (isEditMode() ? 'admin.documentTypes.update' : 'admin.documentTypes.addType')
+                  | translate
+              }}</span>
+            }
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}
+
+@if (showConfirm()) {
+  <div class="modal-backdrop" (click)="cancelConfirm()">
+    <div
+      class="confirm-dialog"
+      (click)="$event.stopPropagation()"
+      [appAccessibleDialog]="'dt-confirm-title'"
+      (dialogClosed)="cancelConfirm()"
+      cdkTrapFocus
+      cdkTrapFocusAutoCapture
+    >
+      <div
+        class="confirm-icon"
+        [class.icon-warn]="confirmItem()?.isActive"
+        [class.icon-info]="!confirmItem()?.isActive"
+      >
+        <span aria-hidden="true" class="material-icons">folder</span>
+      </div>
+      <h3 id="dt-confirm-title" class="confirm-title">
+        {{
+          (confirmItem()?.isActive
+            ? 'admin.documentTypes.deactivateTitle'
+            : 'admin.documentTypes.activateTitle'
+          ) | translate
+        }}
+      </h3>
+      <p class="confirm-msg">
+        <strong>{{ confirmItem()?.docTypeName }}</strong>
+      </p>
+      <div class="confirm-actions">
+        <button class="btn-cancel" (click)="cancelConfirm()">
+          {{ 'common.cancel' | translate }}
+        </button>
+        <button
+          class="btn-confirm"
+          [class.btn-danger]="confirmItem()?.isActive"
+          [class.btn-success]="!confirmItem()?.isActive"
+          (click)="confirmToggle()"
+        >
+          {{
+            (confirmItem()?.isActive
+              ? 'admin.documentTypes.deactivate'
+              : 'admin.documentTypes.activate'
+            ) | translate
+          }}
+        </button>
+      </div>
+    </div>
+  </div>
+}

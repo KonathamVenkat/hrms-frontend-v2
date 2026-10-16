@@ -1,0 +1,512 @@
+/* Employee list: Aurora Glass. Theme tokens + logical properties only, so Arabic mirrors without overrides.
+   Controls are >= 44px; the table header is sticky inside .table-wrap. */
+
+.emp-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+/* ── Header ──────────────────────────────────────────────── */
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+.page-title {
+  margin: 0;
+  font-size: 28px;
+  line-height: 1.25;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.count-badge {
+  padding: 2px var(--space-3);
+  border-radius: 999px;
+  background: var(--mat-sys-primary-container);
+  color: var(--mat-sys-on-primary-container);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* ── Buttons: gradient primary, glass secondary ──────────── */
+.btn-create,
+.btn-search,
+.btn-create-sm {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-block-size: 44px;
+  padding-inline: var(--space-5);
+  border: 0;
+  border-radius: var(--radius-md);
+  background-image: var(--grad-cta);
+  color: #fff;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  box-shadow: var(--cta-shadow);
+  cursor: pointer;
+  transition: transform var(--motion-fast);
+}
+.btn-search {
+  background-image: var(--grad-primary);
+  box-shadow: var(--primary-shadow);
+}
+.btn-create:hover,
+.btn-search:hover,
+.btn-create-sm:hover {
+  transform: translateY(-1px);
+}
+.btn-create .material-icons,
+.btn-create-sm .material-icons {
+  font-size: 20px;
+}
+
+/* ── Filter bar (glass) ──────────────────────────────────── */
+.filter-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  padding: var(--space-3) var(--space-4);
+  background: var(--glass-bg);
+  border: var(--glass-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--glass-shine), var(--glass-shadow);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+}
+
+.search-wrap {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex: 1;
+  min-inline-size: 220px;
+  block-size: 44px;
+  padding-inline: var(--space-3);
+  background: var(--table-surface);
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: var(--radius-md);
+}
+.search-wrap:focus-within {
+  border-color: var(--mat-sys-primary);
+  outline: 2px solid var(--mat-sys-primary);
+  outline-offset: 1px;
+}
+.search-wrap .material-icons {
+  font-size: 20px;
+  color: var(--mat-sys-on-surface-variant);
+  flex-shrink: 0;
+}
+.search-wrap input {
+  flex: 1;
+  min-inline-size: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--mat-sys-on-surface);
+  font: inherit;
+}
+.clear-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 32px;
+  block-size: 32px;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  color: var(--mat-sys-on-surface-variant);
+  cursor: pointer;
+}
+.clear-icon:hover {
+  background: var(--mat-sys-surface-container-high);
+}
+.clear-icon .material-icons {
+  font-size: 18px;
+}
+
+.filter-select,
+.page-size-wrap select {
+  block-size: 44px;
+  padding-inline: var(--space-3);
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: var(--radius-md);
+  background: var(--table-surface);
+  color: var(--mat-sys-on-surface);
+  font: inherit;
+  cursor: pointer;
+}
+.filter-select:focus-visible,
+.page-size-wrap select:focus-visible {
+  outline: 2px solid var(--mat-sys-primary);
+  outline-offset: 1px;
+}
+
+.btn-clear {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-block-size: 44px;
+  padding-inline: var(--space-4);
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: var(--radius-md);
+  background: var(--table-surface);
+  color: var(--mat-sys-on-surface-variant);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+.btn-clear:hover {
+  border-color: var(--danger);
+  color: var(--danger);
+}
+.btn-clear .material-icons {
+  font-size: 18px;
+}
+
+/* ── Table card ──────────────────────────────────────────── */
+.table-card {
+  position: relative;
+  overflow: hidden;
+  background: var(--table-surface);
+  border: var(--glass-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--glass-shine), var(--glass-shadow);
+}
+
+.loading-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  background: var(--glass-bg-strong);
+  color: var(--mat-sys-on-surface-variant);
+}
+.spinner {
+  inline-size: 30px;
+  block-size: 30px;
+  border: 3px solid var(--mat-sys-outline-variant);
+  border-block-start-color: var(--mat-sys-primary);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Scrolls both ways so the sticky header has a scroll container. */
+.table-wrap {
+  overflow: auto;
+  max-block-size: calc(100vh - 360px);
+  min-block-size: 200px;
+}
+.emp-table {
+  inline-size: 100%;
+  min-inline-size: 800px;
+  border-collapse: collapse;
+}
+.emp-table th {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 1;
+  padding: var(--space-3) var(--space-4);
+  background: var(--table-header-bg);
+  color: var(--mat-sys-on-surface-variant);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  text-align: start;
+  white-space: nowrap;
+}
+.emp-row {
+  border-block-start: 1px solid var(--mat-sys-outline-variant);
+  cursor: pointer;
+  transition: background var(--motion-fast);
+}
+.emp-row:hover,
+.emp-row:focus-visible {
+  background: color-mix(in srgb, var(--mat-sys-primary) 7%, transparent);
+}
+.emp-row:focus-visible {
+  outline: 2px solid var(--mat-sys-primary);
+  outline-offset: -2px;
+}
+.emp-table td {
+  padding: var(--space-3) var(--space-4);
+  color: var(--mat-sys-on-surface);
+  vertical-align: middle;
+  font-variant-numeric: tabular-nums;
+}
+
+.emp-cell {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+.emp-avatar {
+  overflow: hidden;
+  inline-size: 40px;
+  block-size: 40px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--grad-primary);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  box-shadow: var(--shadow-1);
+}
+.emp-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.emp-name {
+  font-weight: 700;
+}
+.emp-code {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--mat-sys-primary);
+}
+.emp-email {
+  font-size: 12px;
+  color: var(--mat-sys-on-surface-variant);
+  /* Emails are always left-to-right data. */
+  unicode-bidi: plaintext;
+}
+
+/* ── Badges: status tokens, always text + dot ────────────── */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px var(--space-3);
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+}
+/* This template draws its own dot (.status-dot); skip the global one. */
+.status-badge::before {
+  display: none;
+}
+.status-dot {
+  inline-size: 6px;
+  block-size: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: currentcolor;
+}
+.badge-active {
+  background: var(--status-active-bg);
+  color: var(--status-active-fg);
+}
+.badge-inactive {
+  background: var(--mat-sys-surface-container-high);
+  color: var(--mat-sys-on-surface-variant);
+}
+.badge-probation {
+  background: var(--status-approved-bg);
+  color: var(--status-approved-fg);
+}
+.badge-notice {
+  background: var(--status-pending-bg);
+  color: var(--status-pending-fg);
+}
+.badge-terminated {
+  background: var(--status-rejected-bg);
+  color: var(--status-rejected-fg);
+}
+
+.type-badge {
+  display: inline-block;
+  padding: 3px var(--space-3);
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.type-full {
+  background: var(--status-approved-bg);
+  color: var(--status-approved-fg);
+}
+.type-part {
+  background: var(--mat-sys-secondary-container);
+  color: var(--mat-sys-on-secondary-container);
+}
+.type-contract {
+  background: var(--status-pending-bg);
+  color: var(--status-pending-fg);
+}
+.type-intern {
+  background: var(--status-active-bg);
+  color: var(--status-active-fg);
+}
+
+/* ── Row actions: 44px targets ───────────────────────────── */
+.action-wrap {
+  display: flex;
+  gap: var(--space-1);
+}
+.act-btn {
+  inline-size: 44px;
+  block-size: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: var(--radius-md);
+  background: transparent;
+  cursor: pointer;
+  transition: background var(--motion-fast);
+}
+.act-btn .material-icons {
+  font-size: 20px;
+}
+.act-btn.view {
+  color: var(--status-active-fg);
+}
+.act-btn.edit {
+  color: var(--status-approved-fg);
+}
+.act-btn.view:hover {
+  background: var(--status-active-bg);
+}
+.act-btn.edit:hover {
+  background: var(--status-approved-bg);
+}
+.act-btn:focus-visible,
+.pag-btn:focus-visible,
+.btn-create:focus-visible,
+.btn-search:focus-visible,
+.btn-create-sm:focus-visible,
+.btn-clear:focus-visible,
+.clear-icon:focus-visible {
+  outline: 2px solid var(--mat-sys-primary);
+  outline-offset: 2px;
+}
+
+/* ── Empty state ─────────────────────────────────────────── */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 56px var(--space-5);
+  text-align: center;
+}
+.empty-state .material-icons {
+  font-size: 56px;
+  color: var(--mat-sys-primary);
+  opacity: 0.35;
+}
+.empty-state p {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+.empty-state small {
+  color: var(--mat-sys-on-surface-variant);
+}
+.btn-create-sm {
+  margin-block-start: var(--space-2);
+}
+
+/* ── Pagination ──────────────────────────────────────────── */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border-block-start: 1px solid var(--mat-sys-outline-variant);
+}
+.pag-info,
+.page-size-wrap {
+  color: var(--mat-sys-on-surface-variant);
+  font-size: 13px;
+}
+.page-size-wrap {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.pag-btns {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+.pag-ellipsis {
+  padding-inline: var(--space-1);
+  color: var(--mat-sys-on-surface-variant);
+}
+.pag-btn {
+  min-inline-size: 44px;
+  block-size: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: var(--radius-md);
+  background: var(--table-surface);
+  color: var(--mat-sys-on-surface);
+  font: inherit;
+  cursor: pointer;
+  transition: var(--motion-fast);
+}
+.pag-btn .material-icons {
+  font-size: 20px;
+}
+.pag-btn:hover:not(:disabled) {
+  border-color: var(--mat-sys-primary);
+  color: var(--mat-sys-primary);
+}
+.pag-btn.active {
+  background-image: var(--grad-primary);
+  border-color: transparent;
+  color: #fff;
+  font-weight: 700;
+  box-shadow: var(--primary-shadow);
+}
+.pag-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .filter-bar {
+    background: var(--mat-sys-surface-container);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .spinner {
+    animation-duration: 2s;
+  }
+  .btn-create,
+  .btn-search,
+  .btn-create-sm {
+    transition: none;
+  }
+}

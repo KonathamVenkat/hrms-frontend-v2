@@ -1,0 +1,294 @@
+/* Attendance log: Aurora Glass. Theme tokens + logical properties only, so Arabic mirrors without overrides. */
+
+.attendance-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+/* ── Page header ─────────────────────────────────────────── */
+.page-header,
+.header-left {
+  display: flex;
+  align-items: center;
+}
+.page-header {
+  justify-content: space-between;
+}
+.header-left {
+  gap: var(--space-4);
+}
+.header-icon {
+  inline-size: 40px;
+  block-size: 40px;
+  font-size: 40px;
+  color: var(--mat-sys-primary);
+}
+.page-header h2 {
+  margin: 0;
+  font-size: 28px;
+  line-height: 1.25;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.subtitle {
+  color: var(--mat-sys-on-surface-variant);
+}
+
+/* ── Glass cards ─────────────────────────────────────────── */
+.punch-card,
+.table-card,
+.stat-card {
+  background: var(--table-surface);
+  border: var(--glass-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--glass-shine), var(--glass-shadow);
+}
+
+/* ── Punch card ──────────────────────────────────────────── */
+.punch-grid {
+  display: flex;
+  align-items: center;
+  padding-block: var(--space-2);
+}
+.punch-block {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-4);
+}
+.punch-divider {
+  block-size: 80px;
+  border-color: var(--mat-sys-outline-variant);
+}
+.punch-icon {
+  inline-size: 32px;
+  block-size: 32px;
+  font-size: 32px;
+  color: var(--mat-sys-on-surface-variant);
+}
+.check-in-icon {
+  color: var(--status-active-fg);
+}
+.check-out-icon {
+  color: var(--status-rejected-fg);
+}
+.working-icon {
+  color: var(--mat-sys-primary);
+}
+.punch-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+}
+.punch-label,
+.stat-label {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--mat-sys-on-surface-variant);
+}
+.punch-time {
+  font-size: 28px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+.working-time {
+  color: var(--mat-sys-primary);
+}
+.punch-btn {
+  min-block-size: 44px;
+  min-inline-size: 120px;
+  font-weight: 700;
+}
+/* Done state (disabledInteractive keeps it focusable, so :disabled does not match): neutral, not the gradient. */
+.punch-btn.mat-mdc-button-disabled {
+  background-image: none;
+  background-color: var(--mat-sys-surface-container-high);
+  color: var(--mat-sys-on-surface-variant);
+  box-shadow: none;
+}
+.shift-info {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-block-start: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  background: var(--mat-sys-surface-container);
+  color: var(--mat-sys-on-surface-variant);
+}
+.shift-icon {
+  inline-size: 18px;
+  block-size: 18px;
+  font-size: 18px;
+}
+.late-badge,
+.live-badge {
+  padding: 2px var(--space-3);
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+}
+.late-badge {
+  margin-inline-start: auto;
+  background: var(--status-pending-bg);
+  color: var(--status-pending-fg);
+}
+.live-badge {
+  margin-inline-start: var(--space-2);
+  background: var(--status-active-bg);
+  color: var(--status-active-fg);
+}
+
+/* ── Summary ─────────────────────────────────────────────── */
+.summary-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+}
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: var(--space-3);
+}
+.stat-card {
+  text-align: center;
+  cursor: default;
+}
+.stat-card mat-card-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-5) var(--space-3);
+}
+.stat-value {
+  font-size: 28px;
+  font-weight: 800;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.stat-card.present .stat-value {
+  color: var(--status-active-fg);
+}
+.stat-card.absent .stat-value {
+  color: var(--status-rejected-fg);
+}
+.stat-card.late .stat-value {
+  color: var(--status-pending-fg);
+}
+.stat-card.leave .stat-value {
+  color: var(--mat-sys-secondary);
+}
+.stat-card.working .stat-value,
+.stat-card.overtime .stat-value {
+  font-size: 22px;
+}
+.stat-card.working .stat-value {
+  color: var(--status-approved-fg);
+}
+.stat-card.overtime .stat-value {
+  color: var(--mat-sys-primary);
+}
+
+/* ── Table ───────────────────────────────────────────────── */
+.table-card mat-card-header {
+  padding: var(--space-4) var(--space-5) 0;
+}
+.table-card mat-card-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 18px;
+  font-weight: 700;
+}
+.table-wrapper {
+  position: relative;
+  overflow: auto;
+  min-block-size: 200px;
+  max-block-size: 70vh;
+}
+.attendance-table {
+  inline-size: 100%;
+  background: transparent;
+}
+.attendance-table th {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--mat-sys-on-surface-variant);
+}
+.attendance-table td {
+  font-variant-numeric: tabular-nums;
+}
+.weekend-row td {
+  background: var(--mat-sys-surface-container);
+  color: var(--mat-sys-on-surface-variant);
+}
+.holiday-row td {
+  background: color-mix(in srgb, var(--mat-sys-tertiary) 12%, transparent);
+}
+/* Background and text colour come from getStatusStyle(); this only sets the shape. */
+.status-chip {
+  display: inline-block;
+  padding: 3px var(--space-3);
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.late-text {
+  color: var(--status-pending-fg);
+  font-weight: 600;
+}
+
+/* ── Empty / loading ─────────────────────────────────────── */
+.empty-cell {
+  padding-block: 40px;
+  text-align: center;
+}
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--mat-sys-on-surface-variant);
+}
+.empty-state mat-icon {
+  inline-size: 48px;
+  block-size: 48px;
+  font-size: 48px;
+  color: var(--mat-sys-primary);
+  opacity: 0.4;
+}
+.table-spinner {
+  display: block;
+  margin: 60px auto;
+}
+
+@media (max-width: 768px) {
+  .punch-grid {
+    flex-direction: column;
+  }
+  .punch-divider {
+    display: none;
+  }
+  .summary-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

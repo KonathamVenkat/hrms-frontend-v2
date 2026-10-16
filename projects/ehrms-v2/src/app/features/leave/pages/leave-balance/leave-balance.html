@@ -1,0 +1,426 @@
+<div class="lb-page">
+  <!-- ── Page Header ──────────────────────────────────────── -->
+  <div class="page-header">
+    <div class="header-left">
+      <h1 class="page-title">{{ 'leave.balance.title' | translate }}</h1>
+      <div class="stat-chips">
+        <span class="chip chip-total">
+          {{ 'leave.balance.recordsCount' | translate: { count: totalBalances() } }}
+        </span>
+      </div>
+    </div>
+    <div class="header-right">
+      <!-- Year selector -->
+      <div class="year-nav">
+        <button
+          class="year-btn"
+          [attr.aria-label]="'common.previous' | translate"
+          (click)="onYearChange(selectedYear() - 1)"
+        >
+          <span aria-hidden="true" class="material-icons">chevron_left</span>
+        </button>
+        <select
+          class="year-select"
+          [attr.aria-label]="'leave.balance.selectYear' | translate"
+          [value]="selectedYear()"
+          (change)="onYearChange(+$any($event.target).value)"
+        >
+          @for (y of yearOptions; track y) {
+            <option [value]="y">{{ y }}</option>
+          }
+        </select>
+        <button
+          class="year-btn"
+          [attr.aria-label]="'common.next' | translate"
+          (click)="onYearChange(selectedYear() + 1)"
+        >
+          <span aria-hidden="true" class="material-icons">chevron_right</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Tab nav ────────────────────────────────────────────── -->
+  <div class="tab-nav">
+    <button
+      class="tab-btn"
+      [class.active]="activeTab() === 'overview'"
+      (click)="activeTab.set('overview')"
+    >
+      <span aria-hidden="true" class="material-icons">dashboard</span>
+      {{ 'leave.balance.tabOverview' | translate }}
+    </button>
+    <button
+      class="tab-btn"
+      [class.active]="activeTab() === 'initialize'"
+      (click)="activeTab.set('initialize')"
+    >
+      <span aria-hidden="true" class="material-icons">playlist_add</span>
+      {{ 'leave.balance.tabInitialize' | translate }}
+    </button>
+    <button
+      class="tab-btn"
+      [class.active]="activeTab() === 'adjust'"
+      (click)="activeTab.set('adjust')"
+    >
+      <span aria-hidden="true" class="material-icons">tune</span>
+      {{ 'leave.balance.tabAdjust' | translate }}
+    </button>
+  </div>
+
+  <!-- ── Alerts ─────────────────────────────────────────── -->
+  @if (successMsg()) {
+    <div class="alert alert-success">
+      <span aria-hidden="true" class="material-icons">check_circle</span>{{ successMsg() }}
+    </div>
+  }
+  @if (error()) {
+    <div class="alert alert-error">
+      <span aria-hidden="true" class="material-icons">error_outline</span>{{ error() }}
+    </div>
+  }
+
+  <!-- ══════════════════════════════════════════════════════ -->
+  <!-- TAB: OVERVIEW                                        -->
+  <!-- ══════════════════════════════════════════════════════ -->
+  @if (activeTab() === 'overview') {
+    @if (loading()) {
+      <div class="loading-wrap">
+        <div class="spinner"></div>
+        <span>{{ 'leave.balance.loadingText' | translate: { year: selectedYear() } }}</span>
+      </div>
+    }
+
+    @if (!loading() && balances().length === 0) {
+      <div class="empty-state">
+        <span aria-hidden="true" class="material-icons">event_busy</span>
+        <p>{{ 'leave.balance.emptyTitle' | translate: { year: selectedYear() } }}</p>
+        <small>{{ 'leave.balance.emptyHint' | translate }}</small>
+        <button class="btn-add-sm" (click)="activeTab.set('initialize')">
+          <span aria-hidden="true" class="material-icons">playlist_add</span>
+          {{ 'leave.balance.initializeNowButton' | translate }}
+        </button>
+      </div>
+    }
+
+    @if (!loading() && groupedByLeaveType().length > 0) {
+      <div class="overview-grid">
+        @for (group of groupedByLeaveType(); track group.leaveType) {
+          <div class="type-card">
+            <!-- Card header -->
+            <div
+              class="type-card-header"
+              [style.border-inline-start]="'4px solid ' + getTypeColor(group.leaveType)"
+            >
+              <div class="type-info">
+                <span class="type-code" [style.color]="getTypeColor(group.leaveType)">
+                  {{ group.leaveType }}
+                </span>
+                <span class="type-name">{{ group.leaveTypeName }}</span>
+              </div>
+              <div class="type-stats">
+                <span class="type-emp-count">
+                  {{ 'leave.balance.employeesCount' | translate: { count: group.totalEmps } }}
+                </span>
+                <span class="type-avg">
+                  {{
+                    'leave.balance.avgDaysAvailable'
+                      | translate: { avg: group.avgAvailable.toFixed(1) }
+                  }}
+                </span>
+              </div>
+            </div>
+
+            <!-- Employee rows (first 5) -->
+            <div class="emp-rows">
+              @for (b of group.items.slice(0, 5); track b.balanceId) {
+                <div class="emp-bal-row">
+                  <span class="emp-id">
+                    {{ 'leave.balance.empIdPrefix' | translate }}{{ b.employeeId }}
+                  </span>
+                  <div class="bal-bar-wrap">
+                    <div class="bal-bar">
+                      <div
+                        class="bal-bar-fill"
+                        [style.width.%]="getUsedPercent(b)"
+                        [style.background]="getBarColor(getUsedPercent(b))"
+                      ></div>
+                    </div>
+                    <span class="bal-text">
+                      {{ b.availableDays.toFixed(1) }}/{{ b.totalDays.toFixed(1) }}
+                      {{ 'leave.list.daysPlural' | translate }}
+                    </span>
+                  </div>
+                </div>
+              }
+              @if (group.items.length > 5) {
+                <p class="more-rows">
+                  {{ 'leave.balance.moreEmployees' | translate: { count: group.items.length - 5 } }}
+                </p>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    }
+  }
+
+  <!-- ══════════════════════════════════════════════════════ -->
+  <!-- TAB: INITIALIZE                                      -->
+  <!-- ══════════════════════════════════════════════════════ -->
+  @if (activeTab() === 'initialize') {
+    <div class="form-card">
+      <div class="form-card-header">
+        <span aria-hidden="true" class="material-icons">playlist_add</span>
+        {{ 'leave.balance.initFormTitle' | translate }}
+      </div>
+
+      <div class="form-card-body">
+        <div class="info-banner">
+          <span aria-hidden="true" class="material-icons">info</span>
+          <div>
+            <strong>{{ 'leave.balance.initInfoTitle' | translate }}</strong>
+            {{ 'leave.balance.initInfoBody' | translate }}
+          </div>
+        </div>
+
+        <form [formGroup]="initForm" (ngSubmit)="onInitialize()" novalidate>
+          <div class="field-row">
+            <div class="field">
+              <label for="lb-init-year"
+                >{{ 'leave.balance.yearLabel' | translate }} <span class="req">*</span></label
+              >
+              <select id="lb-init-year" formControlName="year">
+                @for (y of yearOptions; track y) {
+                  <option [value]="y">{{ y }}</option>
+                }
+              </select>
+              @if (isInvalid(initForm, 'year')) {
+                <span class="field-error">{{ getError(initForm, 'year') }}</span>
+              }
+            </div>
+          </div>
+
+          <!-- Options -->
+          <div class="options-grid">
+            <label class="toggle-item">
+              <div class="toggle-wrap">
+                <input type="checkbox" formControlName="skipExisting" class="toggle-inp" />
+                <span class="toggle-slider"></span>
+              </div>
+              <div class="toggle-info">
+                <span class="toggle-label">{{
+                  'leave.balance.skipExistingLabel' | translate
+                }}</span>
+                <span class="toggle-hint">
+                  {{ 'leave.balance.skipExistingHint' | translate }}
+                </span>
+              </div>
+            </label>
+
+            <label class="toggle-item">
+              <div class="toggle-wrap">
+                <input type="checkbox" formControlName="applyCarryForward" class="toggle-inp" />
+                <span class="toggle-slider"></span>
+              </div>
+              <div class="toggle-info">
+                <span class="toggle-label">{{
+                  'leave.balance.carryForwardLabel' | translate
+                }}</span>
+                <span class="toggle-hint">
+                  {{ 'leave.balance.carryForwardHint' | translate }}
+                </span>
+              </div>
+            </label>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn-save" [disabled]="initializing()">
+              @if (initializing()) {
+                <div class="btn-spinner"></div>
+                <span>{{ 'leave.balance.initializingText' | translate }}</span>
+              } @else {
+                <span aria-hidden="true" class="material-icons">playlist_add</span>
+                <span>{{ 'leave.balance.initializeAllButton' | translate }}</span>
+              }
+            </button>
+          </div>
+        </form>
+
+        <!-- ── Initialization result ─────────────────────── -->
+        @if (initResult()) {
+          <div class="result-card" [class.result-error]="initResult()!.errorCount > 0">
+            <div class="result-header">
+              <span aria-hidden="true" class="material-icons">
+                {{ initResult()!.errorCount > 0 ? 'warning' : 'check_circle' }}
+              </span>
+              <strong>
+                {{ 'leave.balance.initCompleteTitle' | translate: { year: initResult()!.year } }}
+              </strong>
+            </div>
+            <div class="result-stats">
+              <div class="result-stat">
+                <span class="stat-val green">{{ initResult()!.initializedCount }}</span>
+                <span class="stat-lbl">{{ 'leave.balance.resultInitialized' | translate }}</span>
+              </div>
+              <div class="result-stat">
+                <span class="stat-val muted">{{ initResult()!.skippedCount }}</span>
+                <span class="stat-lbl">{{ 'leave.balance.resultSkipped' | translate }}</span>
+              </div>
+              <div class="result-stat">
+                <span class="stat-val red">{{ initResult()!.errorCount }}</span>
+                <span class="stat-lbl">{{ 'leave.balance.resultErrors' | translate }}</span>
+              </div>
+              <div class="result-stat">
+                <span class="stat-val blue">{{ initResult()!.totalEmployees }}</span>
+                <span class="stat-lbl">{{ 'leave.balance.resultTotal' | translate }}</span>
+              </div>
+            </div>
+            @if (initResult()!.errors.length > 0) {
+              <div class="result-errors">
+                <p class="error-title">{{ 'leave.balance.errorsTitle' | translate }}</p>
+                @for (err of initResult()!.errors; track err) {
+                  <p class="error-item">{{ err }}</p>
+                }
+              </div>
+            }
+          </div>
+        }
+      </div>
+    </div>
+  }
+
+  <!-- ══════════════════════════════════════════════════════ -->
+  <!-- TAB: ADJUST BALANCE                                  -->
+  <!-- ══════════════════════════════════════════════════════ -->
+  @if (activeTab() === 'adjust') {
+    <div class="form-card">
+      <div class="form-card-header">
+        <span aria-hidden="true" class="material-icons">tune</span>
+        {{ 'leave.balance.adjustFormTitle' | translate }}
+      </div>
+
+      <div class="form-card-body">
+        <div class="info-banner info-banner-warn">
+          <span aria-hidden="true" class="material-icons">warning</span>
+          <div>
+            <strong>{{ 'leave.balance.adjustWarnTitle' | translate }}</strong>
+            {{ 'leave.balance.adjustWarnBody' | translate }}
+          </div>
+        </div>
+
+        <form [formGroup]="adjustForm" (ngSubmit)="onAdjust()" novalidate>
+          <!-- Employee ID + Leave Type -->
+          <div class="field-row">
+            <div class="field">
+              <label for="lb-adjust-employee-id"
+                >{{ 'leave.balance.employeeIdLabel' | translate }} <span class="req">*</span></label
+              >
+              <input
+                id="lb-adjust-employee-id"
+                formControlName="employeeId"
+                type="number"
+                [placeholder]="'leave.balance.employeeIdPlaceholder' | translate"
+              />
+              @if (isInvalid(adjustForm, 'employeeId')) {
+                <span class="field-error">{{ getError(adjustForm, 'employeeId') }}</span>
+              }
+            </div>
+            <div class="field">
+              <label for="lb-adjust-leave-type"
+                >{{ 'leave.balance.leaveTypeLabel' | translate }} <span class="req">*</span></label
+              >
+              <select id="lb-adjust-leave-type" formControlName="leaveTypeCode">
+                <option value="">{{ 'leave.balance.selectLeaveType' | translate }}</option>
+                @for (lt of leaveTypes; track lt) {
+                  <option [value]="lt">{{ lt }}</option>
+                }
+              </select>
+              @if (isInvalid(adjustForm, 'leaveTypeCode')) {
+                <span class="field-error">{{ getError(adjustForm, 'leaveTypeCode') }}</span>
+              }
+            </div>
+          </div>
+
+          <!-- Year + Adjustment type -->
+          <div class="field-row">
+            <div class="field">
+              <label for="lb-adjust-year"
+                >{{ 'leave.balance.yearLabel' | translate }} <span class="req">*</span></label
+              >
+              <select id="lb-adjust-year" formControlName="year">
+                @for (y of yearOptions; track y) {
+                  <option [value]="y">{{ y }}</option>
+                }
+              </select>
+            </div>
+            <div class="field">
+              <label
+                >{{ 'leave.balance.adjustmentTypeLabel' | translate }}
+                <span class="req">*</span></label
+              >
+              <div class="adj-type-selector">
+                @for (at of adjustmentTypes; track at.value) {
+                  <label
+                    class="adj-type-btn"
+                    [class.adj-selected]="ctrl(adjustForm, 'adjustmentType').value === at.value"
+                  >
+                    <input type="radio" formControlName="adjustmentType" [value]="at.value" />
+                    <span class="adj-label">{{ at.labelKey | translate }}</span>
+                    <span class="adj-desc">{{ at.descKey | translate }}</span>
+                  </label>
+                }
+              </div>
+            </div>
+          </div>
+
+          <!-- Days + Reason -->
+          <div class="field-row">
+            <div class="field">
+              <label for="lb-adjust-days"
+                >{{ 'leave.balance.daysLabel' | translate }} <span class="req">*</span></label
+              >
+              <input
+                id="lb-adjust-days"
+                formControlName="days"
+                type="number"
+                min="0.5"
+                max="365"
+                step="0.5"
+                [placeholder]="'leave.balance.daysPlaceholder' | translate"
+              />
+              @if (isInvalid(adjustForm, 'days')) {
+                <span class="field-error">{{ getError(adjustForm, 'days') }}</span>
+              }
+            </div>
+            <div class="field">
+              <label for="lb-adjust-reason"
+                >{{ 'leave.balance.reasonLabel' | translate }} <span class="req">*</span></label
+              >
+              <input
+                id="lb-adjust-reason"
+                formControlName="reason"
+                [placeholder]="'leave.balance.reasonPlaceholder' | translate"
+              />
+              @if (isInvalid(adjustForm, 'reason')) {
+                <span class="field-error">{{ getError(adjustForm, 'reason') }}</span>
+              }
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn-save" [disabled]="adjusting()">
+              @if (adjusting()) {
+                <div class="btn-spinner"></div>
+                <span>{{ 'leave.balance.savingText' | translate }}</span>
+              } @else {
+                <span aria-hidden="true" class="material-icons">tune</span>
+                <span>{{ 'leave.balance.applyAdjustmentButton' | translate }}</span>
+              }
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  }
+</div>

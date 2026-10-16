@@ -1,0 +1,211 @@
+/* Employee salary. Header, cards, form grid, table, chips and empty state come from the shared .app-page block. */
+
+/* ── Live preview ────────────────────────────────────────── */
+.preview-section {
+  padding-block: var(--space-4) var(--space-2);
+}
+.preview-title {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin: var(--space-4) 0 var(--space-3);
+  font-size: 16px;
+  font-weight: 700;
+}
+.preview-title mat-icon {
+  inline-size: 20px;
+  block-size: 20px;
+  font-size: 20px;
+  color: var(--mat-sys-primary);
+}
+.preview-note {
+  margin-inline-start: var(--space-1);
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--mat-sys-on-surface-variant);
+}
+.preview-group {
+  margin-block-end: var(--space-3);
+}
+.preview-group-label {
+  margin-block-end: var(--space-2);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.earning-label,
+.earning-amount {
+  color: var(--status-active-fg);
+}
+.statutory-label,
+.statutory-amount {
+  color: var(--status-pending-fg);
+}
+.preview-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-block-end: var(--space-1);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--mat-sys-surface-container);
+}
+.preview-row:empty {
+  display: none;
+}
+.preview-comp-name {
+  flex: 1;
+  font-weight: 600;
+}
+.preview-basis {
+  min-inline-size: 120px;
+  font-size: 13px;
+  color: var(--mat-sys-on-surface-variant);
+}
+.preview-amount {
+  min-inline-size: 130px;
+  font-weight: 700;
+  text-align: end;
+  font-variant-numeric: tabular-nums;
+}
+.preview-totals {
+  padding-block-start: var(--space-3);
+}
+.total-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-2) var(--space-3);
+}
+.total-row span:first-child {
+  font-weight: 600;
+}
+.total-value {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--status-active-fg);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── History timeline ────────────────────────────────────── */
+.history-timeline {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-4) var(--space-2);
+}
+.history-timeline::before {
+  content: '';
+  position: absolute;
+  inset-inline-start: 15px;
+  inset-block: 24px;
+  inline-size: 2px;
+  background: var(--mat-sys-outline-variant);
+}
+.history-item {
+  position: relative;
+  display: flex;
+  gap: var(--space-4);
+  padding-block-end: var(--space-5);
+}
+.history-item:last-child {
+  padding-block-end: 0;
+}
+.history-dot {
+  z-index: 1;
+  inline-size: 16px;
+  block-size: 16px;
+  flex-shrink: 0;
+  margin-block-start: 4px;
+  border-radius: 50%;
+  background: var(--mat-sys-outline-variant);
+  border: 2px solid var(--table-surface);
+  box-shadow: 0 0 0 2px var(--mat-sys-outline-variant);
+}
+.current-dot {
+  background: var(--status-active-fg);
+  box-shadow: 0 0 0 2px var(--status-active-fg);
+}
+.history-content {
+  flex: 1;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: var(--radius-md);
+  background: var(--mat-sys-surface-container);
+}
+.current-item .history-content {
+  background: var(--status-active-bg);
+  border-color: var(--status-active-fg);
+}
+.history-header {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-block-end: var(--space-3);
+}
+.history-structure {
+  font-weight: 700;
+}
+.history-dates {
+  font-size: 13px;
+  color: var(--mat-sys-on-surface-variant);
+}
+.current-badge {
+  padding: 2px var(--space-3);
+  border-radius: 999px;
+  background: var(--status-active-bg);
+  color: var(--status-active-fg);
+  font-size: 12px;
+  font-weight: 700;
+}
+.history-amounts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-5);
+}
+.amount-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.amount-label {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--mat-sys-on-surface-variant);
+}
+.amount-val {
+  font-size: 16px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.amount-val.gross,
+.salary-val.gross {
+  color: var(--status-approved-fg);
+}
+.amount-val.net,
+.salary-val.net {
+  color: var(--status-active-fg);
+}
+.history-remarks {
+  margin-block-start: var(--space-2);
+  font-size: 13px;
+  font-style: italic;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+/* ── Salary table ────────────────────────────────────────── */
+.salary-val {
+  font-weight: 700;
+}
+
+@media (max-width: 768px) {
+  .history-amounts {
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+}

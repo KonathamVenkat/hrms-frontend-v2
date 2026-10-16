@@ -1,0 +1,38 @@
+/* Office locations: address and contact blocks inside the card. Cards, grid and badges are shared (styles.css). */
+
+.loc-address {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+}
+.addr-icon {
+  flex-shrink: 0;
+  margin-block-start: 2px;
+  font-size: 18px;
+  color: var(--mat-sys-primary);
+}
+.addr-line {
+  color: var(--mat-sys-on-surface-variant);
+}
+.addr-line.city {
+  font-weight: 600;
+  color: var(--mat-sys-on-surface);
+}
+.loc-contact {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+.contact-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 13px;
+  color: var(--mat-sys-on-surface-variant);
+  /* Phones and emails are always left-to-right data. */
+  unicode-bidi: plaintext;
+}
+.contact-item .material-icons {
+  font-size: 16px;
+  color: var(--mat-sys-primary);
+}

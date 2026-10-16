@@ -1,0 +1,325 @@
+<div class="cal-page">
+  <!-- ── Header ──────────────────────────────────────────── -->
+  <div class="cal-header">
+    <div class="header-left">
+      <h1 class="page-title">{{ 'leave.calendar.title' | translate }}</h1>
+    </div>
+    <!-- Month navigation -->
+    <div class="month-nav">
+      <button
+        class="nav-btn"
+        [attr.aria-label]="'common.previous' | translate"
+        (click)="prevMonth()"
+      >
+        <span aria-hidden="true" class="material-icons mirror-rtl">chevron_left</span>
+      </button>
+      <span class="month-label">{{ calendar()?.monthName ?? '...' }}</span>
+      <button class="nav-btn" [attr.aria-label]="'common.next' | translate" (click)="nextMonth()">
+        <span aria-hidden="true" class="material-icons mirror-rtl">chevron_right</span>
+      </button>
+      <button class="today-btn" (click)="goToToday()">
+        {{ 'leave.calendar.todayButton' | translate }}
+      </button>
+    </div>
+  </div>
+
+  <!-- ── Stats strip ────────────────────────────────────── -->
+  @if (calendar()) {
+    <div class="stats-strip">
+      <div class="stat-item">
+        <span aria-hidden="true" class="material-icons stat-icon approved-icon">check_circle</span>
+        <div class="stat-info">
+          <span class="stat-val">{{ calendar()!.totalApproved }}</span>
+          <span class="stat-lbl">{{ 'leave.calendar.statApproved' | translate }}</span>
+        </div>
+      </div>
+      <div class="stat-item">
+        <span aria-hidden="true" class="material-icons stat-icon pending-icon"
+          >hourglass_empty</span
+        >
+        <div class="stat-info">
+          <span class="stat-val">{{ calendar()!.totalPending }}</span>
+          <span class="stat-lbl">{{ 'leave.calendar.statPending' | translate }}</span>
+        </div>
+      </div>
+      <div class="stat-item">
+        <span aria-hidden="true" class="material-icons stat-icon holiday-icon">celebration</span>
+        <div class="stat-info">
+          <span class="stat-val">{{ calendar()!.totalHolidays }}</span>
+          <span class="stat-lbl">{{ 'leave.calendar.statHolidays' | translate }}</span>
+        </div>
+      </div>
+      <div class="stat-item">
+        <span aria-hidden="true" class="material-icons stat-icon today-icon">person_off</span>
+        <div class="stat-info">
+          <span class="stat-val">{{ calendar()!.onLeaveToday }}</span>
+          <span class="stat-lbl">{{ 'leave.calendar.statOnLeaveToday' | translate }}</span>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- ── Alerts ─────────────────────────────────────────── -->
+  @if (error()) {
+    <div class="alert alert-error">
+      <span aria-hidden="true" class="material-icons">error_outline</span>{{ error() }}
+    </div>
+  }
+
+  <!-- ── Loading ────────────────────────────────────────── -->
+  @if (loading()) {
+    <div class="loading-wrap">
+      <div class="spinner"></div>
+      <span>{{ 'leave.calendar.loadingText' | translate }}</span>
+    </div>
+  }
+
+  @if (!loading() && calendar()) {
+    <div class="cal-layout">
+      <!-- ════════════════════════════════════════════════ -->
+      <!-- CALENDAR GRID                                   -->
+      <!-- ════════════════════════════════════════════════ -->
+      <div class="cal-grid-wrap">
+        <!-- Week day headers -->
+        <div class="cal-weekdays">
+          @for (d of weekDays; track d) {
+            <div class="weekday-header">{{ 'leave.calendar.weekdays.' + d | translate }}</div>
+          }
+        </div>
+
+        <!-- Calendar weeks -->
+        <div class="cal-grid">
+          @for (week of weeks(); track $index) {
+            @for (day of week; track day.date) {
+              <div
+                [class]="getDayClass(day)"
+                role="button"
+                tabindex="0"
+                [attr.aria-label]="day.date"
+                (click)="selectDay(day)"
+                (keydown.enter)="selectDay(day)"
+                (keydown.space)="selectDay(day); $event.preventDefault()"
+              >
+                <!-- Day number -->
+                <div class="day-number">{{ day.dayOfMonth }}</div>
+
+                <!-- Holiday badge -->
+                @if (day.isHoliday) {
+                  <div class="holiday-badge" [title]="day.holidays[0]?.holidayName">
+                    <span aria-hidden="true" class="material-icons">celebration</span>
+                  </div>
+                }
+
+                <!-- Leave dots — show up to 3 then +N -->
+                @if (day.leaves.length > 0 && day.isCurrentMonth) {
+                  <div class="leave-dots">
+                    @for (l of day.leaves.slice(0, 3); track l.employeeId) {
+                      <span
+                        class="leave-dot"
+                        [style.background]="getTypeColor(l.leaveTypeCode)"
+                        [class.dot-pending]="l.status === 'PENDING'"
+                        [title]="l.employeeName + ' — ' + l.leaveTypeName"
+                      >
+                      </span>
+                    }
+                    @if (day.leaves.length > 3) {
+                      <span class="more-dot">+{{ day.leaves.length - 3 }}</span>
+                    }
+                  </div>
+                }
+
+                <!-- On leave count badge -->
+                @if (day.onLeaveCount > 0 && day.isCurrentMonth) {
+                  <div class="leave-count">{{ day.onLeaveCount }}</div>
+                }
+              </div>
+            }
+          }
+        </div>
+      </div>
+
+      <!-- ════════════════════════════════════════════════ -->
+      <!-- RIGHT PANEL — Today + Legend                    -->
+      <!-- ════════════════════════════════════════════════ -->
+      <div class="right-panel">
+        <!-- Today on leave -->
+        <div class="panel-card">
+          <div class="panel-card-header">
+            <span aria-hidden="true" class="material-icons">person_off</span>
+            {{ 'leave.calendar.statOnLeaveToday' | translate }}
+            @if (calendar()!.todaysLeaves.length > 0) {
+              <span class="badge">{{ calendar()!.todaysLeaves.length }}</span>
+            }
+          </div>
+
+          @if (calendar()!.todaysLeaves.length === 0) {
+            <div class="panel-empty">
+              <span aria-hidden="true" class="material-icons">check_circle_outline</span>
+              <span>{{ 'leave.calendar.everyoneIn' | translate }}</span>
+            </div>
+          } @else {
+            <div class="today-leaves">
+              @for (l of calendar()!.todaysLeaves; track l.employeeId) {
+                <div class="today-leave-item">
+                  <div class="emp-chip" [style.background]="getTypeColor(l.leaveTypeCode)">
+                    {{ getInitials(l.employeeName) }}
+                  </div>
+                  <div class="emp-details">
+                    <span class="emp-name">{{ l.employeeName }}</span>
+                    <span class="emp-type">{{ l.leaveTypeName }}</span>
+                  </div>
+                </div>
+              }
+            </div>
+          }
+        </div>
+
+        <!-- Legend -->
+        <div class="panel-card">
+          <div class="panel-card-header">
+            <span aria-hidden="true" class="material-icons">info_outline</span>
+            {{ 'leave.calendar.legendTitle' | translate }}
+          </div>
+          <div class="legend-list">
+            <div class="legend-item">
+              <span class="legend-dot" style="background: #0a7466"></span>
+              <span>{{ 'leave.calendar.legendAnnual' | translate }}</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-dot" style="background: #be123c"></span>
+              <span>{{ 'leave.calendar.legendSick' | translate }}</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-dot" style="background: #92400e"></span>
+              <span>{{ 'leave.calendar.legendCasual' | translate }}</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-dot" style="background: #6d28d9"></span>
+              <span>{{ 'leave.calendar.legendMaternity' | translate }}</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-dot" style="background: #06b6d4"></span>
+              <span>{{ 'leave.calendar.legendPaternity' | translate }}</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-dot" style="background: #c2410c"></span>
+              <span>{{ 'leave.calendar.legendHajj' | translate }}</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-swatch holiday-swatch"></span>
+              <span>{{ 'leave.calendar.legendPublicHoliday' | translate }}</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-swatch weekend-swatch"></span>
+              <span>{{ 'leave.calendar.legendWeekend' | translate }}</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-dot pending-dot"></span>
+              <span>{{ 'leave.calendar.legendPending' | translate }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════════════════════════ -->
+    <!-- SELECTED DAY POPUP                                  -->
+    <!-- ════════════════════════════════════════════════════ -->
+    @if (selectedDay()) {
+      <div class="day-popup">
+        <div class="popup-header">
+          <div>
+            <span class="popup-date">{{ selectedDay()!.date }}</span>
+            <span class="popup-dow">{{ selectedDay()!.dayOfWeek }}</span>
+          </div>
+          <div class="popup-tags">
+            @if (selectedDay()!.isToday) {
+              <span class="tag-today">{{ 'leave.calendar.todayButton' | translate }}</span>
+            }
+            @if (selectedDay()!.isHoliday) {
+              <span class="tag-holiday">{{ 'leave.calendar.tagHoliday' | translate }}</span>
+            }
+            @if (selectedDay()!.isWeekend) {
+              <span class="tag-weekend">{{ 'leave.calendar.tagWeekend' | translate }}</span>
+            }
+          </div>
+          <button
+            class="popup-close"
+            [attr.aria-label]="'common.close' | translate"
+            (click)="closePopup()"
+          >
+            <span aria-hidden="true" class="material-icons">close</span>
+          </button>
+        </div>
+
+        <!-- Holidays on this day -->
+        @if (selectedDay()!.holidays.length > 0) {
+          <div class="popup-section">
+            <p class="popup-section-title">
+              <span aria-hidden="true" class="material-icons">celebration</span>
+              {{ 'leave.calendar.sectionHolidays' | translate }}
+            </p>
+            @for (h of selectedDay()!.holidays; track h.holidayId) {
+              <div class="popup-holiday">
+                <span class="holiday-dot" [style.background]="getHolidayColor(h.holidayType)">
+                </span>
+                <div>
+                  <span class="holiday-name">{{ h.holidayName }}</span>
+                  @if (h.holidayNameAr) {
+                    <span class="holiday-name-ar">{{ h.holidayNameAr }}</span>
+                  }
+                </div>
+                <span class="holiday-type">{{ h.holidayType }}</span>
+              </div>
+            }
+          </div>
+        }
+
+        <!-- Leaves on this day -->
+        @if (selectedDay()!.leaves.length > 0) {
+          <div class="popup-section">
+            <p class="popup-section-title">
+              <span aria-hidden="true" class="material-icons">people</span>
+              {{
+                'leave.calendar.sectionEmployeesOnLeave'
+                  | translate: { count: selectedDay()!.leaves.length }
+              }}
+            </p>
+            <div class="popup-leaves">
+              @for (l of selectedDay()!.leaves; track l.employeeId) {
+                <div class="popup-leave-item">
+                  <div class="popup-avatar" [style.background]="getTypeColor(l.leaveTypeCode)">
+                    {{ getInitials(l.employeeName) }}
+                  </div>
+                  <div class="popup-emp-info">
+                    <span class="popup-emp-name">{{ l.employeeName }}</span>
+                    <span class="popup-emp-code">{{ l.employeeCode }}</span>
+                  </div>
+                  <div class="popup-leave-info">
+                    <span class="popup-leave-type" [style.color]="getTypeColor(l.leaveTypeCode)">
+                      {{ l.leaveTypeName }}
+                    </span>
+                    <span
+                      class="popup-status"
+                      [class.status-approved]="l.status === 'APPROVED'"
+                      [class.status-pending]="l.status === 'PENDING'"
+                    >
+                      {{ l.status }}
+                    </span>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        }
+
+        @if (selectedDay()!.leaves.length === 0 && selectedDay()!.holidays.length === 0) {
+          <div class="popup-empty">
+            <span aria-hidden="true" class="material-icons">event_available</span>
+            <span>{{ 'leave.calendar.noLeavesOrHolidays' | translate }}</span>
+          </div>
+        }
+      </div>
+    }
+  }
+</div>

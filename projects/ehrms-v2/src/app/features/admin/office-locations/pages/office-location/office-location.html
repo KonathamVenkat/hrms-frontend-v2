@@ -1,0 +1,422 @@
+<div class="admin-page">
+  <div class="page-header">
+    <div class="header-left">
+      <h1 class="page-title">{{ 'admin.officeLocations.title' | translate }}</h1>
+      <div class="stat-chips">
+        <span class="chip chip-total">{{
+          'admin.officeLocations.totalChip' | translate: { count: locations().length }
+        }}</span>
+        <span class="chip chip-active">{{
+          'admin.officeLocations.activeChip' | translate: { count: activeCount() }
+        }}</span>
+      </div>
+    </div>
+    <button class="btn-add" (click)="openCreate()">
+      <span aria-hidden="true" class="material-icons">add</span>
+      {{ 'admin.officeLocations.addLocation' | translate }}
+    </button>
+  </div>
+
+  @if (successMsg()) {
+    <div class="alert alert-success">
+      <span aria-hidden="true" class="material-icons">check_circle</span>{{ successMsg() }}
+    </div>
+  }
+  @if (error() && !showModal()) {
+    <div class="alert alert-error">
+      <span aria-hidden="true" class="material-icons">error_outline</span>{{ error() }}
+    </div>
+  }
+
+  <div class="filter-bar">
+    <div class="search-wrap">
+      <span aria-hidden="true" class="material-icons">search</span>
+      <input
+        type="text"
+        [placeholder]="'admin.officeLocations.searchPlaceholder' | translate"
+        [attr.aria-label]="'admin.officeLocations.searchPlaceholder' | translate"
+        [value]="filterText()"
+        (input)="filterText.set($any($event.target).value)"
+      />
+    </div>
+    <select
+      class="filter-select"
+      [attr.aria-label]="'admin.officeLocations.type' | translate"
+      [value]="filterType()"
+      (change)="filterType.set($any($event.target).value)"
+    >
+      <option value="">{{ 'admin.officeLocations.allTypes' | translate }}</option>
+      @for (t of locationTypes; track t) {
+        <option [value]="t">{{ t.replace('_', ' ') }}</option>
+      }
+    </select>
+    <div class="tab-filter">
+      <button
+        class="tab-btn"
+        [class.active]="filterActive() === 'all'"
+        (click)="filterActive.set('all')"
+      >
+        {{ 'common.all' | translate }}
+      </button>
+      <button
+        class="tab-btn"
+        [class.active]="filterActive() === 'active'"
+        (click)="filterActive.set('active')"
+      >
+        {{ 'common.active' | translate }}
+      </button>
+      <button
+        class="tab-btn"
+        [class.active]="filterActive() === 'inactive'"
+        (click)="filterActive.set('inactive')"
+      >
+        {{ 'common.inactive' | translate }}
+      </button>
+    </div>
+  </div>
+
+  @if (loading()) {
+    <div class="loading-wrap">
+      <div class="spinner"></div>
+      <span>{{ 'common.loading' | translate }}</span>
+    </div>
+  }
+
+  @if (!loading()) {
+    <div class="locations-grid">
+      @if (filtered().length === 0) {
+        <div class="empty-card">
+          <span aria-hidden="true" class="material-icons">location_off</span>
+          <p>{{ 'admin.officeLocations.emptyTitle' | translate }}</p>
+          <small>{{ 'admin.officeLocations.emptyHint' | translate }}</small>
+        </div>
+      }
+      @for (loc of filtered(); track loc.locationId) {
+        <div class="loc-card" [class.inactive-card]="!loc.isActive">
+          <div class="card-top">
+            <div class="loc-code-wrap">
+              <span class="loc-code">{{ loc.locationCode }}</span>
+              <span class="type-badge" [class]="getTypeBadgeClass(loc.locationType)">
+                {{ loc.locationType.replace('_', ' ') }}
+              </span>
+            </div>
+            <div class="card-actions">
+              <button
+                class="act-btn btn-edit"
+                [attr.aria-label]="'common.edit' | translate"
+                (click)="openEdit(loc)"
+              >
+                <span aria-hidden="true" class="material-icons">edit</span>
+              </button>
+              <button
+                class="act-btn"
+                [class.btn-deactivate]="loc.isActive"
+                [class.btn-activate]="!loc.isActive"
+                [attr.aria-label]="
+                  (loc.isActive
+                    ? 'admin.officeLocations.deactivate'
+                    : 'admin.officeLocations.activate'
+                  ) | translate
+                "
+                (click)="openConfirm(loc)"
+              >
+                <span aria-hidden="true" class="material-icons">{{
+                  loc.isActive ? 'toggle_off' : 'toggle_on'
+                }}</span>
+              </button>
+            </div>
+          </div>
+          <h2 class="loc-name">{{ loc.locationName }}</h2>
+          <p class="loc-name-ar">{{ loc.locationNameAr }}</p>
+          <div class="loc-address">
+            <span aria-hidden="true" class="material-icons addr-icon">location_on</span>
+            <div>
+              <div class="addr-line">{{ loc.addressLine1 }}</div>
+              @if (loc.addressLine2) {
+                <div class="addr-line">{{ loc.addressLine2 }}</div>
+              }
+              <div class="addr-line city">{{ loc.city }}, {{ loc.country }}</div>
+            </div>
+          </div>
+          @if (loc.phone || loc.email) {
+            <div class="loc-contact">
+              @if (loc.phone) {
+                <span class="contact-item">
+                  <span aria-hidden="true" class="material-icons">phone</span>{{ loc.phone }}
+                </span>
+              }
+              @if (loc.email) {
+                <span class="contact-item">
+                  <span aria-hidden="true" class="material-icons">email</span>{{ loc.email }}
+                </span>
+              }
+            </div>
+          }
+          <div class="card-footer">
+            <span
+              class="status-badge"
+              [class.status-active]="loc.isActive"
+              [class.status-inactive]="!loc.isActive"
+            >
+              <span class="status-dot"></span
+              >{{ (loc.isActive ? 'common.active' : 'common.inactive') | translate }}
+            </span>
+            @if (loc.timezone) {
+              <span class="tz-badge">{{ loc.timezone }}</span>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>
+
+<!-- MODAL -->
+@if (showModal()) {
+  <div class="modal-backdrop" (click)="closeModal()">
+    <div
+      class="modal"
+      (click)="$event.stopPropagation()"
+      [appAccessibleDialog]="'ol-modal-title'"
+      (dialogClosed)="closeModal()"
+      cdkTrapFocus
+      cdkTrapFocusAutoCapture
+    >
+      <div class="modal-header">
+        <h2 id="ol-modal-title" class="modal-title">
+          {{
+            (isEditMode() ? 'admin.officeLocations.editTitle' : 'admin.officeLocations.addLocation')
+              | translate
+          }}
+        </h2>
+        <button
+          class="modal-close"
+          [attr.aria-label]="'common.close' | translate"
+          (click)="closeModal()"
+        >
+          <span aria-hidden="true" class="material-icons">close</span>
+        </button>
+      </div>
+      @if (error()) {
+        <div class="modal-alert">
+          <span aria-hidden="true" class="material-icons">error_outline</span>{{ error() }}
+        </div>
+      }
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+        <div class="modal-body">
+          <div class="field-row">
+            <div class="field">
+              <label for="ol-code"
+                >{{ 'admin.officeLocations.code' | translate }} <span class="req">*</span></label
+              >
+              <input
+                id="ol-code"
+                formControlName="locationCode"
+                [placeholder]="'admin.officeLocations.codePlaceholder' | translate"
+              />
+              @if (isInvalid('locationCode')) {
+                <span class="field-error">{{ getError('locationCode') }}</span>
+              }
+            </div>
+            <div class="field">
+              <label for="ol-type"
+                >{{ 'admin.officeLocations.type' | translate }} <span class="req">*</span></label
+              >
+              <select id="ol-type" formControlName="locationType">
+                @for (t of locationTypes; track t) {
+                  <option [value]="t">{{ t.replace('_', ' ') }}</option>
+                }
+              </select>
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="ol-name-en"
+                >{{ 'admin.officeLocations.nameEn' | translate }} <span class="req">*</span></label
+              >
+              <input
+                id="ol-name-en"
+                formControlName="locationName"
+                [placeholder]="'admin.officeLocations.nameEnPlaceholder' | translate"
+              />
+              @if (isInvalid('locationName')) {
+                <span class="field-error">{{ getError('locationName') }}</span>
+              }
+            </div>
+            <div class="field">
+              <label for="ol-name-ar"
+                >{{ 'admin.officeLocations.nameAr' | translate }} <span class="req">*</span></label
+              >
+              <input
+                id="ol-name-ar"
+                formControlName="locationNameAr"
+                placeholder="e.g. المقر الرئيسي"
+                dir="rtl"
+              />
+              @if (isInvalid('locationNameAr')) {
+                <span class="field-error">{{ getError('locationNameAr') }}</span>
+              }
+            </div>
+          </div>
+          <div class="field">
+            <label for="ol-address1"
+              >{{ 'admin.officeLocations.addressLine1' | translate }}
+              <span class="req">*</span></label
+            >
+            <input
+              id="ol-address1"
+              formControlName="addressLine1"
+              [placeholder]="'admin.officeLocations.addressLine1Placeholder' | translate"
+            />
+            @if (isInvalid('addressLine1')) {
+              <span class="field-error">{{ getError('addressLine1') }}</span>
+            }
+          </div>
+          <div class="field">
+            <label for="ol-address2">{{ 'admin.officeLocations.addressLine2' | translate }}</label>
+            <input
+              id="ol-address2"
+              formControlName="addressLine2"
+              [placeholder]="'admin.officeLocations.addressLine2Placeholder' | translate"
+            />
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="ol-city"
+                >{{ 'admin.officeLocations.city' | translate }} <span class="req">*</span></label
+              >
+              <input
+                id="ol-city"
+                formControlName="city"
+                [placeholder]="'admin.officeLocations.cityPlaceholder' | translate"
+              />
+              @if (isInvalid('city')) {
+                <span class="field-error">{{ getError('city') }}</span>
+              }
+            </div>
+            <div class="field">
+              <label for="ol-country"
+                >{{ 'admin.officeLocations.country' | translate }} <span class="req">*</span></label
+              >
+              <input id="ol-country" formControlName="country" />
+              @if (isInvalid('country')) {
+                <span class="field-error">{{ getError('country') }}</span>
+              }
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="ol-phone">{{ 'admin.officeLocations.phone' | translate }}</label
+              ><input id="ol-phone" formControlName="phone" placeholder="+968 2xxx xxxx" />
+            </div>
+            <div class="field">
+              <label for="ol-email">{{ 'admin.officeLocations.email' | translate }}</label>
+              <input
+                id="ol-email"
+                type="email"
+                formControlName="email"
+                placeholder="office@company.com"
+              />
+              @if (isInvalid('email')) {
+                <span class="field-error">{{ getError('email') }}</span>
+              }
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="ol-timezone">{{ 'admin.officeLocations.timezone' | translate }}</label>
+              <input id="ol-timezone" formControlName="timezone" placeholder="Africa/Juba" />
+            </div>
+            <div class="field">
+              <label for="ol-sort-order">{{ 'admin.officeLocations.sortOrder' | translate }}</label>
+              <input id="ol-sort-order" type="number" formControlName="sortOrder" min="0" />
+            </div>
+          </div>
+          @if (isEditMode()) {
+            <label class="toggle-item">
+              <div class="toggle-info">
+                <span class="toggle-label">{{ 'common.active' | translate }}</span>
+                <span class="toggle-hint">{{
+                  'admin.officeLocations.activeHint' | translate
+                }}</span>
+              </div>
+              <div class="toggle-wrap">
+                <input type="checkbox" formControlName="isActive" class="toggle-inp" />
+                <span class="toggle-slider"></span>
+              </div>
+            </label>
+          }
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-cancel" (click)="closeModal()">
+            {{ 'common.cancel' | translate }}
+          </button>
+          <button type="submit" class="btn-save" [disabled]="saving()">
+            @if (saving()) {
+              <div class="btn-spinner"></div>
+              <span>{{ 'admin.officeLocations.saving' | translate }}</span>
+            } @else {
+              <span aria-hidden="true" class="material-icons">save</span
+              ><span>{{
+                (isEditMode()
+                  ? 'admin.officeLocations.update'
+                  : 'admin.officeLocations.addLocation'
+                ) | translate
+              }}</span>
+            }
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}
+
+@if (showConfirm()) {
+  <div class="modal-backdrop" (click)="cancelConfirm()">
+    <div
+      class="confirm-dialog"
+      (click)="$event.stopPropagation()"
+      [appAccessibleDialog]="'ol-confirm-title'"
+      (dialogClosed)="cancelConfirm()"
+      cdkTrapFocus
+      cdkTrapFocusAutoCapture
+    >
+      <div
+        class="confirm-icon"
+        [class.icon-warn]="confirmItem()?.isActive"
+        [class.icon-info]="!confirmItem()?.isActive"
+      >
+        <span aria-hidden="true" class="material-icons">location_on</span>
+      </div>
+      <h3 id="ol-confirm-title" class="confirm-title">
+        {{
+          (confirmItem()?.isActive
+            ? 'admin.officeLocations.deactivateTitle'
+            : 'admin.officeLocations.activateTitle'
+          ) | translate
+        }}
+      </h3>
+      <p class="confirm-msg">
+        <strong>{{ confirmItem()?.locationName }}</strong>
+      </p>
+      <div class="confirm-actions">
+        <button class="btn-cancel" (click)="cancelConfirm()">
+          {{ 'common.cancel' | translate }}
+        </button>
+        <button
+          class="btn-confirm"
+          [class.btn-danger]="confirmItem()?.isActive"
+          [class.btn-success]="!confirmItem()?.isActive"
+          (click)="confirmToggle()"
+        >
+          {{
+            (confirmItem()?.isActive
+              ? 'admin.officeLocations.deactivate'
+              : 'admin.officeLocations.activate'
+            ) | translate
+          }}
+        </button>
+      </div>
+    </div>
+  </div>
+}

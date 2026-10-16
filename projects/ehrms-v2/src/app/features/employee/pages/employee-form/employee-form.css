@@ -1,0 +1,219 @@
+/* Employee form (create + edit): glass section cards. Fields, buttons, alerts and validation styles come from
+   the shared kit in styles.css; this file keeps only the page layout. Logical properties throughout. */
+
+.form-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+/* ── Header ──────────────────────────────────────────────── */
+.page-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+.back-btn {
+  inline-size: 44px;
+  block-size: 44px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: var(--radius-md);
+  background: var(--table-surface);
+  color: var(--mat-sys-on-surface-variant);
+  cursor: pointer;
+  transition: var(--motion-fast);
+}
+.back-btn:hover {
+  border-color: var(--mat-sys-primary);
+  color: var(--mat-sys-primary);
+}
+.back-btn:focus-visible {
+  outline: 2px solid var(--mat-sys-primary);
+  outline-offset: 2px;
+}
+.page-title {
+  margin: 0;
+  font-size: 28px;
+  line-height: 1.25;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.page-sub {
+  margin: var(--space-1) 0 0;
+  color: var(--mat-sys-on-surface-variant);
+}
+.emp-code-display {
+  padding: 2px var(--space-3);
+  border-radius: 999px;
+  background: var(--mat-sys-primary-container);
+  color: var(--mat-sys-on-primary-container);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* Indeterminate bar while the employee loads (edit). Slides along the reading direction. */
+.loading-bar {
+  block-size: 3px;
+  overflow: hidden;
+  border-radius: 3px;
+  background: var(--mat-sys-outline-variant);
+}
+.loading-inner {
+  block-size: 100%;
+  inline-size: 40%;
+  border-radius: 3px;
+  background-image: var(--grad-primary);
+  animation: load-slide 1.4s ease-in-out infinite;
+}
+@keyframes load-slide {
+  from {
+    margin-inline-start: -40%;
+  }
+  to {
+    margin-inline-start: 100%;
+  }
+}
+
+/* ── Section cards ───────────────────────────────────────── */
+.cards-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+  align-items: start;
+}
+.card {
+  overflow: hidden;
+  background: var(--glass-bg);
+  border: var(--glass-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--glass-shine), var(--glass-shadow);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+}
+.card.full-width {
+  grid-column: 1 / -1;
+}
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-5);
+  background: var(--table-header-bg);
+  color: var(--mat-sys-on-surface-variant);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.card-header .material-icons {
+  font-size: 18px;
+  color: var(--mat-sys-primary);
+}
+.card-hint {
+  margin-inline-start: auto;
+  font-size: 12px;
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+}
+.card-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-5);
+  background: var(--table-surface);
+}
+
+/* Arabic name inputs always type right-to-left, whatever the UI language. */
+input[dir='rtl'] {
+  text-align: start;
+}
+
+/* Fields the system fills in (work email, employee code). */
+.readonly-field {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-block-size: 44px;
+  padding-inline: var(--space-3);
+  border: 1px dashed var(--mat-sys-outline-variant);
+  border-radius: var(--radius-md);
+  background: var(--mat-sys-surface-container);
+}
+.readonly-icon {
+  font-size: 18px;
+  color: var(--mat-sys-on-surface-variant);
+}
+.readonly-value {
+  color: var(--mat-sys-on-surface-variant);
+  unicode-bidi: plaintext;
+}
+
+/* Password field with a show/hide button on the end side. */
+.password-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.password-wrap input {
+  flex: 1;
+  min-inline-size: 0;
+  padding-inline-end: 48px;
+}
+.eye-btn {
+  position: absolute;
+  inset-inline-end: 0;
+  inline-size: 44px;
+  block-size: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--mat-sys-on-surface-variant);
+  cursor: pointer;
+}
+.eye-btn:hover {
+  background: var(--mat-sys-surface-container-high);
+  color: var(--mat-sys-primary);
+}
+.eye-btn:focus-visible {
+  outline: 2px solid var(--mat-sys-primary);
+  outline-offset: 2px;
+}
+
+.form-footer {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  padding-block-end: var(--space-5);
+}
+
+@media (max-width: 900px) {
+  .cards-grid {
+    grid-template-columns: 1fr;
+  }
+  .card-hint {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .loading-inner {
+    animation: none;
+    inline-size: 100%;
+  }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .card {
+    background: var(--mat-sys-surface-container);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}

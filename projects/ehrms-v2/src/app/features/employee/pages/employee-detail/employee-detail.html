@@ -1,0 +1,479 @@
+<div class="detail-page">
+  <!-- ── Loading ──────────────────────────────────────────── -->
+  @if (loading()) {
+    <div class="loading-wrap" role="status">
+      <div class="spinner"></div>
+      <span>{{ 'employee.detail.loading' | translate }}</span>
+    </div>
+  }
+
+  <!-- ── Error ─────────────────────────────────────────────── -->
+  @if (error() && !loading()) {
+    <div class="alert alert-error" role="alert">
+      <span class="material-icons" aria-hidden="true">error_outline</span>
+      <span>{{ error() }}</span>
+      <button class="alert-back" (click)="goBack()">{{ 'employee.detail.goBack' | translate }}</button>
+    </div>
+  }
+
+  <!-- ── Content ───────────────────────────────────────────── -->
+  @if (employee() && !loading()) {
+    <div class="content">
+      <!-- ── Profile card ────────────────────────────────── -->
+      <div class="profile-card">
+        <!-- Back button -->
+        @if (!selfMode()) {
+          <button class="back-btn" type="button" [attr.aria-label]="'employee.detail.goBack' | translate" (click)="goBack()">
+            <span class="material-icons mirror-rtl" aria-hidden="true">arrow_back</span>
+          </button>
+        }
+
+        <!-- Avatar + name -->
+        <div class="profile-identity">
+          <app-employee-photo
+            [employeeId]="employee()!.employeeId"
+            [photoUrl]="employee()!.profilePhotoUrl"
+            [name]="employee()!.fullNameEn"
+            [canEdit]="employee()!.isActive"
+            (photoChanged)="onPhotoChanged($event)"
+          />
+
+          <div class="profile-info">
+            <h1 class="profile-name">{{ employee()!.fullNameEn }}</h1>
+            <div class="profile-meta">
+              <span class="emp-code">{{ employee()!.employeeCode }}</span>
+              @if (employee()!.designationTitle) {
+                <span class="sep">·</span>
+                <span class="designation">{{ employee()!.designationTitle }}</span>
+              }
+              @if (employee()!.gradeLevel) {
+                <span class="grade-badge">{{ employee()!.gradeLevel }}</span>
+              }
+            </div>
+            <div class="profile-dept">
+              @if (employee()!.departmentName) {
+                <span class="material-icons dept-icon" aria-hidden="true">business</span>
+                <span>{{ employee()!.departmentName }}</span>
+              }
+            </div>
+          </div>
+        </div>
+
+        <!-- Status + actions -->
+        <div class="profile-actions">
+          <span class="status-badge" [class]="getStatusClass(employee()!.employmentStatus)">
+            <span class="status-dot"></span>
+            {{ 'common.enums.employmentStatus.' + employee()!.employmentStatus | translate }}
+          </span>
+          @if (employee()!.isActive && !selfMode()) {
+            <button class="btn-edit" (click)="editEmployee()">
+              <span class="material-icons" aria-hidden="true">edit</span>
+              {{ 'common.edit' | translate }}
+            </button>
+          }
+          @if (isHrAdmin() && !selfMode()) {
+            @if (employee()!.isActive) {
+              <button class="btn-edit btn-secondary" (click)="openReset()">
+                <span class="material-icons" aria-hidden="true">lock_reset</span>
+                {{ 'employee.detail.resetPassword.action' | translate }}
+              </button>
+              <button class="btn-deactivate" (click)="openConfirm()">
+                <span class="material-icons" aria-hidden="true">block</span>
+                {{ 'employee.detail.deactivateAction' | translate }}
+              </button>
+            } @else {
+              <button class="btn-reactivate" (click)="openConfirm()">
+                <span class="material-icons" aria-hidden="true">check_circle</span>
+                {{ 'employee.detail.reactivateAction' | translate }}
+              </button>
+            }
+          }
+        </div>
+      </div>
+      <!-- end profile-card -->
+
+      <!-- ── Tab bar ─────────────────────────────────────── -->
+      <div
+        class="detail-tabs"
+        role="tablist"
+        [attr.aria-label]="'employee.detail.tabsLabel' | translate"
+        (keydown)="onTabKeydown($event)"
+      >
+        @for (tab of visibleTabs(); track tab.id) {
+          <button
+            type="button"
+            role="tab"
+            class="detail-tab"
+            [id]="'detail-tab-' + tab.id"
+            [class.active]="activeDetailTab() === tab.id"
+            [attr.aria-selected]="activeDetailTab() === tab.id"
+            [attr.aria-controls]="'detail-panel-' + tab.id"
+            [attr.tabindex]="activeDetailTab() === tab.id ? 0 : -1"
+            (click)="activeDetailTab.set(tab.id)"
+          >
+            <span class="material-icons" aria-hidden="true">{{ tab.icon }}</span>
+            {{ tab.labelKey | translate }}
+          </button>
+        }
+      </div>
+      <!-- end tab bar -->
+
+      <!-- ── Profile tab ─────────────────────────────────── -->
+      @if (activeDetailTab() === 'profile') {
+        <div
+          class="cards-grid"
+          role="tabpanel"
+          id="detail-panel-profile"
+          aria-labelledby="detail-tab-profile"
+        >
+          <!-- ══ Personal Information ═══════════════════════ -->
+          <div class="info-card">
+            <div class="card-header">
+              <span class="material-icons" aria-hidden="true">person</span>
+              {{ 'employee.detail.sections.personalInfo' | translate }}
+            </div>
+            <div class="card-body">
+              <div class="info-row">
+                <span class="info-label">{{ 'employee.detail.fields.fullNameEn' | translate }}</span>
+                <span class="info-value">{{ getValue(employee()!.fullNameEn) }}</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">{{ 'employee.detail.fields.fullNameAr' | translate }}</span>
+                <span class="info-value arabic">{{ getValue(employee()!.fullNameAr) }}</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">{{ 'employee.form.dateOfBirth' | translate }}</span>
+                <span class="info-value">{{ formatDate(employee()!.dateOfBirth) }}</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">{{ 'employee.form.gender' | translate }}</span>
+                <span class="info-value">{{ 'common.enums.gender.' + employee()!.gender | translate }}</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">{{ 'employee.form.bloodGroup' | translate }}</span>
+                <span class="info-value">{{ getValue(employee()!.bloodGroup) }}</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">{{ 'employee.form.maritalStatus' | translate }}</span>
+                <span class="info-value">{{ employee()!.maritalStatus ? ('common.enums.maritalStatus.' + employee()!.maritalStatus | translate) : '—' }}</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">{{ 'employee.form.nationality' | translate }}</span>
+                <span class="info-value">{{ getValue(employee()!.nationality) }}</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">{{ 'employee.form.religion' | translate }}</span>
+                <span class="info-value">{{ getValue(employee()!.religion) }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- ══ Contact Details ════════════════════════════ -->
+          <div class="info-card">
+            <div class="card-header">
+              <span class="material-icons" aria-hidden="true">contact_phone</span>
+              {{ 'employee.detail.sections.contactDetails' | translate }}
+            </div>
+            <div class="card-body">
+              <div class="info-row">
+                <span class="info-label">{{ 'employee.form.workEmail' | translate }}</span>
+                <a class="info-value link" [href]="'mailto:' + employee()!.workEmail">
+                  <bdi>{{ employee()!.workEmail }}</bdi>
+                </a>
+              </div>
+              <div class="info-row">
+                <span class="info-label">{{ 'employee.form.personalEmail' | translate }}</span>
+                <a class="info-value link" [href]="'mailto:' + employee()!.personalEmail">
+                  <bdi>{{ employee()!.personalEmail }}</bdi>
+                </a>
+              </div>
+              <div class="info-row">
+                <span class="info-label">{{ 'employee.form.workPhone' | translate }}</span>
+                <span class="info-value"><bdi>{{ getValue(employee()!.workPhone) }}</bdi></span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">{{ 'employee.form.personalPhone' | translate }}</span>
+                <span class="info-value"><bdi>{{ getValue(employee()!.personalPhone) }}</bdi></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- ══ Employment Details ══════════════════════════ -->
+          <div class="info-card">
+            <div class="card-header">
+              <span class="material-icons" aria-hidden="true">work</span>
+              {{ 'employee.detail.sections.employmentSummary' | translate }}
+            </div>
+            <div class="card-body">
+              <!--div class="info-row">
+                <span class="info-label">Department</span>
+                <span class="info-value">
+                  {{ getValue(employee()!.departmentName) }}
+                  @if (employee()!.departmentCode) {
+                    <span class="sub-text">({{ employee()!.departmentCode }})</span>
+                  }
+                </span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Designation</span>
+                <span class="info-value">
+                  {{ getValue(employee()!.designationTitle) }}
+                  @if (employee()!.gradeLevel) {
+                    <span class="grade-inline">{{ employee()!.gradeLevel }}</span>
+                  }
+                </span>
+              </div-->
+              <div class="info-row">
+                <span class="info-label">{{ 'employee.form.employmentType' | translate }}</span>
+                <span class="info-value">
+                  {{ 'common.enums.employmentType.' + employee()!.employmentType | translate }}
+                </span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">{{ 'employee.form.employmentStatus' | translate }}</span>
+                <span
+                  class="status-badge small"
+                  [class]="getStatusClass(employee()!.employmentStatus)"
+                >
+                  <span class="status-dot"></span>
+                  {{ 'common.enums.employmentStatus.' + employee()!.employmentStatus | translate }}
+                </span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">{{ 'employee.form.hireDate' | translate }}</span>
+                <span class="info-value">{{ formatDate(employee()!.hireDate) }}</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">{{ 'employee.form.probationEndDate' | translate }}</span>
+                <span class="info-value">{{ formatDate(employee()!.probationEndDate) }}</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">{{ 'employee.form.confirmationDate' | translate }}</span>
+                <span class="info-value">{{ formatDate(employee()!.confirmationDate) }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- ══ Audit Information ═══════════════════════════ -->
+          <div class="info-card">
+            <div class="card-header">
+              <span class="material-icons" aria-hidden="true">history</span>
+              {{ 'employee.detail.sections.auditInfo' | translate }}
+            </div>
+            <div class="card-body">
+              <div class="info-row">
+                <span class="info-label">{{ 'employee.detail.fields.createdBy' | translate }}</span>
+                <span class="info-value">{{ getValue(employee()!.createdBy) }}</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">{{ 'employee.detail.fields.createdAt' | translate }}</span>
+                <span class="info-value">{{ getValue(employee()!.createdAt) }}</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">{{ 'employee.detail.fields.updatedBy' | translate }}</span>
+                <span class="info-value">{{ getValue(employee()!.updatedBy) }}</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">{{ 'employee.detail.fields.updatedAt' | translate }}</span>
+                <span class="info-value">{{ getValue(employee()!.updatedAt) }}</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">{{ 'common.active' | translate }}</span>
+                <span class="info-value">
+                  {{ (employee()!.isActive ? 'employee.detail.yes' : 'employee.detail.no') | translate }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- end cards-grid -->
+      }
+
+      <!-- ── Job Details tab ─────────────────────────────── -->
+      @if (activeDetailTab() === 'job') {
+        <app-job-details
+          role="tabpanel"
+          id="detail-panel-job"
+          aria-labelledby="detail-tab-job"
+          [employeeId]="employee()!.employeeId"
+        />
+      }
+      <!-- Tab panel — add after job tab -->
+      @if (activeDetailTab() === 'addresses') {
+        <app-employee-addresses
+          role="tabpanel"
+          id="detail-panel-addresses"
+          aria-labelledby="detail-tab-addresses"
+          [employeeId]="employee()!.employeeId"
+        />
+      }
+      @if (activeDetailTab() === 'identity') {
+        <app-employee-identity
+          role="tabpanel"
+          id="detail-panel-identity"
+          aria-labelledby="detail-tab-identity"
+          [employeeId]="employee()!.employeeId"
+          [readOnly]="identityReadOnly()"
+        />
+      }
+      @if (activeDetailTab() === 'documents') {
+        <app-employee-documents
+          role="tabpanel"
+          id="detail-panel-documents"
+          aria-labelledby="detail-tab-documents"
+          [employeeId]="employee()!.employeeId"
+        />
+      }
+    </div>
+    <!-- end content -->
+
+    <!-- ══════════════════════════════════════════════════════ -->
+    <!-- CONFIRM DIALOG — Deactivate / Reactivate                -->
+    <!-- ══════════════════════════════════════════════════════ -->
+    @if (showConfirm()) {
+      <div class="modal-backdrop">
+        <div
+          class="confirm-dialog"
+          [appAccessibleDialog]="'confirm-toggle-title'"
+          (dialogClosed)="cancelConfirm()"
+          cdkTrapFocus
+          cdkTrapFocusAutoCapture
+        >
+          <div class="confirm-icon" [class.icon-warn]="employee()!.isActive" [class.icon-info]="!employee()!.isActive">
+            <span class="material-icons" aria-hidden="true">{{ employee()!.isActive ? 'block' : 'check_circle' }}</span>
+          </div>
+          <h3 id="confirm-toggle-title" class="confirm-title">
+            {{ (employee()!.isActive ? 'employee.detail.confirm.deactivateTitle' : 'employee.detail.confirm.reactivateTitle') | translate }}
+          </h3>
+          <p class="confirm-msg">
+            <strong>{{ employee()!.fullNameEn }}</strong>
+            @if (employee()!.isActive) {
+              {{ 'employee.detail.confirm.deactivateMsg' | translate }}
+            } @else {
+              {{ 'employee.detail.confirm.reactivateMsg' | translate }}
+            }
+          </p>
+          @if (employee()!.isActive) {
+            <div class="reset-form">
+              <label for="exit-status-select" class="reset-label">
+                {{ 'employee.detail.confirm.exitStatusLabel' | translate }}
+              </label>
+              <select
+                id="exit-status-select"
+                class="reset-input"
+                [value]="exitStatus()"
+                (change)="exitStatus.set($any($event.target).value)"
+              >
+                <option value="">{{ 'employee.detail.confirm.exitStatusNone' | translate }}</option>
+                @for (s of exitStatuses; track s) {
+                  <option [value]="s">{{ 'common.enums.employmentStatus.' + s | translate }}</option>
+                }
+              </select>
+            </div>
+          }
+          @if (confirmError()) {
+            <p class="confirm-error" role="alert">{{ confirmError() }}</p>
+          }
+          <div class="confirm-actions">
+            <button class="btn-cancel" [disabled]="confirmBusy()" (click)="cancelConfirm()">
+              {{ 'common.cancel' | translate }}
+            </button>
+            <button
+              class="btn-confirm"
+              [class.btn-danger]="employee()!.isActive"
+              [class.btn-success]="!employee()!.isActive"
+              [disabled]="confirmBusy()"
+              (click)="confirmToggle()"
+            >
+              {{ confirmBusy() ? ('employee.detail.confirm.pleaseWait' | translate) : ((employee()!.isActive ? 'employee.detail.deactivateAction' : 'employee.detail.reactivateAction') | translate) }}
+            </button>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- ══════════════════════════════════════════════════════ -->
+    <!-- RESET PASSWORD DIALOG (HR_ADMIN)                        -->
+    <!-- ══════════════════════════════════════════════════════ -->
+    @if (showReset()) {
+      <div class="modal-backdrop">
+        <div
+          class="confirm-dialog"
+          [appAccessibleDialog]="'reset-password-title'"
+          (dialogClosed)="cancelReset()"
+          cdkTrapFocus
+          cdkTrapFocusAutoCapture
+        >
+          <div class="confirm-icon icon-info">
+            <span class="material-icons" aria-hidden="true">lock_reset</span>
+          </div>
+          <h3 id="reset-password-title" class="confirm-title">
+            {{ 'employee.detail.resetPassword.title' | translate }}
+          </h3>
+          <p class="confirm-msg">
+            <strong>{{ employee()!.fullNameEn }}</strong>
+            {{ 'employee.detail.resetPassword.message' | translate }}
+          </p>
+
+          <form [formGroup]="resetForm" (ngSubmit)="confirmReset()" novalidate class="reset-form">
+            <label for="reset-password-input" class="reset-label">
+              {{ 'employee.detail.resetPassword.label' | translate }}
+            </label>
+            <div class="reset-input-row">
+              <input
+                id="reset-password-input"
+                class="reset-input"
+                formControlName="temporaryPassword"
+                autocomplete="new-password"
+                [type]="resetShowPassword() ? 'text' : 'password'"
+                [attr.aria-describedby]="'reset-password-hint'"
+              />
+              <button
+                type="button"
+                class="btn-cancel reset-toggle"
+                [attr.aria-label]="
+                  (resetShowPassword() ? 'auth.login.hidePassword' : 'auth.login.showPassword')
+                    | translate
+                "
+                [attr.aria-pressed]="resetShowPassword()"
+                (click)="resetShowPassword.set(!resetShowPassword())"
+              >
+                <span class="material-icons" aria-hidden="true">
+                  {{ resetShowPassword() ? 'visibility_off' : 'visibility' }}
+                </span>
+              </button>
+            </div>
+            <p id="reset-password-hint" class="reset-hint">
+              {{ 'auth.changePassword.policyHint' | translate: { count: passwordMinLength } }}
+            </p>
+            @if (resetForm.controls.temporaryPassword.touched && resetForm.controls.temporaryPassword.invalid) {
+              <p class="confirm-error" role="alert">{{ resetPasswordError() }}</p>
+            }
+          </form>
+
+          @if (resetError()) {
+            <p class="confirm-error" role="alert">{{ resetError() }}</p>
+          }
+          <div class="confirm-actions">
+            <button class="btn-cancel" type="button" [disabled]="resetBusy()" (click)="cancelReset()">
+              {{ 'common.cancel' | translate }}
+            </button>
+            <button
+              class="btn-confirm btn-success"
+              type="button"
+              [disabled]="resetBusy()"
+              (click)="confirmReset()"
+            >
+              {{
+                (resetBusy()
+                  ? 'employee.detail.resetPassword.submitting'
+                  : 'employee.detail.resetPassword.submit') | translate
+              }}
+            </button>
+          </div>
+        </div>
+      </div>
+    }
+  }
+</div>
+<!-- end detail-page -->

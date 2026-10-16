@@ -1,0 +1,408 @@
+<div class="identity-section">
+  <!-- ── Header ──────────────────────────────────────────── -->
+  <div class="section-header">
+    <div class="header-left">
+      <h2 class="section-title">{{ 'employee.identity.title' | translate }}</h2>
+      @if (hasData()) {
+        <span class="chip chip-saved"> <span class="material-icons" aria-hidden="true">verified</span> {{ 'employee.identity.savedChip' | translate }} </span>
+      } @else {
+        <span class="chip chip-empty">{{ 'employee.identity.notFilledChip' | translate }}</span>
+      }
+    </div>
+    @if (!editMode() && canEdit()) {
+      <button class="btn-edit-info" (click)="openEdit()">
+        <span class="material-icons" aria-hidden="true">edit</span>
+        {{ (hasData() ? 'common.edit' : 'employee.identity.addInfoAction') | translate }}
+      </button>
+    }
+  </div>
+
+  <!-- ── Alerts ─────────────────────────────────────────── -->
+  @if (successMsg()) {
+    <div class="alert alert-success" role="status">
+      <span class="material-icons" aria-hidden="true">check_circle</span>{{ successMsg() }}
+    </div>
+  }
+  @if (isMasked() && !loading()) {
+    <div class="alert alert-info" role="status">
+      <span class="material-icons" aria-hidden="true">lock</span>{{ 'employee.identity.maskedNotice' | translate }}
+    </div>
+  }
+  @if (readOnly() && !loading()) {
+    <div class="alert alert-info" role="status">
+      <span class="material-icons" aria-hidden="true">info</span>{{ 'employee.identity.readOnlyHint' | translate }}
+    </div>
+  }
+  @if (error() && !editMode()) {
+    <div class="alert alert-error" role="alert">
+      <span class="material-icons" aria-hidden="true">error_outline</span>{{ error() }}
+    </div>
+  }
+
+  <!-- ── Loading ────────────────────────────────────────── -->
+  @if (loading()) {
+    <div class="loading-wrap" role="status">
+      <div class="spinner"></div>
+      <span>{{ 'employee.identity.loading' | translate }}</span>
+    </div>
+  }
+
+  <!-- ══════════════════════════════════════════════════════ -->
+  <!-- VIEW MODE                                             -->
+  <!-- ══════════════════════════════════════════════════════ -->
+  @if (!loading() && !editMode()) {
+    @if (!hasData()) {
+      <div class="empty-state">
+        <span class="material-icons" aria-hidden="true">badge</span>
+        <p>{{ 'employee.identity.emptyTitle' | translate }}</p>
+        @if (canEdit()) {
+          <small>{{ 'employee.identity.emptyHint' | translate }}</small>
+        }
+        @if (canEdit()) {
+          <button class="btn-add-sm" (click)="openEdit()">
+            <span class="material-icons" aria-hidden="true">add</span> {{ 'employee.identity.addIdentityInfo' | translate }}
+          </button>
+        }
+      </div>
+    }
+
+    @if (hasData() && identity()) {
+      <div class="identity-grid">
+        <!-- ── National Identity ───────────────────────── -->
+        <div class="info-card">
+          <div class="info-card-header">
+            <span class="material-icons" aria-hidden="true">perm_identity</span>
+            {{ 'employee.identity.sections.nationalIdentity' | translate }}
+          </div>
+          <div class="info-card-body">
+            <div class="info-row">
+              <span class="info-label">{{ 'employee.identity.fields.nationalId' | translate }}</span>
+              <span class="info-value mono pii-value">
+                {{ displayValue(identity()!.nationalId, 'nationalId') }}
+                @if (identity()!.nationalId && !isMasked()) {
+                  <button
+                    type="button"
+                    class="pii-toggle"
+                    [attr.aria-label]="(isRevealed('nationalId') ? 'employee.identity.pii.hideNationalId' : 'employee.identity.pii.showNationalId') | translate"
+                    (click)="toggleReveal('nationalId')"
+                  >
+                    <span class="material-icons" aria-hidden="true">{{ isRevealed('nationalId') ? 'visibility_off' : 'visibility' }}</span>
+                  </button>
+                }
+              </span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">{{ 'employee.identity.fields.taxId' | translate }}</span>
+              <span class="info-value mono">
+                {{ getValue(identity()!.taxId) }}
+              </span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">{{ 'employee.identity.fields.socialSecurity' | translate }}</span>
+              <span class="info-value mono pii-value">
+                {{ displayValue(identity()!.socialSecurityNumber, 'socialSecurityNumber') }}
+                @if (identity()!.socialSecurityNumber && !isMasked()) {
+                  <button
+                    type="button"
+                    class="pii-toggle"
+                    [attr.aria-label]="(isRevealed('socialSecurityNumber') ? 'employee.identity.pii.hideSsn' : 'employee.identity.pii.showSsn') | translate"
+                    (click)="toggleReveal('socialSecurityNumber')"
+                  >
+                    <span class="material-icons" aria-hidden="true">{{ isRevealed('socialSecurityNumber') ? 'visibility_off' : 'visibility' }}</span>
+                  </button>
+                }
+              </span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">{{ 'employee.identity.fields.biometricId' | translate }}</span>
+              <span class="info-value mono pii-value">
+                {{ displayValue(identity()!.biometricId, 'biometricId') }}
+                @if (identity()!.biometricId && !isMasked()) {
+                  <button
+                    type="button"
+                    class="pii-toggle"
+                    [attr.aria-label]="(isRevealed('biometricId') ? 'employee.identity.pii.hideBiometricId' : 'employee.identity.pii.showBiometricId') | translate"
+                    (click)="toggleReveal('biometricId')"
+                  >
+                    <span class="material-icons" aria-hidden="true">{{ isRevealed('biometricId') ? 'visibility_off' : 'visibility' }}</span>
+                  </button>
+                }
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Passport ────────────────────────────────── -->
+        <div class="info-card">
+          <div class="info-card-header">
+            <span class="material-icons" aria-hidden="true">book</span>
+            {{ 'employee.identity.sections.passport' | translate }}
+          </div>
+          <div class="info-card-body">
+            <div class="info-row">
+              <span class="info-label">{{ 'employee.identity.fields.passportNo' | translate }}</span>
+              <span class="info-value mono">
+                {{ getValue(identity()!.passportNumber) }}
+              </span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">{{ 'employee.identity.fields.drivingLicense' | translate }}</span>
+              <span class="info-value mono">
+                {{ getValue(identity()!.drivingLicenseNumber) }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Visa ────────────────────────────────────── -->
+        <div
+          class="info-card"
+          [class.card-warning]="identity()!.visaExpiringSoon"
+          [class.card-danger]="isExpired(identity()!.visaExpiryDate)"
+        >
+          <div class="info-card-header">
+            <span class="material-icons" aria-hidden="true">flight_takeoff</span>
+            {{ 'employee.identity.sections.visa' | translate }}
+            @if (isExpired(identity()!.visaExpiryDate)) {
+              <span class="expiry-tag tag-expired">{{ 'employee.identity.expiredTag' | translate }}</span>
+            } @else if (identity()!.visaExpiringSoon) {
+              <span class="expiry-tag tag-soon">{{ 'employee.identity.expiringSoonTag' | translate }}</span>
+            }
+          </div>
+          <div class="info-card-body">
+            <div class="info-row">
+              <span class="info-label">{{ 'employee.identity.fields.visaNumber' | translate }}</span>
+              <span class="info-value mono">
+                {{ getValue(identity()!.visaNumber) }}
+              </span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">{{ 'employee.identity.fields.visaType' | translate }}</span>
+              <span class="info-value">
+                {{ getValue(identity()!.visaType) }}
+              </span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">{{ 'employee.identity.fields.issueDate' | translate }}</span>
+              <span class="info-value">
+                {{ formatDate(identity()!.visaIssueDate) }}
+              </span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">{{ 'employee.identity.fields.expiryDate' | translate }}</span>
+              <span
+                class="info-value"
+                [class.text-danger]="isExpired(identity()!.visaExpiryDate)"
+                [class.text-warn]="
+                  identity()!.visaExpiringSoon && !isExpired(identity()!.visaExpiryDate)
+                "
+              >
+                {{ formatDate(identity()!.visaExpiryDate) }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Work Permit ────────────────────────────── -->
+        <div
+          class="info-card"
+          [class.card-warning]="identity()!.workPermitExpiringSoon"
+          [class.card-danger]="isExpired(identity()!.workPermitExpiry)"
+        >
+          <div class="info-card-header">
+            <span class="material-icons" aria-hidden="true">assignment</span>
+            {{ 'employee.identity.sections.workPermit' | translate }}
+            @if (isExpired(identity()!.workPermitExpiry)) {
+              <span class="expiry-tag tag-expired">{{ 'employee.identity.expiredTag' | translate }}</span>
+            } @else if (identity()!.workPermitExpiringSoon) {
+              <span class="expiry-tag tag-soon">{{ 'employee.identity.expiringSoonTag' | translate }}</span>
+            }
+          </div>
+          <div class="info-card-body">
+            <div class="info-row">
+              <span class="info-label">{{ 'employee.identity.fields.permitNumber' | translate }}</span>
+              <span class="info-value mono">
+                {{ getValue(identity()!.workPermitNumber) }}
+              </span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">{{ 'employee.identity.fields.expiryDate' | translate }}</span>
+              <span
+                class="info-value"
+                [class.text-danger]="isExpired(identity()!.workPermitExpiry)"
+                [class.text-warn]="
+                  identity()!.workPermitExpiringSoon && !isExpired(identity()!.workPermitExpiry)
+                "
+              >
+                {{ formatDate(identity()!.workPermitExpiry) }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+  }
+
+  <!-- ══════════════════════════════════════════════════════ -->
+  <!-- EDIT MODE — Inline form (no modal)                    -->
+  <!-- ══════════════════════════════════════════════════════ -->
+  @if (!loading() && editMode()) {
+    @if (error()) {
+      <div class="alert alert-error" role="alert">
+        <span class="material-icons" aria-hidden="true">error_outline</span>{{ error() }}
+      </div>
+    }
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+      <!-- ── National Identity section ───────────────── -->
+      <div class="form-section">
+        <div class="form-section-title">
+          <span class="material-icons" aria-hidden="true">perm_identity</span>
+          {{ 'employee.identity.sections.nationalIdentity' | translate }}
+        </div>
+        <div class="form-grid">
+          <div class="field">
+            <label for="id-national-id">{{ 'employee.identity.fields.nationalId' | translate }}</label>
+            <div class="pii-input-wrap">
+              <input
+                id="id-national-id"
+                [type]="inputType('nationalId')"
+                formControlName="nationalId"
+                [placeholder]="'employee.identity.placeholders.nationalId' | translate"
+                autocomplete="off"
+              />
+              <button
+                type="button"
+                class="pii-toggle"
+                [attr.aria-label]="(isRevealed('nationalId') ? 'employee.identity.pii.hideNationalId' : 'employee.identity.pii.showNationalId') | translate"
+                (click)="toggleReveal('nationalId')"
+              >
+                <span class="material-icons" aria-hidden="true">{{ isRevealed('nationalId') ? 'visibility_off' : 'visibility' }}</span>
+              </button>
+            </div>
+          </div>
+          <div class="field">
+            <label for="id-tax-id">{{ 'employee.identity.fields.taxId' | translate }}</label>
+            <input id="id-tax-id" formControlName="taxId" [placeholder]="'employee.identity.placeholders.taxId' | translate" />
+          </div>
+          <div class="field">
+            <label for="id-ssn">{{ 'employee.identity.fields.socialSecurityNumber' | translate }}</label>
+            <div class="pii-input-wrap">
+              <input
+                id="id-ssn"
+                [type]="inputType('socialSecurityNumber')"
+                formControlName="socialSecurityNumber"
+                [placeholder]="'employee.identity.placeholders.socialSecurityNumber' | translate"
+                autocomplete="off"
+              />
+              <button
+                type="button"
+                class="pii-toggle"
+                [attr.aria-label]="(isRevealed('socialSecurityNumber') ? 'employee.identity.pii.hideSsn' : 'employee.identity.pii.showSsn') | translate"
+                (click)="toggleReveal('socialSecurityNumber')"
+              >
+                <span class="material-icons" aria-hidden="true">{{ isRevealed('socialSecurityNumber') ? 'visibility_off' : 'visibility' }}</span>
+              </button>
+            </div>
+          </div>
+          <div class="field">
+            <label for="id-biometric-id">{{ 'employee.identity.fields.biometricId' | translate }}</label>
+            <div class="pii-input-wrap">
+              <input
+                id="id-biometric-id"
+                [type]="inputType('biometricId')"
+                formControlName="biometricId"
+                [placeholder]="'employee.identity.placeholders.biometricId' | translate"
+                autocomplete="off"
+              />
+              <button
+                type="button"
+                class="pii-toggle"
+                [attr.aria-label]="(isRevealed('biometricId') ? 'employee.identity.pii.hideBiometricId' : 'employee.identity.pii.showBiometricId') | translate"
+                (click)="toggleReveal('biometricId')"
+              >
+                <span class="material-icons" aria-hidden="true">{{ isRevealed('biometricId') ? 'visibility_off' : 'visibility' }}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Passport & License section ──────────────── -->
+      <div class="form-section">
+        <div class="form-section-title">
+          <span class="material-icons" aria-hidden="true">book</span>
+          {{ 'employee.identity.sections.passportLicense' | translate }}
+        </div>
+        <div class="form-grid">
+          <div class="field">
+            <label for="id-passport-number">{{ 'employee.identity.fields.passportNumber' | translate }}</label>
+            <input id="id-passport-number" formControlName="passportNumber" [placeholder]="'employee.identity.placeholders.passportNumber' | translate" />
+          </div>
+          <div class="field">
+            <label for="id-driving-license">{{ 'employee.identity.fields.drivingLicenseNumber' | translate }}</label>
+            <input id="id-driving-license" formControlName="drivingLicenseNumber" [placeholder]="'employee.identity.placeholders.drivingLicenseNumber' | translate" />
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Visa section ─────────────────────────────── -->
+      <div class="form-section">
+        <div class="form-section-title">
+          <span class="material-icons" aria-hidden="true">flight_takeoff</span>
+          {{ 'employee.identity.sections.visa' | translate }}
+        </div>
+        <div class="form-grid">
+          <div class="field">
+            <label for="id-visa-number">{{ 'employee.identity.fields.visaNumber' | translate }}</label>
+            <input id="id-visa-number" formControlName="visaNumber" [placeholder]="'employee.identity.placeholders.visaNumber' | translate" />
+          </div>
+          <div class="field">
+            <label for="id-visa-type">{{ 'employee.identity.fields.visaType' | translate }}</label>
+            <input id="id-visa-type" formControlName="visaType" [placeholder]="'employee.identity.placeholders.visaType' | translate" />
+          </div>
+          <div class="field">
+            <label for="id-visa-issue-date">{{ 'employee.identity.fields.issueDate' | translate }}</label>
+            <input id="id-visa-issue-date" type="date" formControlName="visaIssueDate" />
+          </div>
+          <div class="field">
+            <label for="id-visa-expiry-date">{{ 'employee.identity.fields.expiryDate' | translate }}</label>
+            <input id="id-visa-expiry-date" type="date" formControlName="visaExpiryDate" />
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Work Permit section ──────────────────────── -->
+      <div class="form-section">
+        <div class="form-section-title">
+          <span class="material-icons" aria-hidden="true">assignment</span>
+          {{ 'employee.identity.sections.workPermit' | translate }}
+        </div>
+        <div class="form-grid">
+          <div class="field">
+            <label for="id-work-permit-number">{{ 'employee.identity.fields.workPermitNumber' | translate }}</label>
+            <input id="id-work-permit-number" formControlName="workPermitNumber" [placeholder]="'employee.identity.placeholders.workPermitNumber' | translate" />
+          </div>
+          <div class="field">
+            <label for="id-work-permit-expiry">{{ 'employee.identity.fields.workPermitExpiry' | translate }}</label>
+            <input id="id-work-permit-expiry" type="date" formControlName="workPermitExpiry" />
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Form actions ─────────────────────────────── -->
+      <div class="form-actions">
+        <button type="button" class="btn-cancel" (click)="cancelEdit()">{{ 'common.cancel' | translate }}</button>
+        <button type="submit" class="btn-save" [disabled]="saving()">
+          @if (saving()) {
+            <div class="btn-spinner"></div>
+            <span>{{ 'employee.identity.saving' | translate }}</span>
+          } @else {
+            <span class="material-icons" aria-hidden="true">save</span>
+            <span>{{ 'employee.identity.saveIdentityInfo' | translate }}</span>
+          }
+        </button>
+      </div>
+    </form>
+  }
+</div>
