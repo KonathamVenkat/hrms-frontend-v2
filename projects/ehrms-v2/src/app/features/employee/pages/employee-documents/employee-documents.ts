@@ -32,10 +32,11 @@ import { serverMessage } from '../../../../core/utils/http-error-message';
 import { timedMessage } from '../../../../core/utils/timed-message';
 import { FieldA11yDirective } from '../../../../core/directives/field-a11y.directive';
 import { fieldErrorMessage, isFieldInvalid } from '../../../../core/forms/field-errors';
+import { DateInput } from '../../../../shared/date-input/date-input';
 
 @Component({
   selector: 'app-employee-documents',
-  imports: [SlicePipe, ReactiveFormsModule, FieldA11yDirective, TranslatePipe, CdkTrapFocus, AccessibleDialogDirective],
+  imports: [DateInput, SlicePipe, ReactiveFormsModule, FieldA11yDirective, TranslatePipe, CdkTrapFocus, AccessibleDialogDirective],
   templateUrl: './employee-documents.html',
   styleUrl: './employee-documents.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

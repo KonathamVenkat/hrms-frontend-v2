@@ -455,7 +455,7 @@
             <div class="form-section-title">{{ 'employee.jobDetails.fields.effectiveDate' | translate }}</div>
             <div class="field">
               <label for="jd-effective-from">{{ 'employee.jobDetails.formFields.effectiveFromLabel' | translate }} <span class="req">*</span></label>
-              <input id="jd-effective-from" type="date" formControlName="effectiveFrom" />
+              <app-date-input inputId="jd-effective-from" formControlName="effectiveFrom" />
               @if (isInvalid('effectiveFrom')) {
                 <span class="field-error" id="fe-effectiveFrom">{{ getError('effectiveFrom') }}</span>
               }

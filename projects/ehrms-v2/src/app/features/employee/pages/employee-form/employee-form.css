@@ -193,7 +193,7 @@ input[dir='rtl'] {
   justify-content: flex-end;
   flex-wrap: wrap;
   gap: var(--space-3);
-  padding-block-end: var(--space-5);
+  padding-block: var(--space-5);
 }
 
 @media (max-width: 900px) {

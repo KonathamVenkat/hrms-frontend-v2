@@ -660,6 +660,10 @@ html[dir='rtl'] * {
   gap: 6px;
   min-inline-size: 0;
 }
+/* In a vertical stack the 200px flex-basis would become a minimum height, so size to content. */
+.card-body > .field {
+  flex: 0 0 auto;
+}
 .field > label {
   font-size: 13px;
   font-weight: 600;
@@ -692,6 +696,9 @@ html[dir='rtl'] * {
 .field input.ng-invalid.ng-touched,
 .field select.ng-invalid.ng-touched,
 .field textarea.ng-invalid.ng-touched {
+  border-color: var(--danger);
+}
+.field app-date-input.ng-invalid.ng-touched input {
   border-color: var(--danger);
 }
 .field input:disabled,

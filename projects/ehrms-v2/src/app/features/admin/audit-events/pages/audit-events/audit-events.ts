@@ -13,6 +13,7 @@ import { MatTableModule } from '@angular/material/table';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Subject, catchError, finalize, of, switchMap, tap } from 'rxjs';
 
+import { DateInput } from '../../../../../shared/date-input/date-input';
 import { AuditEventService } from '../../services/audit-event';
 import { AuditEvent, AuditEventFilter } from '../../models/audit-event';
 
@@ -20,6 +21,7 @@ import { AuditEvent, AuditEventFilter } from '../../models/audit-event';
   selector: 'app-audit-events',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    DateInput,
     DatePipe,
     ReactiveFormsModule,
     MatButtonModule,

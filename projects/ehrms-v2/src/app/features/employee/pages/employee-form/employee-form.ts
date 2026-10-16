@@ -24,6 +24,7 @@ import {
   PASSWORD_MIN_LENGTH,
 } from '../../../../core/validators/password.validators';
 import { FieldA11yDirective } from '../../../../core/directives/field-a11y.directive';
+import { DateInput } from '../../../../shared/date-input/date-input';
 import { fieldErrorMessage, isFieldInvalid } from '../../../../core/forms/field-errors';
 
 /** Personal/employment values shared by the create and update forms. */
@@ -51,7 +52,7 @@ type CommonFormValue = {
 
 @Component({
   selector: 'app-employee-form',
-  imports: [ReactiveFormsModule, FieldA11yDirective, TranslatePipe],
+  imports: [ReactiveFormsModule, FieldA11yDirective, TranslatePipe, DateInput],
   templateUrl: './employee-form.html',
   styleUrl: './employee-form.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

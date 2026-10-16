@@ -15,11 +15,12 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { HolidayService } from '../../services/holiday-calendar';
 import { Holiday } from '../../models/holiday-calendar';
 import { AccessibleDialogDirective } from '../../../../../core/directives/accessible-dialog.directive';
+import { DateInput } from '../../../../../shared/date-input/date-input';
 
 @Component({
   selector: 'app-holiday-calendar',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, ReactiveFormsModule, TranslatePipe, CdkTrapFocus, AccessibleDialogDirective],
+  imports: [DateInput, CommonModule, ReactiveFormsModule, TranslatePipe, CdkTrapFocus, AccessibleDialogDirective],
   templateUrl: './holiday-calendar.html',
   styleUrl: './holiday-calendar.css',
 })

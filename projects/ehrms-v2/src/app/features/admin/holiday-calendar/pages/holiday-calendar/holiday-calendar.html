@@ -317,7 +317,7 @@
                 >{{ 'admin.holidayCalendar.holidayDate' | translate }}
                 <span class="req">*</span></label
               >
-              <input id="hc-date" type="date" formControlName="holidayDate" />
+              <app-date-input inputId="hc-date" formControlName="holidayDate" />
               @if (isInvalid('holidayDate')) {
                 <span class="field-error">{{ getError('holidayDate') }}</span>
               }

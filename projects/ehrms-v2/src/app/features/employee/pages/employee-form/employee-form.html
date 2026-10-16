@@ -100,7 +100,7 @@
           <div class="field-row">
             <div class="field">
               <label for="ef-date-of-birth">{{ 'employee.form.dateOfBirth' | translate }} <span class="req">*</span></label>
-              <input id="ef-date-of-birth" type="date" formControlName="dateOfBirth" />
+              <app-date-input inputId="ef-date-of-birth" startView="multi-year" [startYearsAgo]="30" formControlName="dateOfBirth" />
               @if (isInvalid('dateOfBirth')) {
                 <span class="field-error" id="fe-dateOfBirth">{{ getError('dateOfBirth') }}</span>
               }
@@ -281,7 +281,7 @@
 
           <div class="field">
             <label for="ef-hire-date">{{ 'employee.form.hireDate' | translate }} <span class="req">*</span></label>
-            <input id="ef-hire-date" type="date" formControlName="hireDate" />
+            <app-date-input inputId="ef-hire-date" formControlName="hireDate" />
             @if (isInvalid('hireDate')) {
               <span class="field-error" id="fe-hireDate">{{ getError('hireDate') }}</span>
             }
@@ -290,14 +290,14 @@
           <div class="field-row">
             <div class="field">
               <label for="ef-probation-end-date">{{ 'employee.form.probationEndDate' | translate }}</label>
-              <input id="ef-probation-end-date" type="date" formControlName="probationEndDate" />
+              <app-date-input inputId="ef-probation-end-date" formControlName="probationEndDate" />
               @if (isInvalid('probationEndDate')) {
                 <span class="field-error" id="fe-probationEndDate">{{ getError('probationEndDate') }}</span>
               }
             </div>
             <div class="field">
               <label for="ef-confirmation-date">{{ 'employee.form.confirmationDate' | translate }}</label>
-              <input id="ef-confirmation-date" type="date" formControlName="confirmationDate" />
+              <app-date-input inputId="ef-confirmation-date" formControlName="confirmationDate" />
               @if (isInvalid('confirmationDate')) {
                 <span class="field-error" id="fe-confirmationDate">{{ getError('confirmationDate') }}</span>
               }

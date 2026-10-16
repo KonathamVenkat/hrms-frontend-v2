@@ -30,10 +30,11 @@ import { WorkShift } from '../../../admin/work-shifts/models/work-shift';
 import { OfficeLocation } from '../../../admin/office-locations/models/office-location';
 import { EmployeeSearchSelect } from '../../components/employee-search-select/employee-search-select';
 import { fieldErrorMessage, isFieldInvalid } from '../../../../core/forms/field-errors';
+import { DateInput } from '../../../../shared/date-input/date-input';
 
 @Component({
   selector: 'app-job-details',
-  imports: [
+  imports: [DateInput, 
     ReactiveFormsModule,
     FieldA11yDirective,
     EmployeeSearchSelect,

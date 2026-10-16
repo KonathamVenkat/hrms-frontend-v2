@@ -19,11 +19,12 @@ import { LeaveBalanceService } from '../../services/leave-balance.service';
 import { LeaveBalance } from '../../models/leave-balance.model';
 import { Auth } from '../../../../core/auth/auth';
 import { serverMessage } from '../../../../core/utils/http-error-message';
+import { DateInput } from '../../../../shared/date-input/date-input';
 
 @Component({
   selector: 'app-leave-apply',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ReactiveFormsModule, TranslatePipe],
+  imports: [DateInput, ReactiveFormsModule, TranslatePipe],
   templateUrl: './leave-apply.html',
   styleUrl: './leave-apply.css',
 })

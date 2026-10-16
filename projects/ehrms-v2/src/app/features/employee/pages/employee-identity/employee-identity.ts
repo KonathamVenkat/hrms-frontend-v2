@@ -23,10 +23,11 @@ import { serverMessage } from '../../../../core/utils/http-error-message';
 import { timedMessage } from '../../../../core/utils/timed-message';
 import { LanguageService } from '../../../../core/services/language.service';
 import { FieldA11yDirective } from '../../../../core/directives/field-a11y.directive';
+import { DateInput } from '../../../../shared/date-input/date-input';
 
 @Component({
   selector: 'app-employee-identity',
-  imports: [ReactiveFormsModule, FieldA11yDirective, TranslatePipe],
+  imports: [DateInput, ReactiveFormsModule, FieldA11yDirective, TranslatePipe],
   templateUrl: './employee-identity.html',
   styleUrl: './employee-identity.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

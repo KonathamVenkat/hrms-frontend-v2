@@ -26,14 +26,14 @@
           <mat-label>{{ 'admin.auditEvents.targetId' | translate }}</mat-label>
           <input matInput formControlName="targetId" autocomplete="off" />
         </mat-form-field>
-        <mat-form-field appearance="outline">
-          <mat-label>{{ 'admin.auditEvents.from' | translate }}</mat-label>
-          <input matInput type="date" formControlName="from" />
-        </mat-form-field>
-        <mat-form-field appearance="outline">
-          <mat-label>{{ 'admin.auditEvents.to' | translate }}</mat-label>
-          <input matInput type="date" formControlName="to" />
-        </mat-form-field>
+        <div class="field">
+          <label for="ae-from">{{ 'admin.auditEvents.from' | translate }}</label>
+          <app-date-input inputId="ae-from" formControlName="from" />
+        </div>
+        <div class="field">
+          <label for="ae-to">{{ 'admin.auditEvents.to' | translate }}</label>
+          <app-date-input inputId="ae-to" formControlName="to" />
+        </div>
         <div class="filter-actions">
           <button mat-button type="button" (click)="onClear()">
             {{ 'common.clear' | translate }}

@@ -95,12 +95,7 @@
               <label for="la-start-date"
                 >{{ 'leave.apply.startDateLabel' | translate }} <span class="req">*</span></label
               >
-              <input
-                id="la-start-date"
-                type="date"
-                formControlName="startDate"
-                [min]="getMinDate()"
-              />
+              <app-date-input inputId="la-start-date" formControlName="startDate" [min]="getMinDate()" />
               @if (isInvalid('startDate')) {
                 <span class="field-error">{{ getError('startDate') }}</span>
               }
@@ -109,12 +104,7 @@
               <label for="la-end-date"
                 >{{ 'leave.apply.endDateLabel' | translate }} <span class="req">*</span></label
               >
-              <input
-                id="la-end-date"
-                type="date"
-                formControlName="endDate"
-                [min]="ctrl('startDate').value || getMinDate()"
-              />
+              <app-date-input inputId="la-end-date" formControlName="endDate" [min]="ctrl('startDate').value || getMinDate()" />
               @if (isInvalid('endDate')) {
                 <span class="field-error">{{ getError('endDate') }}</span>
               }

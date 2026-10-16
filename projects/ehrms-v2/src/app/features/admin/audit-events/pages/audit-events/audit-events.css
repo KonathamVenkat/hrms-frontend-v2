@@ -41,6 +41,20 @@
   gap: 0 var(--space-4);
   align-items: start;
 }
+/* Date fields sit among Material outline fields: float the label on the top border to match. */
+.filter-grid > .field {
+  position: relative;
+}
+.filter-grid > .field > label {
+  position: absolute;
+  inset-block-start: -9px;
+  inset-inline-start: 12px;
+  z-index: 1;
+  padding-inline: 4px;
+  background: var(--table-surface);
+  font-size: 12px;
+  color: var(--mat-sys-on-surface-variant);
+}
 .filter-actions {
   grid-column: 1 / -1;
   display: flex;
