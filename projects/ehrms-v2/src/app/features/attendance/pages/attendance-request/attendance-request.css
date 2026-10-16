@@ -254,3 +254,8 @@
   align-items: center;
   gap: var(--space-2);
 }
+
+/* Keep the stat icons from being squeezed when the cards shrink on small screens. */
+.mini-stat mat-icon {
+  flex-shrink: 0;
+}

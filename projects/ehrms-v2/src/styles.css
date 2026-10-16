@@ -2038,3 +2038,7 @@ html[dir='rtl'] * {
   flex: 0 1 120px;
   flex-basis: 120px;
 }
+
+.app-page :is(.stat-mini, .stat-card) mat-icon {
+  flex-shrink: 0;
+}
