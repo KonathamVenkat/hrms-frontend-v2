@@ -47,6 +47,7 @@ export class Departments implements OnInit {
   private editingVersion: number | undefined;
   confirmItem = signal<Department | null>(null);
   confirmAction = signal<ConfirmAction>('toggle');
+  confirmError = signal<string | null>(null);
   filterText = signal('');
   filterActive = signal<StatusFilter>('all');
 
@@ -193,11 +194,13 @@ export class Departments implements OnInit {
 
   cancelConfirm(): void {
     this.confirmItem.set(null);
+    this.confirmError.set(null);
   }
 
   confirm(): void {
     const d = this.confirmItem();
     if (!d) return;
+    this.confirmError.set(null);
     const action = this.confirmAction();
     const call =
       action === 'delete'
@@ -219,8 +222,8 @@ export class Departments implements OnInit {
         this.load();
       },
       error: (err: HttpErrorResponse) => {
-        this.error.set(this.messageOf(err, 'common.httpErrors.actionFailed'));
-        this.cancelConfirm();
+        // Stay in the dialog: the user is looking here, a page banner is easy to miss.
+        this.confirmError.set(this.messageOf(err, 'common.httpErrors.actionFailed'));
       },
     });
   }

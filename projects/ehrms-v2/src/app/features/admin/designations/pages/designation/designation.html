@@ -360,26 +360,34 @@
           <br />{{ 'admin.designations.deleteHint' | translate }}
         }
       </p>
+      @if (confirmError()) {
+        <div class="modal-alert confirm-alert" role="alert">
+          <span aria-hidden="true" class="material-icons">error_outline</span
+          ><span dir="auto">{{ confirmError() }}</span>
+        </div>
+      }
       <div class="confirm-actions">
         <button type="button" class="btn-cancel" (click)="cancelConfirm()">
-          {{ 'common.cancel' | translate }}
+          {{ (confirmError() ? 'common.close' : 'common.cancel') | translate }}
         </button>
-        <button
-          type="button"
-          class="btn-confirm"
-          [class.btn-danger]="warn"
-          [class.btn-success]="!warn"
-          (click)="confirm()"
-        >
-          {{
-            (deleting
-              ? 'admin.designations.delete'
-              : item.isActive
-                ? 'admin.designations.deactivate'
-                : 'admin.designations.activate'
-            ) | translate
-          }}
-        </button>
+        @if (!confirmError()) {
+          <button
+            type="button"
+            class="btn-confirm"
+            [class.btn-danger]="warn"
+            [class.btn-success]="!warn"
+            (click)="confirm()"
+          >
+            {{
+              (deleting
+                ? 'admin.designations.delete'
+                : item.isActive
+                  ? 'admin.designations.deactivate'
+                  : 'admin.designations.activate'
+              ) | translate
+            }}
+          </button>
+        }
       </div>
     </div>
   </div>

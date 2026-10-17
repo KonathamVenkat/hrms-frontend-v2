@@ -2589,3 +2589,9 @@ html[dir='rtl'] * {
   cursor: pointer;
   transition: background var(--motion-fast);
 }
+
+/* Refusal shown inside the confirm dialog (deactivate / delete blocked by the server). */
+.confirm-alert {
+  margin: 0 0 var(--space-4);
+  text-align: start;
+}

@@ -49,6 +49,7 @@ export class Designations implements OnInit {
   private editingVersion: number | undefined;
   confirmItem = signal<Designation | null>(null);
   confirmAction = signal<ConfirmAction>('toggle');
+  confirmError = signal<string | null>(null);
   filterText = signal('');
   /** '' = every department, 'none' = designations without a department, otherwise the department id. */
   filterDepartment = signal('');
@@ -207,11 +208,13 @@ export class Designations implements OnInit {
 
   cancelConfirm(): void {
     this.confirmItem.set(null);
+    this.confirmError.set(null);
   }
 
   confirm(): void {
     const d = this.confirmItem();
     if (!d) return;
+    this.confirmError.set(null);
     const action = this.confirmAction();
     const call =
       action === 'delete'
@@ -233,8 +236,8 @@ export class Designations implements OnInit {
         this.load();
       },
       error: (err: HttpErrorResponse) => {
-        this.error.set(this.messageOf(err, 'common.httpErrors.actionFailed'));
-        this.cancelConfirm();
+        // Stay in the dialog: the user is looking here, a page banner is easy to miss.
+        this.confirmError.set(this.messageOf(err, 'common.httpErrors.actionFailed'));
       },
     });
   }
