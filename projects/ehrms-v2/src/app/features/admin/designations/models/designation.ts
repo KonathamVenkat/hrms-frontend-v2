@@ -10,6 +10,7 @@ export interface Designation {
   isActive: boolean;
   createdAt?: string;
   updatedAt?: string;
+  version?: number;
 }
 
 export interface DesignationRequest {
@@ -19,6 +20,8 @@ export interface DesignationRequest {
   gradeLevel?: string;
   departmentId?: number;
   isActive?: boolean;
+  /** Version the screen was loaded with; the server answers 409 if the row changed since. */
+  version?: number;
 }
 
 export interface ApiResponse<T> {

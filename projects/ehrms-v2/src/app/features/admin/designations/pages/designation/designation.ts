@@ -46,6 +46,7 @@ export class Designations implements OnInit {
   showModal = signal(false);
   isEditMode = signal(false);
   editingId = signal<number | null>(null);
+  private editingVersion: number | undefined;
   confirmItem = signal<Designation | null>(null);
   confirmAction = signal<ConfirmAction>('toggle');
   filterText = signal('');
@@ -121,6 +122,7 @@ export class Designations implements OnInit {
   openCreate(): void {
     this.isEditMode.set(false);
     this.editingId.set(null);
+    this.editingVersion = undefined;
     this.form.reset();
     this.form.controls.code.enable();
     this.showModal.set(true);
@@ -129,6 +131,7 @@ export class Designations implements OnInit {
   openEdit(d: Designation): void {
     this.isEditMode.set(true);
     this.editingId.set(d.desigId);
+    this.editingVersion = d.version;
     this.form.reset({
       code: d.code,
       title: d.title,
@@ -160,6 +163,7 @@ export class Designations implements OnInit {
       gradeLevel: v.gradeLevel.trim() || undefined,
       departmentId: v.departmentId ?? undefined,
       isActive: v.isActive,
+      version: this.editingVersion,
     };
     const id = this.editingId();
     const call =

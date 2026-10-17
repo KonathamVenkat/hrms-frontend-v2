@@ -10,6 +10,7 @@ export interface Department {
   isActive: boolean;
   createdAt?: string;
   updatedAt?: string;
+  version?: number;
 }
 
 export interface DepartmentRequest {
@@ -21,6 +22,8 @@ export interface DepartmentRequest {
   headEmployeeId?: number;
   costCenterCode?: string;
   isActive?: boolean;
+  /** Version the screen was loaded with; the server answers 409 if the row changed since. */
+  version?: number;
 }
 
 export interface ApiResponse<T> {

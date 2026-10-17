@@ -44,6 +44,7 @@ export class Departments implements OnInit {
   editingId = signal<number | null>(null);
   /** Kept so a PUT does not wipe the department head, which this screen does not edit. */
   private editingHeadId: number | undefined;
+  private editingVersion: number | undefined;
   confirmItem = signal<Department | null>(null);
   confirmAction = signal<ConfirmAction>('toggle');
   filterText = signal('');
@@ -105,6 +106,7 @@ export class Departments implements OnInit {
     this.isEditMode.set(false);
     this.editingId.set(null);
     this.editingHeadId = undefined;
+    this.editingVersion = undefined;
     this.form.reset();
     this.form.controls.code.enable();
     this.showModal.set(true);
@@ -114,6 +116,7 @@ export class Departments implements OnInit {
     this.isEditMode.set(true);
     this.editingId.set(d.deptId);
     this.editingHeadId = d.headEmployeeId;
+    this.editingVersion = d.version;
     this.form.reset({
       code: d.code,
       name: d.name,
@@ -146,6 +149,7 @@ export class Departments implements OnInit {
       costCenterCode: v.costCenterCode.trim() || undefined,
       headEmployeeId: this.editingHeadId,
       isActive: v.isActive,
+      version: this.editingVersion,
     };
     const id = this.editingId();
     const call =
