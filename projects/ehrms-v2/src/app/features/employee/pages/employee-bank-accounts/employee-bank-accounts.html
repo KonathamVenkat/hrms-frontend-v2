@@ -1,0 +1,350 @@
+<div class="ba-section">
+  <!-- ── Header ──────────────────────────────────────────── -->
+  <div class="section-header">
+    <div class="header-left">
+      <h2 class="section-title">{{ 'employee.bankAccounts.title' | translate }}</h2>
+      <span class="ba-count">{{
+        'employee.bankAccounts.activeCount' | translate: { count: activeAccounts().length }
+      }}</span>
+    </div>
+    @if (!readOnly()) {
+      <button type="button" class="btn-add" (click)="openAdd()">
+        <span class="material-icons" aria-hidden="true">add</span>
+        {{ 'employee.bankAccounts.addAccount' | translate }}
+      </button>
+    }
+  </div>
+
+  @if (successMsg()) {
+    <div class="alert alert-success" role="status">
+      <span class="material-icons" aria-hidden="true">check_circle</span>{{ successMsg() }}
+    </div>
+  }
+  @if (error() && !showModal()) {
+    <div class="alert alert-error" role="alert">
+      <span class="material-icons" aria-hidden="true">error_outline</span>{{ error() }}
+    </div>
+  }
+
+  @if (loading()) {
+    <div class="loading-wrap" role="status">
+      <div class="spinner"></div>
+      <span>{{ 'employee.bankAccounts.loading' | translate }}</span>
+    </div>
+  }
+
+  @if (!loading() && activeAccounts().length === 0) {
+    <div class="empty-state">
+      <span class="material-icons" aria-hidden="true">account_balance</span>
+      <p>{{ 'employee.bankAccounts.emptyTitle' | translate }}</p>
+      @if (!readOnly()) {
+        <small>{{ 'employee.bankAccounts.emptyHint' | translate }}</small>
+        <button type="button" class="btn-add-sm" (click)="openAdd()">
+          <span class="material-icons" aria-hidden="true">add</span>
+          {{ 'employee.bankAccounts.addAccount' | translate }}
+        </button>
+      }
+    </div>
+  }
+
+  <!-- ── Active accounts ────────────────────────────────── -->
+  @if (!loading() && activeAccounts().length > 0) {
+    <div class="ba-grid">
+      @for (a of activeAccounts(); track a.id) {
+        <div class="ba-card" [class.primary-card]="a.isPrimary">
+          <div class="ba-card-header">
+            <div class="ba-bank-wrap">
+              <span class="material-icons ba-bank-icon" aria-hidden="true">account_balance</span>
+              <div>
+                <div class="ba-bank-name">{{ a.bankName }}</div>
+                @if (a.bankNameAr) {
+                  <div class="ba-bank-name-ar" dir="rtl">{{ a.bankNameAr }}</div>
+                }
+              </div>
+            </div>
+            <div class="ba-actions">
+              @if (a.isPrimary) {
+                <span class="primary-badge">
+                  <span class="material-icons" aria-hidden="true">star</span>
+                  {{ 'employee.bankAccounts.primaryBadge' | translate }}
+                </span>
+              }
+              @if (!readOnly()) {
+                @if (!a.isPrimary) {
+                  <button
+                    type="button"
+                    class="act-btn btn-star"
+                    [title]="'employee.bankAccounts.setPrimary' | translate"
+                    [attr.aria-label]="
+                      ('employee.bankAccounts.setPrimary' | translate) + ': ' + a.bankName
+                    "
+                    (click)="openConfirm(a, 'primary')"
+                  >
+                    <span class="material-icons" aria-hidden="true">star_outline</span>
+                  </button>
+                }
+                <button
+                  type="button"
+                  class="act-btn btn-edit"
+                  [title]="'common.edit' | translate"
+                  [attr.aria-label]="('common.edit' | translate) + ': ' + a.bankName"
+                  (click)="openEdit(a)"
+                >
+                  <span class="material-icons" aria-hidden="true">edit</span>
+                </button>
+                <button
+                  type="button"
+                  class="act-btn btn-delete"
+                  [title]="'employee.bankAccounts.deactivate' | translate"
+                  [attr.aria-label]="
+                    ('employee.bankAccounts.deactivate' | translate) + ': ' + a.bankName
+                  "
+                  (click)="openConfirm(a, 'deactivate')"
+                >
+                  <span class="material-icons" aria-hidden="true">delete_outline</span>
+                </button>
+              }
+            </div>
+          </div>
+          <dl class="ba-body">
+            @if (a.bankBranchName) {
+              <div class="ba-row">
+                <dt>{{ 'employee.bankAccounts.fields.branch' | translate }}</dt>
+                <dd>{{ a.bankBranchName }}</dd>
+              </div>
+            }
+            <div class="ba-row">
+              <dt>{{ 'employee.bankAccounts.fields.accountNumber' | translate }}</dt>
+              <dd class="ba-number" dir="ltr">{{ a.accountNumber }}</dd>
+            </div>
+            @if (a.iban) {
+              <div class="ba-row">
+                <dt>{{ 'employee.bankAccounts.fields.iban' | translate }}</dt>
+                <dd class="ba-number" dir="ltr">{{ a.iban }}</dd>
+              </div>
+            }
+            @if (a.accountHolderName) {
+              <div class="ba-row">
+                <dt>{{ 'employee.bankAccounts.fields.accountHolderName' | translate }}</dt>
+                <dd>{{ a.accountHolderName }}</dd>
+              </div>
+            }
+          </dl>
+        </div>
+      }
+    </div>
+  }
+
+  @if (!loading() && inactiveAccounts().length > 0) {
+    <p class="inactive-label">
+      <span class="material-icons" aria-hidden="true">history</span>
+      {{ 'employee.bankAccounts.inactiveCount' | translate: { count: inactiveAccounts().length } }}
+    </p>
+  }
+</div>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!-- MODAL — Add / Edit                                        -->
+<!-- ══════════════════════════════════════════════════════════ -->
+@if (showModal()) {
+  <div class="modal-backdrop">
+    <div
+      class="modal"
+      [appAccessibleDialog]="'ba-modal-title'"
+      (dialogClosed)="closeModal()"
+      cdkTrapFocus
+      cdkTrapFocusAutoCapture
+    >
+      <div class="modal-header">
+        <h2 id="ba-modal-title" class="modal-title">
+          {{
+            (isEditMode() ? 'employee.bankAccounts.editTitle' : 'employee.bankAccounts.addAccount')
+              | translate
+          }}
+        </h2>
+        <button
+          type="button"
+          class="modal-close"
+          [attr.aria-label]="'common.close' | translate"
+          (click)="closeModal()"
+        >
+          <span class="material-icons" aria-hidden="true">close</span>
+        </button>
+      </div>
+
+      @if (error()) {
+        <div class="modal-alert" role="alert">
+          <span class="material-icons" aria-hidden="true">error_outline</span>{{ error() }}
+        </div>
+      }
+
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+        <div class="modal-body">
+          <div class="field-row">
+            <div class="field">
+              <label for="ba-bank"
+                >{{ 'employee.bankAccounts.fields.bank' | translate }}
+                <span class="req">*</span></label
+              >
+              <select id="ba-bank" formControlName="bankId">
+                <option [ngValue]="0">
+                  {{ 'employee.bankAccounts.fields.bankPlaceholder' | translate }}
+                </option>
+                @for (b of bankOptions(); track b.id) {
+                  <option [ngValue]="b.id">{{ b.name }}</option>
+                }
+              </select>
+              @if (isInvalid('bankId')) {
+                <span class="field-error" id="fe-bankId">{{ getError('bankId') }}</span>
+              }
+            </div>
+            <div class="field">
+              <label for="ba-branch">{{ 'employee.bankAccounts.fields.branch' | translate }}</label>
+              <select id="ba-branch" formControlName="bankBranchId">
+                <option [ngValue]="0">
+                  {{ 'employee.bankAccounts.fields.branchPlaceholder' | translate }}
+                </option>
+                @for (b of branchOptions(); track b.id) {
+                  <option [ngValue]="b.id">{{ b.name }}</option>
+                }
+              </select>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="ba-number"
+              >{{ 'employee.bankAccounts.fields.accountNumber' | translate }}
+              <span class="req">*</span></label
+            >
+            <input id="ba-number" formControlName="accountNumber" dir="ltr" autocomplete="off" />
+            @if (isInvalid('accountNumber')) {
+              <span class="field-error" id="fe-accountNumber">{{ getError('accountNumber') }}</span>
+            }
+          </div>
+
+          <div class="field">
+            <label for="ba-iban">{{ 'employee.bankAccounts.fields.iban' | translate }}</label>
+            <input id="ba-iban" formControlName="iban" dir="ltr" autocomplete="off" />
+            @if (isInvalid('iban')) {
+              <span class="field-error" id="fe-iban">{{ getError('iban') }}</span>
+            }
+          </div>
+
+          <div class="field">
+            <label for="ba-holder">{{
+              'employee.bankAccounts.fields.accountHolderName' | translate
+            }}</label>
+            <input id="ba-holder" formControlName="accountHolderName" />
+            @if (isInvalid('accountHolderName')) {
+              <span class="field-error" id="fe-accountHolderName">{{
+                getError('accountHolderName')
+              }}</span>
+            }
+          </div>
+
+          @if (activeAccounts().length > 0 || isEditMode()) {
+            <label class="toggle-item">
+              <div class="toggle-info">
+                <span class="toggle-label">{{
+                  'employee.bankAccounts.primaryToggle.label' | translate
+                }}</span>
+                <span class="toggle-hint">{{
+                  'employee.bankAccounts.primaryToggle.hint' | translate
+                }}</span>
+              </div>
+              <div class="toggle-wrap">
+                <input type="checkbox" formControlName="isPrimary" class="toggle-inp" />
+                <span class="toggle-slider"></span>
+              </div>
+            </label>
+          }
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-cancel" (click)="closeModal()">
+            {{ 'common.cancel' | translate }}
+          </button>
+          <button type="submit" class="btn-save" [disabled]="saving()">
+            @if (saving()) {
+              <div class="btn-spinner"></div>
+              <span>{{ 'employee.bankAccounts.saving' | translate }}</span>
+            } @else {
+              <span class="material-icons" aria-hidden="true">save</span>
+              <span>{{
+                (isEditMode() ? 'employee.bankAccounts.update' : 'employee.bankAccounts.addAccount')
+                  | translate
+              }}</span>
+            }
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!-- CONFIRM — set primary / deactivate                        -->
+<!-- ══════════════════════════════════════════════════════════ -->
+@if (confirmItem(); as item) {
+  <div class="modal-backdrop">
+    <div
+      class="confirm-dialog"
+      [appAccessibleDialog]="'ba-confirm-title'"
+      (dialogClosed)="cancelConfirm()"
+      cdkTrapFocus
+      cdkTrapFocusAutoCapture
+    >
+      @let primary = confirmType() === 'primary';
+      <div class="confirm-icon" [class.icon-star]="primary" [class.icon-warn]="!primary">
+        <span class="material-icons" aria-hidden="true">{{
+          primary ? 'star' : 'delete_outline'
+        }}</span>
+      </div>
+      <h3 id="ba-confirm-title" class="confirm-title">
+        {{
+          (primary
+            ? 'employee.bankAccounts.confirm.setPrimaryTitle'
+            : 'employee.bankAccounts.confirm.deactivateTitle'
+          ) | translate
+        }}
+      </h3>
+      <p class="confirm-msg">
+        <strong>{{ item.bankName }}</strong>
+        <span dir="ltr"> {{ item.accountNumber }}</span>
+        <br /><small>{{
+          (primary
+            ? 'employee.bankAccounts.confirm.setPrimaryHint'
+            : 'employee.bankAccounts.confirm.deactivateHint'
+          ) | translate
+        }}</small>
+      </p>
+      @if (confirmError()) {
+        <div class="modal-alert confirm-alert" role="alert">
+          <span class="material-icons" aria-hidden="true">error_outline</span
+          ><span dir="auto">{{ confirmError() }}</span>
+        </div>
+      }
+      <div class="confirm-actions">
+        <button type="button" class="btn-cancel" (click)="cancelConfirm()">
+          {{ (confirmError() ? 'common.close' : 'common.cancel') | translate }}
+        </button>
+        @if (!confirmError()) {
+          <button
+            type="button"
+            class="btn-confirm"
+            [class.btn-star-confirm]="primary"
+            [class.btn-danger]="!primary"
+            (click)="confirmAction()"
+          >
+            {{
+              (primary
+                ? 'employee.bankAccounts.confirm.setPrimaryAction'
+                : 'employee.bankAccounts.confirm.deactivateAction'
+              ) | translate
+            }}
+          </button>
+        }
+      </div>
+    </div>
+  </div>
+}

@@ -1,0 +1,332 @@
+<div class="admin-page">
+  <div class="page-header">
+    <div class="header-left">
+      <h1 class="page-title">{{ t + '.title' | translate }}</h1>
+      <div class="stat-chips">
+        <span class="chip chip-total">{{
+          'admin.masters.totalChip' | translate: { count: records().length }
+        }}</span>
+        <span class="chip chip-active">{{
+          'admin.masters.activeChip' | translate: { count: activeCount() }
+        }}</span>
+      </div>
+    </div>
+    <button type="button" class="btn-add" (click)="openCreate()">
+      <span aria-hidden="true" class="material-icons">add</span>
+      {{ t + '.add' | translate }}
+    </button>
+  </div>
+
+  @if (successMsg()) {
+    <div class="alert alert-success" role="status">
+      <span aria-hidden="true" class="material-icons">check_circle</span>{{ successMsg() }}
+    </div>
+  }
+  @if (error() && !showModal()) {
+    <div class="alert alert-error" role="alert">
+      <span aria-hidden="true" class="material-icons">error_outline</span>{{ error() }}
+    </div>
+  }
+
+  <div class="filter-bar">
+    <div class="search-wrap">
+      <span aria-hidden="true" class="material-icons">search</span>
+      <input
+        type="text"
+        [placeholder]="t + '.search' | translate"
+        [attr.aria-label]="t + '.search' | translate"
+        [value]="filterText()"
+        (input)="filterText.set($any($event.target).value)"
+      />
+      @if (filterText()) {
+        <button
+          type="button"
+          class="clear-btn"
+          [attr.aria-label]="'common.clear' | translate"
+          (click)="filterText.set('')"
+        >
+          <span aria-hidden="true" class="material-icons">close</span>
+        </button>
+      }
+    </div>
+    <div class="tab-filter">
+      <button
+        type="button"
+        class="tab-btn"
+        [class.active]="filterActive() === 'all'"
+        (click)="filterActive.set('all')"
+      >
+        {{ 'common.all' | translate }}
+      </button>
+      <button
+        type="button"
+        class="tab-btn"
+        [class.active]="filterActive() === 'active'"
+        (click)="filterActive.set('active')"
+      >
+        {{ 'common.active' | translate }}
+      </button>
+      <button
+        type="button"
+        class="tab-btn"
+        [class.active]="filterActive() === 'inactive'"
+        (click)="filterActive.set('inactive')"
+      >
+        {{ 'common.inactive' | translate }}
+      </button>
+    </div>
+  </div>
+
+  @if (loading()) {
+    <div class="loading-wrap">
+      <div class="spinner"></div>
+      <span>{{ 'common.loading' | translate }}</span>
+    </div>
+  }
+
+  @if (!loading()) {
+    <!-- The card, grid and badge classes are named after office locations but shared by the admin screens. -->
+    <div class="locations-grid">
+      @if (filtered().length === 0) {
+        <div class="empty-card">
+          <span aria-hidden="true" class="material-icons">{{ cfg.icon }}</span>
+          <p>{{ t + '.emptyTitle' | translate }}</p>
+          <small>{{ t + '.emptyHint' | translate }}</small>
+        </div>
+      }
+      @for (r of filtered(); track r.id) {
+        <div class="loc-card" [class.inactive-card]="!r.isActive">
+          <div class="card-top">
+            <div class="loc-code-wrap">
+              <span class="loc-code">{{ r.code }}</span>
+            </div>
+            <div class="card-actions">
+              <button
+                type="button"
+                class="act-btn btn-edit"
+                [attr.aria-label]="'common.edit' | translate"
+                (click)="openEdit(r)"
+              >
+                <span aria-hidden="true" class="material-icons">edit</span>
+              </button>
+              <button
+                type="button"
+                class="act-btn"
+                [class.btn-deactivate]="r.isActive"
+                [class.btn-activate]="!r.isActive"
+                [attr.aria-label]="
+                  (r.isActive ? 'admin.masters.deactivate' : 'admin.masters.activate') | translate
+                "
+                (click)="openConfirm(r, 'toggle')"
+              >
+                <span aria-hidden="true" class="material-icons">{{
+                  r.isActive ? 'toggle_off' : 'toggle_on'
+                }}</span>
+              </button>
+              <button
+                type="button"
+                class="act-btn btn-delete"
+                [attr.aria-label]="'admin.masters.delete' | translate"
+                (click)="openConfirm(r, 'delete')"
+              >
+                <span aria-hidden="true" class="material-icons">delete</span>
+              </button>
+            </div>
+          </div>
+          <h2 class="loc-name">{{ r.name }}</h2>
+          <p class="loc-name-ar">{{ r.nameAr }}</p>
+          <div class="card-footer">
+            <span
+              class="status-badge"
+              [class.status-active]="r.isActive"
+              [class.status-inactive]="!r.isActive"
+            >
+              <span class="status-dot"></span
+              >{{ (r.isActive ? 'common.active' : 'common.inactive') | translate }}
+            </span>
+            @if (parentName(r); as parent) {
+              <span class="tz-badge">{{ parent }}</span>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>
+
+<!-- MODAL -->
+@if (showModal()) {
+  <div class="modal-backdrop" (click)="closeModal()">
+    <div
+      class="modal"
+      (click)="$event.stopPropagation()"
+      [appAccessibleDialog]="'ms-modal-title'"
+      (dialogClosed)="closeModal()"
+      cdkTrapFocus
+      cdkTrapFocusAutoCapture
+    >
+      <div class="modal-header">
+        <h2 id="ms-modal-title" class="modal-title">
+          {{ (isEditMode() ? t + '.edit' : t + '.add') | translate }}
+        </h2>
+        <button
+          type="button"
+          class="modal-close"
+          [attr.aria-label]="'common.close' | translate"
+          (click)="closeModal()"
+        >
+          <span aria-hidden="true" class="material-icons">close</span>
+        </button>
+      </div>
+      @if (error()) {
+        <div class="modal-alert" role="alert">
+          <span aria-hidden="true" class="material-icons">error_outline</span>{{ error() }}
+        </div>
+      }
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+        <div class="modal-body">
+          @if (cfg.parent) {
+            <div class="field">
+              <label for="ms-parent"
+                >{{ t + '.parent' | translate }} <span class="req">*</span></label
+              >
+              <select id="ms-parent" formControlName="parentId">
+                <option [ngValue]="0">{{ t + '.parentPlaceholder' | translate }}</option>
+                @for (p of parentOptions(); track p.id) {
+                  <option [ngValue]="p.id">{{ p.name }}</option>
+                }
+              </select>
+              @if (isInvalid('parentId')) {
+                <span class="field-error">{{ getError('parentId') }}</span>
+              }
+            </div>
+          }
+          <div class="field">
+            <label for="ms-code"
+              >{{ 'admin.masters.code' | translate }} <span class="req">*</span></label
+            >
+            <input
+              id="ms-code"
+              formControlName="code"
+              [placeholder]="'admin.masters.codePlaceholder' | translate"
+            />
+            @if (isInvalid('code')) {
+              <span class="field-error">{{ getError('code') }}</span>
+            }
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="ms-name-en"
+                >{{ 'admin.masters.nameEn' | translate }} <span class="req">*</span></label
+              >
+              <input id="ms-name-en" formControlName="name" />
+              @if (isInvalid('name')) {
+                <span class="field-error">{{ getError('name') }}</span>
+              }
+            </div>
+            <div class="field">
+              <label for="ms-name-ar"
+                >{{ 'admin.masters.nameAr' | translate }} <span class="req">*</span></label
+              >
+              <input id="ms-name-ar" formControlName="nameAr" dir="rtl" />
+              @if (isInvalid('nameAr')) {
+                <span class="field-error">{{ getError('nameAr') }}</span>
+              }
+            </div>
+          </div>
+          @if (isEditMode()) {
+            <label class="toggle-item">
+              <div class="toggle-info">
+                <span class="toggle-label">{{ 'common.active' | translate }}</span>
+                <span class="toggle-hint">{{ t + '.activeHint' | translate }}</span>
+              </div>
+              <div class="toggle-wrap">
+                <input type="checkbox" formControlName="isActive" class="toggle-inp" />
+                <span class="toggle-slider"></span>
+              </div>
+            </label>
+          }
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-cancel" (click)="closeModal()">
+            {{ 'common.cancel' | translate }}
+          </button>
+          <button type="submit" class="btn-save" [disabled]="saving()">
+            @if (saving()) {
+              <div class="btn-spinner"></div>
+              <span>{{ 'admin.masters.saving' | translate }}</span>
+            } @else {
+              <span aria-hidden="true" class="material-icons">save</span>
+              <span>{{ (isEditMode() ? 'admin.masters.update' : t + '.add') | translate }}</span>
+            }
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}
+
+<!-- CONFIRM: deactivate / activate / delete -->
+@if (confirmItem(); as item) {
+  <div class="modal-backdrop" (click)="cancelConfirm()">
+    <div
+      class="confirm-dialog"
+      (click)="$event.stopPropagation()"
+      [appAccessibleDialog]="'ms-confirm-title'"
+      (dialogClosed)="cancelConfirm()"
+      cdkTrapFocus
+      cdkTrapFocusAutoCapture
+    >
+      @let deleting = confirmAction() === 'delete';
+      @let warn = deleting || item.isActive;
+      <div class="confirm-icon" [class.icon-warn]="warn" [class.icon-info]="!warn">
+        <span aria-hidden="true" class="material-icons">{{ deleting ? 'delete' : cfg.icon }}</span>
+      </div>
+      <h3 id="ms-confirm-title" class="confirm-title">
+        {{
+          (deleting
+            ? t + '.deleteTitle'
+            : item.isActive
+              ? t + '.deactivateTitle'
+              : t + '.activateTitle'
+          ) | translate
+        }}
+      </h3>
+      <p class="confirm-msg">
+        <strong>{{ item.name }}</strong>
+        @if (deleting) {
+          <br />{{ 'admin.masters.deleteHint' | translate }}
+        }
+      </p>
+      @if (confirmError()) {
+        <div class="modal-alert confirm-alert" role="alert">
+          <span aria-hidden="true" class="material-icons">error_outline</span
+          ><span dir="auto">{{ confirmError() }}</span>
+        </div>
+      }
+      <div class="confirm-actions">
+        <button type="button" class="btn-cancel" (click)="cancelConfirm()">
+          {{ (confirmError() ? 'common.close' : 'common.cancel') | translate }}
+        </button>
+        @if (!confirmError()) {
+          <button
+            type="button"
+            class="btn-confirm"
+            [class.btn-danger]="warn"
+            [class.btn-success]="!warn"
+            (click)="confirm()"
+          >
+            {{
+              (deleting
+                ? 'admin.masters.delete'
+                : item.isActive
+                  ? 'admin.masters.deactivate'
+                  : 'admin.masters.activate'
+              ) | translate
+            }}
+          </button>
+        }
+      </div>
+    </div>
+  </div>
+}

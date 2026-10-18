@@ -1,0 +1,132 @@
+/* Employee bank accounts: glass account cards. Buttons, alerts, modal, fields, toggle, empty state and the confirm
+   dialog come from the shared kit in styles.css; this file keeps only the cards. */
+
+.ba-section {
+  display: block;
+}
+
+.ba-count {
+  padding: 2px var(--space-3);
+  border-radius: 999px;
+  background: var(--mat-sys-primary-container);
+  color: var(--mat-sys-on-primary-container);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.ba-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: var(--space-4);
+}
+.ba-card {
+  overflow: hidden;
+  background: var(--glass-bg);
+  border: var(--glass-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--glass-shine), var(--glass-shadow);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  transition: box-shadow var(--motion-base);
+}
+.ba-card:hover {
+  box-shadow: var(--glass-shine), var(--shadow-3);
+}
+/* Primary account: an accent along the start edge, not colour alone (the badge also says "Primary"). */
+.ba-card.primary-card {
+  border-inline-start: 4px solid var(--mat-sys-primary);
+}
+.ba-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding-block: var(--space-2);
+  padding-inline: var(--space-4) var(--space-2);
+  background: var(--table-header-bg);
+}
+.ba-bank-wrap {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-inline-size: 0;
+}
+.ba-bank-icon {
+  font-size: 22px;
+  color: var(--mat-sys-primary);
+}
+.ba-bank-name {
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+.ba-bank-name-ar {
+  color: var(--mat-sys-on-surface-variant);
+  font-size: 0.9em;
+}
+.ba-actions {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+.primary-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 2px var(--space-2);
+  margin-inline-end: var(--space-1);
+  border-radius: 999px;
+  background: var(--status-pending-bg);
+  color: var(--status-pending-fg);
+  font-size: 12px;
+  font-weight: 700;
+}
+.primary-badge .material-icons {
+  font-size: 14px;
+}
+
+.ba-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin: 0;
+  padding: var(--space-4);
+  background: var(--table-surface);
+}
+.ba-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+.ba-row dt {
+  color: var(--mat-sys-on-surface-variant);
+}
+.ba-row dd {
+  margin: 0;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+/* Account numbers read left to right in every language. */
+.ba-number {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  letter-spacing: 0.04em;
+}
+
+.inactive-label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-block: var(--space-4) 0;
+  color: var(--mat-sys-on-surface-variant);
+}
+.inactive-label .material-icons {
+  font-size: 18px;
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .ba-card {
+    background: var(--mat-sys-surface-container);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}

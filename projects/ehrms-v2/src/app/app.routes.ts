@@ -1,6 +1,12 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
 import { HR_ROLES, roleGuard } from './core/guards/role.guard';
+import {
+  BANKS,
+  BANK_BRANCHES,
+  COMPANIES,
+  COMPANY_BRANCHES,
+} from './features/admin/masters/masters.config';
 
 export const routes: Routes = [
   // ① Default → login
@@ -65,6 +71,46 @@ export const routes: Routes = [
                 (m) => m.Designations,
               ),
             title: 'Designations · EHRMS',
+          },
+          {
+            path: 'banks',
+            canActivate: [roleGuard('SYSTEM_ADMIN')],
+            data: { master: BANKS },
+            loadComponent: () =>
+              import('./features/admin/masters/pages/master-data/master-data').then(
+                (m) => m.MasterData,
+              ),
+            title: 'Banks · EHRMS',
+          },
+          {
+            path: 'bank-branches',
+            canActivate: [roleGuard('SYSTEM_ADMIN')],
+            data: { master: BANK_BRANCHES },
+            loadComponent: () =>
+              import('./features/admin/masters/pages/master-data/master-data').then(
+                (m) => m.MasterData,
+              ),
+            title: 'Bank Branches · EHRMS',
+          },
+          {
+            path: 'companies',
+            canActivate: [roleGuard('SYSTEM_ADMIN')],
+            data: { master: COMPANIES },
+            loadComponent: () =>
+              import('./features/admin/masters/pages/master-data/master-data').then(
+                (m) => m.MasterData,
+              ),
+            title: 'Companies · EHRMS',
+          },
+          {
+            path: 'company-branches',
+            canActivate: [roleGuard('SYSTEM_ADMIN')],
+            data: { master: COMPANY_BRANCHES },
+            loadComponent: () =>
+              import('./features/admin/masters/pages/master-data/master-data').then(
+                (m) => m.MasterData,
+              ),
+            title: 'Company Branches · EHRMS',
           },
           {
             path: 'leave-types',

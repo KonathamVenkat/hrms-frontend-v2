@@ -316,6 +316,15 @@
           [readOnly]="identityReadOnly()"
         />
       }
+      @if (activeDetailTab() === 'bank') {
+        <app-employee-bank-accounts
+          role="tabpanel"
+          id="detail-panel-bank"
+          aria-labelledby="detail-tab-bank"
+          [employeeId]="employee()!.employeeId"
+          [readOnly]="!isHrAdmin()"
+        />
+      }
       @if (activeDetailTab() === 'documents') {
         <app-employee-documents
           role="tabpanel"

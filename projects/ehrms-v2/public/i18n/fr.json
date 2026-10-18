@@ -230,7 +230,8 @@
         "job": "Détails du poste",
         "addresses": "Adresses",
         "identity": "Identité",
-        "documents": "Documents"
+        "documents": "Documents",
+        "bank": "Banque"
       },
       "sections": {
         "personalInfo": "Informations personnelles",
@@ -545,6 +546,61 @@
       "edit": "Modifier l'employé",
       "detail": "Fiche de l'employé",
       "profile": "Mon profil"
+    },
+    "bankAccounts": {
+      "title": "Comptes bancaires",
+      "activeCount": "{{count}} actif(s)",
+      "addAccount": "Ajouter un compte bancaire",
+      "loading": "Chargement des comptes bancaires...",
+      "emptyTitle": "Aucun compte bancaire",
+      "emptyHint": "Ajoutez le compte sur lequel le salaire est versé",
+      "primaryBadge": "Principal",
+      "setPrimary": "Définir comme principal",
+      "deactivate": "Désactiver",
+      "inactiveCount": "{{count}} compte(s) inactif(s)",
+      "editTitle": "Modifier le compte bancaire",
+      "saving": "Enregistrement...",
+      "update": "Mettre à jour",
+      "fields": {
+        "bank": "Banque",
+        "bankPlaceholder": "Sélectionner une banque",
+        "branch": "Agence",
+        "branchPlaceholder": "Aucune agence",
+        "accountNumber": "Numéro de compte",
+        "iban": "IBAN",
+        "accountHolderName": "Titulaire du compte"
+      },
+      "primaryToggle": {
+        "label": "Compte principal",
+        "hint": "Le salaire est versé sur le compte principal"
+      },
+      "confirm": {
+        "setPrimaryTitle": "Définir comme principal ?",
+        "deactivateTitle": "Désactiver le compte ?",
+        "setPrimaryHint": "Le salaire sera versé sur ce compte au lieu du compte principal actuel.",
+        "deactivateHint": "Ce compte sera désactivé. Son numéro reste enregistré.",
+        "setPrimaryAction": "Définir principal",
+        "deactivateAction": "Désactiver"
+      },
+      "success": {
+        "added": "Compte bancaire ajouté",
+        "updated": "Compte bancaire mis à jour",
+        "setPrimary": "Compte principal mis à jour",
+        "deactivated": "Compte bancaire désactivé"
+      },
+      "errors": {
+        "loadFailed": "Échec du chargement des comptes bancaires.",
+        "stale": "Cet enregistrement a été modifié par quelqu'un d'autre. Rechargez-le et refaites votre modification.",
+        "rules": {
+          "BANK_INACTIVE": "La banque sélectionnée n'est pas active.",
+          "BRANCH_INACTIVE": "L'agence sélectionnée n'est pas active.",
+          "BRANCH_BANK_MISMATCH": "L'agence n'appartient pas à la banque sélectionnée.",
+          "DUPLICATE_BANK_ACCOUNT": "Ce numéro de compte est déjà enregistré dans cette banque.",
+          "INVALID_IBAN": "L'IBAN n'est pas valide. Vérifiez le numéro et réessayez.",
+          "ACCOUNT_INACTIVE": "Un compte désactivé ne peut pas être modifié.",
+          "CANNOT_DEACTIVATE_PRIMARY": "Il s'agit du compte principal. Choisissez d'abord un autre compte comme principal."
+        }
+      }
     }
   },
   "layout": {
@@ -1773,6 +1829,92 @@
         "activated": "« {{name}} » activée",
         "deactivated": "« {{name}} » désactivée",
         "deleted": "« {{name}} » supprimée"
+      }
+    },
+    "masters": {
+      "totalChip": "{{count}} au total",
+      "activeChip": "{{count}} actifs",
+      "code": "Code",
+      "codePlaceholder": "ex. 001",
+      "nameEn": "Nom (EN)",
+      "nameAr": "Nom (AR)",
+      "saving": "Enregistrement...",
+      "update": "Mettre à jour",
+      "deactivate": "Désactiver",
+      "activate": "Activer",
+      "delete": "Supprimer",
+      "deleteHint": "Cette action est irréversible. Un élément utilisé ne peut pas être supprimé ; désactivez-le à la place.",
+      "errors": {
+        "duplicate": "Un élément avec ce code existe déjà.",
+        "stale": "Cet enregistrement a été modifié par quelqu'un d'autre. Rechargez-le et refaites votre modification.",
+        "rules": {
+          "MASTER_IN_USE": "{{code}} est utilisé. Désactivez-le au lieu de le supprimer.",
+          "MASTER_HAS_ACTIVE_CHILDREN": "{{code}} a encore des agences actives. Désactivez-les d'abord.",
+          "PARENT_INACTIVE": "Son parent est inactif : cet élément ne peut pas être actif. Activez d'abord le parent."
+        }
+      },
+      "success": {
+        "created": "« {{name}} » créé",
+        "updated": "« {{name}} » mis à jour",
+        "activated": "« {{name}} » activé",
+        "deactivated": "« {{name}} » désactivé",
+        "deleted": "« {{name}} » supprimé"
+      },
+      "banks": {
+        "title": "Banques",
+        "add": "Ajouter une banque",
+        "edit": "Modifier la banque",
+        "search": "Rechercher des banques...",
+        "emptyTitle": "Aucune banque trouvée",
+        "emptyHint": "Ajoutez une banque ci-dessus",
+        "loadFailed": "Échec du chargement des banques.",
+        "activeHint": "Une banque inactive ne peut pas être choisie pour les comptes des employés",
+        "deleteTitle": "Supprimer la banque ?",
+        "deactivateTitle": "Désactiver la banque ?",
+        "activateTitle": "Activer la banque ?"
+      },
+      "bankBranches": {
+        "title": "Agences bancaires",
+        "add": "Ajouter une agence",
+        "edit": "Modifier l'agence",
+        "search": "Rechercher des agences...",
+        "emptyTitle": "Aucune agence trouvée",
+        "emptyHint": "Ajoutez une agence ci-dessus",
+        "loadFailed": "Échec du chargement des agences.",
+        "activeHint": "Une agence inactive ne peut pas être choisie pour les comptes des employés",
+        "deleteTitle": "Supprimer l'agence ?",
+        "deactivateTitle": "Désactiver l'agence ?",
+        "activateTitle": "Activer l'agence ?",
+        "parent": "Banque",
+        "parentPlaceholder": "Sélectionner une banque"
+      },
+      "companies": {
+        "title": "Sociétés",
+        "add": "Ajouter une société",
+        "edit": "Modifier la société",
+        "search": "Rechercher des sociétés...",
+        "emptyTitle": "Aucune société trouvée",
+        "emptyHint": "Ajoutez une société ci-dessus",
+        "loadFailed": "Échec du chargement des sociétés.",
+        "activeHint": "Une société inactive ne peut pas être choisie",
+        "deleteTitle": "Supprimer la société ?",
+        "deactivateTitle": "Désactiver la société ?",
+        "activateTitle": "Activer la société ?"
+      },
+      "companyBranches": {
+        "title": "Succursales",
+        "add": "Ajouter une succursale",
+        "edit": "Modifier la succursale",
+        "search": "Rechercher des succursales...",
+        "emptyTitle": "Aucune succursale trouvée",
+        "emptyHint": "Ajoutez une succursale ci-dessus",
+        "loadFailed": "Échec du chargement des succursales.",
+        "activeHint": "Une succursale inactive ne peut pas être choisie",
+        "deleteTitle": "Supprimer la succursale ?",
+        "deactivateTitle": "Désactiver la succursale ?",
+        "activateTitle": "Activer la succursale ?",
+        "parent": "Société",
+        "parentPlaceholder": "Sélectionner une société"
       }
     }
   }

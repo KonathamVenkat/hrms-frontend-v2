@@ -9,6 +9,7 @@ import { EmployeeDetailData } from '../../models/employee';
 import { JobDetailsComponent } from '../job-details/job-details';
 import { EmployeeAddressesComponent } from '../employee-addresses/employee-addresses';
 import { EmployeeIdentityComponent } from '../employee-identity/employee-identity';
+import { EmployeeBankAccountsComponent } from '../employee-bank-accounts/employee-bank-accounts';
 import { EmployeePhoto } from '../employee-photo/employee-photo';
 import { EmployeeDocumentsComponent } from '../employee-documents/employee-documents';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
@@ -28,7 +29,7 @@ import { getHttpErrorMessage } from '../../../../core/utils/http-error-message';
 import { formatDisplayDate } from '../../../../core/utils/display-date';
 import { LanguageService } from '../../../../core/services/language.service';
 
-type DetailTab = 'profile' | 'job' | 'addresses' | 'identity' | 'documents';
+type DetailTab = 'profile' | 'job' | 'addresses' | 'identity' | 'bank' | 'documents';
 
 @Component({
   selector: 'app-employee-detail',
@@ -36,6 +37,7 @@ type DetailTab = 'profile' | 'job' | 'addresses' | 'identity' | 'documents';
     JobDetailsComponent,
     EmployeeAddressesComponent,
     EmployeeIdentityComponent,
+    EmployeeBankAccountsComponent,
     EmployeeDocumentsComponent,
     EmployeePhoto,
     TranslatePipe,
@@ -72,6 +74,7 @@ export class EmployeeDetail implements OnInit {
     { id: 'job', icon: 'work', labelKey: 'employee.detail.tabs.job' },
     { id: 'addresses', icon: 'location_on', labelKey: 'employee.detail.tabs.addresses' },
     { id: 'identity', icon: 'badge', labelKey: 'employee.detail.tabs.identity' },
+    { id: 'bank', icon: 'account_balance', labelKey: 'employee.detail.tabs.bank' },
     { id: 'documents', icon: 'folder', labelKey: 'employee.detail.tabs.documents' },
   ];
 
@@ -81,7 +84,7 @@ export class EmployeeDetail implements OnInit {
   private readonly isHr = this.auth.hasAnyRole(...HR_ROLES);
   readonly visibleTabs = computed(() =>
     this.selfMode() && !this.isHr
-      ? this.tabs.filter((tab) => tab.id === 'profile' || tab.id === 'identity')
+      ? this.tabs.filter((tab) => tab.id === 'profile' || tab.id === 'identity' || tab.id === 'bank')
       : this.tabs,
   );
   /** The identity details are read-only for everyone but an HR_ADMIN. */

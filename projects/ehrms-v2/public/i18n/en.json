@@ -230,7 +230,8 @@
         "job": "Job Details",
         "addresses": "Addresses",
         "identity": "Identity",
-        "documents": "Documents"
+        "documents": "Documents",
+        "bank": "Bank"
       },
       "sections": {
         "personalInfo": "Personal Information",
@@ -545,6 +546,61 @@
       "edit": "Edit Employee",
       "detail": "Employee Detail",
       "profile": "My Profile"
+    },
+    "bankAccounts": {
+      "title": "Bank Accounts",
+      "activeCount": "{{count}} active",
+      "addAccount": "Add Bank Account",
+      "loading": "Loading bank accounts...",
+      "emptyTitle": "No bank accounts yet",
+      "emptyHint": "Add the account the salary is paid into",
+      "primaryBadge": "Primary",
+      "setPrimary": "Set as Primary",
+      "deactivate": "Deactivate",
+      "inactiveCount": "{{count}} inactive account(s)",
+      "editTitle": "Edit Bank Account",
+      "saving": "Saving...",
+      "update": "Update",
+      "fields": {
+        "bank": "Bank",
+        "bankPlaceholder": "Select a bank",
+        "branch": "Branch",
+        "branchPlaceholder": "No branch",
+        "accountNumber": "Account Number",
+        "iban": "IBAN",
+        "accountHolderName": "Account Holder Name"
+      },
+      "primaryToggle": {
+        "label": "Primary Account",
+        "hint": "Salary is paid into the primary account"
+      },
+      "confirm": {
+        "setPrimaryTitle": "Set as Primary?",
+        "deactivateTitle": "Deactivate Account?",
+        "setPrimaryHint": "Salary will be paid into this account instead of the current primary one.",
+        "deactivateHint": "This account will be deactivated. Its number stays on record.",
+        "setPrimaryAction": "Set Primary",
+        "deactivateAction": "Deactivate"
+      },
+      "success": {
+        "added": "Bank account added",
+        "updated": "Bank account updated",
+        "setPrimary": "Primary account updated",
+        "deactivated": "Bank account deactivated"
+      },
+      "errors": {
+        "loadFailed": "Failed to load bank accounts.",
+        "stale": "This record was changed by someone else. Reload it and repeat your change.",
+        "rules": {
+          "BANK_INACTIVE": "The selected bank is not active.",
+          "BRANCH_INACTIVE": "The selected branch is not active.",
+          "BRANCH_BANK_MISMATCH": "The branch does not belong to the selected bank.",
+          "DUPLICATE_BANK_ACCOUNT": "This account number is already registered at this bank.",
+          "INVALID_IBAN": "The IBAN is not valid. Check the number and try again.",
+          "ACCOUNT_INACTIVE": "A deactivated account cannot be changed.",
+          "CANNOT_DEACTIVATE_PRIMARY": "This is the primary account. Choose another account as primary first."
+        }
+      }
     }
   },
   "layout": {
@@ -1773,6 +1829,92 @@
         "activated": "\"{{name}}\" activated",
         "deactivated": "\"{{name}}\" deactivated",
         "deleted": "\"{{name}}\" deleted"
+      }
+    },
+    "masters": {
+      "totalChip": "{{count}} Total",
+      "activeChip": "{{count}} Active",
+      "code": "Code",
+      "codePlaceholder": "e.g. 001",
+      "nameEn": "Name (EN)",
+      "nameAr": "Name (AR)",
+      "saving": "Saving...",
+      "update": "Update",
+      "deactivate": "Deactivate",
+      "activate": "Activate",
+      "delete": "Delete",
+      "deleteHint": "This cannot be undone. An entry that is in use cannot be deleted; deactivate it instead.",
+      "errors": {
+        "duplicate": "An entry with this code already exists.",
+        "stale": "This record was changed by someone else. Reload it and repeat your change.",
+        "rules": {
+          "MASTER_IN_USE": "{{code}} is in use. Deactivate it instead of deleting it.",
+          "MASTER_HAS_ACTIVE_CHILDREN": "{{code}} still has active branches. Deactivate them first.",
+          "PARENT_INACTIVE": "Its parent is inactive, so this entry cannot be active. Activate the parent first."
+        }
+      },
+      "success": {
+        "created": "\"{{name}}\" created",
+        "updated": "\"{{name}}\" updated",
+        "activated": "\"{{name}}\" activated",
+        "deactivated": "\"{{name}}\" deactivated",
+        "deleted": "\"{{name}}\" deleted"
+      },
+      "banks": {
+        "title": "Banks",
+        "add": "Add Bank",
+        "edit": "Edit Bank",
+        "search": "Search banks...",
+        "emptyTitle": "No banks found",
+        "emptyHint": "Add a bank above",
+        "loadFailed": "Failed to load banks.",
+        "activeHint": "Inactive banks cannot be chosen for employee accounts",
+        "deleteTitle": "Delete Bank?",
+        "deactivateTitle": "Deactivate Bank?",
+        "activateTitle": "Activate Bank?"
+      },
+      "bankBranches": {
+        "title": "Bank Branches",
+        "add": "Add Bank Branch",
+        "edit": "Edit Bank Branch",
+        "search": "Search bank branches...",
+        "emptyTitle": "No bank branches found",
+        "emptyHint": "Add a bank branch above",
+        "loadFailed": "Failed to load bank branches.",
+        "activeHint": "Inactive branches cannot be chosen for employee accounts",
+        "deleteTitle": "Delete Bank Branch?",
+        "deactivateTitle": "Deactivate Bank Branch?",
+        "activateTitle": "Activate Bank Branch?",
+        "parent": "Bank",
+        "parentPlaceholder": "Select a bank"
+      },
+      "companies": {
+        "title": "Companies",
+        "add": "Add Company",
+        "edit": "Edit Company",
+        "search": "Search companies...",
+        "emptyTitle": "No companies found",
+        "emptyHint": "Add a company above",
+        "loadFailed": "Failed to load companies.",
+        "activeHint": "Inactive companies cannot be chosen",
+        "deleteTitle": "Delete Company?",
+        "deactivateTitle": "Deactivate Company?",
+        "activateTitle": "Activate Company?"
+      },
+      "companyBranches": {
+        "title": "Company Branches",
+        "add": "Add Company Branch",
+        "edit": "Edit Company Branch",
+        "search": "Search company branches...",
+        "emptyTitle": "No company branches found",
+        "emptyHint": "Add a company branch above",
+        "loadFailed": "Failed to load company branches.",
+        "activeHint": "Inactive branches cannot be chosen",
+        "deleteTitle": "Delete Company Branch?",
+        "deactivateTitle": "Deactivate Company Branch?",
+        "activateTitle": "Activate Company Branch?",
+        "parent": "Company",
+        "parentPlaceholder": "Select a company"
       }
     }
   }

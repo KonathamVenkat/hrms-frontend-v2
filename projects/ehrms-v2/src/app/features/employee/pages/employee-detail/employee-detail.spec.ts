@@ -82,14 +82,14 @@ describe('EmployeeDetail as "My profile"', () => {
     expect(el.querySelector('.back-btn')).toBeNull();
     expect(el.querySelector('.btn-edit')).toBeNull();
     expect(el.querySelector('.btn-deactivate')).toBeNull();
-    expect(tabIds()).toEqual(['detail-tab-profile', 'detail-tab-identity']);
+    expect(tabIds()).toEqual(['detail-tab-profile', 'detail-tab-identity', 'detail-tab-bank']);
     expect(component.identityReadOnly()).toBe(true);
   });
 
   it('shows every tab to an HR user viewing their own profile, but still no HR actions', () => {
     const { el, tabIds } = setup({ self: true, role: 'HR_MANAGER' });
 
-    expect(tabIds()).toHaveLength(5);
+    expect(tabIds()).toHaveLength(6);
     expect(el.querySelector('.btn-edit')).toBeNull();
   });
 

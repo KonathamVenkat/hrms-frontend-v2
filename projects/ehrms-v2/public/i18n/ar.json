@@ -230,7 +230,8 @@
         "job": "تفاصيل الوظيفة",
         "addresses": "العناوين",
         "identity": "الهوية",
-        "documents": "المستندات"
+        "documents": "المستندات",
+        "bank": "البنك"
       },
       "sections": {
         "personalInfo": "المعلومات الشخصية",
@@ -545,6 +546,61 @@
       "edit": "تعديل موظف",
       "detail": "تفاصيل الموظف",
       "profile": "ملفي الشخصي"
+    },
+    "bankAccounts": {
+      "title": "الحسابات المصرفية",
+      "activeCount": "{{count}} نشط",
+      "addAccount": "إضافة حساب مصرفي",
+      "loading": "جارٍ تحميل الحسابات المصرفية...",
+      "emptyTitle": "لا توجد حسابات مصرفية",
+      "emptyHint": "أضف الحساب الذي يُصرف إليه الراتب",
+      "primaryBadge": "رئيسي",
+      "setPrimary": "تعيين كرئيسي",
+      "deactivate": "إلغاء التفعيل",
+      "inactiveCount": "{{count}} حساب غير نشط",
+      "editTitle": "تعديل الحساب المصرفي",
+      "saving": "جارٍ الحفظ...",
+      "update": "تحديث",
+      "fields": {
+        "bank": "البنك",
+        "bankPlaceholder": "اختر بنكاً",
+        "branch": "الفرع",
+        "branchPlaceholder": "بدون فرع",
+        "accountNumber": "رقم الحساب",
+        "iban": "رقم الآيبان (IBAN)",
+        "accountHolderName": "اسم صاحب الحساب"
+      },
+      "primaryToggle": {
+        "label": "الحساب الرئيسي",
+        "hint": "يُصرف الراتب إلى الحساب الرئيسي"
+      },
+      "confirm": {
+        "setPrimaryTitle": "تعيين كرئيسي؟",
+        "deactivateTitle": "إلغاء تفعيل الحساب؟",
+        "setPrimaryHint": "سيُصرف الراتب إلى هذا الحساب بدلاً من الحساب الرئيسي الحالي.",
+        "deactivateHint": "سيتم إلغاء تفعيل هذا الحساب مع بقاء رقمه مسجلاً.",
+        "setPrimaryAction": "تعيين كرئيسي",
+        "deactivateAction": "إلغاء التفعيل"
+      },
+      "success": {
+        "added": "تمت إضافة الحساب المصرفي",
+        "updated": "تم تحديث الحساب المصرفي",
+        "setPrimary": "تم تحديث الحساب الرئيسي",
+        "deactivated": "تم إلغاء تفعيل الحساب المصرفي"
+      },
+      "errors": {
+        "loadFailed": "فشل تحميل الحسابات المصرفية.",
+        "stale": "تم تعديل هذا السجل بواسطة شخص آخر. أعد تحميله وكرر التعديل.",
+        "rules": {
+          "BANK_INACTIVE": "البنك المحدد غير نشط.",
+          "BRANCH_INACTIVE": "الفرع المحدد غير نشط.",
+          "BRANCH_BANK_MISMATCH": "الفرع لا يتبع البنك المحدد.",
+          "DUPLICATE_BANK_ACCOUNT": "رقم الحساب هذا مسجل بالفعل في هذا البنك.",
+          "INVALID_IBAN": "رقم الآيبان غير صالح. تحقق من الرقم وحاول مرة أخرى.",
+          "ACCOUNT_INACTIVE": "لا يمكن تعديل حساب تم إلغاء تفعيله.",
+          "CANNOT_DEACTIVATE_PRIMARY": "هذا هو الحساب الرئيسي. اختر حساباً آخر كرئيسي أولاً."
+        }
+      }
     }
   },
   "layout": {
@@ -1773,6 +1829,92 @@
         "activated": "تم تفعيل \"{{name}}\"",
         "deactivated": "تم تعطيل \"{{name}}\"",
         "deleted": "تم حذف \"{{name}}\""
+      }
+    },
+    "masters": {
+      "totalChip": "{{count}} إجمالي",
+      "activeChip": "{{count}} نشط",
+      "code": "الرمز",
+      "codePlaceholder": "مثال: 001",
+      "nameEn": "الاسم (EN)",
+      "nameAr": "الاسم (AR)",
+      "saving": "جارٍ الحفظ...",
+      "update": "تحديث",
+      "deactivate": "إلغاء التفعيل",
+      "activate": "تفعيل",
+      "delete": "حذف",
+      "deleteHint": "لا يمكن التراجع عن هذا الإجراء. لا يمكن حذف عنصر قيد الاستخدام؛ قم بإلغاء تفعيله بدلاً من ذلك.",
+      "errors": {
+        "duplicate": "يوجد عنصر بهذا الرمز بالفعل.",
+        "stale": "تم تعديل هذا السجل بواسطة شخص آخر. أعد تحميله وكرر التعديل.",
+        "rules": {
+          "MASTER_IN_USE": "{{code}} قيد الاستخدام. قم بإلغاء تفعيله بدلاً من حذفه.",
+          "MASTER_HAS_ACTIVE_CHILDREN": "{{code}} لا يزال لديه فروع نشطة. قم بإلغاء تفعيلها أولاً.",
+          "PARENT_INACTIVE": "العنصر الأصل غير نشط، لذلك لا يمكن تفعيل هذا العنصر. قم بتفعيل العنصر الأصل أولاً."
+        }
+      },
+      "success": {
+        "created": "تم إنشاء \"{{name}}\"",
+        "updated": "تم تحديث \"{{name}}\"",
+        "activated": "تم تفعيل \"{{name}}\"",
+        "deactivated": "تم إلغاء تفعيل \"{{name}}\"",
+        "deleted": "تم حذف \"{{name}}\""
+      },
+      "banks": {
+        "title": "البنوك",
+        "add": "إضافة بنك",
+        "edit": "تعديل البنك",
+        "search": "بحث في البنوك...",
+        "emptyTitle": "لا توجد بنوك",
+        "emptyHint": "أضف بنكاً أعلاه",
+        "loadFailed": "فشل تحميل البنوك.",
+        "activeHint": "لا يمكن اختيار البنك غير النشط لحسابات الموظفين",
+        "deleteTitle": "حذف البنك؟",
+        "deactivateTitle": "إلغاء تفعيل البنك؟",
+        "activateTitle": "تفعيل البنك؟"
+      },
+      "bankBranches": {
+        "title": "فروع البنوك",
+        "add": "إضافة فرع بنك",
+        "edit": "تعديل فرع البنك",
+        "search": "بحث في فروع البنوك...",
+        "emptyTitle": "لا توجد فروع",
+        "emptyHint": "أضف فرع بنك أعلاه",
+        "loadFailed": "فشل تحميل فروع البنوك.",
+        "activeHint": "لا يمكن اختيار الفرع غير النشط لحسابات الموظفين",
+        "deleteTitle": "حذف فرع البنك؟",
+        "deactivateTitle": "إلغاء تفعيل فرع البنك؟",
+        "activateTitle": "تفعيل فرع البنك؟",
+        "parent": "البنك",
+        "parentPlaceholder": "اختر بنكاً"
+      },
+      "companies": {
+        "title": "الشركات",
+        "add": "إضافة شركة",
+        "edit": "تعديل الشركة",
+        "search": "بحث في الشركات...",
+        "emptyTitle": "لا توجد شركات",
+        "emptyHint": "أضف شركة أعلاه",
+        "loadFailed": "فشل تحميل الشركات.",
+        "activeHint": "لا يمكن اختيار الشركة غير النشطة",
+        "deleteTitle": "حذف الشركة؟",
+        "deactivateTitle": "إلغاء تفعيل الشركة؟",
+        "activateTitle": "تفعيل الشركة؟"
+      },
+      "companyBranches": {
+        "title": "فروع الشركات",
+        "add": "إضافة فرع شركة",
+        "edit": "تعديل فرع الشركة",
+        "search": "بحث في فروع الشركات...",
+        "emptyTitle": "لا توجد فروع",
+        "emptyHint": "أضف فرع شركة أعلاه",
+        "loadFailed": "فشل تحميل فروع الشركات.",
+        "activeHint": "لا يمكن اختيار الفرع غير النشط",
+        "deleteTitle": "حذف فرع الشركة؟",
+        "deactivateTitle": "إلغاء تفعيل فرع الشركة؟",
+        "activateTitle": "تفعيل فرع الشركة؟",
+        "parent": "الشركة",
+        "parentPlaceholder": "اختر شركة"
       }
     }
   }
