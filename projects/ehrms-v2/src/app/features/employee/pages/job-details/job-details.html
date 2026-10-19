@@ -201,6 +201,7 @@
           </div>
         </div>
       </div>
+      <app-department-head [employeeId]="employeeId()" [departmentId]="currentJob()!.departmentId" />
       <!-- end job-cards -->
     }
   }
@@ -386,23 +387,21 @@
           <div class="field-row">
             <div class="field">
               <label for="jd-reporting-manager-id">{{ 'employee.jobDetails.fields.reportingManager' | translate }}</label>
-              <app-employee-search-select
-                #reportingManagerPicker
-                inputId="jd-reporting-manager-id"
-                formControlName="reportingManagerId"
-                [excludeEmployeeId]="employeeId()"
-                [placeholder]="'employee.jobDetails.formFields.searchPlaceholder' | translate"
-              />
+              <select id="jd-reporting-manager-id" formControlName="reportingManagerId">
+                <option value="">{{ managerPlaceholderKey() | translate }}</option>
+                @for (m of reportingOptions(); track m.employeeId) {
+                  <option [value]="m.employeeId">{{ m.fullNameEn }} ({{ m.employeeCode }}) · {{ m.designationTitle }}</option>
+                }
+              </select>
             </div>
             <div class="field">
               <label for="jd-functional-manager-id">{{ 'employee.jobDetails.fields.functionalManager' | translate }}</label>
-              <app-employee-search-select
-                #functionalManagerPicker
-                inputId="jd-functional-manager-id"
-                formControlName="functionalManagerId"
-                [excludeEmployeeId]="employeeId()"
-                [placeholder]="'employee.jobDetails.formFields.searchPlaceholder' | translate"
-              />
+              <select id="jd-functional-manager-id" formControlName="functionalManagerId">
+                <option value="">{{ managerPlaceholderKey() | translate }}</option>
+                @for (m of functionalOptions(); track m.employeeId) {
+                  <option [value]="m.employeeId">{{ m.fullNameEn }} ({{ m.employeeCode }}) · {{ m.designationTitle }}</option>
+                }
+              </select>
             </div>
           </div>
 

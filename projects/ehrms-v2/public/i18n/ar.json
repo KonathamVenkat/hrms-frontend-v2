@@ -84,7 +84,8 @@
         "HR_MANAGER": "مدير الموارد البشرية",
         "EMPLOYEE": "موظف"
       }
-    }
+    },
+    "unsavedChanges": "لديك تعديلات غير محفوظة. هل تريد مغادرة الصفحة وفقدانها؟"
   },
   "employee": {
     "list": {
@@ -467,6 +468,33 @@
         "saved": "تم حفظ معلومات الهوية بنجاح"
       }
     },
+    "departmentHead": {
+      "title": "رئيس القسم",
+      "retry": "حاول مرة أخرى",
+      "loading": "جارٍ تحميل رئيس القسم…",
+      "isHead": "هذا الموظف هو رئيس قسم {{department}}.",
+      "otherHead": "{{name}} هو رئيس قسم {{department}}.",
+      "noHead": "لا يوجد رئيس لقسم {{department}} بعد.",
+      "make": "تعيين رئيساً للقسم",
+      "remove": "إزالة من رئاسة القسم",
+      "makeTitle": "تعيين هذا الموظف رئيساً للقسم؟",
+      "removeTitle": "إزالة من رئاسة القسم؟",
+      "makeMsg": "سيصبح الموظف رئيس هذا القسم ويمكنه رفع طلبات التوظيف له.",
+      "removeMsg": "لن يكون للقسم رئيس حتى يتم تعيين موظف آخر.",
+      "replaceMsg": "{{name}} هو الرئيس الحالي وسيتم استبداله.",
+      "success": {
+        "made": "تم تحديث رئيس القسم",
+        "removed": "تمت إزالة رئيس القسم"
+      },
+      "errors": {
+        "loadFailed": "تعذّر تحميل رئيس القسم.",
+        "stale": "تم تعديل القسم من قبل شخص آخر. أعد التحميل وحاول مجدداً.",
+        "rules": {
+          "EMP_INACTIVE": "هذا الموظف معطّل. أعد تفعيله أولاً.",
+          "DEPARTMENT_INACTIVE": "القسم غير نشط."
+        }
+      }
+    },
     "jobDetails": {
       "title": "تفاصيل الوظيفة",
       "tabs": {
@@ -513,6 +541,9 @@
         "selectDesignation": "اختر المسمى الوظيفي",
         "jobPositionIdPlaceholder": "رمز مرجعي اختياري للمنصب",
         "searchPlaceholder": "البحث بالاسم أو الرمز...",
+        "managerSelectDepartmentFirst": "اختر القسم أولاً",
+        "managerSelect": "اختر المدير",
+        "managerNone": "لا يوجد مديرون في هذا القسم",
         "workLocationShift": "موقع العمل والمناوبة",
         "officeLocationLabel": "موقع المكتب",
         "selectLocation": "اختر الموقع",
@@ -1761,6 +1792,9 @@
       "descriptionPlaceholder": "مهام هذا القسم (اختياري)",
       "costCenter": "مركز التكلفة",
       "costCenterPlaceholder": "مثال: CC-IT-001",
+      "head": "رئيس القسم",
+      "headNone": "غير معيّن",
+      "headHint": "يُحدَّد من تبويب تفاصيل الوظيفة للموظف.",
       "activeHint": "لا يمكن اختيار الأقسام غير النشطة للموظفين",
       "saving": "جارٍ الحفظ...",
       "update": "تحديث",
@@ -1773,7 +1807,13 @@
       "delete": "حذف",
       "errors": {
         "loadFailed": "تعذّر تحميل الأقسام.",
-        "duplicate": "يوجد قسم بهذا الرمز بالفعل."
+        "duplicate": "يوجد قسم بهذا الرمز بالفعل.",
+        "stale": "تم تغيير هذا السجل بواسطة شخص آخر. أعد تحميله وكرر التعديل.",
+        "rules": {
+          "DEPARTMENT_IN_USE": "القسم {{code}} مستخدم في مسميات وظيفية أو سجلات وظائف الموظفين. عطّله بدلاً من حذفه.",
+          "DEPARTMENT_HAS_ACTIVE_DESIGNATIONS": "لا يزال القسم {{code}} يحتوي على مسميات وظيفية نشطة. عطّلها أولاً.",
+          "HEAD_EMPLOYEE_INACTIVE": "رئيس القسم المحدد ليس موظفاً نشطاً."
+        }
       },
       "success": {
         "created": "تم إنشاء \"{{name}}\"",
@@ -1821,7 +1861,12 @@
       },
       "errors": {
         "loadFailed": "تعذّر تحميل المسميات الوظيفية.",
-        "duplicate": "يوجد مسمى وظيفي بهذا الرمز بالفعل."
+        "duplicate": "يوجد مسمى وظيفي بهذا الرمز بالفعل.",
+        "stale": "تم تغيير هذا السجل بواسطة شخص آخر. أعد تحميله وكرر التعديل.",
+        "rules": {
+          "DESIGNATION_IN_USE": "المسمى الوظيفي {{code}} مستخدم في سجلات وظائف الموظفين، لذلك لا يمكن حذفه أو نقله إلى قسم آخر.",
+          "DEPARTMENT_INACTIVE": "القسم غير نشط، لذلك لا يمكنه احتواء مسمى وظيفي نشط. فعّل القسم أو عطّل هذا المسمى."
+        }
       },
       "success": {
         "created": "تم إنشاء \"{{name}}\"",
@@ -1915,6 +1960,288 @@
         "activateTitle": "تفعيل فرع الشركة؟",
         "parent": "الشركة",
         "parentPlaceholder": "اختر شركة"
+      }
+    }
+  },
+  "recruitment": {
+    "routes": {
+      "requisitions": "طلبات التوظيف",
+      "new": "طلب توظيف جديد",
+      "edit": "تعديل طلب التوظيف",
+      "detail": "طلب توظيف",
+      "stages": "مراحل التوظيف",
+      "rejectionReasons": "أسباب الرفض"
+    },
+    "enums": {
+      "status": {
+        "DRAFT": "مسودة",
+        "PENDING_APPROVAL": "بانتظار الموافقة",
+        "APPROVED": "تمت الموافقة",
+        "REJECTED": "مرفوض",
+        "ON_HOLD": "معلّق",
+        "FILLED": "تم شغله",
+        "CLOSED": "مغلق",
+        "CANCELLED": "ملغى"
+      },
+      "priority": {
+        "LOW": "منخفضة",
+        "MEDIUM": "متوسطة",
+        "HIGH": "عالية",
+        "URGENT": "عاجلة"
+      },
+      "type": {
+        "NEW": "وظيفة جديدة",
+        "REPLACEMENT": "إحلال"
+      },
+      "decision": {
+        "APPROVED": "تمت الموافقة",
+        "REJECTED": "مرفوض"
+      },
+      "stageType": {
+        "OPEN": "قيد المعالجة",
+        "HIRED": "تم التعيين",
+        "REJECTED": "مرفوض",
+        "WITHDRAWN": "منسحب"
+      },
+      "scope": {
+        "APPLICATION": "طلب التوظيف",
+        "OFFER": "العرض الوظيفي"
+      }
+    },
+    "list": {
+      "title": "طلبات التوظيف",
+      "subtitle": "طلبات شغل الوظائف وحالة كل طلب",
+      "newRequisition": "طلب توظيف جديد",
+      "search": "بحث",
+      "searchPlaceholder": "الرمز أو المسمى الوظيفي",
+      "status": "الحالة",
+      "department": "القسم",
+      "clearFilters": "مسح التصفية",
+      "retry": "إعادة المحاولة",
+      "loadFailed": "تعذّر تحميل الطلبات.",
+      "empty": "لا توجد طلبات بعد",
+      "emptyHint": "استخدم «طلب توظيف جديد» لطلب وظيفة في قسمك.",
+      "emptyHintNoRaise": "تظهر هنا الطلبات التي قدّمتها أو التي تخص قسماً تترأسه.",
+      "emptyFiltered": "لا يوجد طلب يطابق هذه التصفية",
+      "emptyFilteredHint": "غيّر التصفية أو امسحها لعرض المزيد.",
+      "pagination": "صفحات الطلبات",
+      "view": "فتح الطلب {{code}}",
+      "columns": {
+        "code": "الرمز",
+        "jobTitle": "المسمى الوظيفي",
+        "department": "القسم",
+        "requestedBy": "مقدّم الطلب",
+        "positions": "المشغول / الإجمالي",
+        "priority": "الأولوية",
+        "targetJoinDate": "تاريخ البدء المستهدف",
+        "status": "الحالة",
+        "actions": "الإجراءات"
+      }
+    },
+    "form": {
+      "newTitle": "طلب توظيف جديد",
+      "editTitle": "تعديل طلب التوظيف",
+      "subtitle": "صف الوظيفة. تعتمدها الموارد البشرية قبل تعيين أي شخص.",
+      "sections": {
+        "position": "الوظيفة",
+        "requirements": "المتطلبات والميزانية"
+      },
+      "jobTitle": "المسمى الوظيفي",
+      "jobTitleAr": "المسمى الوظيفي (بالعربية)",
+      "department": "القسم",
+      "designation": "التسمية الوظيفية",
+      "noDesignations": "لا توجد تسميات وظيفية نشطة في هذا القسم.",
+      "location": "موقع العمل",
+      "reportingManager": "المدير المباشر",
+      "none": "غير محدد",
+      "noOfPositions": "عدد الوظائف",
+      "employmentType": "نوع التوظيف",
+      "requisitionType": "نوع الطلب",
+      "replacedEmployee": "الموظف المراد إحلاله",
+      "replacedHint": "اختر من موظفي القسم.",
+      "minExperience": "الحد الأدنى للخبرة (سنوات)",
+      "maxExperience": "الحد الأقصى للخبرة (سنوات)",
+      "minSalary": "الحد الأدنى للراتب",
+      "maxSalary": "الحد الأقصى للراتب",
+      "priority": "الأولوية",
+      "targetJoinDate": "تاريخ البدء المستهدف",
+      "justification": "لماذا الحاجة إلى هذه الوظيفة؟",
+      "saving": "جارٍ الحفظ...",
+      "saveDraft": "حفظ كمسودة",
+      "saveChanges": "حفظ التعديلات",
+      "created": "تم حفظ الطلب {{code}} كمسودة.",
+      "updated": "تم تعديل الطلب {{code}}.",
+      "loadFailed": "تعذّر تحميل النموذج.",
+      "saveFailed": "تعذّر حفظ الطلب.",
+      "backToList": "العودة إلى الطلبات",
+      "cannotRaise": "لا يمكنك تقديم طلب توظيف",
+      "cannotRaiseHint": "يمكن للموارد البشرية ورئيس القسم فقط تقديم الطلب. اطلب من الموارد البشرية تعيينك رئيساً لقسمك.",
+      "errors": {
+        "invisibleCharacters": "أزل أحرف التحكم أو الأحرف غير المرئية.",
+        "positionsRange": "أدخل عدداً صحيحاً من 1 إلى 999.",
+        "replacedRequired": "اختر الموظف المراد إحلاله.",
+        "experienceBounds": "أدخل سنوات من 0 إلى 99.9.",
+        "experienceRange": "لا يمكن أن تقل الخبرة القصوى عن الحد الأدنى.",
+        "salaryBounds": "أدخل مبلغاً لا يقل عن 0.",
+        "salaryRange": "لا يمكن أن يقل الراتب الأقصى عن الحد الأدنى.",
+        "pastDate": "لا يمكن أن يكون تاريخ البدء في الماضي."
+      }
+    },
+    "detail": {
+      "requestedBy": "مقدّم الطلب",
+      "experience": "الخبرة",
+      "years": "سنوات",
+      "salaryBand": "نطاق الراتب",
+      "approvalHistory": "سجل الموافقات",
+      "budgetConfirmed": "تم التحقق من الميزانية مع المالية",
+      "managementConfirmed": "وافقت الإدارة",
+      "noDecisions": "لا يوجد قرار بعد.",
+      "budgetConfirmedLabel": "تم التحقق من ميزانية هذه الوظيفة مع المالية",
+      "managementConfirmedLabel": "وافقت الإدارة على هذه الوظيفة",
+      "confirmBoth": "أكّد الأمرين قبل الموافقة.",
+      "comments": "ملاحظات (اختياري)",
+      "rejectReason": "سبب الرفض",
+      "loadFailed": "تعذّر تحميل الطلب.",
+      "actions": {
+        "submit": "إرسال للموافقة",
+        "approve": "موافقة",
+        "reject": "رفض",
+        "hold": "تعليق",
+        "resume": "استئناف",
+        "close": "إغلاق",
+        "cancel": "إلغاء الطلب"
+      },
+      "success": {
+        "submitted": "تم إرسال الطلب {{code}} للموافقة.",
+        "cancelled": "تم إلغاء الطلب {{code}}.",
+        "approved": "تمت الموافقة على الطلب {{code}}.",
+        "rejected": "تم رفض الطلب {{code}}.",
+        "held": "تم تعليق الطلب {{code}}.",
+        "resumed": "تم استئناف الطلب {{code}}.",
+        "closed": "تم إغلاق الطلب {{code}}."
+      },
+      "dialogs": {
+        "submit": {
+          "title": "إرسال للموافقة؟",
+          "message": "سيذهب {{code}} ({{title}}، {{department}}) إلى الموارد البشرية للموافقة. لن تتمكن من تعديله بعد ذلك.",
+          "confirm": "إرسال"
+        },
+        "cancel": {
+          "title": "إلغاء هذا الطلب؟",
+          "message": "سيتم إلغاء {{code}} ({{title}}، {{department}}) ولن يمكن التعيين عليه.",
+          "confirm": "إلغاء الطلب"
+        },
+        "approve": {
+          "title": "الموافقة على هذا الطلب؟",
+          "message": "الموافقة على {{code}} ({{title}}، {{department}}) تسمح للموارد البشرية ببدء التوظيف. أكّد ما تحققت منه خارج النظام.",
+          "confirm": "موافقة"
+        },
+        "reject": {
+          "title": "رفض هذا الطلب؟",
+          "message": "سيتم رفض {{code}} ({{title}}، {{department}}). لا يمكن التراجع؛ على مقدّم الطلب تقديم طلب جديد.",
+          "confirm": "رفض"
+        },
+        "hold": {
+          "title": "تعليق الطلب؟",
+          "message": "يتوقف التوظيف على {{code}} ({{title}}) حتى تستأنفه.",
+          "confirm": "تعليق"
+        },
+        "resume": {
+          "title": "استئناف هذا الطلب؟",
+          "message": "يصبح {{code}} ({{title}}) نشطاً من جديد.",
+          "confirm": "استئناف"
+        },
+        "close": {
+          "title": "إغلاق هذا الطلب؟",
+          "message": "سيتم إغلاق {{code}} ({{title}}) ولن يمكن تعيين أحد عليه. لا يمكن التراجع.",
+          "confirm": "إغلاق الطلب"
+        }
+      }
+    },
+    "errors": {
+      "stale": "قام شخص آخر بتغيير هذا العنصر. تُعرض أحدث نسخة؛ راجعها ثم أعد المحاولة.",
+      "rules": {
+        "NO_EMPLOYEE_PROFILE": "حسابك غير مرتبط بسجل موظف.",
+        "REQUISITION_INVALID_STATE": "هذا غير ممكن في الحالة الحالية للطلب.",
+        "REQUISITION_NOT_EDITABLE": "لا يمكن تعديل إلا الطلب الذي هو مسودة.",
+        "SELF_APPROVAL_NOT_ALLOWED": "أنت من قدّم هذا الطلب، لذا يجب أن يقرر فيه شخص آخر.",
+        "REPLACED_EMPLOYEE_REQUIRED": "اختر الموظف المراد إحلاله.",
+        "POSITIONS_BELOW_FILLED": "لا يمكن أن يقل عدد الوظائف عن المشغول منها.",
+        "DEPARTMENT_INACTIVE": "القسم غير نشط.",
+        "DESIGNATION_INACTIVE": "التسمية الوظيفية غير نشطة.",
+        "DESIGNATION_DEPARTMENT_MISMATCH": "التسمية الوظيفية تابعة لقسم آخر.",
+        "LOCATION_INACTIVE": "الموقع غير نشط.",
+        "EMPLOYEE_INACTIVE": "الموظف المحدد غير نشط.",
+        "STAGE_TYPE_LOCKED": "تحتفظ المرحلة بنوعها. أنشئ مرحلة جديدة بدلاً من ذلك.",
+        "STAGE_SYSTEM_PROTECTED": "هذه المرحلة تستخدمها عملية التوظيف، فلا يمكن تغيير رمزها أو تعطيلها أو حذفها.",
+        "STAGE_TERMINAL_EXISTS": "توجد مرحلة نشطة من هذا النوع بالفعل. عطّلها أولاً.",
+        "MASTER_IN_USE": "هذا العنصر مستخدم. عطّله بدلاً من حذفه."
+      }
+    },
+    "setup": {
+      "columns": {
+        "order": "الترتيب",
+        "code": "الرمز",
+        "name": "الاسم",
+        "nameEn": "الاسم (بالإنجليزية)",
+        "nameAr": "الاسم (بالعربية)",
+        "status": "الحالة",
+        "actions": "الإجراءات"
+      },
+      "activate": "تفعيل",
+      "deactivate": "تعطيل",
+      "delete": "حذف",
+      "activateTitle": "تفعيل؟",
+      "deactivateTitle": "تعطيل؟",
+      "deleteTitle": "حذف؟",
+      "errors": {
+        "sortOrder": "أدخل رقماً من 0 إلى 999."
+      },
+      "stages": {
+        "title": "مراحل التوظيف",
+        "totalChip": "{{count}} مراحل",
+        "add": "إضافة مرحلة",
+        "editTitle": "تعديل المرحلة",
+        "hint": "الخطوات التي يمر بها المرشح. المراحل المعلّمة «نظام» تعتمد عليها عملية التوظيف وتبقى كما هي؛ ويمكنك مع ذلك تغيير اسمها وترتيبها.",
+        "empty": "لا توجد مراحل",
+        "system": "نظام",
+        "typeLocked": "تحتفظ المرحلة بنوعها.",
+        "loadFailed": "تعذّر تحميل المراحل.",
+        "columns": {
+          "type": "النوع"
+        },
+        "deleteHint": "سيتم حذف المرحلة نهائياً. إذا كان مرشحون يستخدمونها فعطّلها بدلاً من ذلك.",
+        "deactivateHint": "لن يمكن نقل المرشحين إلى هذه المرحلة.",
+        "activateHint": "يمكن نقل المرشحين إلى هذه المرحلة من جديد.",
+        "success": {
+          "created": "تمت إضافة المرحلة {{name}}.",
+          "updated": "تم تعديل المرحلة {{name}}.",
+          "deleted": "تم حذف المرحلة {{name}}.",
+          "activated": "تم تفعيل المرحلة {{name}}.",
+          "deactivated": "تم تعطيل المرحلة {{name}}."
+        }
+      },
+      "reasons": {
+        "title": "أسباب الرفض",
+        "totalChip": "{{count}} أسباب",
+        "add": "إضافة سبب",
+        "editTitle": "تعديل السبب",
+        "hint": "الأسباب المعروضة عند رفض طلب توظيف أو عرض وظيفي.",
+        "empty": "لا توجد أسباب رفض",
+        "loadFailed": "تعذّر تحميل أسباب الرفض.",
+        "columns": {
+          "appliesTo": "يُستخدم لـ"
+        },
+        "deleteHint": "سيتم حذف السبب نهائياً. إذا كان مستخدماً فعطّله بدلاً من ذلك.",
+        "deactivateHint": "لن يُعرض عند الرفض بعد الآن.",
+        "activateHint": "سيُعرض من جديد عند الرفض.",
+        "success": {
+          "created": "تمت إضافة السبب {{name}}.",
+          "updated": "تم تعديل السبب {{name}}.",
+          "deleted": "تم حذف السبب {{name}}.",
+          "activated": "تم تفعيل السبب {{name}}.",
+          "deactivated": "تم تعطيل السبب {{name}}."
+        }
       }
     }
   }

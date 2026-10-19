@@ -84,7 +84,8 @@
         "HR_MANAGER": "HR Manager",
         "EMPLOYEE": "Employee"
       }
-    }
+    },
+    "unsavedChanges": "You have unsaved changes. Leave this page and lose them?"
   },
   "employee": {
     "list": {
@@ -467,6 +468,33 @@
         "saved": "Identity information saved successfully"
       }
     },
+    "departmentHead": {
+      "title": "Department head",
+      "retry": "Try again",
+      "loading": "Loading department head…",
+      "isHead": "This employee is the head of {{department}}.",
+      "otherHead": "{{name}} is the head of {{department}}.",
+      "noHead": "{{department}} has no head yet.",
+      "make": "Make department head",
+      "remove": "Remove as department head",
+      "makeTitle": "Make this employee department head?",
+      "removeTitle": "Remove as department head?",
+      "makeMsg": "The employee will be head of this department and can raise recruitment requisitions for it.",
+      "removeMsg": "The department will have no head until another employee is named.",
+      "replaceMsg": "{{name}} is the current head and will be replaced.",
+      "success": {
+        "made": "Department head updated",
+        "removed": "Department head removed"
+      },
+      "errors": {
+        "loadFailed": "Could not load the department head.",
+        "stale": "The department was changed by someone else. Reload and try again.",
+        "rules": {
+          "EMP_INACTIVE": "This employee is deactivated. Reactivate the employee first.",
+          "DEPARTMENT_INACTIVE": "The department is inactive."
+        }
+      }
+    },
     "jobDetails": {
       "title": "Job Details",
       "tabs": {
@@ -513,6 +541,9 @@
         "selectDesignation": "Select designation",
         "jobPositionIdPlaceholder": "Optional position reference code",
         "searchPlaceholder": "Search by name or code...",
+        "managerSelectDepartmentFirst": "Select a department first",
+        "managerSelect": "Select manager",
+        "managerNone": "No managers in this department",
         "workLocationShift": "Work Location & Shift",
         "officeLocationLabel": "Office Location",
         "selectLocation": "Select location",
@@ -1761,6 +1792,9 @@
       "descriptionPlaceholder": "What this department does (optional)",
       "costCenter": "Cost Center",
       "costCenterPlaceholder": "e.g. CC-IT-001",
+      "head": "Department head",
+      "headNone": "Not assigned",
+      "headHint": "Set from the employee's Job Details tab.",
       "activeHint": "Inactive departments cannot be chosen for employees",
       "saving": "Saving...",
       "update": "Update",
@@ -1773,7 +1807,13 @@
       "delete": "Delete",
       "errors": {
         "loadFailed": "Failed to load departments.",
-        "duplicate": "A department with this code already exists."
+        "duplicate": "A department with this code already exists.",
+        "stale": "This record was changed by someone else. Reload it and repeat your change.",
+        "rules": {
+          "DEPARTMENT_IN_USE": "Department {{code}} is used by designations or employee job records. Deactivate it instead of deleting it.",
+          "DEPARTMENT_HAS_ACTIVE_DESIGNATIONS": "Department {{code}} still has active designations. Deactivate them first.",
+          "HEAD_EMPLOYEE_INACTIVE": "The selected department head is not an active employee."
+        }
       },
       "success": {
         "created": "\"{{name}}\" created",
@@ -1821,7 +1861,12 @@
       },
       "errors": {
         "loadFailed": "Failed to load designations.",
-        "duplicate": "A designation with this code already exists."
+        "duplicate": "A designation with this code already exists.",
+        "stale": "This record was changed by someone else. Reload it and repeat your change.",
+        "rules": {
+          "DESIGNATION_IN_USE": "Designation {{code}} is used by employee job records, so it cannot be deleted or moved to another department.",
+          "DEPARTMENT_INACTIVE": "The department is inactive, so it cannot hold an active designation. Activate the department or deactivate this designation."
+        }
       },
       "success": {
         "created": "\"{{name}}\" created",
@@ -1915,6 +1960,288 @@
         "activateTitle": "Activate Company Branch?",
         "parent": "Company",
         "parentPlaceholder": "Select a company"
+      }
+    }
+  },
+  "recruitment": {
+    "routes": {
+      "requisitions": "Requisitions",
+      "new": "New Requisition",
+      "edit": "Edit Requisition",
+      "detail": "Requisition",
+      "stages": "Pipeline Stages",
+      "rejectionReasons": "Rejection Reasons"
+    },
+    "enums": {
+      "status": {
+        "DRAFT": "Draft",
+        "PENDING_APPROVAL": "Pending approval",
+        "APPROVED": "Approved",
+        "REJECTED": "Rejected",
+        "ON_HOLD": "On hold",
+        "FILLED": "Filled",
+        "CLOSED": "Closed",
+        "CANCELLED": "Cancelled"
+      },
+      "priority": {
+        "LOW": "Low",
+        "MEDIUM": "Medium",
+        "HIGH": "High",
+        "URGENT": "Urgent"
+      },
+      "type": {
+        "NEW": "New position",
+        "REPLACEMENT": "Replacement"
+      },
+      "decision": {
+        "APPROVED": "Approved",
+        "REJECTED": "Rejected"
+      },
+      "stageType": {
+        "OPEN": "In progress",
+        "HIRED": "Hired",
+        "REJECTED": "Rejected",
+        "WITHDRAWN": "Withdrawn"
+      },
+      "scope": {
+        "APPLICATION": "Application",
+        "OFFER": "Offer"
+      }
+    },
+    "list": {
+      "title": "Job Requisitions",
+      "subtitle": "Requests to fill positions, and where each one stands",
+      "newRequisition": "New requisition",
+      "search": "Search",
+      "searchPlaceholder": "Code or job title",
+      "status": "Status",
+      "department": "Department",
+      "clearFilters": "Clear filters",
+      "retry": "Try again",
+      "loadFailed": "The requisitions could not be loaded.",
+      "empty": "No requisitions yet",
+      "emptyHint": "Use New requisition to ask for a position in your department.",
+      "emptyHintNoRaise": "Requisitions you raise, or that belong to a department you head, appear here.",
+      "emptyFiltered": "No requisition matches these filters",
+      "emptyFilteredHint": "Change or clear the filters to see more.",
+      "pagination": "Requisitions pages",
+      "view": "Open requisition {{code}}",
+      "columns": {
+        "code": "Code",
+        "jobTitle": "Job title",
+        "department": "Department",
+        "requestedBy": "Requested by",
+        "positions": "Filled / total",
+        "priority": "Priority",
+        "targetJoinDate": "Target start",
+        "status": "Status",
+        "actions": "Actions"
+      }
+    },
+    "form": {
+      "newTitle": "New requisition",
+      "editTitle": "Edit requisition",
+      "subtitle": "Describe the position. HR approves it before anyone can be hired.",
+      "sections": {
+        "position": "The position",
+        "requirements": "Requirements and budget"
+      },
+      "jobTitle": "Job title",
+      "jobTitleAr": "Job title (Arabic)",
+      "department": "Department",
+      "designation": "Designation",
+      "noDesignations": "This department has no active designations.",
+      "location": "Work location",
+      "reportingManager": "Reporting manager",
+      "none": "Not set",
+      "noOfPositions": "Number of positions",
+      "employmentType": "Employment type",
+      "requisitionType": "Type of requisition",
+      "replacedEmployee": "Employee being replaced",
+      "replacedHint": "Choose from the people of the department.",
+      "minExperience": "Minimum experience (years)",
+      "maxExperience": "Maximum experience (years)",
+      "minSalary": "Minimum salary",
+      "maxSalary": "Maximum salary",
+      "priority": "Priority",
+      "targetJoinDate": "Target start date",
+      "justification": "Why is this position needed?",
+      "saving": "Saving...",
+      "saveDraft": "Save as draft",
+      "saveChanges": "Save changes",
+      "created": "Requisition {{code}} saved as a draft.",
+      "updated": "Requisition {{code}} updated.",
+      "loadFailed": "The form could not be loaded.",
+      "saveFailed": "The requisition could not be saved.",
+      "backToList": "Back to requisitions",
+      "cannotRaise": "You cannot raise a requisition",
+      "cannotRaiseHint": "Only HR and the head of a department can raise one. Ask HR to set you as the head of your department.",
+      "errors": {
+        "invisibleCharacters": "Remove control or invisible characters.",
+        "positionsRange": "Enter a whole number from 1 to 999.",
+        "replacedRequired": "Choose the employee being replaced.",
+        "experienceBounds": "Enter years from 0 to 99.9.",
+        "experienceRange": "Maximum experience cannot be below the minimum.",
+        "salaryBounds": "Enter an amount of 0 or more.",
+        "salaryRange": "Maximum salary cannot be below the minimum.",
+        "pastDate": "The start date cannot be in the past."
+      }
+    },
+    "detail": {
+      "requestedBy": "Requested by",
+      "experience": "Experience",
+      "years": "years",
+      "salaryBand": "Salary band",
+      "approvalHistory": "Approval history",
+      "budgetConfirmed": "Budget checked with Finance",
+      "managementConfirmed": "Management agreed",
+      "noDecisions": "No decision yet.",
+      "budgetConfirmedLabel": "The budget for this position was checked with Finance",
+      "managementConfirmedLabel": "Management agreed to this position",
+      "confirmBoth": "Confirm both before approving.",
+      "comments": "Comments (optional)",
+      "rejectReason": "Reason for rejecting",
+      "loadFailed": "The requisition could not be loaded.",
+      "actions": {
+        "submit": "Submit for approval",
+        "approve": "Approve",
+        "reject": "Reject",
+        "hold": "Put on hold",
+        "resume": "Resume",
+        "close": "Close",
+        "cancel": "Cancel requisition"
+      },
+      "success": {
+        "submitted": "Requisition {{code}} submitted for approval.",
+        "cancelled": "Requisition {{code}} cancelled.",
+        "approved": "Requisition {{code}} approved.",
+        "rejected": "Requisition {{code}} rejected.",
+        "held": "Requisition {{code}} put on hold.",
+        "resumed": "Requisition {{code}} resumed.",
+        "closed": "Requisition {{code}} closed."
+      },
+      "dialogs": {
+        "submit": {
+          "title": "Submit for approval?",
+          "message": "{{code}} ({{title}}, {{department}}) goes to HR for approval. You cannot edit it after this.",
+          "confirm": "Submit"
+        },
+        "cancel": {
+          "title": "Cancel this requisition?",
+          "message": "{{code}} ({{title}}, {{department}}) will be cancelled and cannot be used to hire anyone.",
+          "confirm": "Cancel requisition"
+        },
+        "approve": {
+          "title": "Approve this requisition?",
+          "message": "Approving {{code}} ({{title}}, {{department}}) allows HR to start recruiting. Confirm what you checked outside the system.",
+          "confirm": "Approve"
+        },
+        "reject": {
+          "title": "Reject this requisition?",
+          "message": "{{code}} ({{title}}, {{department}}) will be rejected. This cannot be undone; the requester must raise a new one.",
+          "confirm": "Reject"
+        },
+        "hold": {
+          "title": "Put on hold?",
+          "message": "Recruiting for {{code}} ({{title}}) pauses until you resume it.",
+          "confirm": "Put on hold"
+        },
+        "resume": {
+          "title": "Resume this requisition?",
+          "message": "{{code}} ({{title}}) becomes active again.",
+          "confirm": "Resume"
+        },
+        "close": {
+          "title": "Close this requisition?",
+          "message": "{{code}} ({{title}}) will be closed and no more people can be hired against it. This cannot be undone.",
+          "confirm": "Close requisition"
+        }
+      }
+    },
+    "errors": {
+      "stale": "This was changed by someone else. The latest version is shown; check it and try again.",
+      "rules": {
+        "NO_EMPLOYEE_PROFILE": "Your account is not linked to an employee record.",
+        "REQUISITION_INVALID_STATE": "This is not possible in the requisition's current state.",
+        "REQUISITION_NOT_EDITABLE": "Only a draft requisition can be edited.",
+        "SELF_APPROVAL_NOT_ALLOWED": "You raised this requisition, so another person must decide on it.",
+        "REPLACED_EMPLOYEE_REQUIRED": "Choose the employee being replaced.",
+        "POSITIONS_BELOW_FILLED": "The number of positions cannot be below the ones already filled.",
+        "DEPARTMENT_INACTIVE": "The department is inactive.",
+        "DESIGNATION_INACTIVE": "The designation is inactive.",
+        "DESIGNATION_DEPARTMENT_MISMATCH": "The designation belongs to a different department.",
+        "LOCATION_INACTIVE": "The location is inactive.",
+        "EMPLOYEE_INACTIVE": "The selected employee is inactive.",
+        "STAGE_TYPE_LOCKED": "A stage keeps its type. Create a new stage instead.",
+        "STAGE_SYSTEM_PROTECTED": "This stage is used by the hiring flow, so it cannot be re-coded, deactivated or deleted.",
+        "STAGE_TERMINAL_EXISTS": "There is already an active stage of this type. Deactivate it first.",
+        "MASTER_IN_USE": "This is in use. Deactivate it instead of deleting it."
+      }
+    },
+    "setup": {
+      "columns": {
+        "order": "Order",
+        "code": "Code",
+        "name": "Name",
+        "nameEn": "Name (English)",
+        "nameAr": "Name (Arabic)",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "activate": "Activate",
+      "deactivate": "Deactivate",
+      "delete": "Delete",
+      "activateTitle": "Activate?",
+      "deactivateTitle": "Deactivate?",
+      "deleteTitle": "Delete?",
+      "errors": {
+        "sortOrder": "Enter a number from 0 to 999."
+      },
+      "stages": {
+        "title": "Pipeline Stages",
+        "totalChip": "{{count}} stages",
+        "add": "Add stage",
+        "editTitle": "Edit stage",
+        "hint": "The steps a candidate moves through. Stages marked System are used by the hiring flow and stay as they are; you can still rename them and change their order.",
+        "empty": "No stages",
+        "system": "System",
+        "typeLocked": "A stage keeps its type.",
+        "loadFailed": "The stages could not be loaded.",
+        "columns": {
+          "type": "Type"
+        },
+        "deleteHint": "This removes the stage for good. If candidates already use it, deactivate it instead.",
+        "deactivateHint": "Candidates can no longer be moved into this stage.",
+        "activateHint": "Candidates can be moved into this stage again.",
+        "success": {
+          "created": "Stage {{name}} added.",
+          "updated": "Stage {{name}} updated.",
+          "deleted": "Stage {{name}} deleted.",
+          "activated": "Stage {{name}} activated.",
+          "deactivated": "Stage {{name}} deactivated."
+        }
+      },
+      "reasons": {
+        "title": "Rejection Reasons",
+        "totalChip": "{{count}} reasons",
+        "add": "Add reason",
+        "editTitle": "Edit reason",
+        "hint": "The reasons offered when an application or an offer is turned down.",
+        "empty": "No rejection reasons",
+        "loadFailed": "The rejection reasons could not be loaded.",
+        "columns": {
+          "appliesTo": "Used for"
+        },
+        "deleteHint": "This removes the reason for good. If it is already used, deactivate it instead.",
+        "deactivateHint": "It is no longer offered when rejecting.",
+        "activateHint": "It is offered again when rejecting.",
+        "success": {
+          "created": "Reason {{name}} added.",
+          "updated": "Reason {{name}} updated.",
+          "deleted": "Reason {{name}} deleted.",
+          "activated": "Reason {{name}} activated.",
+          "deactivated": "Reason {{name}} deactivated."
+        }
       }
     }
   }

@@ -10,7 +10,7 @@ import {
 import { Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
@@ -42,7 +42,7 @@ function differsFromCurrent(group: AbstractControl): ValidationErrors | null {
   imports: [
     ReactiveFormsModule,
     MatButtonModule,
-    MatCardModule,
+    MatIconModule,
     MatFormFieldModule,
     MatInputModule,
     MatSnackBarModule,
@@ -61,15 +61,22 @@ export class ChangePassword implements OnInit {
 
   readonly minLength = PASSWORD_MIN_LENGTH;
   readonly submitting = signal(false);
+  readonly hidePasswords = signal(true);
   readonly error = signal<string | null>(null);
   /** True when the user holds a temporary password and can't use the app until it's replaced. */
   readonly forced = signal(false);
 
   readonly form = new FormGroup(
     {
-      currentPassword: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
+      currentPassword: new FormControl('', {
+        nonNullable: true,
+        validators: [Validators.required],
+      }),
       newPassword: new FormControl('', { nonNullable: true, validators: NEW_PASSWORD_VALIDATORS }),
-      confirmPassword: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
+      confirmPassword: new FormControl('', {
+        nonNullable: true,
+        validators: [Validators.required],
+      }),
     },
     { validators: [passwordsMatch, differsFromCurrent] },
   );
@@ -81,7 +88,8 @@ export class ChangePassword implements OnInit {
   newPasswordError(): string {
     const c = this.form.controls.newPassword;
     if (!c.touched || !c.errors) return '';
-    if (c.hasError('required')) return this.translate.instant('auth.changePassword.errors.newRequired');
+    if (c.hasError('required'))
+      return this.translate.instant('auth.changePassword.errors.newRequired');
     if (c.hasError('minlength'))
       return this.translate.instant('common.validation.minLength', { count: PASSWORD_MIN_LENGTH });
     if (c.hasError('maxlength'))
@@ -133,6 +141,10 @@ export class ChangePassword implements OnInit {
           );
         },
       });
+  }
+
+  togglePasswords(): void {
+    this.hidePasswords.update((v) => !v);
   }
 
   onCancel(): void {

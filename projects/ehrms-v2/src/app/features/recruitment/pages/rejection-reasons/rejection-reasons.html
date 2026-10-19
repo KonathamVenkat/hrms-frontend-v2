@@ -1,0 +1,315 @@
+<div class="admin-page">
+  <div class="page-header">
+    <div class="header-left">
+      <h1 class="page-title">{{ 'recruitment.setup.reasons.title' | translate }}</h1>
+      <div class="stat-chips">
+        <span class="chip chip-total">{{
+          'recruitment.setup.reasons.totalChip' | translate: { count: reasons().length }
+        }}</span>
+      </div>
+    </div>
+    <button type="button" class="btn-add" (click)="openCreate()">
+      <span aria-hidden="true" class="material-icons">add</span>
+      {{ 'recruitment.setup.reasons.add' | translate }}
+    </button>
+  </div>
+  <p class="page-hint">{{ 'recruitment.setup.reasons.hint' | translate }}</p>
+
+  @if (successMsg()) {
+    <div class="alert alert-success" role="status">
+      <span aria-hidden="true" class="material-icons">check_circle</span>{{ successMsg() }}
+    </div>
+  }
+  @if (error() && !showModal()) {
+    <div class="alert alert-error" role="alert">
+      <span aria-hidden="true" class="material-icons">error_outline</span>{{ error() }}
+      <button type="button" class="btn-cancel" (click)="load()">
+        {{ 'recruitment.list.retry' | translate }}
+      </button>
+    </div>
+  }
+
+  @if (loading()) {
+    <div class="loading-wrap" role="status">
+      <div class="spinner"></div>
+      <span>{{ 'common.loading' | translate }}</span>
+    </div>
+  } @else {
+    <div class="table-card">
+      <table class="data-table">
+        <caption class="visually-hidden">
+          {{
+            'recruitment.setup.reasons.title' | translate
+          }}
+        </caption>
+        <thead>
+          <tr>
+            <th scope="col">{{ 'recruitment.setup.columns.order' | translate }}</th>
+            <th scope="col">{{ 'recruitment.setup.columns.code' | translate }}</th>
+            <th scope="col">{{ 'recruitment.setup.columns.name' | translate }}</th>
+            <th scope="col">{{ 'recruitment.setup.reasons.columns.appliesTo' | translate }}</th>
+            <th scope="col">{{ 'recruitment.setup.columns.status' | translate }}</th>
+            <th scope="col">{{ 'recruitment.setup.columns.actions' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (reasons().length === 0) {
+            <tr>
+              <td colspan="6">
+                <div class="empty-state">
+                  <span aria-hidden="true" class="material-icons">block</span>
+                  <p>{{ 'recruitment.setup.reasons.empty' | translate }}</p>
+                </div>
+              </td>
+            </tr>
+          }
+          @for (s of reasons(); track s.id) {
+            <tr class="data-row" [class.inactive-row]="!s.isActive">
+              <td class="cell-num">{{ s.sortOrder }}</td>
+              <td>
+                <span class="code-badge">{{ s.code }}</span>
+              </td>
+              <td>
+                <div class="name-cell">
+                  <span class="name-en">{{ s.name }}</span>
+                  <span class="name-ar">{{ s.nameAr }}</span>
+                </div>
+              </td>
+              <td>{{ 'recruitment.enums.scope.' + s.appliesTo | translate }}</td>
+              <td>
+                <span
+                  class="status-badge"
+                  [class.status-active]="s.isActive"
+                  [class.status-inactive]="!s.isActive"
+                  >{{ (s.isActive ? 'common.active' : 'common.inactive') | translate }}</span
+                >
+              </td>
+              <td>
+                <div class="action-wrap">
+                  <button
+                    type="button"
+                    class="act-btn btn-edit"
+                    [attr.aria-label]="'common.edit' | translate"
+                    (click)="openEdit(s)"
+                  >
+                    <span aria-hidden="true" class="material-icons">edit</span>
+                  </button>
+                  <button
+                    type="button"
+                    class="act-btn"
+                    [class.btn-deactivate]="s.isActive"
+                    [class.btn-activate]="!s.isActive"
+                    [attr.aria-label]="
+                      (s.isActive ? 'recruitment.setup.deactivate' : 'recruitment.setup.activate')
+                        | translate
+                    "
+                    (click)="openConfirm(s, 'toggle')"
+                  >
+                    <span aria-hidden="true" class="material-icons">{{
+                      s.isActive ? 'toggle_off' : 'toggle_on'
+                    }}</span>
+                  </button>
+                  <button
+                    type="button"
+                    class="act-btn btn-delete"
+                    [attr.aria-label]="'recruitment.setup.delete' | translate"
+                    (click)="openConfirm(s, 'delete')"
+                  >
+                    <span aria-hidden="true" class="material-icons">delete</span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>
+
+@if (showModal()) {
+  <div class="modal-backdrop" (click)="closeModal()">
+    <div
+      class="modal"
+      (click)="$event.stopPropagation()"
+      [appAccessibleDialog]="'rr-modal-title'"
+      (dialogClosed)="closeModal()"
+      cdkTrapFocus
+      cdkTrapFocusAutoCapture
+    >
+      <div class="modal-header">
+        <h2 id="rr-modal-title" class="modal-title">
+          {{
+            (editing() ? 'recruitment.setup.reasons.editTitle' : 'recruitment.setup.reasons.add')
+              | translate
+          }}
+        </h2>
+        <button
+          type="button"
+          class="modal-close"
+          [attr.aria-label]="'common.close' | translate"
+          (click)="closeModal()"
+        >
+          <span aria-hidden="true" class="material-icons">close</span>
+        </button>
+      </div>
+      @if (error()) {
+        <div class="modal-alert" role="alert">
+          <span aria-hidden="true" class="material-icons">error_outline</span>{{ error() }}
+        </div>
+      }
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+        <div class="modal-body">
+          <div class="field">
+            <label for="rr-code"
+              >{{ 'recruitment.setup.columns.code' | translate }} <span class="req">*</span></label
+            >
+            <input id="rr-code" formControlName="code" maxlength="30" />
+            @if (isInvalid('code')) {
+              <span class="field-error" id="fe-code">{{ getError('code') }}</span>
+            }
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="rr-name"
+                >{{ 'recruitment.setup.columns.nameEn' | translate }}
+                <span class="req">*</span></label
+              >
+              <input id="rr-name" formControlName="name" maxlength="100" />
+              @if (isInvalid('name')) {
+                <span class="field-error" id="fe-name">{{ getError('name') }}</span>
+              }
+            </div>
+            <div class="field">
+              <label for="rr-name-ar"
+                >{{ 'recruitment.setup.columns.nameAr' | translate }}
+                <span class="req">*</span></label
+              >
+              <input id="rr-name-ar" formControlName="nameAr" maxlength="200" dir="rtl" />
+              @if (isInvalid('nameAr')) {
+                <span class="field-error" id="fe-nameAr">{{ getError('nameAr') }}</span>
+              }
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="rr-scope"
+                >{{ 'recruitment.setup.reasons.columns.appliesTo' | translate }}
+                <span class="req">*</span></label
+              >
+              <select id="rr-scope" formControlName="appliesTo">
+                @for (t of scopes; track t) {
+                  <option [value]="t">{{ 'recruitment.enums.scope.' + t | translate }}</option>
+                }
+              </select>
+            </div>
+            <div class="field">
+              <label for="rr-order"
+                >{{ 'recruitment.setup.columns.order' | translate }}
+                <span class="req">*</span></label
+              >
+              <input id="rr-order" type="number" formControlName="sortOrder" min="0" max="999" />
+              @if (isInvalid('sortOrder')) {
+                <span class="field-error" id="fe-sortOrder">{{ getError('sortOrder') }}</span>
+              }
+            </div>
+          </div>
+          @if (editing()) {
+            <label class="toggle-item">
+              <div class="toggle-info">
+                <span class="toggle-label">{{ 'common.active' | translate }}</span>
+              </div>
+              <div class="toggle-wrap">
+                <input type="checkbox" formControlName="isActive" class="toggle-inp" />
+                <span class="toggle-slider"></span>
+              </div>
+            </label>
+          }
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-cancel" (click)="closeModal()">
+            {{ 'common.cancel' | translate }}
+          </button>
+          <button type="submit" class="btn-save" [disabled]="saving()">
+            @if (saving()) {
+              <div class="btn-spinner"></div>
+              <span>{{ 'recruitment.form.saving' | translate }}</span>
+            } @else {
+              <span aria-hidden="true" class="material-icons">save</span>
+              <span>{{ 'common.save' | translate }}</span>
+            }
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}
+
+@if (confirmItem(); as item) {
+  <div class="modal-backdrop" (click)="cancelConfirm()">
+    <div
+      class="confirm-dialog"
+      (click)="$event.stopPropagation()"
+      [appAccessibleDialog]="'rr-confirm-title'"
+      (dialogClosed)="cancelConfirm()"
+      cdkTrapFocus
+      cdkTrapFocusAutoCapture
+    >
+      @let deleting = confirmAction() === 'delete';
+      @let warn = deleting || item.isActive;
+      <div class="confirm-icon" [class.icon-warn]="warn" [class.icon-info]="!warn">
+        <span aria-hidden="true" class="material-icons">{{ deleting ? 'delete' : 'block' }}</span>
+      </div>
+      <h3 id="rr-confirm-title" class="confirm-title">
+        {{
+          (deleting
+            ? 'recruitment.setup.deleteTitle'
+            : item.isActive
+              ? 'recruitment.setup.deactivateTitle'
+              : 'recruitment.setup.activateTitle'
+          ) | translate
+        }}
+      </h3>
+      <p class="confirm-msg">
+        <strong dir="auto">{{ item.name }}</strong>
+        <br />{{
+          (deleting
+            ? 'recruitment.setup.reasons.deleteHint'
+            : item.isActive
+              ? 'recruitment.setup.reasons.deactivateHint'
+              : 'recruitment.setup.reasons.activateHint'
+          ) | translate
+        }}
+      </p>
+      @if (confirmError()) {
+        <div class="modal-alert confirm-alert" role="alert">
+          <span aria-hidden="true" class="material-icons">error_outline</span
+          ><span dir="auto">{{ confirmError() }}</span>
+        </div>
+      }
+      <div class="confirm-actions">
+        <button type="button" class="btn-cancel" (click)="cancelConfirm()">
+          {{ (confirmError() ? 'common.close' : 'common.cancel') | translate }}
+        </button>
+        @if (!confirmError()) {
+          <button
+            type="button"
+            class="btn-confirm"
+            [class.btn-danger]="warn"
+            [class.btn-success]="!warn"
+            (click)="confirm()"
+          >
+            {{
+              (deleting
+                ? 'recruitment.setup.delete'
+                : item.isActive
+                  ? 'recruitment.setup.deactivate'
+                  : 'recruitment.setup.activate'
+              ) | translate
+            }}
+          </button>
+        }
+      </div>
+    </div>
+  </div>
+}

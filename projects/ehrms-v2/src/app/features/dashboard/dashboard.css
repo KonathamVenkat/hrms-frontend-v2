@@ -155,22 +155,29 @@
   color: var(--status-pending-fg);
 }
 
-/* Employee view: glass cards. */
+/* Employee view: raised cards. A soft top-left to bottom-right gradient plus a light/dark shadow pair gives the
+   embossed look on the plain white page. */
 .employee-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: var(--space-4);
+  gap: var(--space-5);
   align-items: start;
 }
 .employee-grid > mat-card {
   --mat-card-outlined-container-color: transparent;
   --mat-card-outlined-outline-color: transparent;
-  background: var(--glass-bg);
-  border: var(--glass-border);
+  background: linear-gradient(
+    145deg,
+    light-dark(#fff, rgb(32 40 80)),
+    light-dark(#eef2fb, rgb(21 27 58))
+  );
+  border: 1px solid light-dark(rgb(37 56 120 / 10%), rgb(255 255 255 / 10%));
   border-radius: var(--radius-lg);
-  box-shadow: var(--glass-shine), var(--glass-shadow);
-  -webkit-backdrop-filter: var(--glass-blur);
-  backdrop-filter: var(--glass-blur);
+  box-shadow:
+    8px 8px 20px light-dark(rgb(37 56 120 / 16%), rgb(0 0 0 / 50%)),
+    -6px -6px 16px light-dark(rgb(255 255 255 / 95%), rgb(255 255 255 / 4%)),
+    inset 1px 1px 0 light-dark(rgb(255 255 255 / 90%), rgb(255 255 255 / 8%)),
+    inset -1px -1px 0 light-dark(rgb(37 56 120 / 8%), rgb(0 0 0 / 30%));
 }
 
 .attendance-message {

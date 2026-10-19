@@ -1,0 +1,15 @@
+/* Layout, cards, filters and the table come from the shared .app-page block in styles.css. */
+.filter-search {
+  flex: 2 1 240px;
+}
+.alert button {
+  margin-inline-start: auto;
+}
+.ref-id {
+  font-weight: 700;
+  text-decoration: none;
+}
+.ref-id:hover,
+.ref-id:focus-visible {
+  text-decoration: underline;
+}

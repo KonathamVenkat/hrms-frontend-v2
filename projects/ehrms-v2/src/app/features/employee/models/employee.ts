@@ -3,7 +3,15 @@ export interface DepartmentLookup {
   code: string;
   name: string;
   nameAr: string;
-  costCenterCode: string;
+}
+
+/** GET /api/v1/departments/{id}/managers: who can be reporting or functional manager there. */
+export interface ManagerLookup {
+  employeeId: number;
+  employeeCode: string;
+  fullNameEn: string;
+  designationTitle: string;
+  gradeLevel: string;
 }
 
 export interface DesignationLookup {

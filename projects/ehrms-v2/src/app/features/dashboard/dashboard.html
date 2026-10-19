@@ -2,7 +2,9 @@
   <header class="dashboard-header">
     <h1 class="dashboard-title">{{ 'dashboard.title' | translate }}</h1>
     @if (displayName()) {
-      <p class="dashboard-welcome">{{ 'dashboard.welcome' | translate: { name: displayName() } }}</p>
+      <p class="dashboard-welcome">
+        {{ 'dashboard.welcome' | translate: { name: displayName() } }}
+      </p>
     }
   </header>
 

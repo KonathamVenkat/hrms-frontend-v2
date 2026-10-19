@@ -13,6 +13,7 @@ import { CdkTrapFocus } from '@angular/cdk/a11y';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { finalize } from 'rxjs';
+import { getHttpErrorMessage } from '../../../../../core/utils/http-error-message';
 import { DepartmentService } from '../../services/department';
 import { Department, DepartmentRequest } from '../../models/department';
 import { AccessibleDialogDirective } from '../../../../../core/directives/accessible-dialog.directive';
@@ -45,6 +46,8 @@ export class Departments implements OnInit {
   /** Kept so a PUT does not wipe the department head, which this screen does not edit. */
   private editingHeadId: number | undefined;
   private editingVersion: number | undefined;
+  /** Name of the head of the department being edited; shown read-only. */
+  readonly headName = signal('');
   confirmItem = signal<Department | null>(null);
   confirmAction = signal<ConfirmAction>('toggle');
   confirmError = signal<string | null>(null);
@@ -118,6 +121,7 @@ export class Departments implements OnInit {
     this.editingId.set(d.deptId);
     this.editingHeadId = d.headEmployeeId;
     this.editingVersion = d.version;
+    this.headName.set(d.headEmployeeName ?? '');
     this.form.reset({
       code: d.code,
       name: d.name,
@@ -179,9 +183,11 @@ export class Departments implements OnInit {
         this.error.set(
           this.messageOf(
             err,
-            err.status === 409
-              ? 'admin.departments.errors.duplicate'
-              : 'common.httpErrors.actionFailed',
+            'common.httpErrors.actionFailed',
+            v.code,
+            this.isEditMode()
+              ? 'admin.departments.errors.stale'
+              : 'admin.departments.errors.duplicate',
           ),
         ),
     });
@@ -223,7 +229,7 @@ export class Departments implements OnInit {
       },
       error: (err: HttpErrorResponse) => {
         // Stay in the dialog: the user is looking here, a page banner is easy to miss.
-        this.confirmError.set(this.messageOf(err, 'common.httpErrors.actionFailed'));
+        this.confirmError.set(this.messageOf(err, 'common.httpErrors.actionFailed', d.code));
       },
     });
   }
@@ -246,8 +252,29 @@ export class Departments implements OnInit {
     return this.translate.instant('common.validation.invalid');
   }
 
-  private messageOf(err: HttpErrorResponse, fallbackKey: string): string {
-    return err.error?.message || this.translate.instant(fallbackKey);
+  /**
+   * Every failure is shown in the user's language: a business-rule refusal by its ruleCode, anything else
+   * by HTTP status. The server's own text (English only) is used just for statuses not listed here.
+   */
+  private messageOf(
+    err: HttpErrorResponse,
+    fallbackKey: string,
+    code = '',
+    conflictKey = 'common.httpErrors.conflict',
+  ): string {
+    const rule: unknown = err.error?.errors?.ruleCode;
+    if (typeof rule === 'string') {
+      const key = `admin.departments.errors.rules.${rule}`;
+      const text = this.translate.instant(key, { code });
+      if (text !== key) return text;
+    }
+    const t = (key: string) => this.translate.instant(key);
+    return getHttpErrorMessage(this.translate, err, {
+      400: t('common.httpErrors.badRequest'),
+      409: t(conflictKey),
+      422: t(fallbackKey),
+      500: t('common.httpErrors.unexpected'),
+    });
   }
 
   private showSuccess(msg: string): void {

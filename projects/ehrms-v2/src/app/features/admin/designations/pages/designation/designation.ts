@@ -13,6 +13,7 @@ import { CdkTrapFocus } from '@angular/cdk/a11y';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { finalize } from 'rxjs';
+import { getHttpErrorMessage } from '../../../../../core/utils/http-error-message';
 import { DesignationService } from '../../services/designation';
 import { Designation, DesignationRequest } from '../../models/designation';
 import { DepartmentService } from '../../../departments/services/department';
@@ -193,9 +194,11 @@ export class Designations implements OnInit {
         this.error.set(
           this.messageOf(
             err,
-            err.status === 409
-              ? 'admin.designations.errors.duplicate'
-              : 'common.httpErrors.actionFailed',
+            'common.httpErrors.actionFailed',
+            v.code,
+            this.isEditMode()
+              ? 'admin.designations.errors.stale'
+              : 'admin.designations.errors.duplicate',
           ),
         ),
     });
@@ -237,7 +240,7 @@ export class Designations implements OnInit {
       },
       error: (err: HttpErrorResponse) => {
         // Stay in the dialog: the user is looking here, a page banner is easy to miss.
-        this.confirmError.set(this.messageOf(err, 'common.httpErrors.actionFailed'));
+        this.confirmError.set(this.messageOf(err, 'common.httpErrors.actionFailed', d.code));
       },
     });
   }
@@ -260,8 +263,29 @@ export class Designations implements OnInit {
     return this.translate.instant('common.validation.invalid');
   }
 
-  private messageOf(err: HttpErrorResponse, fallbackKey: string): string {
-    return err.error?.message || this.translate.instant(fallbackKey);
+  /**
+   * Every failure is shown in the user's language: a business-rule refusal by its ruleCode, anything else
+   * by HTTP status. The server's own text (English only) is used just for statuses not listed here.
+   */
+  private messageOf(
+    err: HttpErrorResponse,
+    fallbackKey: string,
+    code = '',
+    conflictKey = 'common.httpErrors.conflict',
+  ): string {
+    const rule: unknown = err.error?.errors?.ruleCode;
+    if (typeof rule === 'string') {
+      const key = `admin.designations.errors.rules.${rule}`;
+      const text = this.translate.instant(key, { code });
+      if (text !== key) return text;
+    }
+    const t = (key: string) => this.translate.instant(key);
+    return getHttpErrorMessage(this.translate, err, {
+      400: t('common.httpErrors.badRequest'),
+      409: t(conflictKey),
+      422: t(fallbackKey),
+      500: t('common.httpErrors.unexpected'),
+    });
   }
 
   private showSuccess(msg: string): void {

@@ -1,0 +1,119 @@
+/* Cards and dialogs come from the shared .app-page block in styles.css. */
+.card-heading {
+  margin: 0;
+  font: inherit;
+}
+.subtitle {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+.ref-code {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.detail-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+.detail-actions :is(a, button) {
+  min-block-size: 44px;
+}
+.detail-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: var(--space-4);
+}
+.facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--space-3) var(--space-5);
+  margin: 0;
+}
+.facts dt {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--mat-sys-on-surface-variant);
+}
+.facts dd {
+  margin: 2px 0 0;
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}
+.justification-title {
+  margin-block: var(--space-4) var(--space-1);
+  font-size: 14px;
+}
+.justification {
+  margin: 0;
+  white-space: pre-line;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+.timeline {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.timeline > li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-3);
+}
+.when {
+  color: var(--mat-sys-on-surface-variant);
+  font-size: 13px;
+}
+.confirmations {
+  flex-basis: 100%;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  font-size: 13px;
+}
+.confirmations li {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+.confirmations mat-icon {
+  inline-size: 16px;
+  block-size: 16px;
+  font-size: 16px;
+  color: var(--status-active-fg);
+}
+.comment {
+  flex-basis: 100%;
+  margin: 0;
+  font-style: italic;
+  overflow-wrap: anywhere;
+}
+.muted {
+  margin: 0;
+  color: var(--mat-sys-on-surface-variant);
+}
+.dialog-message {
+  margin: 0;
+  line-height: 1.5;
+}
+.dialog-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.field-error {
+  margin: 0;
+  font-size: 13px;
+  color: var(--status-rejected-fg);
+}

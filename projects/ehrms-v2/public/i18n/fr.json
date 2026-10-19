@@ -84,7 +84,8 @@
         "HR_MANAGER": "Responsable RH",
         "EMPLOYEE": "Employé"
       }
-    }
+    },
+    "unsavedChanges": "Vous avez des modifications non enregistrées. Quitter cette page et les perdre ?"
   },
   "employee": {
     "list": {
@@ -467,6 +468,33 @@
         "saved": "Informations d'identité enregistrées avec succès"
       }
     },
+    "departmentHead": {
+      "title": "Responsable du département",
+      "retry": "Réessayer",
+      "loading": "Chargement du responsable…",
+      "isHead": "Cet employé est le responsable de {{department}}.",
+      "otherHead": "{{name}} est le responsable de {{department}}.",
+      "noHead": "{{department}} n'a pas encore de responsable.",
+      "make": "Nommer responsable du département",
+      "remove": "Retirer comme responsable",
+      "makeTitle": "Nommer cet employé responsable du département ?",
+      "removeTitle": "Retirer comme responsable du département ?",
+      "makeMsg": "L'employé sera responsable de ce département et pourra déposer des demandes de recrutement pour celui-ci.",
+      "removeMsg": "Le département n'aura pas de responsable tant qu'un autre employé n'est pas nommé.",
+      "replaceMsg": "{{name}} est le responsable actuel et sera remplacé.",
+      "success": {
+        "made": "Responsable du département mis à jour",
+        "removed": "Responsable du département retiré"
+      },
+      "errors": {
+        "loadFailed": "Impossible de charger le responsable du département.",
+        "stale": "Le département a été modifié par quelqu'un d'autre. Rechargez puis réessayez.",
+        "rules": {
+          "EMP_INACTIVE": "Cet employé est désactivé. Réactivez-le d'abord.",
+          "DEPARTMENT_INACTIVE": "Le département est inactif."
+        }
+      }
+    },
     "jobDetails": {
       "title": "Détails du poste",
       "tabs": {
@@ -513,6 +541,9 @@
         "selectDesignation": "Sélectionner le poste",
         "jobPositionIdPlaceholder": "Code de référence de poste (facultatif)",
         "searchPlaceholder": "Rechercher par nom ou code...",
+        "managerSelectDepartmentFirst": "Sélectionnez d’abord un département",
+        "managerSelect": "Sélectionner un responsable",
+        "managerNone": "Aucun responsable dans ce département",
         "workLocationShift": "Lieu de travail & équipe",
         "officeLocationLabel": "Site du bureau",
         "selectLocation": "Sélectionner le site",
@@ -1761,6 +1792,9 @@
       "descriptionPlaceholder": "Rôle de ce département (facultatif)",
       "costCenter": "Centre de coût",
       "costCenterPlaceholder": "ex. CC-IT-001",
+      "head": "Responsable du département",
+      "headNone": "Non attribué",
+      "headHint": "Défini depuis l'onglet Détails du poste de l'employé.",
       "activeHint": "Un département inactif ne peut pas être attribué aux employés",
       "saving": "Enregistrement...",
       "update": "Mettre à jour",
@@ -1773,7 +1807,13 @@
       "delete": "Supprimer",
       "errors": {
         "loadFailed": "Échec du chargement des départements.",
-        "duplicate": "Un département avec ce code existe déjà."
+        "duplicate": "Un département avec ce code existe déjà.",
+        "stale": "Cet enregistrement a été modifié par quelqu’un d’autre. Rechargez-le et refaites votre modification.",
+        "rules": {
+          "DEPARTMENT_IN_USE": "Le département {{code}} est utilisé par des désignations ou des dossiers d’emploi. Désactivez-le plutôt que de le supprimer.",
+          "DEPARTMENT_HAS_ACTIVE_DESIGNATIONS": "Le département {{code}} a encore des désignations actives. Désactivez-les d’abord.",
+          "HEAD_EMPLOYEE_INACTIVE": "Le responsable de département choisi n’est pas un employé actif."
+        }
       },
       "success": {
         "created": "« {{name}} » créé",
@@ -1821,7 +1861,12 @@
       },
       "errors": {
         "loadFailed": "Échec du chargement des désignations.",
-        "duplicate": "Une désignation avec ce code existe déjà."
+        "duplicate": "Une désignation avec ce code existe déjà.",
+        "stale": "Cet enregistrement a été modifié par quelqu’un d’autre. Rechargez-le et refaites votre modification.",
+        "rules": {
+          "DESIGNATION_IN_USE": "La désignation {{code}} est utilisée par des dossiers d’emploi : elle ne peut être ni supprimée ni déplacée vers un autre département.",
+          "DEPARTMENT_INACTIVE": "Le département est inactif et ne peut pas contenir une désignation active. Activez le département ou désactivez cette désignation."
+        }
       },
       "success": {
         "created": "« {{name}} » créée",
@@ -1915,6 +1960,288 @@
         "activateTitle": "Activer la succursale ?",
         "parent": "Société",
         "parentPlaceholder": "Sélectionner une société"
+      }
+    }
+  },
+  "recruitment": {
+    "routes": {
+      "requisitions": "Demandes de recrutement",
+      "new": "Nouvelle demande",
+      "edit": "Modifier la demande",
+      "detail": "Demande de recrutement",
+      "stages": "Étapes du recrutement",
+      "rejectionReasons": "Motifs de refus"
+    },
+    "enums": {
+      "status": {
+        "DRAFT": "Brouillon",
+        "PENDING_APPROVAL": "En attente d'approbation",
+        "APPROVED": "Approuvée",
+        "REJECTED": "Rejetée",
+        "ON_HOLD": "En pause",
+        "FILLED": "Pourvue",
+        "CLOSED": "Clôturée",
+        "CANCELLED": "Annulée"
+      },
+      "priority": {
+        "LOW": "Faible",
+        "MEDIUM": "Moyenne",
+        "HIGH": "Élevée",
+        "URGENT": "Urgente"
+      },
+      "type": {
+        "NEW": "Nouveau poste",
+        "REPLACEMENT": "Remplacement"
+      },
+      "decision": {
+        "APPROVED": "Approuvée",
+        "REJECTED": "Rejetée"
+      },
+      "stageType": {
+        "OPEN": "En cours",
+        "HIRED": "Embauché",
+        "REJECTED": "Refusé",
+        "WITHDRAWN": "Retiré"
+      },
+      "scope": {
+        "APPLICATION": "Candidature",
+        "OFFER": "Offre"
+      }
+    },
+    "list": {
+      "title": "Demandes de recrutement",
+      "subtitle": "Les demandes de poste et leur état d'avancement",
+      "newRequisition": "Nouvelle demande",
+      "search": "Rechercher",
+      "searchPlaceholder": "Code ou intitulé du poste",
+      "status": "Statut",
+      "department": "Département",
+      "clearFilters": "Effacer les filtres",
+      "retry": "Réessayer",
+      "loadFailed": "Les demandes n'ont pas pu être chargées.",
+      "empty": "Aucune demande pour le moment",
+      "emptyHint": "Utilisez Nouvelle demande pour demander un poste dans votre département.",
+      "emptyHintNoRaise": "Les demandes que vous créez, ou celles d'un département que vous dirigez, apparaissent ici.",
+      "emptyFiltered": "Aucune demande ne correspond à ces filtres",
+      "emptyFilteredHint": "Modifiez ou effacez les filtres pour en voir plus.",
+      "pagination": "Pages des demandes",
+      "view": "Ouvrir la demande {{code}}",
+      "columns": {
+        "code": "Code",
+        "jobTitle": "Intitulé du poste",
+        "department": "Département",
+        "requestedBy": "Demandée par",
+        "positions": "Pourvus / total",
+        "priority": "Priorité",
+        "targetJoinDate": "Début prévu",
+        "status": "Statut",
+        "actions": "Actions"
+      }
+    },
+    "form": {
+      "newTitle": "Nouvelle demande",
+      "editTitle": "Modifier la demande",
+      "subtitle": "Décrivez le poste. Les RH l'approuvent avant toute embauche.",
+      "sections": {
+        "position": "Le poste",
+        "requirements": "Exigences et budget"
+      },
+      "jobTitle": "Intitulé du poste",
+      "jobTitleAr": "Intitulé du poste (arabe)",
+      "department": "Département",
+      "designation": "Fonction",
+      "noDesignations": "Ce département n'a aucune fonction active.",
+      "location": "Lieu de travail",
+      "reportingManager": "Responsable hiérarchique",
+      "none": "Non défini",
+      "noOfPositions": "Nombre de postes",
+      "employmentType": "Type d'emploi",
+      "requisitionType": "Type de demande",
+      "replacedEmployee": "Employé remplacé",
+      "replacedHint": "Choisissez parmi les personnes du département.",
+      "minExperience": "Expérience minimale (années)",
+      "maxExperience": "Expérience maximale (années)",
+      "minSalary": "Salaire minimal",
+      "maxSalary": "Salaire maximal",
+      "priority": "Priorité",
+      "targetJoinDate": "Date de début prévue",
+      "justification": "Pourquoi ce poste est-il nécessaire ?",
+      "saving": "Enregistrement...",
+      "saveDraft": "Enregistrer comme brouillon",
+      "saveChanges": "Enregistrer les modifications",
+      "created": "La demande {{code}} est enregistrée comme brouillon.",
+      "updated": "La demande {{code}} a été modifiée.",
+      "loadFailed": "Le formulaire n'a pas pu être chargé.",
+      "saveFailed": "La demande n'a pas pu être enregistrée.",
+      "backToList": "Retour aux demandes",
+      "cannotRaise": "Vous ne pouvez pas créer de demande",
+      "cannotRaiseHint": "Seuls les RH et le responsable d'un département peuvent en créer une. Demandez aux RH de vous désigner responsable de votre département.",
+      "errors": {
+        "invisibleCharacters": "Supprimez les caractères de contrôle ou invisibles.",
+        "positionsRange": "Saisissez un nombre entier de 1 à 999.",
+        "replacedRequired": "Choisissez l'employé remplacé.",
+        "experienceBounds": "Saisissez des années de 0 à 99,9.",
+        "experienceRange": "L'expérience maximale ne peut pas être inférieure au minimum.",
+        "salaryBounds": "Saisissez un montant supérieur ou égal à 0.",
+        "salaryRange": "Le salaire maximal ne peut pas être inférieur au minimum.",
+        "pastDate": "La date de début ne peut pas être dans le passé."
+      }
+    },
+    "detail": {
+      "requestedBy": "Demandée par",
+      "experience": "Expérience",
+      "years": "ans",
+      "salaryBand": "Fourchette de salaire",
+      "approvalHistory": "Historique d'approbation",
+      "budgetConfirmed": "Budget vérifié avec la Finance",
+      "managementConfirmed": "Direction d'accord",
+      "noDecisions": "Aucune décision pour le moment.",
+      "budgetConfirmedLabel": "Le budget de ce poste a été vérifié avec la Finance",
+      "managementConfirmedLabel": "La Direction a donné son accord pour ce poste",
+      "confirmBoth": "Confirmez les deux avant d'approuver.",
+      "comments": "Commentaires (facultatif)",
+      "rejectReason": "Motif du rejet",
+      "loadFailed": "La demande n'a pas pu être chargée.",
+      "actions": {
+        "submit": "Soumettre pour approbation",
+        "approve": "Approuver",
+        "reject": "Rejeter",
+        "hold": "Mettre en pause",
+        "resume": "Reprendre",
+        "close": "Clôturer",
+        "cancel": "Annuler la demande"
+      },
+      "success": {
+        "submitted": "La demande {{code}} a été soumise pour approbation.",
+        "cancelled": "La demande {{code}} a été annulée.",
+        "approved": "La demande {{code}} a été approuvée.",
+        "rejected": "La demande {{code}} a été rejetée.",
+        "held": "La demande {{code}} a été mise en pause.",
+        "resumed": "La demande {{code}} a été reprise.",
+        "closed": "La demande {{code}} a été clôturée."
+      },
+      "dialogs": {
+        "submit": {
+          "title": "Soumettre pour approbation ?",
+          "message": "{{code}} ({{title}}, {{department}}) part aux RH pour approbation. Vous ne pourrez plus la modifier.",
+          "confirm": "Soumettre"
+        },
+        "cancel": {
+          "title": "Annuler cette demande ?",
+          "message": "{{code}} ({{title}}, {{department}}) sera annulée et ne pourra plus servir à embaucher.",
+          "confirm": "Annuler la demande"
+        },
+        "approve": {
+          "title": "Approuver cette demande ?",
+          "message": "Approuver {{code}} ({{title}}, {{department}}) permet aux RH de lancer le recrutement. Confirmez ce que vous avez vérifié hors du système.",
+          "confirm": "Approuver"
+        },
+        "reject": {
+          "title": "Rejeter cette demande ?",
+          "message": "{{code}} ({{title}}, {{department}}) sera rejetée. C'est définitif : le demandeur devra en créer une nouvelle.",
+          "confirm": "Rejeter"
+        },
+        "hold": {
+          "title": "Mettre en pause ?",
+          "message": "Le recrutement pour {{code}} ({{title}}) est suspendu jusqu'à sa reprise.",
+          "confirm": "Mettre en pause"
+        },
+        "resume": {
+          "title": "Reprendre cette demande ?",
+          "message": "{{code}} ({{title}}) redevient active.",
+          "confirm": "Reprendre"
+        },
+        "close": {
+          "title": "Clôturer cette demande ?",
+          "message": "{{code}} ({{title}}) sera clôturée et plus personne ne pourra être embauché dessus. C'est définitif.",
+          "confirm": "Clôturer la demande"
+        }
+      }
+    },
+    "errors": {
+      "stale": "Quelqu'un d'autre a modifié cet élément. La dernière version est affichée ; vérifiez-la puis réessayez.",
+      "rules": {
+        "NO_EMPLOYEE_PROFILE": "Votre compte n'est pas lié à une fiche employé.",
+        "REQUISITION_INVALID_STATE": "Impossible dans l'état actuel de la demande.",
+        "REQUISITION_NOT_EDITABLE": "Seule une demande en brouillon peut être modifiée.",
+        "SELF_APPROVAL_NOT_ALLOWED": "Vous avez créé cette demande : une autre personne doit statuer.",
+        "REPLACED_EMPLOYEE_REQUIRED": "Choisissez l'employé remplacé.",
+        "POSITIONS_BELOW_FILLED": "Le nombre de postes ne peut pas être inférieur à celui déjà pourvu.",
+        "DEPARTMENT_INACTIVE": "Le département est inactif.",
+        "DESIGNATION_INACTIVE": "La fonction est inactive.",
+        "DESIGNATION_DEPARTMENT_MISMATCH": "La fonction appartient à un autre département.",
+        "LOCATION_INACTIVE": "Le lieu est inactif.",
+        "EMPLOYEE_INACTIVE": "L'employé choisi est inactif.",
+        "STAGE_TYPE_LOCKED": "Une étape garde son type. Créez plutôt une nouvelle étape.",
+        "STAGE_SYSTEM_PROTECTED": "Cette étape est utilisée par le processus d'embauche : son code ne peut pas changer et elle ne peut être ni désactivée ni supprimée.",
+        "STAGE_TERMINAL_EXISTS": "Une étape active de ce type existe déjà. Désactivez-la d'abord.",
+        "MASTER_IN_USE": "Cet élément est utilisé. Désactivez-le plutôt que de le supprimer."
+      }
+    },
+    "setup": {
+      "columns": {
+        "order": "Ordre",
+        "code": "Code",
+        "name": "Nom",
+        "nameEn": "Nom (anglais)",
+        "nameAr": "Nom (arabe)",
+        "status": "Statut",
+        "actions": "Actions"
+      },
+      "activate": "Activer",
+      "deactivate": "Désactiver",
+      "delete": "Supprimer",
+      "activateTitle": "Activer ?",
+      "deactivateTitle": "Désactiver ?",
+      "deleteTitle": "Supprimer ?",
+      "errors": {
+        "sortOrder": "Saisissez un nombre de 0 à 999."
+      },
+      "stages": {
+        "title": "Étapes du recrutement",
+        "totalChip": "{{count}} étapes",
+        "add": "Ajouter une étape",
+        "editTitle": "Modifier l'étape",
+        "hint": "Les étapes par lesquelles passe un candidat. Les étapes marquées Système sont utilisées par le processus d'embauche et restent telles quelles ; vous pouvez tout de même les renommer et changer leur ordre.",
+        "empty": "Aucune étape",
+        "system": "Système",
+        "typeLocked": "Une étape garde son type.",
+        "loadFailed": "Les étapes n'ont pas pu être chargées.",
+        "columns": {
+          "type": "Type"
+        },
+        "deleteHint": "L'étape sera supprimée définitivement. Si des candidats l'utilisent déjà, désactivez-la plutôt.",
+        "deactivateHint": "Les candidats ne pourront plus être déplacés vers cette étape.",
+        "activateHint": "Les candidats pourront de nouveau être déplacés vers cette étape.",
+        "success": {
+          "created": "Étape {{name}} ajoutée.",
+          "updated": "Étape {{name}} modifiée.",
+          "deleted": "Étape {{name}} supprimée.",
+          "activated": "Étape {{name}} activée.",
+          "deactivated": "Étape {{name}} désactivée."
+        }
+      },
+      "reasons": {
+        "title": "Motifs de refus",
+        "totalChip": "{{count}} motifs",
+        "add": "Ajouter un motif",
+        "editTitle": "Modifier le motif",
+        "hint": "Les motifs proposés lorsqu'une candidature ou une offre est refusée.",
+        "empty": "Aucun motif de refus",
+        "loadFailed": "Les motifs de refus n'ont pas pu être chargés.",
+        "columns": {
+          "appliesTo": "Utilisé pour"
+        },
+        "deleteHint": "Le motif sera supprimé définitivement. S'il est déjà utilisé, désactivez-le plutôt.",
+        "deactivateHint": "Il n'est plus proposé lors d'un refus.",
+        "activateHint": "Il est de nouveau proposé lors d'un refus.",
+        "success": {
+          "created": "Motif {{name}} ajouté.",
+          "updated": "Motif {{name}} modifié.",
+          "deleted": "Motif {{name}} supprimé.",
+          "activated": "Motif {{name}} activé.",
+          "deactivated": "Motif {{name}} désactivé."
+        }
       }
     }
   }

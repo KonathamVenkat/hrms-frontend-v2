@@ -1,0 +1,346 @@
+<div class="app-page requisition-detail-page">
+  @if (loading()) {
+    <div class="center-spinner" role="status">
+      <mat-spinner diameter="44" />
+      <p>{{ 'common.loading' | translate }}</p>
+    </div>
+  } @else if (loadError()) {
+    <div class="alert alert-error" role="alert">
+      <span aria-hidden="true" class="material-icons">error_outline</span>
+      <span>{{ loadError() }}</span>
+    </div>
+    <div class="detail-actions">
+      <a mat-stroked-button routerLink="/app/recruitment/requisitions">{{
+        'recruitment.form.backToList' | translate
+      }}</a>
+      <button type="button" mat-flat-button color="primary" (click)="load()">
+        {{ 'recruitment.list.retry' | translate }}
+      </button>
+    </div>
+  } @else if (requisition(); as r) {
+    <div class="page-header">
+      <div class="header-left">
+        <a
+          mat-icon-button
+          routerLink="/app/recruitment/requisitions"
+          [attr.aria-label]="'recruitment.form.backToList' | translate"
+        >
+          <mat-icon class="mirror-rtl" aria-hidden="true">arrow_back</mat-icon>
+        </a>
+        <div>
+          <h1 class="page-title" #pageTitle tabindex="-1" dir="auto">{{ r.jobTitle }}</h1>
+          <span class="subtitle">
+            <span class="ref-code">{{ r.code }}</span>
+            <span class="status-badge" [class]="badgeClass()">{{
+              'recruitment.enums.status.' + r.status | translate
+            }}</span>
+          </span>
+        </div>
+      </div>
+
+      <div class="detail-actions">
+        @if (can().has('edit')) {
+          <button type="button" mat-stroked-button (click)="edit()">
+            <mat-icon aria-hidden="true">edit</mat-icon>{{ 'common.edit' | translate }}
+          </button>
+        }
+        @if (can().has('submit')) {
+          <button type="button" mat-flat-button color="primary" (click)="open('submit')">
+            <mat-icon aria-hidden="true">send</mat-icon
+            >{{ 'recruitment.detail.actions.submit' | translate }}
+          </button>
+        }
+        @if (can().has('approve')) {
+          <button type="button" mat-flat-button color="primary" (click)="open('approve')">
+            <mat-icon aria-hidden="true">check_circle</mat-icon
+            >{{ 'recruitment.detail.actions.approve' | translate }}
+          </button>
+        }
+        @if (can().has('reject')) {
+          <button type="button" mat-flat-button color="warn" (click)="open('reject')">
+            <mat-icon aria-hidden="true">cancel</mat-icon
+            >{{ 'recruitment.detail.actions.reject' | translate }}
+          </button>
+        }
+        @if (can().has('hold')) {
+          <button type="button" mat-stroked-button (click)="open('hold')">
+            <mat-icon aria-hidden="true">pause_circle</mat-icon
+            >{{ 'recruitment.detail.actions.hold' | translate }}
+          </button>
+        }
+        @if (can().has('resume')) {
+          <button type="button" mat-flat-button color="primary" (click)="open('resume')">
+            <mat-icon aria-hidden="true">play_circle</mat-icon
+            >{{ 'recruitment.detail.actions.resume' | translate }}
+          </button>
+        }
+        @if (can().has('close')) {
+          <button type="button" mat-stroked-button (click)="open('close')">
+            <mat-icon aria-hidden="true">lock</mat-icon
+            >{{ 'recruitment.detail.actions.close' | translate }}
+          </button>
+        }
+        @if (can().has('cancel')) {
+          <button type="button" mat-stroked-button color="warn" (click)="open('cancel')">
+            <mat-icon aria-hidden="true">block</mat-icon
+            >{{ 'recruitment.detail.actions.cancel' | translate }}
+          </button>
+        }
+      </div>
+    </div>
+
+    <div class="detail-grid">
+      <mat-card class="table-card">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon aria-hidden="true">work</mat-icon>
+            <h2 class="card-heading">{{ 'recruitment.form.sections.position' | translate }}</h2>
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <dl class="facts">
+            <div>
+              <dt>{{ 'recruitment.form.department' | translate }}</dt>
+              <dd dir="auto">{{ r.departmentName }}</dd>
+            </div>
+            <div>
+              <dt>{{ 'recruitment.form.designation' | translate }}</dt>
+              <dd dir="auto">{{ r.designationTitle }}</dd>
+            </div>
+            <div>
+              <dt>{{ 'recruitment.detail.requestedBy' | translate }}</dt>
+              <dd dir="auto">{{ r.requestedByName }}</dd>
+            </div>
+            <div>
+              <dt>{{ 'recruitment.form.reportingManager' | translate }}</dt>
+              <dd dir="auto">{{ r.reportingManagerName ?? '—' }}</dd>
+            </div>
+            <div>
+              <dt>{{ 'recruitment.form.noOfPositions' | translate }}</dt>
+              <dd>{{ r.filledPositions }} / {{ r.noOfPositions }}</dd>
+            </div>
+            <div>
+              <dt>{{ 'recruitment.form.employmentType' | translate }}</dt>
+              <dd>{{ 'common.enums.employmentType.' + r.employmentType | translate }}</dd>
+            </div>
+            <div>
+              <dt>{{ 'recruitment.form.requisitionType' | translate }}</dt>
+              <dd>{{ 'recruitment.enums.type.' + r.requisitionType | translate }}</dd>
+            </div>
+            <div>
+              <dt>{{ 'recruitment.form.priority' | translate }}</dt>
+              <dd>{{ 'recruitment.enums.priority.' + r.priority | translate }}</dd>
+            </div>
+            <div>
+              <dt>{{ 'recruitment.form.targetJoinDate' | translate }}</dt>
+              <dd>
+                @if (r.targetJoinDate) {
+                  <bdi>{{ r.targetJoinDate | date: 'dd MMM yyyy' }}</bdi>
+                } @else {
+                  —
+                }
+              </dd>
+            </div>
+          </dl>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="table-card">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon aria-hidden="true">payments</mat-icon>
+            <h2 class="card-heading">{{ 'recruitment.form.sections.requirements' | translate }}</h2>
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <dl class="facts">
+            <div>
+              <dt>{{ 'recruitment.detail.experience' | translate }}</dt>
+              <dd>
+                {{ r.minExperienceYears | number: '1.0-1' }}
+                @if (r.maxExperienceYears != null) {
+                  – {{ r.maxExperienceYears | number: '1.0-1' }}
+                }
+                {{ 'recruitment.detail.years' | translate }}
+              </dd>
+            </div>
+            <div>
+              <dt>{{ 'recruitment.detail.salaryBand' | translate }}</dt>
+              <dd>
+                @if (r.minSalary != null || r.maxSalary != null) {
+                  <bdi>
+                    {{ r.minSalary != null ? (r.minSalary | number: '1.3-3') : '…' }} –
+                    {{ r.maxSalary != null ? (r.maxSalary | number: '1.3-3') : '…' }}
+                    {{ r.currency }}
+                  </bdi>
+                } @else {
+                  —
+                }
+              </dd>
+            </div>
+          </dl>
+          @if (r.justification) {
+            <h3 class="justification-title">{{ 'recruitment.form.justification' | translate }}</h3>
+            <p class="justification" dir="auto">{{ r.justification }}</p>
+          }
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <mat-card class="table-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon aria-hidden="true">fact_check</mat-icon>
+          <h2 class="card-heading">{{ 'recruitment.detail.approvalHistory' | translate }}</h2>
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        @if (r.approvals && r.approvals.length > 0) {
+          <ol class="timeline">
+            @for (a of r.approvals; track a.levelNo) {
+              <li>
+                <span
+                  class="status-badge"
+                  [class]="a.decision === 'APPROVED' ? 'status-active' : 'status-rejected'"
+                  >{{ 'recruitment.enums.decision.' + a.decision | translate }}</span
+                >
+                <span dir="auto">{{ a.approverName }}</span>
+                <bdi class="when">{{ a.actionAt | date: 'dd MMM yyyy HH:mm' }}</bdi>
+                @if (a.decision === 'APPROVED') {
+                  <ul class="confirmations">
+                    <li>
+                      <mat-icon aria-hidden="true">check</mat-icon>
+                      {{ 'recruitment.detail.budgetConfirmed' | translate }}
+                    </li>
+                    <li>
+                      <mat-icon aria-hidden="true">check</mat-icon>
+                      {{ 'recruitment.detail.managementConfirmed' | translate }}
+                    </li>
+                  </ul>
+                }
+                @if (a.comments) {
+                  <p class="comment" dir="auto">{{ a.comments }}</p>
+                }
+              </li>
+            }
+          </ol>
+        } @else {
+          <p class="muted">{{ 'recruitment.detail.noDecisions' | translate }}</p>
+        }
+      </mat-card-content>
+    </mat-card>
+
+    @if (dialog(); as action) {
+      <div class="dialog-overlay" (click)="closeDialog()">
+        <div
+          class="dialog-box"
+          (click)="$event.stopPropagation()"
+          [appAccessibleDialog]="'rd-dialog-title'"
+          (dialogClosed)="closeDialog()"
+          cdkTrapFocus
+          cdkTrapFocusAutoCapture
+        >
+          <div class="dialog-header">
+            <mat-icon class="warn-icon" aria-hidden="true">{{
+              action === 'approve' || action === 'submit' || action === 'resume'
+                ? 'help_outline'
+                : 'warning_amber'
+            }}</mat-icon>
+            <h3 id="rd-dialog-title">
+              {{ 'recruitment.detail.dialogs.' + action + '.title' | translate }}
+            </h3>
+            <button
+              type="button"
+              mat-icon-button
+              [attr.aria-label]="'common.close' | translate"
+              (click)="closeDialog()"
+            >
+              <mat-icon aria-hidden="true">close</mat-icon>
+            </button>
+          </div>
+
+          <div class="dialog-body">
+            <p class="dialog-message" dir="auto">
+              {{
+                'recruitment.detail.dialogs.' + action + '.message'
+                  | translate: { code: r.code, title: r.jobTitle, department: r.departmentName }
+              }}
+            </p>
+
+            @if (action === 'approve') {
+              <form [formGroup]="approveForm" class="dialog-form">
+                <mat-checkbox formControlName="budgetConfirmed">{{
+                  'recruitment.detail.budgetConfirmedLabel' | translate
+                }}</mat-checkbox>
+                <mat-checkbox formControlName="managementConfirmed">{{
+                  'recruitment.detail.managementConfirmedLabel' | translate
+                }}</mat-checkbox>
+                @if (
+                  approveForm.touched &&
+                  approveForm.invalid &&
+                  !approveForm.controls.comments.errors
+                ) {
+                  <p class="field-error" role="alert">
+                    {{ 'recruitment.detail.confirmBoth' | translate }}
+                  </p>
+                }
+                <mat-form-field appearance="outline" subscriptSizing="dynamic" class="full-width">
+                  <mat-label>{{ 'recruitment.detail.comments' | translate }}</mat-label>
+                  <textarea matInput rows="3" maxlength="500" formControlName="comments"></textarea>
+                  <mat-hint align="end"
+                    >{{ approveForm.controls.comments.value.length }}/500</mat-hint
+                  >
+                </mat-form-field>
+              </form>
+            }
+
+            @if (action === 'reject') {
+              <form [formGroup]="rejectForm" class="dialog-form">
+                <mat-form-field appearance="outline" subscriptSizing="dynamic" class="full-width">
+                  <mat-label>{{ 'recruitment.detail.rejectReason' | translate }}</mat-label>
+                  <textarea
+                    matInput
+                    rows="3"
+                    maxlength="500"
+                    formControlName="reason"
+                    required
+                  ></textarea>
+                  <mat-hint align="end">{{ rejectForm.controls.reason.value.length }}/500</mat-hint>
+                  @if (rejectForm.controls.reason.invalid) {
+                    <mat-error>{{ 'common.validation.required' | translate }}</mat-error>
+                  }
+                </mat-form-field>
+              </form>
+            }
+
+            @if (dialogError()) {
+              <div class="error-msg" role="alert">
+                <mat-icon aria-hidden="true">error</mat-icon>
+                <span>{{ dialogError() }}</span>
+              </div>
+            }
+          </div>
+
+          <div class="dialog-actions">
+            <button type="button" mat-stroked-button (click)="closeDialog()" [disabled]="acting()">
+              {{ 'common.cancel' | translate }}
+            </button>
+            <button
+              type="button"
+              mat-flat-button
+              [color]="action === 'reject' || action === 'cancel' ? 'warn' : 'primary'"
+              disabledInteractive
+              [disabled]="acting()"
+              (click)="confirm()"
+            >
+              @if (acting()) {
+                <mat-spinner diameter="18" />
+              }
+              <span>{{ 'recruitment.detail.dialogs.' + action + '.confirm' | translate }}</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    }
+  }
+</div>

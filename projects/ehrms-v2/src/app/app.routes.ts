@@ -228,6 +228,11 @@ export const routes: Routes = [
           import('./features/attendance/attendance-routing').then((m) => m.ATTENDANCE_ROUTES),
       },
       {
+        path: 'recruitment',
+        loadChildren: () =>
+          import('./features/recruitment/recruitment-routing').then((m) => m.RECRUITMENT_ROUTES),
+      },
+      {
         path: 'payroll',
         canActivate: [roleGuard(...HR_ROLES)],
         loadChildren: () =>

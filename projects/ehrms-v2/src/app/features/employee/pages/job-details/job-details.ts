@@ -3,7 +3,6 @@ import {
   Component,
   OnInit,
   input,
-  viewChild,
   signal,
   inject,
   computed,
@@ -12,7 +11,7 @@ import {
 import { FormBuilder, Validators, ReactiveFormsModule, AbstractControl } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { CdkTrapFocus } from '@angular/cdk/a11y';
-import { finalize } from 'rxjs';
+import { catchError, finalize, of, switchMap, tap } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { AccessibleDialogDirective } from '../../../../core/directives/accessible-dialog.directive';
@@ -20,7 +19,7 @@ import { FieldA11yDirective } from '../../../../core/directives/field-a11y.direc
 import { JobDetailsService } from '../../services/job-details.service';
 import { EmployeeService } from '../../services/employee';
 import { JobDetails } from '../../models/job-details.model';
-import { DepartmentLookup, DesignationLookup } from '../../models/employee';
+import { DepartmentLookup, DesignationLookup, ManagerLookup } from '../../models/employee';
 import { timedMessage } from '../../../../core/utils/timed-message';
 
 // Import Phase 1 admin lookups
@@ -28,16 +27,15 @@ import { WorkShiftService } from '../../../admin/work-shifts/services/work-shift
 import { OfficeLocationService } from '../../../admin/office-locations/services/office-location';
 import { WorkShift } from '../../../admin/work-shifts/models/work-shift';
 import { OfficeLocation } from '../../../admin/office-locations/models/office-location';
-import { EmployeeSearchSelect } from '../../components/employee-search-select/employee-search-select';
 import { fieldErrorMessage, isFieldInvalid } from '../../../../core/forms/field-errors';
 import { DateInput } from '../../../../shared/date-input/date-input';
+import { DepartmentHeadCard } from '../../components/department-head/department-head';
 
 @Component({
   selector: 'app-job-details',
-  imports: [DateInput, 
+  imports: [DateInput, DepartmentHeadCard,
     ReactiveFormsModule,
     FieldA11yDirective,
-    EmployeeSearchSelect,
     TranslatePipe,
     CdkTrapFocus,
     AccessibleDialogDirective,
@@ -49,9 +47,6 @@ import { DateInput } from '../../../../shared/date-input/date-input';
 export class JobDetailsComponent implements OnInit {
   /** Passed from employee-detail. */
   readonly employeeId = input.required<number>();
-
-  private readonly reportingManagerPicker = viewChild<EmployeeSearchSelect>('reportingManagerPicker');
-  private readonly functionalManagerPicker = viewChild<EmployeeSearchSelect>('functionalManagerPicker');
 
   private fb = inject(FormBuilder);
   private jobSvc = inject(JobDetailsService);
@@ -81,6 +76,36 @@ export class JobDetailsComponent implements OnInit {
   filteredDesignations = signal<DesignationLookup[]>([]);
   locations = signal<OfficeLocation[]>([]);
   shifts = signal<WorkShift[]>([]);
+  /** Manager/executive-grade people of the department chosen in the form (from the database). */
+  managers = signal<ManagerLookup[]>([]);
+  private departmentChosen = signal(false);
+
+  readonly managerPlaceholderKey = computed(() => {
+    if (!this.departmentChosen()) return 'employee.jobDetails.formFields.managerSelectDepartmentFirst';
+    return this.managers().length
+      ? 'employee.jobDetails.formFields.managerSelect'
+      : 'employee.jobDetails.formFields.managerNone';
+  });
+  /** Everyone offered except the employee being edited. */
+  private readonly managerChoices = computed(() =>
+    this.managers().filter((m) => m.employeeId !== this.employeeId()),
+  );
+  readonly reportingOptions = computed(() =>
+    this.withCurrentManager(
+      this.managerChoices(),
+      this.currentJob()?.reportingManagerId,
+      this.currentJob()?.reportingManagerName,
+      this.currentJob()?.reportingManagerCode,
+    ),
+  );
+  readonly functionalOptions = computed(() =>
+    this.withCurrentManager(
+      this.managerChoices(),
+      this.currentJob()?.functionalManagerId,
+      this.currentJob()?.functionalManagerName,
+      this.currentJob()?.functionalManagerCode,
+    ),
+  );
 
   readonly workModes = ['ON_SITE', 'REMOTE', 'HYBRID'];
 
@@ -121,6 +146,41 @@ export class JobDetailsComponent implements OnInit {
           this.filteredDesignations.set(this.designations());
         }
       });
+
+    // The manager lists follow the department; the old choice no longer applies.
+    this.form.controls.departmentId.valueChanges
+      .pipe(
+        tap((deptId) => {
+          this.form.controls.reportingManagerId.setValue(null);
+          this.form.controls.functionalManagerId.setValue(null);
+          this.departmentChosen.set(!!deptId);
+          this.managers.set([]);
+        }),
+        switchMap((deptId) =>
+          deptId
+            ? this.empSvc.getDepartmentManagers(+deptId).pipe(catchError(() => of(null)))
+            : of(null),
+        ),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((res) => this.managers.set(res?.success ? res.data : []));
+  }
+
+  /**
+   * While editing the current record the managers are shown read-only: keep the saved ones in the list
+   * even when they are not manager-grade of this department any more, so the select can display them.
+   */
+  private withCurrentManager(
+    list: ManagerLookup[],
+    id: number | undefined,
+    name: string | undefined,
+    code: string | undefined,
+  ): ManagerLookup[] {
+    if (this.isNewAssignment() || !id || !name || list.some((m) => m.employeeId === id)) return list;
+    return [
+      ...list,
+      { employeeId: id, employeeCode: code ?? '', fullNameEn: name, designationTitle: '', gradeLevel: '' },
+    ];
   }
 
   // ── Load current job ──────────────────────────────────────
@@ -258,19 +318,6 @@ export class JobDetailsComponent implements OnInit {
       effectiveFrom: job.effectiveFrom,
       remarks: job.remarks ?? '',
     });
-
-    // patchValue already cleared the pickers' display text via writeValue(null)
-    // where there's no manager — only set a label where one exists.
-    if (job.reportingManagerName) {
-      this.reportingManagerPicker()?.setInitialLabel(
-        `${job.reportingManagerName} (${job.reportingManagerCode})`,
-      );
-    }
-    if (job.functionalManagerName) {
-      this.functionalManagerPicker()?.setInitialLabel(
-        `${job.functionalManagerName} (${job.functionalManagerCode})`,
-      );
-    }
 
     this.showModal.set(true);
   }

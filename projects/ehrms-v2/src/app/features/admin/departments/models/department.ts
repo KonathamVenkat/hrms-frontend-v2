@@ -6,6 +6,8 @@ export interface Department {
   nameAr: string;
   description?: string;
   headEmployeeId?: number;
+  /** Read-only; the head is set from the employee's job details. */
+  headEmployeeName?: string;
   costCenterCode?: string;
   isActive: boolean;
   createdAt?: string;
@@ -18,7 +20,7 @@ export interface DepartmentRequest {
   name: string;
   nameAr: string;
   description?: string;
-  /** Not editable on this screen, but a PUT replaces the record, so the current value is sent back. */
+  /** Not editable on this screen (set from the employee's job details), but a PUT replaces the record, so the current value is sent back. */
   headEmployeeId?: number;
   costCenterCode?: string;
   isActive?: boolean;

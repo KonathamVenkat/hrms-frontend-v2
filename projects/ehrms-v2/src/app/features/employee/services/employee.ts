@@ -9,6 +9,7 @@ import {
   CreatedEmployee,
   EmployeeQueryParams,
   DepartmentLookup,
+  ManagerLookup,
   DesignationLookup,
   CreateEmployeePayload,
   UpdateEmployeePayload,
@@ -59,6 +60,11 @@ export class EmployeeService {
   // ── Departments lookup ────────────────────────────────────
   getDepartments(): Observable<ApiResponse<DepartmentLookup[]>> {
     return this.http.get<ApiResponse<DepartmentLookup[]>>(`${this.deptUrl}/lookup`);
+  }
+
+  // ── Managers of a department (reporting / functional manager pickers) ──
+  getDepartmentManagers(deptId: number): Observable<ApiResponse<ManagerLookup[]>> {
+    return this.http.get<ApiResponse<ManagerLookup[]>>(`${this.deptUrl}/${deptId}/managers`);
   }
 
   // ── Designations lookup (all) ─────────────────────────────

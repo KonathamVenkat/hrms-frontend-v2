@@ -1,0 +1,101 @@
+<div class="head-card">
+  <div class="head-card-header">
+    <span class="material-icons" aria-hidden="true">badge</span>
+    <h3 class="head-card-title">{{ 'employee.departmentHead.title' | translate }}</h3>
+  </div>
+  <div class="head-card-body">
+    @if (successMsg()) {
+      <div class="head-alert head-alert-success" role="status">
+        <span class="material-icons" aria-hidden="true">check_circle</span>{{ successMsg() }}
+      </div>
+    }
+    @if (info.isLoading()) {
+      <p class="head-state" role="status">{{ 'employee.departmentHead.loading' | translate }}</p>
+    } @else if (info.error()) {
+      <div class="head-alert head-alert-error" role="alert">
+        <span class="material-icons" aria-hidden="true">error_outline</span>
+        <span>{{ 'employee.departmentHead.errors.loadFailed' | translate }}</span>
+        <button type="button" class="head-btn" (click)="info.reload()">
+          {{ 'employee.departmentHead.retry' | translate }}
+        </button>
+      </div>
+    } @else if (info.value(); as i) {
+      <p class="head-status" dir="auto">
+        @if (i.head) {
+          {{ 'employee.departmentHead.isHead' | translate: { department: i.departmentName } }}
+        } @else if (i.currentHeadName) {
+          {{
+            'employee.departmentHead.otherHead'
+              | translate: { name: i.currentHeadName, department: i.departmentName }
+          }}
+        } @else {
+          {{ 'employee.departmentHead.noHead' | translate: { department: i.departmentName } }}
+        }
+      </p>
+      <button type="button" class="head-btn" (click)="openConfirm()">
+        {{
+          (i.head ? 'employee.departmentHead.remove' : 'employee.departmentHead.make') | translate
+        }}
+      </button>
+    }
+  </div>
+</div>
+
+@if (confirming()) {
+  @let i = info.value();
+  <div class="modal-backdrop" (click)="closeConfirm()">
+    <div
+      class="confirm-dialog"
+      (click)="$event.stopPropagation()"
+      [appAccessibleDialog]="'dh-confirm-title'"
+      (dialogClosed)="closeConfirm()"
+      cdkTrapFocus
+      cdkTrapFocusAutoCapture
+    >
+      <div class="confirm-icon" [class.icon-warn]="i?.head" [class.icon-info]="!i?.head">
+        <span aria-hidden="true" class="material-icons">badge</span>
+      </div>
+      <h3 id="dh-confirm-title" class="confirm-title">
+        {{
+          (i?.head ? 'employee.departmentHead.removeTitle' : 'employee.departmentHead.makeTitle')
+            | translate
+        }}
+      </h3>
+      <p class="confirm-msg" dir="auto">
+        <strong>{{ i?.departmentName }}</strong>
+        <br />
+        {{
+          (i?.head ? 'employee.departmentHead.removeMsg' : 'employee.departmentHead.makeMsg')
+            | translate
+        }}
+        @if (replacedName(); as old) {
+          <br />{{ 'employee.departmentHead.replaceMsg' | translate: { name: old } }}
+        }
+      </p>
+      @if (confirmError()) {
+        <div class="modal-alert confirm-alert" role="alert">
+          <span aria-hidden="true" class="material-icons">error_outline</span
+          ><span dir="auto">{{ confirmError() }}</span>
+        </div>
+      }
+      <div class="confirm-actions">
+        <button type="button" class="btn-cancel" [disabled]="saving()" (click)="closeConfirm()">
+          {{ 'common.cancel' | translate }}
+        </button>
+        <button
+          type="button"
+          class="btn-confirm"
+          [class.btn-danger]="i?.head"
+          [class.btn-success]="!i?.head"
+          [disabled]="saving()"
+          (click)="confirm()"
+        >
+          {{
+            (i?.head ? 'employee.departmentHead.remove' : 'employee.departmentHead.make')
+              | translate
+          }}
+        </button>
+      </div>
+    </div>
+  </div>
+}
