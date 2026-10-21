@@ -38,6 +38,8 @@ export interface MasterConfig {
   parent?: { endpoint: string; field: ParentField };
   /** The master has an optional sort order (grades), shown and edited on the screen. */
   sortOrder?: boolean;
+  /** The list is long: the server pages, searches and filters it (GET <endpoint>/search). */
+  paged?: boolean;
 }
 
 export const BANKS: MasterConfig = { key: 'banks', endpoint: 'banks', icon: 'account_balance' };
@@ -74,6 +76,7 @@ const CITIES: MasterConfig = {
   endpoint: 'cities',
   icon: 'location_city',
   parent: { endpoint: 'provinces', field: 'provinceId' },
+  paged: true,
 };
 const RELIGIONS: MasterConfig = { key: 'religions', endpoint: 'religions', icon: 'menu_book' };
 const NATIONALITIES: MasterConfig = {
@@ -97,6 +100,7 @@ const LANGUAGE_LEVELS: MasterConfig = {
   key: 'languageLevels',
   endpoint: 'language-levels',
   icon: 'bar_chart',
+  sortOrder: true,
 };
 const HOUSE_TYPES: MasterConfig = { key: 'houseTypes', endpoint: 'house-types', icon: 'home' };
 const RELATION_TYPES: MasterConfig = {

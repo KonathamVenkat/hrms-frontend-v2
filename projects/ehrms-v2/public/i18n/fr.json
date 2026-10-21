@@ -2153,7 +2153,8 @@
         "deactivateTitle": "Désactiver la ville ?",
         "activateTitle": "Activer la ville ?",
         "parent": "Province",
-        "parentPlaceholder": "Sélectionner une province"
+        "parentPlaceholder": "Sélectionner une province",
+        "filterParentAll": "Toutes les provinces"
       },
       "religions": {
         "title": "Religions",
@@ -2314,7 +2315,8 @@
         "deleteTitle": "Supprimer le grade ?",
         "deactivateTitle": "Désactiver le grade ?",
         "activateTitle": "Activer le grade ?"
-      }
+      },
+      "pageOf": "Page {{page}} sur {{pages}}"
     }
   },
   "recruitment": {

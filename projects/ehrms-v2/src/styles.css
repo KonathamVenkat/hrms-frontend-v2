@@ -1722,6 +1722,24 @@ html[dir='rtl'] * {
   background-image: var(--grad-primary);
   color: #fff;
 }
+.admin-page .master-pager {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-3);
+  margin-block-start: var(--space-4);
+  font-size: 14px;
+}
+.admin-page .master-pager .tab-btn {
+  min-inline-size: 44px;
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: var(--radius-md);
+}
+.admin-page .master-pager .tab-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
 .admin-page :is(.filter-select, .tab-btn, .clear-btn, .year-btn):focus-visible {
   outline: 2px solid var(--mat-sys-primary);
   outline-offset: -2px;

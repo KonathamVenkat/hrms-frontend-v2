@@ -4,11 +4,13 @@
       <h1 class="page-title">{{ t + '.title' | translate }}</h1>
       <div class="stat-chips">
         <span class="chip chip-total">{{
-          'admin.masters.totalChip' | translate: { count: records().length }
+          'admin.masters.totalChip' | translate: { count: totalCount() }
         }}</span>
-        <span class="chip chip-active">{{
-          'admin.masters.activeChip' | translate: { count: activeCount() }
-        }}</span>
+        @if (!cfg.paged) {
+          <span class="chip chip-active">{{
+            'admin.masters.activeChip' | translate: { count: activeCount() }
+          }}</span>
+        }
       </div>
     </div>
     <button type="button" class="btn-add" (click)="openCreate()">
@@ -36,25 +38,37 @@
         [placeholder]="t + '.search' | translate"
         [attr.aria-label]="t + '.search' | translate"
         [value]="filterText()"
-        (input)="filterText.set($any($event.target).value)"
+        (input)="setText($any($event.target).value)"
       />
       @if (filterText()) {
         <button
           type="button"
           class="clear-btn"
           [attr.aria-label]="'common.clear' | translate"
-          (click)="filterText.set('')"
+          (click)="setText('')"
         >
           <span aria-hidden="true" class="material-icons">close</span>
         </button>
       }
     </div>
+    @if (cfg.paged && cfg.parent) {
+      <select
+        class="filter-select"
+        [attr.aria-label]="t + '.parent' | translate"
+        (change)="setParentFilter($any($event.target).value)"
+      >
+        <option value="">{{ t + '.filterParentAll' | translate }}</option>
+        @for (p of parents(); track p.id) {
+          <option [value]="p.id" [selected]="filterParent() === p.id">{{ p.name }}</option>
+        }
+      </select>
+    }
     <div class="tab-filter">
       <button
         type="button"
         class="tab-btn"
         [class.active]="filterActive() === 'all'"
-        (click)="filterActive.set('all')"
+        (click)="setStatus('all')"
       >
         {{ 'common.all' | translate }}
       </button>
@@ -62,7 +76,7 @@
         type="button"
         class="tab-btn"
         [class.active]="filterActive() === 'active'"
-        (click)="filterActive.set('active')"
+        (click)="setStatus('active')"
       >
         {{ 'common.active' | translate }}
       </button>
@@ -70,7 +84,7 @@
         type="button"
         class="tab-btn"
         [class.active]="filterActive() === 'inactive'"
-        (click)="filterActive.set('inactive')"
+        (click)="setStatus('inactive')"
       >
         {{ 'common.inactive' | translate }}
       </button>
@@ -154,6 +168,35 @@
         </div>
       }
     </div>
+    @if (cfg.paged && totalElements() > 0) {
+      <nav class="master-pager" [attr.aria-label]="'employee.list.paginationLabel' | translate">
+        <span role="status">{{
+          'employee.list.showing'
+            | translate: { from: rangeFrom(), to: rangeTo(), total: totalElements() }
+        }}</span>
+        <button
+          type="button"
+          class="tab-btn"
+          [attr.aria-label]="'employee.list.prevPage' | translate"
+          [disabled]="page() === 0"
+          (click)="changePage(page() - 1)"
+        >
+          <span class="material-icons mirror-rtl" aria-hidden="true">chevron_left</span>
+        </button>
+        <span>{{
+          'admin.masters.pageOf' | translate: { page: page() + 1, pages: totalPages() }
+        }}</span>
+        <button
+          type="button"
+          class="tab-btn"
+          [attr.aria-label]="'employee.list.nextPage' | translate"
+          [disabled]="page() >= totalPages() - 1"
+          (click)="changePage(page() + 1)"
+        >
+          <span class="material-icons mirror-rtl" aria-hidden="true">chevron_right</span>
+        </button>
+      </nav>
+    }
   }
 </div>
 

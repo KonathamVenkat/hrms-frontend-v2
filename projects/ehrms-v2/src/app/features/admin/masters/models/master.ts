@@ -12,7 +12,7 @@ export interface MasterRecord {
   code: string;
   name: string;
   nameAr: string;
-  /** Grades only. */
+  /** Grades and language levels only. */
   sortOrder?: number;
   isActive: boolean;
   createdAt?: string;
@@ -31,11 +31,27 @@ export interface MasterRequest {
   code: string;
   name: string;
   nameAr: string;
-  /** Grades only; null clears it. */
+  /** Grades and language levels only; null clears it. */
   sortOrder?: number | null;
   isActive?: boolean;
   /** Version the screen was loaded with; the server answers 409 if the row changed since. */
   version?: number;
+}
+
+/** Mirrors PagedResponse<T> of the paged masters (GET /api/v1/admin/<endpoint>/search). */
+export interface MasterPage {
+  content: MasterRecord[];
+  totalPages: number;
+  totalElements: number;
+  number: number;
+}
+
+export interface MasterSearch {
+  q: string;
+  parentId: number | null;
+  active: boolean | null;
+  page: number;
+  size: number;
 }
 
 export interface ApiResponse<T> {

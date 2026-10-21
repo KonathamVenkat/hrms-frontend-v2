@@ -13,7 +13,7 @@ import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angula
 import { CdkTrapFocus } from '@angular/cdk/a11y';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { finalize } from 'rxjs';
+import { Subject, catchError, debounceTime, finalize, merge, of, switchMap, tap } from 'rxjs';
 import { getHttpErrorMessage } from '../../../../../core/utils/http-error-message';
 import { AccessibleDialogDirective } from '../../../../../core/directives/accessible-dialog.directive';
 import { MasterDataService } from '../../services/master-data';
@@ -23,6 +23,10 @@ import { MasterConfig } from '../../masters.config';
 type FormKey = 'code' | 'name' | 'nameAr' | 'parentId' | 'sortOrder';
 type ConfirmAction = 'toggle' | 'delete';
 type StatusFilter = 'all' | 'active' | 'inactive';
+
+/** Rows per page and typing pause for the masters the server pages (cities). */
+const PAGE_SIZE = 20;
+const SEARCH_DEBOUNCE_MS = 300;
 
 /**
  * Shared screen for the simple code / English name / Arabic name masters (banks, companies, geography,
@@ -59,6 +63,21 @@ export class MasterData implements OnInit {
   confirmError = signal<string | null>(null);
   filterText = signal('');
   filterActive = signal<StatusFilter>('all');
+  /** Paged masters only: the page shown (0-based), the totals, and the optional parent filter. */
+  page = signal(0);
+  totalElements = signal(0);
+  totalPages = signal(0);
+  filterParent = signal<number | null>(null);
+  private readonly typed$ = new Subject<void>();
+  private readonly now$ = new Subject<void>();
+
+  readonly totalCount = computed(() =>
+    this.cfg.paged ? this.totalElements() : this.records().length,
+  );
+  readonly rangeFrom = computed(() =>
+    this.totalElements() === 0 ? 0 : this.page() * PAGE_SIZE + 1,
+  );
+  readonly rangeTo = computed(() => Math.min((this.page() + 1) * PAGE_SIZE, this.totalElements()));
 
   readonly activeCount = computed(() => this.records().filter((r) => r.isActive).length);
 
@@ -74,6 +93,7 @@ export class MasterData implements OnInit {
   });
 
   readonly filtered = computed(() => {
+    if (this.cfg.paged) return this.records();
     const text = this.filterText().toLowerCase();
     const status = this.filterActive();
     return this.records().filter((r) => {
@@ -106,7 +126,77 @@ export class MasterData implements OnInit {
         this.form.controls.code.setValue(v.toUpperCase(), { emitEvent: false });
       }
     });
+    if (this.cfg.paged) this.listenForPages();
     this.load();
+  }
+
+  /** Server-paged masters: a typing pause or any other change asks for a page; only the latest answer counts. */
+  private listenForPages(): void {
+    merge(this.typed$.pipe(debounceTime(SEARCH_DEBOUNCE_MS)), this.now$)
+      .pipe(
+        tap(() => this.loading.set(true)),
+        switchMap(() =>
+          this.svc
+            .search(this.cfg.endpoint, this.cfg.parent?.field, {
+              q: this.filterText().trim(),
+              parentId: this.filterParent(),
+              active: this.activeFilterValue(),
+              page: this.page(),
+              size: PAGE_SIZE,
+            })
+            .pipe(
+              catchError((err: HttpErrorResponse) => {
+                this.error.set(this.messageOf(err, `${this.t}.loadFailed`));
+                return of(null);
+              }),
+            ),
+        ),
+        takeUntilDestroyed(this.destroy),
+      )
+      .subscribe((res) => {
+        this.loading.set(false);
+        if (!res) return;
+        if (!res.success) {
+          this.error.set(res.message);
+          return;
+        }
+        this.records.set(res.data.content);
+        this.totalElements.set(res.data.totalElements);
+        this.totalPages.set(res.data.totalPages);
+        // The last row of the last page was deleted or filtered away: show the new last page instead of nothing.
+        if (res.data.content.length === 0 && this.page() > 0 && res.data.totalPages > 0) {
+          this.changePage(res.data.totalPages - 1);
+        }
+      });
+  }
+
+  private activeFilterValue(): boolean | null {
+    const s = this.filterActive();
+    return s === 'all' ? null : s === 'active';
+  }
+
+  /** Search box: a new text starts again from the first page, after a short typing pause. */
+  setText(value: string): void {
+    this.filterText.set(value);
+    if (!this.cfg.paged) return;
+    this.page.set(0);
+    this.typed$.next();
+  }
+
+  setStatus(status: StatusFilter): void {
+    this.filterActive.set(status);
+    this.changePage(0);
+  }
+
+  setParentFilter(value: string): void {
+    this.filterParent.set(value ? Number(value) : null);
+    this.changePage(0);
+  }
+
+  changePage(page: number): void {
+    if (!this.cfg.paged) return;
+    this.page.set(page);
+    this.now$.next();
   }
 
   parentOf(r: MasterRecord | null): number | undefined {
@@ -124,6 +214,10 @@ export class MasterData implements OnInit {
   }
 
   load(): void {
+    if (this.cfg.paged) {
+      this.changePage(this.page());
+      return;
+    }
     this.loading.set(true);
     this.svc
       .getAll(this.cfg.endpoint)

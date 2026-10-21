@@ -26,6 +26,7 @@ const region: MasterRecord = {
 function setup(cfg: MasterConfig) {
   const svc = {
     getAll: vi.fn((endpoint: string) => reply(endpoint === 'regions' ? [region] : [])),
+    search: vi.fn(() => reply({ content: [region], totalElements: 45, totalPages: 3, number: 0 })),
     create: vi.fn(() => reply({ ...region, id: 9, name: 'Created' })),
     update: vi.fn(),
     deactivate: vi.fn(),
@@ -120,5 +121,85 @@ describe('MasterData (reference masters)', () => {
 
     expect(svc.create).not.toHaveBeenCalled();
     expect(el.querySelector('.field-error')).not.toBeNull();
+  });
+
+  describe('paged master (cities)', () => {
+    beforeEach(() => vi.useFakeTimers());
+    afterEach(() => vi.useRealTimers());
+
+    it('asks the server for the first page and does not load the whole list', () => {
+      const { svc, comp } = setup(config('cities'));
+      vi.advanceTimersByTime(0);
+
+      expect(svc.search).toHaveBeenCalledTimes(1);
+      expect(svc.search).toHaveBeenCalledWith('cities', 'provinceId', {
+        q: '',
+        parentId: null,
+        active: null,
+        page: 0,
+        size: 20,
+      });
+      expect(svc.getAll).not.toHaveBeenCalledWith('cities');
+      expect(comp.totalCount()).toBe(45);
+      expect(comp.totalPages()).toBe(3);
+    });
+
+    it('waits for a typing pause, sends one request and goes back to the first page', () => {
+      const { svc, comp } = setup(config('cities'));
+      comp.changePage(2);
+      svc.search.mockClear();
+
+      comp.setText('ju');
+      comp.setText('juba');
+      vi.advanceTimersByTime(299);
+      expect(svc.search).not.toHaveBeenCalled();
+      vi.advanceTimersByTime(1);
+
+      expect(svc.search).toHaveBeenCalledTimes(1);
+      expect(svc.search).toHaveBeenCalledWith(
+        'cities',
+        'provinceId',
+        expect.objectContaining({ q: 'juba', page: 0 }),
+      );
+    });
+
+    it('sends the status and province filters and returns to page 0', () => {
+      const { svc, comp } = setup(config('cities'));
+      comp.changePage(1);
+      svc.search.mockClear();
+
+      comp.setStatus('inactive');
+      comp.setParentFilter('7');
+
+      expect(svc.search).toHaveBeenLastCalledWith(
+        'cities',
+        'provinceId',
+        expect.objectContaining({ active: false, parentId: 7, page: 0 }),
+      );
+    });
+
+    it('moves between pages and shows the range', () => {
+      const { svc, comp, fixture, el } = setup(config('cities'));
+      comp.changePage(1);
+      fixture.detectChanges();
+
+      expect(svc.search).toHaveBeenLastCalledWith(
+        'cities',
+        'provinceId',
+        expect.objectContaining({ page: 1 }),
+      );
+      expect(comp.rangeFrom()).toBe(21);
+      expect(comp.rangeTo()).toBe(40);
+      expect(el.querySelector('.master-pager')).not.toBeNull();
+    });
+
+    it('does not page a master that is not server-paged', () => {
+      const { svc, comp, el } = setup(config('regions'));
+
+      comp.changePage(2);
+
+      expect(svc.search).not.toHaveBeenCalled();
+      expect(el.querySelector('.master-pager')).toBeNull();
+    });
   });
 });

@@ -2153,7 +2153,8 @@
         "deactivateTitle": "تعطيل مدينة؟",
         "activateTitle": "تفعيل مدينة؟",
         "parent": "مقاطعة",
-        "parentPlaceholder": "اختر مقاطعة"
+        "parentPlaceholder": "اختر مقاطعة",
+        "filterParentAll": "كل المقاطعات"
       },
       "religions": {
         "title": "الديانات",
@@ -2314,7 +2315,8 @@
         "deleteTitle": "حذف درجة؟",
         "deactivateTitle": "تعطيل درجة؟",
         "activateTitle": "تفعيل درجة؟"
-      }
+      },
+      "pageOf": "صفحة {{page}} من {{pages}}"
     }
   },
   "recruitment": {
