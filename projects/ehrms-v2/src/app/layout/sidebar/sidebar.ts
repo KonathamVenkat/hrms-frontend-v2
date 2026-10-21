@@ -1,4 +1,5 @@
 import { Component, OnInit, signal, inject, ElementRef, ChangeDetectionStrategy } from '@angular/core';
+import { NgOptimizedImage } from '@angular/common';
 import { Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { MenuService, MenuDto } from '../../core/services/menu.service';
@@ -44,7 +45,7 @@ const DEFAULT_ICON_STYLE = { color: '#64748b', bg: '#f8fafc', activeBg: '#64748b
 @Component({
   selector: 'app-sidebar',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [TranslatePipe],
+  imports: [NgOptimizedImage, TranslatePipe],
   templateUrl: './sidebar.html',
   styleUrl: './sidebar.css',
   host: {

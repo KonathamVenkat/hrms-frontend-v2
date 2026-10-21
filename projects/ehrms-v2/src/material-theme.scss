@@ -145,6 +145,15 @@ html {
     )
   );
 
+  // Material's own small text (form hints and errors, chip labels, paginator) is 12px / 11px. The app's floor is
+  // 14px because many readers are over 70, so the three small sizes are raised, with roomier lines.
+  --mat-sys-body-small-size: 0.875rem;
+  --mat-sys-body-small-line-height: 1.25rem;
+  --mat-sys-label-medium-size: 0.875rem;
+  --mat-sys-label-medium-line-height: 1.25rem;
+  --mat-sys-label-small-size: 0.875rem;
+  --mat-sys-label-small-line-height: 1.25rem;
+
   // Global component restyle, done once here (44px = minimum touch target).
   @include mat.button-overrides(
     (
@@ -268,6 +277,12 @@ html {
   --glass-border: 1px solid light-dark(rgb(37 56 120 / 16%), rgb(255 255 255 / 12%));
   --glass-shine: inset 0 1px 0 light-dark(rgb(255 255 255 / 80%), rgb(255 255 255 / 10%));
   --glass-shadow: 0 6px 20px light-dark(rgb(37 56 120 / 16%), rgb(0 0 0 / 40%));
+  // Content cards: solid white, rounded, soft shadow (dashboard and every screen's cards).
+  --card-bg: light-dark(#fff, rgb(26 32 64));
+  --card-border: 1px solid light-dark(rgb(15 23 42 / 6%), rgb(255 255 255 / 10%));
+  --card-radius: 20px;
+  --card-shadow: 0 4px 20px light-dark(rgb(15 23 42 / 8%), rgb(0 0 0 / 40%));
+  --card-shadow-hover: 0 12px 28px light-dark(rgb(15 23 42 / 16%), rgb(0 0 0 / 55%));
   // Sidebar tint over the glass (vertical, so it needs no RTL flip).
   --sidebar-tint: linear-gradient(
     to bottom,

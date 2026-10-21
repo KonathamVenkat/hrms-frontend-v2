@@ -64,10 +64,10 @@
   align-items: center;
   gap: var(--space-3);
   padding: var(--space-3) var(--space-4);
-  background: var(--table-surface);
-  border: var(--glass-border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--glass-shine), var(--glass-shadow);
+  background: var(--card-bg);
+  border: var(--card-border);
+  border-radius: var(--card-radius);
+  box-shadow: var(--card-shadow);
 }
 .stat-icon {
   font-size: 26px;
@@ -95,7 +95,7 @@
   font-variant-numeric: tabular-nums;
 }
 .stat-lbl {
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 600;
   color: var(--mat-sys-on-surface-variant);
 }
@@ -203,7 +203,7 @@
   border-radius: 999px;
   background-image: var(--grad-primary);
   color: #fff;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 700;
 }
 
@@ -233,7 +233,7 @@
 }
 .emp-type,
 .popup-emp-code {
-  font-size: 12px;
+  font-size: 14px;
   color: var(--mat-sys-on-surface-variant);
 }
 
@@ -272,7 +272,7 @@
 }
 .popup-dow {
   display: block;
-  font-size: 12px;
+  font-size: 14px;
   color: var(--mat-sys-on-surface-variant);
 }
 .popup-tags {
@@ -326,7 +326,7 @@
   font-weight: 600;
 }
 .holiday-name-ar {
-  font-size: 12px;
+  font-size: 14px;
   color: var(--mat-sys-on-surface-variant);
   direction: rtl;
 }
@@ -389,7 +389,7 @@
     padding: var(--space-1);
   }
   .day-number {
-    font-size: 12px;
+    font-size: 14px;
   }
 }
 @media (prefers-reduced-motion: reduce) {

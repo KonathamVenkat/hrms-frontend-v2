@@ -2,10 +2,7 @@
 
 .topbar {
   block-size: var(--header-height);
-  margin: 12px 12px 0;
-  border: var(--glass-border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--glass-shine), var(--glass-shadow);
+  border-block-end: 1px solid var(--mat-sys-outline-variant);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -21,7 +18,6 @@
   position: absolute;
   inset: 0;
   z-index: -1;
-  border-radius: inherit;
   background: var(--glass-bg);
   -webkit-backdrop-filter: var(--glass-blur);
   backdrop-filter: var(--glass-blur);
@@ -241,9 +237,6 @@
 }
 
 @media (max-width: 767.98px) {
-  .topbar {
-    margin: 8px 8px 0;
-  }
   .icon-btn.nav-toggle {
     display: none;
   }

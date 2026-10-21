@@ -10,7 +10,7 @@
   border-radius: 999px;
   background: var(--mat-sys-primary-container);
   color: var(--mat-sys-on-primary-container);
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 700;
 }
 
@@ -22,10 +22,10 @@
 }
 .addr-card {
   overflow: hidden;
-  background: var(--glass-bg);
-  border: var(--glass-border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--glass-shine), var(--glass-shadow);
+  background: var(--card-bg);
+  border: var(--card-border);
+  border-radius: var(--card-radius);
+  box-shadow: var(--card-shadow);
   -webkit-backdrop-filter: var(--glass-blur);
   backdrop-filter: var(--glass-blur);
   transition: box-shadow var(--motion-base);
@@ -59,7 +59,7 @@
 .addr-type-badge {
   padding: 2px var(--space-3);
   border-radius: 999px;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -88,7 +88,7 @@
   border-radius: 999px;
   background: var(--status-pending-bg);
   color: var(--status-pending-fg);
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 700;
 }
 .primary-badge .material-icons {
@@ -190,7 +190,7 @@
   border-radius: 999px;
   background: var(--mat-sys-surface-container-high);
   color: var(--mat-sys-on-surface-variant);
-  font-size: 11px;
+  font-size: 14px;
 }
 
 @media (prefers-reduced-transparency: reduce) {

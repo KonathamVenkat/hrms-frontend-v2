@@ -3,7 +3,7 @@
 
 :host {
   --rail-w: 64px;
-  --rail-gap: 12px; /* floating-card margin; 0 for the mobile drawer */
+  --rail-gap: 0px; /* flush with the window edge; flyout offsets still read it */
   --flyout-w: 240px;
 }
 :host-context(.nav-expanded) {
@@ -12,12 +12,8 @@
 
 .sidebar-rail {
   inline-size: var(--rail-w);
-  margin-block: var(--rail-gap);
-  margin-inline-start: var(--rail-gap);
-  min-block-size: calc(100vh - 2 * var(--rail-gap));
-  border: var(--glass-border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--glass-shine), var(--glass-shadow);
+  min-block-size: 100vh;
+  border-inline-end: 1px solid var(--mat-sys-outline-variant);
   display: flex;
   flex-direction: column;
   position: relative;
@@ -32,7 +28,6 @@
   position: absolute;
   inset: 0;
   z-index: -1;
-  border-radius: inherit;
   background: var(--sidebar-tint), var(--glass-bg);
   -webkit-backdrop-filter: var(--glass-blur);
   backdrop-filter: var(--glass-blur);
@@ -57,14 +52,13 @@
 }
 .logo-avatar {
   inline-size: 44px;
-  block-size: 36px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  block-size: 44px;
   border-radius: var(--radius-md);
-  background: var(--grad-primary);
-  color: #fff;
-  box-shadow: var(--primary-shadow);
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgb(0 14 31 / 28%);
+}
+.logo-avatar img {
+  display: block;
 }
 
 /* ── Nav list ── */
@@ -291,10 +285,9 @@
   :host,
   :host-context(.nav-expanded) {
     --rail-w: 280px;
-    --rail-gap: 0px;
   }
   .sidebar-rail {
-    border-radius: 0;
+    box-shadow: var(--glass-shadow); /* the drawer floats over the scrim */
     position: fixed;
     inset-block: 0;
     inset-inline-start: 0;

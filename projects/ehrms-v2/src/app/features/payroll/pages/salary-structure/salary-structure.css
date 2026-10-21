@@ -41,7 +41,7 @@
   background: var(--table-header-bg);
   border-block-end: 1px solid var(--mat-sys-outline-variant);
   color: var(--mat-sys-on-surface-variant);
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -98,10 +98,10 @@
 }
 .structure-panel {
   overflow: hidden;
-  background: var(--table-surface);
-  border: var(--glass-border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--glass-shine), var(--glass-shadow);
+  background: var(--card-bg);
+  border: var(--card-border);
+  border-radius: var(--card-radius);
+  box-shadow: var(--card-shadow);
 }
 .inactive-panel {
   opacity: 0.7;
@@ -151,7 +151,7 @@ mat-panel-description {
   align-items: center;
   gap: var(--space-2);
   margin: 0 0 var(--space-2);
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;

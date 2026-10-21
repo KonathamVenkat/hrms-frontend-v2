@@ -16,7 +16,7 @@
   gap: var(--space-1);
   padding: 2px var(--space-3);
   border-radius: 999px;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 700;
 }
 .stat-chip .material-icons {
@@ -84,10 +84,10 @@
   flex-direction: column;
   gap: var(--space-3);
   padding: var(--space-4);
-  background: var(--glass-bg);
-  border: var(--glass-border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--glass-shine), var(--glass-shadow);
+  background: var(--card-bg);
+  border: var(--card-border);
+  border-radius: var(--card-radius);
+  box-shadow: var(--card-shadow);
   -webkit-backdrop-filter: var(--glass-blur);
   backdrop-filter: var(--glass-blur);
 }
@@ -118,7 +118,7 @@
   border-radius: var(--radius-sm);
   background: var(--mat-sys-surface-container-high);
   color: var(--mat-sys-on-surface-variant);
-  font-size: 10px;
+  font-size: 14px;
   font-weight: 700;
 }
 .doc-badges {
@@ -132,7 +132,7 @@
 .expiry-badge {
   padding: 2px var(--space-2);
   border-radius: 999px;
-  font-size: 11px;
+  font-size: 14px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -200,7 +200,7 @@
   align-items: center;
   gap: var(--space-1);
   font-family: 'IBM Plex Mono', monospace;
-  font-size: 12px;
+  font-size: 14px;
   color: var(--mat-sys-primary);
 }
 .doc-number .material-icons {
@@ -219,7 +219,7 @@
   gap: 2px;
 }
 .date-label {
-  font-size: 11px;
+  font-size: 14px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -244,7 +244,7 @@
   justify-content: space-between;
   gap: var(--space-2);
   color: var(--mat-sys-on-surface-variant);
-  font-size: 12px;
+  font-size: 14px;
 }
 .upload-date {
   unicode-bidi: plaintext;
@@ -308,7 +308,7 @@
 }
 .selected-size {
   color: var(--mat-sys-on-surface-variant);
-  font-size: 12px;
+  font-size: 14px;
 }
 .remove-file {
   inline-size: 44px;

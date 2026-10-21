@@ -30,7 +30,7 @@
 }
 .time-label,
 .stat-lbl {
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 600;
   text-transform: uppercase;
   color: var(--mat-sys-on-surface-variant);
@@ -85,7 +85,7 @@
 .day-chip {
   padding: 3px var(--space-2);
   border-radius: var(--radius-sm);
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 700;
 }
 .day-active {

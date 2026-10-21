@@ -40,10 +40,10 @@
 .form-card,
 .table-card,
 .mini-stat {
-  background: var(--table-surface);
-  border: var(--glass-border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--glass-shine), var(--glass-shadow);
+  background: var(--card-bg);
+  border: var(--card-border);
+  border-radius: var(--card-radius);
+  box-shadow: var(--card-shadow);
 }
 .form-card mat-card-header,
 .table-card mat-card-header {
@@ -104,7 +104,7 @@
   font-variant-numeric: tabular-nums;
 }
 .mini-label {
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -135,7 +135,7 @@
   background: transparent;
 }
 .req-table th {
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -157,7 +157,7 @@
   gap: var(--space-1);
   padding: 4px var(--space-3);
   border-radius: 999px;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 700;
   white-space: nowrap;
 }
@@ -188,7 +188,7 @@
   align-items: center;
   gap: var(--space-1);
   margin-block-start: var(--space-1);
-  font-size: 12px;
+  font-size: 14px;
   color: var(--status-rejected-fg);
 }
 .muted {

@@ -21,7 +21,7 @@
   border-radius: 999px;
   background: var(--mat-sys-primary-container);
   color: var(--mat-sys-on-primary-container);
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 700;
 }
 .pending-chip {
@@ -32,7 +32,7 @@
   border-radius: 999px;
   background: var(--status-pending-bg);
   color: var(--status-pending-fg);
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 700;
 }
 .pending-chip .material-icons {
@@ -46,10 +46,10 @@
   flex-wrap: wrap;
   gap: var(--space-3);
   padding: var(--space-3) var(--space-4);
-  background: var(--glass-bg);
-  border: var(--glass-border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--glass-shine), var(--glass-shadow);
+  background: var(--card-bg);
+  border: var(--card-border);
+  border-radius: var(--card-radius);
+  box-shadow: var(--card-shadow);
   -webkit-backdrop-filter: var(--glass-blur);
   backdrop-filter: var(--glass-blur);
 }
@@ -89,10 +89,10 @@
 
 .leave-card {
   overflow: hidden;
-  background: var(--table-surface);
-  border: var(--glass-border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--glass-shine), var(--glass-shadow);
+  background: var(--card-bg);
+  border: var(--card-border);
+  border-radius: var(--card-radius);
+  box-shadow: var(--card-shadow);
 }
 /* The inline edge shows the status only. */
 .card-pending {
@@ -151,7 +151,7 @@
   font-weight: 700;
 }
 .emp-code {
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 600;
   color: var(--mat-sys-primary);
 }
@@ -188,7 +188,7 @@
   border-radius: 999px;
   background: var(--status-approved-bg);
   color: var(--status-approved-fg);
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 700;
   white-space: nowrap;
 }

@@ -49,10 +49,10 @@
 .trend-card,
 .empty-card,
 .backfill-card {
-  background: var(--table-surface);
-  border: var(--glass-border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--glass-shine), var(--glass-shadow);
+  background: var(--card-bg);
+  border: var(--card-border);
+  border-radius: var(--card-radius);
+  box-shadow: var(--card-shadow);
 }
 
 /* ── Stats grid ──────────────────────────────────────────── */
@@ -90,7 +90,7 @@
 }
 .stat-lbl,
 .pct-label {
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -157,7 +157,7 @@
   border-radius: 999px;
   background: var(--status-active-bg);
   color: var(--status-active-fg);
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 700;
 }
 .att-bar {
@@ -194,7 +194,7 @@
 }
 .trend-month-label,
 .trend-pct {
-  font-size: 12px;
+  font-size: 14px;
   color: var(--mat-sys-on-surface-variant);
   font-variant-numeric: tabular-nums;
 }

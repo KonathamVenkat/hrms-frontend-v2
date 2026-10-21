@@ -49,7 +49,7 @@
   padding: 0 var(--space-2);
   border-radius: 999px;
   background: rgb(255 255 255 / 25%);
-  font-size: 12px;
+  font-size: 14px;
 }
 .tab-btn:not(.active) .tab-count {
   background: var(--mat-sys-primary-container);
@@ -115,10 +115,10 @@
 }
 .job-card {
   overflow: hidden;
-  background: var(--glass-bg);
-  border: var(--glass-border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--glass-shine), var(--glass-shadow);
+  background: var(--card-bg);
+  border: var(--card-border);
+  border-radius: var(--card-radius);
+  box-shadow: var(--card-shadow);
   -webkit-backdrop-filter: var(--glass-blur);
   backdrop-filter: var(--glass-blur);
 }
@@ -129,7 +129,7 @@
   padding: var(--space-3) var(--space-5);
   background: var(--table-header-bg);
   color: var(--mat-sys-on-surface-variant);
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -180,7 +180,7 @@
 }
 .val-code {
   font-family: 'IBM Plex Mono', monospace;
-  font-size: 12px;
+  font-size: 14px;
   color: var(--mat-sys-primary);
   unicode-bidi: plaintext;
 }
@@ -195,7 +195,7 @@
   border-radius: 999px;
   background: var(--status-approved-bg);
   color: var(--status-approved-fg);
-  font-size: 11px;
+  font-size: 14px;
   font-weight: 700;
 }
 .grade-badge-sm {
@@ -207,12 +207,12 @@
   align-self: flex-start;
   padding: 2px var(--space-3);
   border-radius: 999px;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 700;
   text-transform: capitalize;
 }
 .work-mode-badge.sm {
-  font-size: 11px;
+  font-size: 14px;
 }
 .wm-onsite {
   background: var(--status-active-bg);
@@ -264,10 +264,10 @@
   color: var(--mat-sys-outline);
 }
 .timeline-card {
-  background: var(--glass-bg);
-  border: var(--glass-border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--glass-shine), var(--glass-shadow);
+  background: var(--card-bg);
+  border: var(--card-border);
+  border-radius: var(--card-radius);
+  box-shadow: var(--card-shadow);
   -webkit-backdrop-filter: var(--glass-blur);
   backdrop-filter: var(--glass-blur);
   overflow: hidden;
@@ -307,7 +307,7 @@
   border-radius: 999px;
   background: var(--status-active-bg);
   color: var(--status-active-fg);
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 700;
 }
 .timeline-details {

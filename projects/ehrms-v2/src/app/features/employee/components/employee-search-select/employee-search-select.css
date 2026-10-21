@@ -26,7 +26,7 @@
   border: 1.5px solid var(--border);
   border-radius: 8px;
   font-size: 13px;
-  font-family: 'Outfit', sans-serif;
+  font-family: inherit;
   color: var(--text);
   background: #f8fafc;
   outline: none;
@@ -75,7 +75,7 @@
 
 .ess-status {
   padding: 10px 12px;
-  font-size: 12px;
+  font-size: 14px;
   color: var(--muted);
 }
 
@@ -90,7 +90,7 @@
   background: none;
   text-align: start;
   cursor: pointer;
-  font-family: 'Outfit', sans-serif;
+  font-family: inherit;
 }
 .ess-option:hover {
   background: #f4f7f9;
@@ -101,7 +101,7 @@
   color: var(--text);
 }
 .ess-code {
-  font-size: 11px;
+  font-size: 14px;
   color: var(--teal);
   font-weight: 600;
 }

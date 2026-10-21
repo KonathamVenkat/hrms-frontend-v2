@@ -9,9 +9,9 @@
 .profile-card,
 .detail-tabs,
 .info-card {
-  background: var(--glass-bg);
-  border: var(--glass-border);
-  box-shadow: var(--glass-shine), var(--glass-shadow);
+  background: var(--card-bg);
+  border: var(--card-border);
+  box-shadow: var(--card-shadow);
   -webkit-backdrop-filter: var(--glass-blur);
   backdrop-filter: var(--glass-blur);
 }
@@ -84,7 +84,7 @@
   background: var(--mat-sys-primary-container);
   color: var(--mat-sys-on-primary-container);
   font-family: 'IBM Plex Mono', monospace;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 600;
 }
 .sep {
@@ -98,7 +98,7 @@
   border-radius: 999px;
   background: var(--status-approved-bg);
   color: var(--status-approved-fg);
-  font-size: 11px;
+  font-size: 14px;
   font-weight: 700;
 }
 .profile-dept {
@@ -182,7 +182,7 @@
   padding: var(--space-3) var(--space-5);
   background: var(--table-header-bg);
   color: var(--mat-sys-on-surface-variant);
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -236,7 +236,7 @@
 }
 .sub-text {
   margin-inline-start: var(--space-1);
-  font-size: 12px;
+  font-size: 14px;
   color: var(--mat-sys-on-surface-variant);
 }
 .grade-inline {
@@ -245,7 +245,7 @@
   border-radius: 999px;
   background: var(--status-approved-bg);
   color: var(--status-approved-fg);
-  font-size: 11px;
+  font-size: 14px;
   font-weight: 700;
 }
 

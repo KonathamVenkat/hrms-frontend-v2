@@ -26,7 +26,7 @@
   border-radius: 999px;
   background: var(--mat-sys-primary-container);
   color: var(--mat-sys-on-primary-container);
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 700;
 }
 
@@ -44,10 +44,10 @@
   gap: var(--space-3);
   flex-wrap: wrap;
   padding: var(--space-3) var(--space-4);
-  background: var(--glass-bg);
-  border: var(--glass-border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--glass-shine), var(--glass-shadow);
+  background: var(--card-bg);
+  border: var(--card-border);
+  border-radius: var(--card-radius);
+  box-shadow: var(--card-shadow);
   -webkit-backdrop-filter: var(--glass-blur);
   backdrop-filter: var(--glass-blur);
 }
@@ -131,10 +131,10 @@
 .table-card {
   position: relative;
   overflow: hidden;
-  background: var(--table-surface);
-  border: var(--glass-border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--glass-shine), var(--glass-shadow);
+  background: var(--card-bg);
+  border: var(--card-border);
+  border-radius: var(--card-radius);
+  box-shadow: var(--card-shadow);
 }
 
 .spinner {
@@ -201,7 +201,7 @@
   font-weight: 700;
 }
 .emp-code {
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 600;
   color: var(--mat-sys-primary);
 }
@@ -213,7 +213,7 @@
   gap: 6px;
   padding: 3px var(--space-3);
   border-radius: 999px;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 700;
 }
 /* This template draws its own dot (.status-dot); skip the global one. */
@@ -232,7 +232,7 @@
   display: inline-block;
   padding: 3px var(--space-3);
   border-radius: 999px;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 600;
 }
 

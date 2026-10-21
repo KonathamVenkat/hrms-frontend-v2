@@ -1,4 +1,5 @@
 /* Global styles. Tokens and Material theming live in material-theme.scss. */
+@import './fonts.css';
 
 /* Keyboard focus on Material buttons: their own state layer is only a faint tint, so draw the same ring
    the toolbar and sidebar use. */
@@ -141,7 +142,7 @@ html[dir='rtl'] * {
 }
 .status-badge.small {
   padding-block: 1px;
-  font-size: 11px;
+  font-size: 14px;
 }
 
 /* Sticky header for data tables: add class "sticky-table" to the scroll wrapper. */
@@ -456,7 +457,7 @@ html[dir='rtl'] * {
 }
 .reset-hint {
   margin: 0;
-  font-size: 12px;
+  font-size: 14px;
   color: var(--mat-sys-on-surface-variant);
 }
 
@@ -661,7 +662,8 @@ html[dir='rtl'] * {
   min-inline-size: 0;
 }
 /* In a vertical stack the 200px flex-basis would become a minimum height, so size to content. */
-.card-body > .field {
+.card-body > .field,
+.modal-body > .field {
   flex: 0 0 auto;
 }
 .field > label {
@@ -681,6 +683,12 @@ html[dir='rtl'] * {
   background: var(--table-surface);
   color: var(--mat-sys-on-surface);
   font: inherit;
+}
+/* Arabic is typed and read by older users; its letters look smaller than Latin at the same size. */
+.field :is(input, textarea)[dir='rtl']:not([type='checkbox']):not([type='radio']) {
+  font-size: 1.25rem;
+  line-height: 1.6;
+  min-block-size: 52px;
 }
 .field textarea {
   padding-block: var(--space-3);
@@ -708,11 +716,11 @@ html[dir='rtl'] * {
   cursor: not-allowed;
 }
 .field-error {
-  font-size: 12px;
+  font-size: 14px;
   color: var(--status-rejected-fg);
 }
 .field-hint {
-  font-size: 12px;
+  font-size: 14px;
   color: var(--mat-sys-on-surface-variant);
 }
 
@@ -739,7 +747,7 @@ html[dir='rtl'] * {
   font-weight: 600;
 }
 .toggle-hint {
-  font-size: 12px;
+  font-size: 14px;
   color: var(--mat-sys-on-surface-variant);
 }
 .toggle-wrap {
@@ -949,10 +957,10 @@ html[dir='rtl'] * {
 
 /* Glass cards */
 .app-page :is(.filter-card, .stat-mini, .stat-card, .table-card, .form-card) {
-  background: var(--table-surface);
-  border: var(--glass-border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--glass-shine), var(--glass-shadow);
+  background: var(--card-bg);
+  border: var(--card-border);
+  border-radius: var(--card-radius);
+  box-shadow: var(--card-shadow);
 }
 .app-page :is(.form-card, .table-card) mat-card-header {
   padding: var(--space-4) var(--space-5) 0;
@@ -1039,7 +1047,7 @@ html[dir='rtl'] * {
   font-size: 22px;
 }
 .app-page .stat-lbl {
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -1070,7 +1078,7 @@ html[dir='rtl'] * {
   background: transparent;
 }
 .app-page :is(.approval-table, .ot-table) th {
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -1122,7 +1130,7 @@ html[dir='rtl'] * {
   font-weight: 700;
 }
 .app-page .emp-code {
-  font-size: 12px;
+  font-size: 14px;
   color: var(--mat-sys-on-surface-variant);
 }
 .app-page :is(.reg-id, .ref-id) {
@@ -1131,14 +1139,14 @@ html[dir='rtl'] * {
   background: var(--mat-sys-surface-container-high);
   color: var(--mat-sys-on-surface-variant);
   font-family: monospace;
-  font-size: 12px;
+  font-size: 14px;
   white-space: nowrap;
 }
 .app-page :is(.date-text, .datetime-text) {
   white-space: nowrap;
 }
 .app-page :is(.datetime-text, .acted-at) {
-  font-size: 12px;
+  font-size: 14px;
   color: var(--mat-sys-on-surface-variant);
 }
 .app-page .muted {
@@ -1150,7 +1158,7 @@ html[dir='rtl'] * {
   gap: var(--space-1);
   padding: 3px var(--space-3);
   border-radius: 999px;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 700;
   white-space: nowrap;
   font-variant-numeric: tabular-nums;
@@ -1179,7 +1187,7 @@ html[dir='rtl'] * {
   display: flex;
   align-items: center;
   gap: var(--space-1);
-  font-size: 12px;
+  font-size: 14px;
   color: var(--mat-sys-on-surface-variant);
 }
 .app-page .rejection-note {
@@ -1296,7 +1304,7 @@ html[dir='rtl'] * {
   flex-shrink: 0;
   min-inline-size: 88px;
   padding-block-start: 2px;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -1406,7 +1414,7 @@ html[dir='rtl'] * {
   background: transparent;
 }
 .app-page :is(.comp-table, .salary-table) th {
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -1431,7 +1439,7 @@ html[dir='rtl'] * {
   background: var(--mat-sys-surface-container-high);
   color: var(--mat-sys-on-surface-variant);
   font-family: monospace;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 700;
   white-space: nowrap;
 }
@@ -1439,7 +1447,7 @@ html[dir='rtl'] * {
   display: inline-block;
   padding: 3px var(--space-3);
   border-radius: 999px;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 700;
   white-space: nowrap;
 }
@@ -1469,10 +1477,10 @@ html[dir='rtl'] * {
   color: var(--mat-sys-on-surface);
 }
 .app-page :is(.history-card, .empty-card) {
-  background: var(--table-surface);
-  border: var(--glass-border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--glass-shine), var(--glass-shadow);
+  background: var(--card-bg);
+  border: var(--card-border);
+  border-radius: var(--card-radius);
+  box-shadow: var(--card-shadow);
 }
 .app-page .history-card mat-card-header {
   padding: var(--space-4) var(--space-5) 0;
@@ -1568,7 +1576,7 @@ html[dir='rtl'] * {
 .admin-page .chip {
   padding: 3px var(--space-3);
   border-radius: 999px;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 700;
   background: var(--mat-sys-primary-container);
   color: var(--mat-sys-on-primary-container);
@@ -1622,10 +1630,10 @@ html[dir='rtl'] * {
   flex-wrap: wrap;
   gap: var(--space-3);
   padding: var(--space-3) var(--space-4);
-  background: var(--glass-bg);
-  border: var(--glass-border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--glass-shine), var(--glass-shadow);
+  background: var(--card-bg);
+  border: var(--card-border);
+  border-radius: var(--card-radius);
+  box-shadow: var(--card-shadow);
   -webkit-backdrop-filter: var(--glass-blur);
   backdrop-filter: var(--glass-blur);
 }
@@ -1721,10 +1729,10 @@ html[dir='rtl'] * {
 
 /* Surfaces */
 .admin-page :is(.table-card, .month-card, .loc-card, .shift-card, .empty-card) {
-  background: var(--table-surface);
-  border: var(--glass-border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--glass-shine), var(--glass-shadow);
+  background: var(--card-bg);
+  border: var(--card-border);
+  border-radius: var(--card-radius);
+  box-shadow: var(--card-shadow);
 }
 .admin-page .table-card {
   overflow: auto;
@@ -1741,7 +1749,7 @@ html[dir='rtl'] * {
   padding: var(--space-3) var(--space-4);
   background: var(--table-header-bg);
   color: var(--mat-sys-on-surface-variant);
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -1846,7 +1854,7 @@ html[dir='rtl'] * {
   background: var(--mat-sys-surface-container-high);
   color: var(--mat-sys-on-surface-variant);
   font-family: monospace;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 700;
   white-space: nowrap;
 }
@@ -1858,10 +1866,26 @@ html[dir='rtl'] * {
 .admin-page :is(.name-en, .h-name-en) {
   font-weight: 700;
 }
+/* Arabic names are as prominent as the Latin line: large, dark and roomy, because many readers are over 70. */
 .admin-page :is(.name-ar, .h-name-ar, .loc-name-ar, .shift-name-ar) {
   margin: 0;
-  font-size: 13px;
-  color: var(--mat-sys-on-surface-variant);
+  font-size: 20px;
+  line-height: 1.7;
+  font-weight: 600;
+  color: var(--mat-sys-on-surface);
+  text-align: start;
+}
+.admin-page small[dir='rtl'] {
+  font-size: 17px;
+  line-height: 1.6;
+  color: var(--mat-sys-on-surface);
+}
+/* Arabic text that sits in a left-to-right row (no dir attribute): same look, still starts at the line start. */
+.ar-text {
+  font-size: 20px;
+  line-height: 1.7;
+  font-weight: 600;
+  unicode-bidi: plaintext;
   text-align: start;
 }
 .admin-page :is(.loc-name, .shift-name) {
@@ -1887,7 +1911,7 @@ html[dir='rtl'] * {
   gap: var(--space-1);
   padding: 2px var(--space-3);
   border-radius: 999px;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 700;
   white-space: nowrap;
   background: var(--mat-sys-surface-container-high);
@@ -1971,7 +1995,7 @@ html[dir='rtl'] * {
   gap: 2px;
 }
 .admin-page :is(.expiry-days, .carry-days) {
-  font-size: 12px;
+  font-size: 14px;
   color: var(--mat-sys-on-surface-variant);
 }
 .admin-page :is(.size-badge, .days-badge) {
@@ -2087,15 +2111,15 @@ html[dir='rtl'] * {
 .panel-card,
 .day-popup {
   overflow: hidden;
-  background: var(--table-surface);
-  border: var(--glass-border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--glass-shine), var(--glass-shadow);
+  background: var(--card-bg);
+  border: var(--card-border);
+  border-radius: var(--card-radius);
+  box-shadow: var(--card-shadow);
 }
 .weekday-header {
   padding-block: var(--space-3);
   text-align: center;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -2130,7 +2154,7 @@ html[dir='rtl'] * {
   border-radius: 999px;
   background: var(--mat-sys-surface-container-high);
   color: var(--mat-sys-on-surface-variant);
-  font-size: 11px;
+  font-size: 14px;
   font-weight: 700;
   line-height: 16px;
 }
@@ -2146,7 +2170,7 @@ html[dir='rtl'] * {
   border-radius: 50%;
   background: #b45309;
   color: #fff;
-  font-size: 11px;
+  font-size: 14px;
   font-weight: 700;
 }
 .panel-card-header {
@@ -2156,7 +2180,7 @@ html[dir='rtl'] * {
   padding: var(--space-3) var(--space-4);
   background: var(--table-header-bg);
   border-block-end: 1px solid var(--mat-sys-outline-variant);
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -2180,7 +2204,7 @@ html[dir='rtl'] * {
   justify-content: center;
   border-radius: 50%;
   color: #fff;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 700;
 }
 .legend-item {
@@ -2212,7 +2236,7 @@ html[dir='rtl'] * {
 .holiday-type {
   padding: 2px var(--space-3);
   border-radius: 999px;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 700;
 }
 .tag-weekend,
@@ -2225,7 +2249,7 @@ html[dir='rtl'] * {
   align-items: center;
   gap: var(--space-2);
   margin: 0 0 var(--space-3);
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -2242,7 +2266,7 @@ html[dir='rtl'] * {
 .popup-status {
   padding: 1px var(--space-2);
   border-radius: 999px;
-  font-size: 11px;
+  font-size: 14px;
   font-weight: 700;
   text-transform: uppercase;
 }
@@ -2328,7 +2352,7 @@ html[dir='rtl'] * {
   padding: var(--space-3) var(--space-4);
   background: var(--table-header-bg);
   color: var(--mat-sys-on-surface-variant);
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -2342,7 +2366,7 @@ html[dir='rtl'] * {
   font-variant-numeric: tabular-nums;
 }
 .emp-email {
-  font-size: 12px;
+  font-size: 14px;
   color: var(--mat-sys-on-surface-variant);
   /* Emails are always left-to-right data. */
   unicode-bidi: plaintext;
@@ -2503,7 +2527,7 @@ html[dir='rtl'] * {
   flex-shrink: 0;
   padding-block-start: 2px;
   color: var(--mat-sys-on-surface-variant);
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 700;
   text-transform: uppercase;
 }
@@ -2571,7 +2595,7 @@ html[dir='rtl'] * {
   border-radius: 999px;
   background: var(--mat-sys-surface-container-high);
   color: var(--mat-sys-on-surface-variant);
-  font-size: 11px;
+  font-size: 14px;
   font-weight: 700;
 }
 .btn-cancel-req {
@@ -2594,4 +2618,167 @@ html[dir='rtl'] * {
 .confirm-alert {
   margin: 0 0 var(--space-4);
   text-align: start;
+}
+
+/* Tile cards lift on hover / keyboard focus; big containers (tables, forms, filter bars) stay still.
+   `body` raises specificity above the per-component box-shadow. */
+body
+  :is(
+    .stat-card,
+    .stat-mini,
+    .mini-stat,
+    .stat-item,
+    .type-card,
+    .leave-card,
+    .info-card,
+    .addr-card,
+    .ba-card,
+    .doc-card,
+    .job-card,
+    .head-card,
+    .loc-card,
+    .shift-card,
+    .month-card
+  ) {
+  transition:
+    transform var(--motion-base) var(--motion-ease),
+    box-shadow var(--motion-base) var(--motion-ease);
+}
+body
+  :is(
+    .stat-card,
+    .stat-mini,
+    .mini-stat,
+    .stat-item,
+    .type-card,
+    .leave-card,
+    .info-card,
+    .addr-card,
+    .ba-card,
+    .doc-card,
+    .job-card,
+    .head-card,
+    .loc-card,
+    .shift-card,
+    .month-card
+  ):is(:hover, :focus-within) {
+  transform: translateY(-4px);
+  box-shadow: var(--card-shadow-hover);
+}
+@media (prefers-reduced-motion: reduce) {
+  body
+    :is(
+      .stat-card,
+      .stat-mini,
+      .mini-stat,
+      .stat-item,
+      .type-card,
+      .leave-card,
+      .info-card,
+      .addr-card,
+      .ba-card,
+      .doc-card,
+      .job-card,
+      .head-card,
+      .loc-card,
+      .shift-card,
+      .month-card
+    ) {
+    transition: none;
+  }
+  body
+    :is(
+      .stat-card,
+      .stat-mini,
+      .mini-stat,
+      .stat-item,
+      .type-card,
+      .leave-card,
+      .info-card,
+      .addr-card,
+      .ba-card,
+      .doc-card,
+      .job-card,
+      .head-card,
+      .loc-card,
+      .shift-card,
+      .month-card
+    ):is(:hover, :focus-within) {
+    transform: none;
+  }
+}
+
+/* Organisation screens (branch set-up, branch back-fill): small pieces on top of the admin kit. */
+.admin-page .page-subtitle {
+  margin: var(--space-1) 0 var(--space-2);
+  color: var(--mat-sys-on-surface-variant);
+}
+.admin-page .chip-warn,
+.admin-page .flag-missing {
+  background: var(--status-pending-bg);
+  color: var(--status-pending-fg);
+}
+/* "Missing" is always spelled out in words, never colour alone. */
+.admin-page .flag-missing {
+  display: inline-block;
+  padding: 2px var(--space-2);
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 600;
+}
+.admin-page .sr-only {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.admin-page .stat-tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--space-4);
+  margin-block: var(--space-4);
+}
+.admin-page .stat-tile {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-4);
+  background: var(--card-bg);
+  border: var(--card-border);
+  border-radius: var(--card-radius);
+  box-shadow: var(--card-shadow);
+}
+.admin-page .stat-tile strong {
+  font-size: 28px;
+  line-height: 1.15;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+.admin-page .stat-tile span {
+  color: var(--mat-sys-on-surface-variant);
+}
+.admin-page .data-table select {
+  min-block-size: 44px;
+  max-inline-size: 100%;
+  padding-inline: var(--space-3);
+  border: 1px solid var(--mat-sys-outline);
+  border-radius: var(--radius-md);
+  background: var(--mat-sys-surface);
+  color: var(--mat-sys-on-surface);
+  font: inherit;
+}
+.admin-page .skipped-list {
+  margin: var(--space-1) 0 0;
+  padding-inline-start: var(--space-5);
+}
+.admin-page .pager {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+  padding: var(--space-3);
+  border-block-start: 1px solid var(--mat-sys-outline-variant);
 }
