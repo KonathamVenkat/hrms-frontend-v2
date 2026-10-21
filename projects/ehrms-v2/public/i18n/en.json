@@ -232,7 +232,10 @@
         "addresses": "Addresses",
         "identity": "Identity",
         "documents": "Documents",
-        "bank": "Bank"
+        "bank": "Bank",
+        "family": "Family",
+        "qualifications": "Qualifications",
+        "experience": "Experience"
       },
       "sections": {
         "personalInfo": "Personal Information",
@@ -635,6 +638,132 @@
           "ACCOUNT_INACTIVE": "A deactivated account cannot be changed.",
           "CANNOT_DEACTIVATE_PRIMARY": "This is the primary account. Choose another account as primary first."
         }
+      }
+    },
+    "info": {
+      "activeCount": "{{count}} active",
+      "inactiveCount": "{{count}} deactivated",
+      "loading": "Loading…",
+      "retry": "Retry",
+      "chooseOne": "Select…",
+      "saving": "Saving…",
+      "update": "Update",
+      "deactivate": "Deactivate",
+      "activate": "Activate",
+      "present": "present",
+      "born": "Born {{date}}",
+      "deceased": "Deceased",
+      "read": "Reading",
+      "write": "Writing",
+      "speak": "Speaking",
+      "gender": {
+        "MALE": "Male",
+        "FEMALE": "Female",
+        "OTHER": "Other",
+        "PREFER_NOT_TO_SAY": "Prefer not to say"
+      },
+      "success": {
+        "added": "The record was added.",
+        "updated": "The record was updated.",
+        "deactivated": "The record was deactivated.",
+        "activated": "The record was activated."
+      },
+      "confirm": {
+        "deactivateTitle": "Deactivate this record?",
+        "deactivateHint": "It stays on file and can be activated again later.",
+        "activateTitle": "Activate this record?",
+        "activateHint": "It will show in the active list again."
+      },
+      "errors": {
+        "stale": "Someone else changed this record while you were editing. Close this window, reload and try again.",
+        "loadFailed": "Could not load the records. Check your connection and try again.",
+        "future": "The date cannot be in the future.",
+        "phone": "Phone may contain only digits, + ( ) - and spaces.",
+        "dateRange": "The end date cannot be before the start date.",
+        "rules": {
+          "RELATION_INACTIVE": "This relation is no longer active. Choose another one.",
+          "EDUCATION_LEVEL_INACTIVE": "This education level is no longer active. Choose another one.",
+          "LANGUAGE_INACTIVE": "This language is no longer active. Choose another one.",
+          "LANGUAGE_LEVEL_INACTIVE": "This language level is no longer active. Choose another one.",
+          "INVALID_DATE_RANGE": "The end date cannot be before the start date.",
+          "DUPLICATE_LANGUAGE": "This language is already recorded for the employee. If it was deactivated, activate it instead.",
+          "RECORD_INACTIVE": "A deactivated record cannot be edited. Activate it first."
+        }
+      },
+      "fields": {
+        "relationId": "Relation",
+        "firstName": "First name",
+        "middleName": "Middle name",
+        "lastName": "Last name",
+        "firstNameAr": "First name (Arabic)",
+        "middleNameAr": "Middle name (Arabic)",
+        "lastNameAr": "Last name (Arabic)",
+        "gender": "Gender",
+        "dateOfBirth": "Date of birth",
+        "birthPlace": "Place of birth",
+        "isAlive": "Is alive",
+        "phone": "Phone",
+        "address": "Address",
+        "educationLevelId": "Education level",
+        "qualification": "Qualification",
+        "qualificationAr": "Qualification (Arabic)",
+        "institution": "Institution",
+        "startDate": "Start date",
+        "endDate": "End date",
+        "courseName": "Course",
+        "courseNameAr": "Course (Arabic)",
+        "provider": "Provider",
+        "languageId": "Language",
+        "readLevelId": "Reading level",
+        "writeLevelId": "Writing level",
+        "speakLevelId": "Speaking level",
+        "employerName": "Employer",
+        "employerNameAr": "Employer (Arabic)",
+        "jobTitle": "Job title",
+        "place": "Place",
+        "email": "E-mail"
+      },
+      "dependants": {
+        "title": "Dependants",
+        "add": "Add dependant",
+        "edit": "Edit dependant",
+        "emptyTitle": "No dependants recorded",
+        "emptyHint": "Add the spouse, the children or other dependants."
+      },
+      "education": {
+        "title": "Education",
+        "add": "Add education",
+        "edit": "Edit education",
+        "emptyTitle": "No education recorded",
+        "emptyHint": "Add a degree, diploma or other qualification."
+      },
+      "training": {
+        "title": "Training",
+        "add": "Add training",
+        "edit": "Edit training",
+        "emptyTitle": "No training recorded",
+        "emptyHint": "Add a course or training programme."
+      },
+      "languages": {
+        "title": "Languages",
+        "add": "Add language",
+        "edit": "Edit language",
+        "emptyTitle": "No languages recorded",
+        "emptyHint": "Add the languages the employee knows and how well."
+      },
+      "experience": {
+        "title": "Work experience",
+        "add": "Add experience",
+        "edit": "Edit experience",
+        "emptyTitle": "No work experience recorded",
+        "emptyHint": "Add earlier employers."
+      },
+      "references": {
+        "title": "References",
+        "add": "Add reference",
+        "edit": "Edit reference",
+        "emptyTitle": "No references recorded",
+        "emptyHint": "Add people who can vouch for the employee."
       }
     }
   },

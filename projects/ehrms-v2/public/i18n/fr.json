@@ -232,7 +232,10 @@
         "addresses": "Adresses",
         "identity": "Identité",
         "documents": "Documents",
-        "bank": "Banque"
+        "bank": "Banque",
+        "family": "Famille",
+        "qualifications": "Qualifications",
+        "experience": "Expérience"
       },
       "sections": {
         "personalInfo": "Informations personnelles",
@@ -635,6 +638,132 @@
           "ACCOUNT_INACTIVE": "Un compte désactivé ne peut pas être modifié.",
           "CANNOT_DEACTIVATE_PRIMARY": "Il s'agit du compte principal. Choisissez d'abord un autre compte comme principal."
         }
+      }
+    },
+    "info": {
+      "activeCount": "{{count}} actifs",
+      "inactiveCount": "{{count}} désactivés",
+      "loading": "Chargement…",
+      "retry": "Réessayer",
+      "chooseOne": "Sélectionner…",
+      "saving": "Enregistrement…",
+      "update": "Mettre à jour",
+      "deactivate": "Désactiver",
+      "activate": "Activer",
+      "present": "aujourd’hui",
+      "born": "Né(e) le {{date}}",
+      "deceased": "Décédé(e)",
+      "read": "Lecture",
+      "write": "Écriture",
+      "speak": "Oral",
+      "gender": {
+        "MALE": "Homme",
+        "FEMALE": "Femme",
+        "OTHER": "Autre",
+        "PREFER_NOT_TO_SAY": "Préfère ne pas répondre"
+      },
+      "success": {
+        "added": "L’enregistrement a été ajouté.",
+        "updated": "L’enregistrement a été mis à jour.",
+        "deactivated": "L’enregistrement a été désactivé.",
+        "activated": "L’enregistrement a été activé."
+      },
+      "confirm": {
+        "deactivateTitle": "Désactiver cet enregistrement ?",
+        "deactivateHint": "Il reste au dossier et pourra être réactivé plus tard.",
+        "activateTitle": "Activer cet enregistrement ?",
+        "activateHint": "Il réapparaîtra dans la liste des enregistrements actifs."
+      },
+      "errors": {
+        "stale": "Quelqu’un d’autre a modifié cet enregistrement pendant votre édition. Fermez cette fenêtre, rechargez et réessayez.",
+        "loadFailed": "Impossible de charger les enregistrements. Vérifiez votre connexion et réessayez.",
+        "future": "La date ne peut pas être dans le futur.",
+        "phone": "Le téléphone ne peut contenir que des chiffres, + ( ) - et des espaces.",
+        "dateRange": "La date de fin ne peut pas précéder la date de début.",
+        "rules": {
+          "RELATION_INACTIVE": "Ce lien de parenté n’est plus actif. Choisissez-en un autre.",
+          "EDUCATION_LEVEL_INACTIVE": "Ce niveau d’études n’est plus actif. Choisissez-en un autre.",
+          "LANGUAGE_INACTIVE": "Cette langue n’est plus active. Choisissez-en une autre.",
+          "LANGUAGE_LEVEL_INACTIVE": "Ce niveau de langue n’est plus actif. Choisissez-en un autre.",
+          "INVALID_DATE_RANGE": "La date de fin ne peut pas précéder la date de début.",
+          "DUPLICATE_LANGUAGE": "Cette langue est déjà enregistrée pour l’employé. Si elle a été désactivée, activez-la plutôt.",
+          "RECORD_INACTIVE": "Un enregistrement désactivé ne peut pas être modifié. Activez-le d’abord."
+        }
+      },
+      "fields": {
+        "relationId": "Lien de parenté",
+        "firstName": "Prénom",
+        "middleName": "Deuxième prénom",
+        "lastName": "Nom de famille",
+        "firstNameAr": "Prénom (arabe)",
+        "middleNameAr": "Deuxième prénom (arabe)",
+        "lastNameAr": "Nom de famille (arabe)",
+        "gender": "Sexe",
+        "dateOfBirth": "Date de naissance",
+        "birthPlace": "Lieu de naissance",
+        "isAlive": "En vie",
+        "phone": "Téléphone",
+        "address": "Adresse",
+        "educationLevelId": "Niveau d’études",
+        "qualification": "Diplôme ou qualification",
+        "qualificationAr": "Diplôme ou qualification (arabe)",
+        "institution": "Établissement",
+        "startDate": "Date de début",
+        "endDate": "Date de fin",
+        "courseName": "Formation",
+        "courseNameAr": "Formation (arabe)",
+        "provider": "Organisme",
+        "languageId": "Langue",
+        "readLevelId": "Niveau de lecture",
+        "writeLevelId": "Niveau d’écriture",
+        "speakLevelId": "Niveau d’expression orale",
+        "employerName": "Employeur",
+        "employerNameAr": "Employeur (arabe)",
+        "jobTitle": "Intitulé du poste",
+        "place": "Lieu",
+        "email": "E-mail"
+      },
+      "dependants": {
+        "title": "Personnes à charge",
+        "add": "Ajouter une personne à charge",
+        "edit": "Modifier la personne à charge",
+        "emptyTitle": "Aucune personne à charge enregistrée",
+        "emptyHint": "Ajoutez le conjoint, les enfants ou d’autres personnes à charge."
+      },
+      "education": {
+        "title": "Études et diplômes",
+        "add": "Ajouter une formation initiale",
+        "edit": "Modifier la formation initiale",
+        "emptyTitle": "Aucune formation initiale enregistrée",
+        "emptyHint": "Ajoutez un diplôme ou une autre qualification."
+      },
+      "training": {
+        "title": "Formations professionnelles",
+        "add": "Ajouter une formation professionnelle",
+        "edit": "Modifier la formation professionnelle",
+        "emptyTitle": "Aucune formation professionnelle enregistrée",
+        "emptyHint": "Ajoutez un cours ou un programme de formation."
+      },
+      "languages": {
+        "title": "Langues",
+        "add": "Ajouter une langue",
+        "edit": "Modifier la langue",
+        "emptyTitle": "Aucune langue enregistrée",
+        "emptyHint": "Ajoutez les langues que l’employé connaît et leur niveau."
+      },
+      "experience": {
+        "title": "Expérience professionnelle",
+        "add": "Ajouter une expérience",
+        "edit": "Modifier l’expérience",
+        "emptyTitle": "Aucune expérience professionnelle enregistrée",
+        "emptyHint": "Ajoutez les employeurs précédents."
+      },
+      "references": {
+        "title": "Références",
+        "add": "Ajouter une référence",
+        "edit": "Modifier la référence",
+        "emptyTitle": "Aucune référence enregistrée",
+        "emptyHint": "Ajoutez des personnes qui peuvent se porter garantes de l’employé."
       }
     }
   },

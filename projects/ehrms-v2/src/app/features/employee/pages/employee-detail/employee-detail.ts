@@ -12,6 +12,9 @@ import { EmployeeIdentityComponent } from '../employee-identity/employee-identit
 import { EmployeeBankAccountsComponent } from '../employee-bank-accounts/employee-bank-accounts';
 import { EmployeePhoto } from '../employee-photo/employee-photo';
 import { EmployeeDocumentsComponent } from '../employee-documents/employee-documents';
+import { EmployeeFamily } from '../employee-family/employee-family';
+import { EmployeeQualifications } from '../employee-qualifications/employee-qualifications';
+import { EmployeeExperience } from '../employee-experience/employee-experience';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CdkTrapFocus } from '@angular/cdk/a11y';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
@@ -29,7 +32,16 @@ import { getHttpErrorMessage } from '../../../../core/utils/http-error-message';
 import { formatDisplayDate } from '../../../../core/utils/display-date';
 import { LanguageService } from '../../../../core/services/language.service';
 
-type DetailTab = 'profile' | 'job' | 'addresses' | 'identity' | 'bank' | 'documents';
+type DetailTab =
+  | 'profile'
+  | 'job'
+  | 'addresses'
+  | 'identity'
+  | 'bank'
+  | 'documents'
+  | 'family'
+  | 'qualifications'
+  | 'experience';
 
 @Component({
   selector: 'app-employee-detail',
@@ -39,6 +51,9 @@ type DetailTab = 'profile' | 'job' | 'addresses' | 'identity' | 'bank' | 'docume
     EmployeeIdentityComponent,
     EmployeeBankAccountsComponent,
     EmployeeDocumentsComponent,
+    EmployeeFamily,
+    EmployeeQualifications,
+    EmployeeExperience,
     EmployeePhoto,
     TranslatePipe,
     ReactiveFormsModule,
@@ -76,15 +91,29 @@ export class EmployeeDetail implements OnInit {
     { id: 'identity', icon: 'badge', labelKey: 'employee.detail.tabs.identity' },
     { id: 'bank', icon: 'account_balance', labelKey: 'employee.detail.tabs.bank' },
     { id: 'documents', icon: 'folder', labelKey: 'employee.detail.tabs.documents' },
+    { id: 'family', icon: 'people', labelKey: 'employee.detail.tabs.family' },
+    { id: 'qualifications', icon: 'school', labelKey: 'employee.detail.tabs.qualifications' },
+    { id: 'experience', icon: 'history', labelKey: 'employee.detail.tabs.experience' },
   ];
 
   /** True on "My profile": the viewer's own record, without the HR actions on it. */
   selfMode = signal(false);
-  /** Job details, addresses and documents are HR-only in the backend, so an employee sees only the rest. */
+  /**
+   * Job details, addresses and documents are HR-only in the backend, so an employee sees only the rest: their own
+   * identity, bank, family, qualifications and experience (read-only, the backend lets them read their own).
+   */
   private readonly isHr = this.auth.hasAnyRole(...HR_ROLES);
+  private readonly selfTabs: readonly DetailTab[] = [
+    'profile',
+    'identity',
+    'bank',
+    'family',
+    'qualifications',
+    'experience',
+  ];
   readonly visibleTabs = computed(() =>
     this.selfMode() && !this.isHr
-      ? this.tabs.filter((tab) => tab.id === 'profile' || tab.id === 'identity' || tab.id === 'bank')
+      ? this.tabs.filter((tab) => this.selfTabs.includes(tab.id))
       : this.tabs,
   );
   /** The identity details are read-only for everyone but an HR_ADMIN. */

@@ -325,6 +325,33 @@
           [readOnly]="!isHrAdmin()"
         />
       }
+      @if (activeDetailTab() === 'family') {
+        <app-employee-family
+          role="tabpanel"
+          id="detail-panel-family"
+          aria-labelledby="detail-tab-family"
+          [employeeId]="employee()!.employeeId"
+          [readOnly]="!isHrAdmin()"
+        />
+      }
+      @if (activeDetailTab() === 'qualifications') {
+        <app-employee-qualifications
+          role="tabpanel"
+          id="detail-panel-qualifications"
+          aria-labelledby="detail-tab-qualifications"
+          [employeeId]="employee()!.employeeId"
+          [readOnly]="!isHrAdmin()"
+        />
+      }
+      @if (activeDetailTab() === 'experience') {
+        <app-employee-experience
+          role="tabpanel"
+          id="detail-panel-experience"
+          aria-labelledby="detail-tab-experience"
+          [employeeId]="employee()!.employeeId"
+          [readOnly]="!isHrAdmin()"
+        />
+      }
       @if (activeDetailTab() === 'documents') {
         <app-employee-documents
           role="tabpanel"

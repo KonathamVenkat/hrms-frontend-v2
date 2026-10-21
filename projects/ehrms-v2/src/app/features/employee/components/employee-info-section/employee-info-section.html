@@ -1,0 +1,345 @@
+<section class="info-section" [attr.aria-labelledby]="'info-title-' + config().key">
+  <!-- ── Header ──────────────────────────────────────────── -->
+  <div class="section-header">
+    <div class="header-left">
+      <span class="material-icons info-icon" aria-hidden="true">{{ config().icon }}</span>
+      <h2 class="section-title" [id]="'info-title-' + config().key">
+        {{ prefix() + '.title' | translate }}
+      </h2>
+      <span class="info-count">{{
+        'employee.info.activeCount' | translate: { count: activeRows().length }
+      }}</span>
+    </div>
+    @if (!readOnly()) {
+      <button type="button" class="btn-add" (click)="openAdd()">
+        <span class="material-icons" aria-hidden="true">add</span>
+        {{ prefix() + '.add' | translate }}
+      </button>
+    }
+  </div>
+
+  @if (successMsg()) {
+    <div class="alert alert-success" role="status">
+      <span class="material-icons" aria-hidden="true">check_circle</span>{{ successMsg() }}
+    </div>
+  }
+  @if (error() && !showModal()) {
+    <div class="alert alert-error" role="alert">
+      <span class="material-icons" aria-hidden="true">error_outline</span>{{ error() }}
+    </div>
+  }
+
+  @if (loading()) {
+    <div class="loading-wrap" role="status">
+      <div class="spinner"></div>
+      <span>{{ 'employee.info.loading' | translate }}</span>
+    </div>
+  } @else if (loadFailed()) {
+    <div class="alert alert-error" role="alert">
+      <span class="material-icons" aria-hidden="true">error_outline</span>
+      {{ 'employee.info.errors.loadFailed' | translate }}
+      <button type="button" class="btn-cancel" data-testid="retry" (click)="load()">
+        {{ 'employee.info.retry' | translate }}
+      </button>
+    </div>
+  } @else if (activeRows().length === 0) {
+    <div class="empty-state">
+      <span class="material-icons" aria-hidden="true">{{ config().icon }}</span>
+      <p>{{ prefix() + '.emptyTitle' | translate }}</p>
+      @if (!readOnly()) {
+        <small>{{ prefix() + '.emptyHint' | translate }}</small>
+      }
+    </div>
+  }
+
+  <!-- ── Active records ─────────────────────────────────── -->
+  @if (!loading() && activeRows().length > 0) {
+    <ul class="info-list">
+      @for (row of activeRows(); track row.record.id) {
+        <li class="info-card">
+          <div class="info-main">
+            <h3 class="info-name">{{ row.view.title }}</h3>
+            @if (row.view.titleAr) {
+              <span class="ar-text">{{ row.view.titleAr }}</span>
+            }
+            @if (row.view.meta.length > 0) {
+              <p class="info-meta">
+                @for (m of row.view.meta; track $index) {
+                  <span class="meta-item">{{ m }}</span>
+                }
+              </p>
+            }
+            @if (row.view.chips.length > 0) {
+              <p class="info-chips">
+                @for (c of row.view.chips; track $index) {
+                  <span class="info-chip">{{ c }}</span>
+                }
+              </p>
+            }
+          </div>
+          @if (!readOnly()) {
+            <div class="info-actions">
+              <button
+                type="button"
+                class="act-btn btn-edit"
+                data-testid="edit"
+                [title]="'common.edit' | translate"
+                [attr.aria-label]="('common.edit' | translate) + ': ' + row.view.title"
+                (click)="openEdit(row.record)"
+              >
+                <span class="material-icons" aria-hidden="true">edit</span>
+              </button>
+              <button
+                type="button"
+                class="act-btn btn-delete"
+                data-testid="deactivate"
+                [title]="'employee.info.deactivate' | translate"
+                [attr.aria-label]="('employee.info.deactivate' | translate) + ': ' + row.view.title"
+                (click)="openConfirm(row, 'deactivate')"
+              >
+                <span class="material-icons" aria-hidden="true">delete_outline</span>
+              </button>
+            </div>
+          }
+        </li>
+      }
+    </ul>
+  }
+
+  <!-- ── Deactivated records ────────────────────────────── -->
+  @if (!loading() && inactiveRows().length > 0) {
+    <h3 class="inactive-label">
+      <span class="material-icons" aria-hidden="true">history</span>
+      {{ 'employee.info.inactiveCount' | translate: { count: inactiveRows().length } }}
+    </h3>
+    <ul class="info-list inactive-list">
+      @for (row of inactiveRows(); track row.record.id) {
+        <li class="info-card inactive-card">
+          <div class="info-main">
+            <h4 class="info-name">{{ row.view.title }}</h4>
+            @if (row.view.titleAr) {
+              <span class="ar-text">{{ row.view.titleAr }}</span>
+            }
+          </div>
+          @if (!readOnly()) {
+            <div class="info-actions">
+              <button
+                type="button"
+                class="btn-add-sm"
+                data-testid="activate"
+                [attr.aria-label]="('employee.info.activate' | translate) + ': ' + row.view.title"
+                (click)="openConfirm(row, 'activate')"
+              >
+                <span class="material-icons" aria-hidden="true">restore</span>
+                {{ 'employee.info.activate' | translate }}
+              </button>
+            </div>
+          }
+        </li>
+      }
+    </ul>
+  }
+</section>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!-- MODAL — Add / Edit                                        -->
+<!-- ══════════════════════════════════════════════════════════ -->
+@if (showModal()) {
+  <div class="modal-backdrop">
+    <div
+      class="modal"
+      [appAccessibleDialog]="'info-modal-title-' + config().key"
+      (dialogClosed)="closeModal()"
+      cdkTrapFocus
+      cdkTrapFocusAutoCapture
+    >
+      <div class="modal-header">
+        <h2 [id]="'info-modal-title-' + config().key" class="modal-title">
+          {{ (isEditMode() ? prefix() + '.edit' : prefix() + '.add') | translate }}
+        </h2>
+        <button
+          type="button"
+          class="modal-close"
+          [attr.aria-label]="'common.close' | translate"
+          (click)="closeModal()"
+        >
+          <span class="material-icons" aria-hidden="true">close</span>
+        </button>
+      </div>
+
+      @if (error()) {
+        <div class="modal-alert" role="alert">
+          <span class="material-icons" aria-hidden="true">error_outline</span>{{ error() }}
+        </div>
+      }
+
+      <form [formGroup]="form()" (ngSubmit)="onSubmit()" novalidate>
+        <div class="modal-body">
+          <div class="info-grid">
+            @for (f of config().fields; track f.name) {
+              @let id = 'info-' + config().key + '-' + f.name;
+              @if (f.type === 'checkbox') {
+                <label class="toggle-item field-wide">
+                  <div class="toggle-info">
+                    <span class="toggle-label">{{ f.labelKey | translate }}</span>
+                  </div>
+                  <div class="toggle-wrap">
+                    <input type="checkbox" [formControlName]="f.name" class="toggle-inp" />
+                    <span class="toggle-slider"></span>
+                  </div>
+                </label>
+              } @else {
+                <div class="field" [class.field-wide]="f.wide">
+                  <label [for]="id"
+                    >{{ f.labelKey | translate }}
+                    @if (f.required) {
+                      <span class="req" aria-hidden="true">*</span>
+                    }
+                  </label>
+                  @switch (f.type) {
+                    @case ('date') {
+                      <app-date-input [inputId]="id" [formControlName]="f.name" />
+                    }
+                    @case ('select') {
+                      <select [id]="id" [formControlName]="f.name">
+                        <option [ngValue]="null">
+                          {{ 'employee.info.chooseOne' | translate }}
+                        </option>
+                        @for (o of selectOptions()[f.name]; track o.id) {
+                          <option [ngValue]="o.id">{{ o.label }}</option>
+                        }
+                      </select>
+                    }
+                    @case ('gender') {
+                      <select [id]="id" [formControlName]="f.name">
+                        <option [ngValue]="null">
+                          {{ 'employee.info.chooseOne' | translate }}
+                        </option>
+                        @for (g of genders; track g) {
+                          <option [ngValue]="g">
+                            {{ 'employee.info.gender.' + g | translate }}
+                          </option>
+                        }
+                      </select>
+                    }
+                    @case ('arabic') {
+                      <input [id]="id" [formControlName]="f.name" dir="rtl" autocomplete="off" />
+                    }
+                    @case ('phone') {
+                      <input
+                        [id]="id"
+                        [formControlName]="f.name"
+                        type="tel"
+                        dir="ltr"
+                        autocomplete="off"
+                      />
+                    }
+                    @case ('email') {
+                      <input
+                        [id]="id"
+                        [formControlName]="f.name"
+                        type="email"
+                        dir="ltr"
+                        autocomplete="off"
+                      />
+                    }
+                    @default {
+                      <input [id]="id" [formControlName]="f.name" autocomplete="off" />
+                    }
+                  }
+                  @if (isInvalid(f.name)) {
+                    <span class="field-error" [id]="'fe-' + f.name">{{ getError(f.name) }}</span>
+                  }
+                  @if (config().dateRange?.to === f.name && dateRangeInvalid()) {
+                    <span class="field-error" role="alert">{{
+                      'employee.info.errors.dateRange' | translate
+                    }}</span>
+                  }
+                </div>
+              }
+            }
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-cancel" (click)="closeModal()">
+            {{ 'common.cancel' | translate }}
+          </button>
+          <button type="submit" class="btn-save" [disabled]="saving()">
+            @if (saving()) {
+              <div class="btn-spinner"></div>
+              <span>{{ 'employee.info.saving' | translate }}</span>
+            } @else {
+              <span class="material-icons" aria-hidden="true">save</span>
+              <span>{{
+                (isEditMode() ? 'employee.info.update' : prefix() + '.add') | translate
+              }}</span>
+            }
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!-- CONFIRM — deactivate / activate                           -->
+<!-- ══════════════════════════════════════════════════════════ -->
+@if (confirmItem(); as item) {
+  <div class="modal-backdrop">
+    <div
+      class="confirm-dialog"
+      [appAccessibleDialog]="'info-confirm-title-' + config().key"
+      (dialogClosed)="cancelConfirm()"
+      cdkTrapFocus
+      cdkTrapFocusAutoCapture
+    >
+      @let deactivating = confirmAction() === 'deactivate';
+      <div class="confirm-icon" [class.icon-warn]="deactivating" [class.icon-info]="!deactivating">
+        <span class="material-icons" aria-hidden="true">{{
+          deactivating ? 'delete_outline' : 'restore'
+        }}</span>
+      </div>
+      <h3 [id]="'info-confirm-title-' + config().key" class="confirm-title">
+        {{
+          (deactivating
+            ? 'employee.info.confirm.deactivateTitle'
+            : 'employee.info.confirm.activateTitle'
+          ) | translate
+        }}
+      </h3>
+      <p class="confirm-msg">
+        <strong>{{ item.view.title }}</strong>
+        <br /><small>{{
+          (deactivating
+            ? 'employee.info.confirm.deactivateHint'
+            : 'employee.info.confirm.activateHint'
+          ) | translate
+        }}</small>
+      </p>
+      @if (confirmError()) {
+        <div class="modal-alert confirm-alert" role="alert">
+          <span class="material-icons" aria-hidden="true">error_outline</span
+          ><span dir="auto">{{ confirmError() }}</span>
+        </div>
+      }
+      <div class="confirm-actions">
+        <button type="button" class="btn-cancel" (click)="cancelConfirm()">
+          {{ (confirmError() ? 'common.close' : 'common.cancel') | translate }}
+        </button>
+        @if (!confirmError()) {
+          <button
+            type="button"
+            class="btn-confirm"
+            data-testid="confirm"
+            [class.btn-danger]="deactivating"
+            [class.btn-success]="!deactivating"
+            (click)="confirm()"
+          >
+            {{ (deactivating ? 'employee.info.deactivate' : 'employee.info.activate') | translate }}
+          </button>
+        }
+      </div>
+    </div>
+  </div>
+}

@@ -1880,12 +1880,14 @@ html[dir='rtl'] * {
   line-height: 1.6;
   color: var(--mat-sys-on-surface);
 }
-/* Arabic text that sits in a left-to-right row (no dir attribute): same look, still starts at the line start. */
+/* Arabic text that sits in a left-to-right row (no dir attribute): same look, on its own line under the English
+   one and starting where the line starts (never flipped to the far side, which unicode-bidi: plaintext would do). */
 .ar-text {
+  display: block;
   font-size: 20px;
   line-height: 1.7;
   font-weight: 600;
-  unicode-bidi: plaintext;
+  unicode-bidi: isolate;
   text-align: start;
 }
 .admin-page :is(.loc-name, .shift-name) {
