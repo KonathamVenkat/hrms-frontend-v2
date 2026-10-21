@@ -147,6 +147,9 @@
             @if (parentName(r); as parent) {
               <span class="tz-badge">{{ parent }}</span>
             }
+            @if (cfg.sortOrder && r.sortOrder !== undefined) {
+              <span class="tz-badge">#{{ r.sortOrder }}</span>
+            }
           </div>
         </div>
       }
@@ -234,6 +237,16 @@
               }
             </div>
           </div>
+          @if (cfg.sortOrder) {
+            <div class="field">
+              <label for="ms-sort">{{ 'admin.masters.sortOrder' | translate }}</label>
+              <input id="ms-sort" type="number" min="0" max="9999" formControlName="sortOrder" />
+              <span class="toggle-hint">{{ 'admin.masters.sortOrderHint' | translate }}</span>
+              @if (isInvalid('sortOrder')) {
+                <span class="field-error">{{ getError('sortOrder') }}</span>
+              }
+            </div>
+          }
           @if (isEditMode()) {
             <label class="toggle-item">
               <div class="toggle-info">

@@ -32,6 +32,13 @@ export interface JobDetails {
   locationCode: string;
   locationCity: string;
 
+  // Branch (null until HR assigns one)
+  companyBranchId?: number;
+  branchCode?: string;
+  branchName?: string;
+  branchNameAr?: string;
+  branchManagerName?: string;
+
   // Shift
   shiftId?: number;
   shiftName?: string;
@@ -57,6 +64,8 @@ export interface JobDetailsRequest {
   reportingManagerId?: number;
   functionalManagerId?: number;
   locationId: number;
+  /** The branch must be active and in the chosen location; null when none. */
+  companyBranchId?: number | null;
   shiftId?: number;
   workMode: string;
   effectiveFrom: string;

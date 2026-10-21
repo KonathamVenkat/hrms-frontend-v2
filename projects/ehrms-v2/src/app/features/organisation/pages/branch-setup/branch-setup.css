@@ -1,0 +1,88 @@
+.loc-card {
+  margin-block: 16px;
+  overflow: hidden;
+  border: var(--card-border, 1px solid #e8edf0);
+  border-radius: var(--card-radius, 16px);
+  background: var(--card-bg, #fff);
+  box-shadow: var(--card-shadow, none);
+}
+
+.loc-title {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin: 0;
+  padding: 14px 18px;
+  background: #f1f5f9;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.loc-count {
+  font-size: 14px;
+  font-weight: 500;
+  color: #475569;
+}
+
+.branch-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.branch-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 20px;
+  padding: 12px 18px;
+  border-block-start: 1px solid #eef2f5;
+}
+
+.branch-name {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1 1 220px;
+  min-width: 0;
+  font-weight: 600;
+}
+
+.branch-name small {
+  font-weight: 400;
+}
+
+.branch-manager {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  flex: 1 1 200px;
+  min-width: 0;
+}
+
+.branch-action {
+  min-width: 140px;
+  min-height: 44px;
+  padding-inline: 16px;
+  border: 1.5px solid #0a7466;
+  border-radius: 10px;
+  background: #fff;
+  color: #0a7466;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.branch-action.primary {
+  background: #0a7466;
+  color: #fff;
+}
+
+.branch-action:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.inactive-row {
+  opacity: 0.65;
+}

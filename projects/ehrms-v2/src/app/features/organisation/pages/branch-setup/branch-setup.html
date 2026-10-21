@@ -1,0 +1,219 @@
+<div class="admin-page">
+  <div class="page-header">
+    <div class="header-left">
+      <h1 class="page-title">{{ 'organisation.branchSetup.title' | translate }}</h1>
+      <p class="page-subtitle">{{ 'organisation.branchSetup.subtitle' | translate }}</p>
+      @if (!loading() && !loadFailed()) {
+        <div class="stat-chips">
+          <span class="chip chip-total">{{
+            'organisation.branchSetup.totalChip' | translate: { count: branches().length }
+          }}</span>
+          @if (withoutLocation() > 0) {
+            <span class="chip chip-warn">{{
+              'organisation.branchSetup.withoutLocationChip'
+                | translate: { count: withoutLocation() }
+            }}</span>
+          }
+          @if (withoutManager() > 0) {
+            <span class="chip chip-warn">{{
+              'organisation.branchSetup.withoutManagerChip' | translate: { count: withoutManager() }
+            }}</span>
+          }
+        </div>
+      }
+    </div>
+  </div>
+
+  @if (successMsg()) {
+    <div class="alert alert-success" role="status">
+      <span aria-hidden="true" class="material-icons">check_circle</span>{{ successMsg() }}
+    </div>
+  }
+
+  <div class="filter-bar">
+    <div class="search-wrap">
+      <span aria-hidden="true" class="material-icons">search</span>
+      <input
+        type="text"
+        [placeholder]="'organisation.branchSetup.search' | translate"
+        [attr.aria-label]="'organisation.branchSetup.search' | translate"
+        [value]="filterText()"
+        (input)="filterText.set($any($event.target).value)"
+      />
+      @if (filterText()) {
+        <button
+          type="button"
+          class="clear-btn"
+          [attr.aria-label]="'common.clear' | translate"
+          (click)="filterText.set('')"
+        >
+          <span aria-hidden="true" class="material-icons">close</span>
+        </button>
+      }
+    </div>
+  </div>
+
+  @if (loading()) {
+    <div class="loading-wrap" role="status">
+      <div class="spinner"></div>
+      <span>{{ 'common.loading' | translate }}</span>
+    </div>
+  } @else if (loadFailed()) {
+    <div class="alert alert-error" role="alert">
+      <span aria-hidden="true" class="material-icons">error_outline</span>
+      {{ 'organisation.errors.loadFailed' | translate }}
+      <button type="button" class="btn-cancel" data-testid="retry" (click)="load()">
+        {{ 'organisation.retry' | translate }}
+      </button>
+    </div>
+  } @else if (filtered().length === 0) {
+    <div class="empty-card">
+      <span aria-hidden="true" class="material-icons">corporate_fare</span>
+      <p>{{ 'organisation.branchSetup.emptyTitle' | translate }}</p>
+      <small>{{ 'organisation.branchSetup.emptyHint' | translate }}</small>
+    </div>
+  } @else {
+    @for (g of groups(); track g.key) {
+      <section class="loc-card" [attr.aria-labelledby]="'bs-loc-' + g.key">
+        <h2 class="loc-title" [id]="'bs-loc-' + g.key">
+          @if (g.locationId === null) {
+            {{ 'organisation.branchSetup.noLocationGroup' | translate }}
+          } @else {
+            {{ g.name }}
+          }
+          <small class="loc-count">{{
+            'organisation.branchSetup.groupCount' | translate: { count: g.branches.length }
+          }}</small>
+        </h2>
+        <ul class="branch-list">
+          @for (b of g.branches; track b.branchId) {
+            <li class="branch-row" [class.inactive-row]="!b.isActive">
+              <div class="branch-name">
+                <div>{{ b.name }}</div>
+                <span class="ar-text">{{ b.nameAr }}</span>
+                <small class="muted"
+                  ><bdi>{{ b.code }}</bdi></small
+                >
+              </div>
+              <div class="branch-manager">
+                @if (b.managerName) {
+                  <div>{{ b.managerName }}</div>
+                  <small class="muted"
+                    ><bdi>{{ b.managerCode }}</bdi></small
+                  >
+                } @else {
+                  <span class="flag-missing">{{
+                    'organisation.branchSetup.noManager' | translate
+                  }}</span>
+                }
+              </div>
+              @if (!b.isActive) {
+                <span class="status-badge inactive">{{ 'common.inactive' | translate }}</span>
+              }
+              <button
+                type="button"
+                class="branch-action"
+                [class.primary]="!b.managerName"
+                data-testid="edit"
+                [disabled]="!b.isActive"
+                [attr.aria-label]="
+                  (b.managerName
+                    ? 'organisation.branchSetup.changeManagerFor'
+                    : 'organisation.branchSetup.chooseManagerFor'
+                  ) | translate: { name: b.name }
+                "
+                (click)="openEdit(b)"
+              >
+                {{
+                  (b.managerName
+                    ? 'organisation.branchSetup.changeManager'
+                    : 'organisation.branchSetup.chooseManager'
+                  ) | translate
+                }}
+              </button>
+            </li>
+          }
+        </ul>
+      </section>
+    }
+  }
+</div>
+
+@if (editing(); as branch) {
+  <div class="modal-backdrop" (click)="closeEdit()">
+    <div
+      class="modal"
+      (click)="$event.stopPropagation()"
+      [appAccessibleDialog]="'bs-modal-title'"
+      (dialogClosed)="closeEdit()"
+      cdkTrapFocus
+      cdkTrapFocusAutoCapture
+    >
+      <div class="modal-header">
+        <h2 id="bs-modal-title" class="modal-title">
+          {{ 'organisation.branchSetup.managerTitle' | translate: { name: branch.name } }}
+        </h2>
+        <button
+          type="button"
+          class="modal-close"
+          [attr.aria-label]="'common.close' | translate"
+          (click)="closeEdit()"
+        >
+          <span aria-hidden="true" class="material-icons">close</span>
+        </button>
+      </div>
+      @if (error()) {
+        <div class="modal-alert" role="alert">
+          <span aria-hidden="true" class="material-icons">error_outline</span>{{ error() }}
+        </div>
+      }
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+        <div class="modal-body">
+          @if (branch.locationId == null) {
+            <div class="field">
+              <label for="bs-location"
+                >{{ 'organisation.branchSetup.location' | translate }}
+                <span class="req">*</span></label
+              >
+              <select id="bs-location" formControlName="locationId">
+                <option [ngValue]="null">
+                  {{ 'organisation.branchSetup.locationPlaceholder' | translate }}
+                </option>
+                @for (l of locations(); track l.locationId) {
+                  <option [ngValue]="l.locationId">{{ l.locationName }}</option>
+                }
+              </select>
+              @if (isInvalid('locationId')) {
+                <span class="field-error">{{ 'common.validation.required' | translate }}</span>
+              }
+            </div>
+          } @else {
+            <p class="toggle-hint">
+              {{ 'organisation.branchSetup.atLocation' | translate: { name: branch.locationName } }}
+            </p>
+          }
+          <app-manager-picker
+            [locationId]="branch.locationId ?? null"
+            [selectedId]="managerId()"
+            [selectedLabel]="managerLabel()"
+            (picked)="onManagerPicked($event)"
+          />
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-cancel" (click)="closeEdit()">
+            {{ 'common.cancel' | translate }}
+          </button>
+          <button type="submit" class="btn-save" [disabled]="saving()">
+            @if (saving()) {
+              <div class="btn-spinner"></div>
+              <span>{{ 'organisation.saving' | translate }}</span>
+            } @else {
+              <span aria-hidden="true" class="material-icons">save</span>
+              <span>{{ 'common.save' | translate }}</span>
+            }
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}

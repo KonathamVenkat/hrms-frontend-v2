@@ -20,13 +20,13 @@ import { MasterDataService } from '../../services/master-data';
 import { MasterRecord, MasterRequest } from '../../models/master';
 import { MasterConfig } from '../../masters.config';
 
-type FormKey = 'code' | 'name' | 'nameAr' | 'parentId';
+type FormKey = 'code' | 'name' | 'nameAr' | 'parentId' | 'sortOrder';
 type ConfirmAction = 'toggle' | 'delete';
 type StatusFilter = 'all' | 'active' | 'inactive';
 
 /**
- * Shared screen for the simple code / English name / Arabic name masters (banks, bank branches,
- * companies, company branches). Which master it shows comes from the route's `master` data.
+ * Shared screen for the simple code / English name / Arabic name masters (banks, companies, geography,
+ * employee reference lists, directorates, grades). Which master it shows comes from the route's `master` data.
  */
 @Component({
   selector: 'app-master-data',
@@ -92,6 +92,7 @@ export class MasterData implements OnInit {
     code: ['', [Validators.required, Validators.maxLength(30), Validators.pattern('^[A-Z0-9_]+$')]],
     name: ['', [Validators.required, Validators.maxLength(200)]],
     nameAr: ['', [Validators.required, Validators.maxLength(200)]],
+    sortOrder: this.fb.control<number | null>(null, [Validators.min(0), Validators.max(9999)]),
     isActive: [true],
   });
 
@@ -171,6 +172,7 @@ export class MasterData implements OnInit {
       code: r.code,
       name: r.name,
       nameAr: r.nameAr,
+      sortOrder: r.sortOrder ?? null,
       isActive: r.isActive,
     });
     this.form.controls.code.disable();
@@ -198,6 +200,7 @@ export class MasterData implements OnInit {
     };
     const field = this.cfg.parent?.field;
     if (field) payload[field] = v.parentId;
+    if (this.cfg.sortOrder) payload.sortOrder = v.sortOrder;
     const id = this.editingId();
     const call =
       this.isEditMode() && id !== null
@@ -283,6 +286,7 @@ export class MasterData implements OnInit {
   getError(name: FormKey): string {
     const c = this.form.controls[name];
     if (!c.errors || !c.touched) return '';
+    if (name === 'sortOrder') return this.translate.instant('common.validation.invalid');
     if (c.errors['required'] || c.errors['min']) {
       return this.translate.instant('common.validation.required');
     }

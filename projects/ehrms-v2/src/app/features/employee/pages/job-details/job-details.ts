@@ -28,12 +28,13 @@ import { OfficeLocationService } from '../../../admin/office-locations/services/
 import { WorkShift } from '../../../admin/work-shifts/models/work-shift';
 import { OfficeLocation } from '../../../admin/office-locations/models/office-location';
 import { fieldErrorMessage, isFieldInvalid } from '../../../../core/forms/field-errors';
+import { BranchSelect } from '../../../organisation/components/branch-select/branch-select';
 import { DateInput } from '../../../../shared/date-input/date-input';
 import { DepartmentHeadCard } from '../../components/department-head/department-head';
 
 @Component({
   selector: 'app-job-details',
-  imports: [DateInput, DepartmentHeadCard,
+  imports: [BranchSelect, DateInput, DepartmentHeadCard,
     ReactiveFormsModule,
     FieldA11yDirective,
     TranslatePipe,
@@ -120,6 +121,7 @@ export class JobDetailsComponent implements OnInit {
     reportingManagerId: this.fb.control<number | null>(null),
     functionalManagerId: this.fb.control<number | null>(null),
     locationId: this.fb.control<number | null>(null, Validators.required),
+    companyBranchId: this.fb.control<number | null>(null),
     shiftId: this.fb.control<number | null>(null),
     workMode: this.fb.nonNullable.control('ON_SITE', Validators.required),
     effectiveFrom: this.fb.nonNullable.control('', Validators.required),
@@ -287,6 +289,7 @@ export class JobDetailsComponent implements OnInit {
       reportingManagerId: null,
       functionalManagerId: null,
       locationId: null,
+      companyBranchId: null,
       shiftId: null,
       workMode: 'ON_SITE',
       effectiveFrom: '',
@@ -313,6 +316,7 @@ export class JobDetailsComponent implements OnInit {
       reportingManagerId: job.reportingManagerId ?? null,
       functionalManagerId: job.functionalManagerId ?? null,
       locationId: job.locationId,
+      companyBranchId: job.companyBranchId ?? null,
       shiftId: job.shiftId ?? null,
       workMode: job.workMode,
       effectiveFrom: job.effectiveFrom,
@@ -357,6 +361,7 @@ export class JobDetailsComponent implements OnInit {
       reportingManagerId: v.reportingManagerId ? +v.reportingManagerId : undefined,
       functionalManagerId: v.functionalManagerId ? +v.functionalManagerId : undefined,
       locationId: Number(v.locationId),
+      companyBranchId: v.companyBranchId ?? null,
       shiftId: v.shiftId ? +v.shiftId : undefined,
       workMode: v.workMode,
       effectiveFrom: v.effectiveFrom,

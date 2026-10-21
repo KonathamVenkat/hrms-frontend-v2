@@ -1,0 +1,79 @@
+@if (selectedId() !== null) {
+  <div class="mp-current">
+    <span>
+      {{ 'organisation.managerPicker.current' | translate }}
+      <strong>{{ selectedLabel() }}</strong>
+    </span>
+    <button type="button" class="mp-clear" (click)="clear()">
+      {{ 'organisation.managerPicker.clear' | translate }}
+    </button>
+  </div>
+}
+
+<input
+  type="text"
+  class="mp-search"
+  autocomplete="off"
+  [placeholder]="'organisation.managerPicker.search' | translate"
+  [attr.aria-label]="'organisation.managerPicker.search' | translate"
+  [value]="query()"
+  (input)="query.set($any($event.target).value)"
+/>
+
+@if (canNarrow()) {
+  <label class="mp-switch">
+    <input type="checkbox" [checked]="showAll()" (change)="showAll.set(!showAll())" />
+    {{ 'organisation.managerPicker.showAll' | translate }}
+  </label>
+}
+
+<div class="mp-body" aria-live="polite">
+  @if (loading()) {
+    <p class="mp-status" role="status">{{ 'common.loading' | translate }}</p>
+  } @else if (failed()) {
+    <p class="mp-status mp-error" role="alert">
+      {{ 'organisation.errors.loadFailed' | translate }}
+      <button type="button" class="mp-clear" (click)="reload()">
+        {{ 'organisation.retry' | translate }}
+      </button>
+    </p>
+  } @else if (results().length === 0) {
+    <p class="mp-status">
+      {{
+        (canNarrow() && !showAll()
+          ? 'organisation.managerPicker.emptyHere'
+          : 'organisation.managerPicker.empty'
+        ) | translate
+      }}
+    </p>
+  } @else {
+    <ul class="mp-list">
+      @for (e of results(); track e.employeeId) {
+        <li>
+          <button
+            type="button"
+            class="mp-option"
+            [class.selected]="e.employeeId === selectedId()"
+            [attr.aria-pressed]="e.employeeId === selectedId()"
+            (click)="pick(e)"
+          >
+            <span class="mp-name">{{ e.fullName }}</span>
+            <span class="mp-meta">
+              <bdi>{{ e.employeeCode }}</bdi>
+              @if (e.departmentName) {
+                · {{ e.departmentName }}
+              }
+            </span>
+          </button>
+        </li>
+      }
+    </ul>
+    @if (hasMore()) {
+      <p class="mp-status">
+        {{
+          'organisation.managerPicker.more' | translate: { shown: results().length, total: total() }
+        }}
+      </p>
+    }
+  }
+</div>

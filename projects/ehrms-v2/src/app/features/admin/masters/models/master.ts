@@ -1,12 +1,19 @@
-/** Mirrors Bank/BankBranch/Company/CompanyBranch Response and Request of GET|POST|PUT /api/v1/admin/<endpoint>. */
+/** Mirrors the Response and Request of GET|POST|PUT /api/v1/admin/<endpoint> of every master (one shape for all). */
 export interface MasterRecord {
   id: number;
-  /** Only the branch masters have a parent: bankId (bank branches) or companyId (company branches). */
+  /** Only the masters that hang under another one have a parent id, named after the parent. */
   bankId?: number;
   companyId?: number;
+  regionId?: number;
+  wilayaId?: number;
+  provinceId?: number;
+  relationTypeId?: number;
+  companyBranchId?: number;
   code: string;
   name: string;
   nameAr: string;
+  /** Grades only. */
+  sortOrder?: number;
   isActive: boolean;
   createdAt?: string;
   updatedAt?: string;
@@ -16,9 +23,16 @@ export interface MasterRecord {
 export interface MasterRequest {
   bankId?: number;
   companyId?: number;
+  regionId?: number;
+  wilayaId?: number;
+  provinceId?: number;
+  relationTypeId?: number;
+  companyBranchId?: number;
   code: string;
   name: string;
   nameAr: string;
+  /** Grades only; null clears it. */
+  sortOrder?: number | null;
   isActive?: boolean;
   /** Version the screen was loaded with; the server answers 409 if the row changed since. */
   version?: number;

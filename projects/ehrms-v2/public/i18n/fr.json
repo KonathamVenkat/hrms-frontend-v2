@@ -525,7 +525,10 @@
         "shift": "Équipe",
         "effectiveDate": "Date d'effet",
         "remarks": "Remarques",
-        "reportsTo": "Rapporte à"
+        "reportsTo": "Rapporte à",
+        "branch": "Agence",
+        "branchManager": "Responsable d’agence",
+        "noBranch": "Aucune agence affectée"
       },
       "notAssigned": "Non attribué",
       "present": "Présent",
@@ -551,7 +554,8 @@
         "noShiftAssigned": "Aucune équipe attribuée",
         "effectiveFromLabel": "Effectif à partir du",
         "effectiveFromHint": "L'affectation précédente sera clôturée la veille de cette date",
-        "remarksPlaceholder": "ex. Transfert dû à une restructuration du département..."
+        "remarksPlaceholder": "ex. Transfert dû à une restructuration du département...",
+        "branchLabel": "Agence"
       },
       "saving": "Enregistrement...",
       "update": "Mettre à jour",
@@ -1894,8 +1898,9 @@
         "stale": "Cet enregistrement a été modifié par quelqu'un d'autre. Rechargez-le et refaites votre modification.",
         "rules": {
           "MASTER_IN_USE": "{{code}} est utilisé. Désactivez-le au lieu de le supprimer.",
-          "MASTER_HAS_ACTIVE_CHILDREN": "{{code}} a encore des agences actives. Désactivez-les d'abord.",
-          "PARENT_INACTIVE": "Son parent est inactif : cet élément ne peut pas être actif. Activez d'abord le parent."
+          "MASTER_HAS_ACTIVE_CHILDREN": "{{code}} a encore des éléments actifs en dessous. Désactivez-les d'abord.",
+          "PARENT_INACTIVE": "Son parent est inactif : cet élément ne peut pas être actif. Activez d'abord le parent.",
+          "MASTER_HAS_CHILDREN": "{{code}} a des éléments en dessous : il ne peut pas être déplacé vers un autre parent."
         }
       },
       "success": {
@@ -1960,6 +1965,226 @@
         "activateTitle": "Activer la succursale ?",
         "parent": "Société",
         "parentPlaceholder": "Sélectionner une société"
+      },
+      "sortOrder": "Ordre de tri",
+      "sortOrderHint": "Les nombres les plus petits viennent en premier",
+      "regions": {
+        "title": "Régions",
+        "add": "Ajouter une région",
+        "edit": "Modifier la région",
+        "search": "Rechercher régions...",
+        "emptyTitle": "Aucune région trouvée",
+        "emptyHint": "Ajoutez une région ci-dessus",
+        "loadFailed": "Échec du chargement : régions.",
+        "activeHint": "Une entrée inactive ne peut pas être choisie dans les dossiers des employés",
+        "deleteTitle": "Supprimer la région ?",
+        "deactivateTitle": "Désactiver la région ?",
+        "activateTitle": "Activer la région ?"
+      },
+      "wilayas": {
+        "title": "Wilayas",
+        "add": "Ajouter une wilaya",
+        "edit": "Modifier la wilaya",
+        "search": "Rechercher wilayas...",
+        "emptyTitle": "Aucune wilaya trouvée",
+        "emptyHint": "Ajoutez une wilaya ci-dessus",
+        "loadFailed": "Échec du chargement : wilayas.",
+        "activeHint": "Une entrée inactive ne peut pas être choisie dans les dossiers des employés",
+        "deleteTitle": "Supprimer la wilaya ?",
+        "deactivateTitle": "Désactiver la wilaya ?",
+        "activateTitle": "Activer la wilaya ?",
+        "parent": "Région",
+        "parentPlaceholder": "Sélectionner une région"
+      },
+      "provinces": {
+        "title": "Provinces",
+        "add": "Ajouter une province",
+        "edit": "Modifier la province",
+        "search": "Rechercher provinces...",
+        "emptyTitle": "Aucune province trouvée",
+        "emptyHint": "Ajoutez une province ci-dessus",
+        "loadFailed": "Échec du chargement : provinces.",
+        "activeHint": "Une entrée inactive ne peut pas être choisie dans les dossiers des employés",
+        "deleteTitle": "Supprimer la province ?",
+        "deactivateTitle": "Désactiver la province ?",
+        "activateTitle": "Activer la province ?",
+        "parent": "Wilaya",
+        "parentPlaceholder": "Sélectionner une wilaya"
+      },
+      "cities": {
+        "title": "Villes",
+        "add": "Ajouter une ville",
+        "edit": "Modifier la ville",
+        "search": "Rechercher villes...",
+        "emptyTitle": "Aucune ville trouvée",
+        "emptyHint": "Ajoutez une ville ci-dessus",
+        "loadFailed": "Échec du chargement : villes.",
+        "activeHint": "Une entrée inactive ne peut pas être choisie dans les dossiers des employés",
+        "deleteTitle": "Supprimer la ville ?",
+        "deactivateTitle": "Désactiver la ville ?",
+        "activateTitle": "Activer la ville ?",
+        "parent": "Province",
+        "parentPlaceholder": "Sélectionner une province"
+      },
+      "religions": {
+        "title": "Religions",
+        "add": "Ajouter une religion",
+        "edit": "Modifier la religion",
+        "search": "Rechercher religions...",
+        "emptyTitle": "Aucune religion trouvée",
+        "emptyHint": "Ajoutez une religion ci-dessus",
+        "loadFailed": "Échec du chargement : religions.",
+        "activeHint": "Une entrée inactive ne peut pas être choisie dans les dossiers des employés",
+        "deleteTitle": "Supprimer la religion ?",
+        "deactivateTitle": "Désactiver la religion ?",
+        "activateTitle": "Activer la religion ?"
+      },
+      "nationalities": {
+        "title": "Nationalités",
+        "add": "Ajouter une nationalité",
+        "edit": "Modifier la nationalité",
+        "search": "Rechercher nationalités...",
+        "emptyTitle": "Aucune nationalité trouvée",
+        "emptyHint": "Ajoutez une nationalité ci-dessus",
+        "loadFailed": "Échec du chargement : nationalités.",
+        "activeHint": "Une entrée inactive ne peut pas être choisie dans les dossiers des employés",
+        "deleteTitle": "Supprimer la nationalité ?",
+        "deactivateTitle": "Désactiver la nationalité ?",
+        "activateTitle": "Activer la nationalité ?"
+      },
+      "contractTypes": {
+        "title": "Types de contrat",
+        "add": "Ajouter un type de contrat",
+        "edit": "Modifier le type de contrat",
+        "search": "Rechercher types de contrat...",
+        "emptyTitle": "Aucun type de contrat trouvé",
+        "emptyHint": "Ajoutez un type de contrat ci-dessus",
+        "loadFailed": "Échec du chargement : types de contrat.",
+        "activeHint": "Une entrée inactive ne peut pas être choisie dans les dossiers des employés",
+        "deleteTitle": "Supprimer le type de contrat ?",
+        "deactivateTitle": "Désactiver le type de contrat ?",
+        "activateTitle": "Activer le type de contrat ?"
+      },
+      "professions": {
+        "title": "Professions",
+        "add": "Ajouter une profession",
+        "edit": "Modifier la profession",
+        "search": "Rechercher professions...",
+        "emptyTitle": "Aucune profession trouvée",
+        "emptyHint": "Ajoutez une profession ci-dessus",
+        "loadFailed": "Échec du chargement : professions.",
+        "activeHint": "Une entrée inactive ne peut pas être choisie dans les dossiers des employés",
+        "deleteTitle": "Supprimer la profession ?",
+        "deactivateTitle": "Désactiver la profession ?",
+        "activateTitle": "Activer la profession ?"
+      },
+      "educationLevels": {
+        "title": "Niveaux d'études",
+        "add": "Ajouter un niveau d'études",
+        "edit": "Modifier le niveau d'études",
+        "search": "Rechercher niveaux d'études...",
+        "emptyTitle": "Aucun niveau d'études trouvé",
+        "emptyHint": "Ajoutez un niveau d'études ci-dessus",
+        "loadFailed": "Échec du chargement : niveaux d'études.",
+        "activeHint": "Une entrée inactive ne peut pas être choisie dans les dossiers des employés",
+        "deleteTitle": "Supprimer le niveau d'études ?",
+        "deactivateTitle": "Désactiver le niveau d'études ?",
+        "activateTitle": "Activer le niveau d'études ?"
+      },
+      "languages": {
+        "title": "Langues",
+        "add": "Ajouter une langue",
+        "edit": "Modifier la langue",
+        "search": "Rechercher langues...",
+        "emptyTitle": "Aucune langue trouvée",
+        "emptyHint": "Ajoutez une langue ci-dessus",
+        "loadFailed": "Échec du chargement : langues.",
+        "activeHint": "Une entrée inactive ne peut pas être choisie dans les dossiers des employés",
+        "deleteTitle": "Supprimer la langue ?",
+        "deactivateTitle": "Désactiver la langue ?",
+        "activateTitle": "Activer la langue ?"
+      },
+      "languageLevels": {
+        "title": "Niveaux de langue",
+        "add": "Ajouter un niveau de langue",
+        "edit": "Modifier le niveau de langue",
+        "search": "Rechercher niveaux de langue...",
+        "emptyTitle": "Aucun niveau de langue trouvé",
+        "emptyHint": "Ajoutez un niveau de langue ci-dessus",
+        "loadFailed": "Échec du chargement : niveaux de langue.",
+        "activeHint": "Une entrée inactive ne peut pas être choisie dans les dossiers des employés",
+        "deleteTitle": "Supprimer le niveau de langue ?",
+        "deactivateTitle": "Désactiver le niveau de langue ?",
+        "activateTitle": "Activer le niveau de langue ?"
+      },
+      "houseTypes": {
+        "title": "Types de logement",
+        "add": "Ajouter un type de logement",
+        "edit": "Modifier le type de logement",
+        "search": "Rechercher types de logement...",
+        "emptyTitle": "Aucun type de logement trouvé",
+        "emptyHint": "Ajoutez un type de logement ci-dessus",
+        "loadFailed": "Échec du chargement : types de logement.",
+        "activeHint": "Une entrée inactive ne peut pas être choisie dans les dossiers des employés",
+        "deleteTitle": "Supprimer le type de logement ?",
+        "deactivateTitle": "Désactiver le type de logement ?",
+        "activateTitle": "Activer le type de logement ?"
+      },
+      "relationTypes": {
+        "title": "Types de relation",
+        "add": "Ajouter un type de relation",
+        "edit": "Modifier le type de relation",
+        "search": "Rechercher types de relation...",
+        "emptyTitle": "Aucun type de relation trouvé",
+        "emptyHint": "Ajoutez un type de relation ci-dessus",
+        "loadFailed": "Échec du chargement : types de relation.",
+        "activeHint": "Une entrée inactive ne peut pas être choisie dans les dossiers des employés",
+        "deleteTitle": "Supprimer le type de relation ?",
+        "deactivateTitle": "Désactiver le type de relation ?",
+        "activateTitle": "Activer le type de relation ?"
+      },
+      "relations": {
+        "title": "Liens de parenté",
+        "add": "Ajouter un lien de parenté",
+        "edit": "Modifier le lien de parenté",
+        "search": "Rechercher liens de parenté...",
+        "emptyTitle": "Aucun lien de parenté trouvé",
+        "emptyHint": "Ajoutez un lien de parenté ci-dessus",
+        "loadFailed": "Échec du chargement : liens de parenté.",
+        "activeHint": "Une entrée inactive ne peut pas être choisie dans les dossiers des employés",
+        "deleteTitle": "Supprimer le lien de parenté ?",
+        "deactivateTitle": "Désactiver le lien de parenté ?",
+        "activateTitle": "Activer le lien de parenté ?",
+        "parent": "Type de relation",
+        "parentPlaceholder": "Sélectionner un type de relation"
+      },
+      "directorates": {
+        "title": "Directions",
+        "add": "Ajouter une direction",
+        "edit": "Modifier la direction",
+        "search": "Rechercher directions...",
+        "emptyTitle": "Aucune direction trouvée",
+        "emptyHint": "Ajoutez une direction ci-dessus",
+        "loadFailed": "Échec du chargement : directions.",
+        "activeHint": "Une entrée inactive ne peut pas être choisie dans les dossiers des employés",
+        "deleteTitle": "Supprimer la direction ?",
+        "deactivateTitle": "Désactiver la direction ?",
+        "activateTitle": "Activer la direction ?",
+        "parent": "Agence",
+        "parentPlaceholder": "Sélectionner une agence"
+      },
+      "grades": {
+        "title": "Grades",
+        "add": "Ajouter un grade",
+        "edit": "Modifier le grade",
+        "search": "Rechercher grades...",
+        "emptyTitle": "Aucun grade trouvé",
+        "emptyHint": "Ajoutez un grade ci-dessus",
+        "loadFailed": "Échec du chargement : grades.",
+        "activeHint": "Une entrée inactive ne peut pas être choisie dans les dossiers des employés",
+        "deleteTitle": "Supprimer le grade ?",
+        "deactivateTitle": "Désactiver le grade ?",
+        "activateTitle": "Activer le grade ?"
       }
     }
   },
@@ -2243,6 +2468,105 @@
           "deactivated": "Motif {{name}} désactivé."
         }
       }
+    }
+  },
+  "organisation": {
+    "retry": "Réessayer",
+    "saving": "Enregistrement…",
+    "routes": {
+      "branchSetup": "Configuration des agences",
+      "branchAssignments": "Affectation aux agences"
+    },
+    "errors": {
+      "loadFailed": "Impossible de charger les données. Vérifiez votre connexion et réessayez.",
+      "stale": "Quelqu’un a modifié cette agence pendant votre édition. Fermez cette fenêtre, rechargez la liste et réessayez.",
+      "rules": {
+        "BRANCH_INACTIVE": "Cette agence est inactive. Activez-la avant de modifier son emplacement ou son responsable.",
+        "MANAGER_NOT_ACTIVE": "Cet employé est désactivé et ne peut pas diriger une agence.",
+        "BRANCH_HAS_EMPLOYEES": "Cette agence a encore des employés actifs. Affectez-les à une autre agence avant de changer son site."
+      }
+    },
+    "summary": {
+      "employeesWithoutBranch": "Employés sans agence",
+      "branchesWithoutManager": "Agences actives sans responsable",
+      "branchesWithoutLocation": "Agences actives sans emplacement"
+    },
+    "reasons": {
+      "BRANCH_INACTIVE": "l’agence est inactive",
+      "BRANCH_NOT_FOUND": "l’agence n’existe pas",
+      "BRANCH_LOCATION_MISMATCH": "l’agence n’est pas dans le site de l’employé",
+      "EMPLOYEE_NOT_FOUND": "l’employé n’existe pas",
+      "EMPLOYEE_INACTIVE": "l’employé est désactivé",
+      "NO_CURRENT_JOB": "l’employé n’a pas de poste en cours",
+      "ALREADY_ASSIGNED": "l’employé a déjà une agence"
+    },
+    "branchSetup": {
+      "title": "Configuration des agences",
+      "subtitle": "Choisissez un site, puis donnez un responsable à chaque agence de ce site. Un responsable par agence ; une personne peut diriger plusieurs agences.",
+      "totalChip": "{{count}} agences",
+      "withoutLocationChip": "{{count}} sans emplacement",
+      "withoutManagerChip": "{{count}} sans responsable",
+      "search": "Rechercher par code, nom ou responsable",
+      "emptyTitle": "Aucune agence trouvée",
+      "emptyHint": "Les agences sont créées par l’administrateur système dans la configuration.",
+      "code": "Code",
+      "name": "Nom",
+      "location": "Site",
+      "manager": "Responsable d’agence",
+      "status": "Statut",
+      "actions": "Actions",
+      "noLocation": "Aucun site",
+      "noManager": "Aucun responsable",
+      "edit": "Modifier {{name}}",
+      "editTitle": "Modifier {{name}}",
+      "locationPlaceholder": "Choisir un site",
+      "managerHint": "Laissez vide pour retirer le responsable. Seuls les employés actifs peuvent diriger une agence.",
+      "saved": "{{name}} a été mise à jour.",
+      "noLocationGroup": "Aucun site défini",
+      "groupCount": "{{count}} sur ce site",
+      "chooseManager": "Choisir un responsable",
+      "changeManager": "Changer",
+      "chooseManagerFor": "Choisir un responsable pour {{name}}",
+      "changeManagerFor": "Changer le responsable de {{name}}",
+      "managerTitle": "Responsable de {{name}}",
+      "atLocation": "Employés qui travaillent à {{name}}."
+    },
+    "managerPicker": {
+      "current": "Sélectionné :",
+      "clear": "Retirer le responsable",
+      "search": "Rechercher par nom ou code",
+      "showAll": "Afficher les employés de tous les sites",
+      "emptyHere": "Aucun employé actif ne travaille sur ce site. Activez l’option pour voir tout le monde.",
+      "empty": "Aucun employé trouvé.",
+      "more": "{{shown}} affichés sur {{total}}. Saisissez une recherche pour affiner la liste."
+    },
+    "branchAssignments": {
+      "title": "Affectation aux agences",
+      "subtitle": "Affectez à chaque employé sans agence son agence. Seules les agences du site de l’employé sont proposées.",
+      "assign": "Affecter la sélection ({{count}})",
+      "assigned": "{{count}} affecté(s).",
+      "skippedTitle": "{{count}} non affecté(s)",
+      "search": "Rechercher par nom ou matricule",
+      "emptyTitle": "Chaque employé actif a une agence",
+      "emptyHint": "Rien à affecter.",
+      "employee": "Employé",
+      "department": "Département",
+      "location": "Site",
+      "branch": "Agence",
+      "chooseFor": "Agence de {{name}}",
+      "branchPlaceholder": "Choisir une agence",
+      "pager": "Pages",
+      "pageOf": "Page {{page}} sur {{total}}",
+      "confirmTitle": "Affecter les agences",
+      "confirmBody": "Affecter {{count}} employés à l’agence choisie pour chacun ? Cela renseigne l’agence sur leur poste en cours.",
+      "confirm": "Affecter",
+      "errors": {
+        "badRequest": "La demande n’était pas valide. Rechargez la page et réessayez."
+      }
+    },
+    "branchSelect": {
+      "placeholder": "Choisir une agence",
+      "loadFailed": "Impossible de charger les agences. Réessayez."
     }
   }
 }

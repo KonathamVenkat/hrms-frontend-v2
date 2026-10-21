@@ -525,7 +525,10 @@
         "shift": "Shift",
         "effectiveDate": "Effective Date",
         "remarks": "Remarks",
-        "reportsTo": "Reports To"
+        "reportsTo": "Reports To",
+        "branch": "Branch",
+        "branchManager": "Branch manager",
+        "noBranch": "No branch assigned yet"
       },
       "notAssigned": "Not assigned",
       "present": "Present",
@@ -551,7 +554,8 @@
         "noShiftAssigned": "No shift assigned",
         "effectiveFromLabel": "Effective From",
         "effectiveFromHint": "Previous assignment will be closed on the day before this date",
-        "remarksPlaceholder": "e.g. Transfer due to department restructuring..."
+        "remarksPlaceholder": "e.g. Transfer due to department restructuring...",
+        "branchLabel": "Branch"
       },
       "saving": "Saving...",
       "update": "Update",
@@ -1894,8 +1898,9 @@
         "stale": "This record was changed by someone else. Reload it and repeat your change.",
         "rules": {
           "MASTER_IN_USE": "{{code}} is in use. Deactivate it instead of deleting it.",
-          "MASTER_HAS_ACTIVE_CHILDREN": "{{code}} still has active branches. Deactivate them first.",
-          "PARENT_INACTIVE": "Its parent is inactive, so this entry cannot be active. Activate the parent first."
+          "MASTER_HAS_ACTIVE_CHILDREN": "{{code}} still has active entries below it. Deactivate them first.",
+          "PARENT_INACTIVE": "Its parent is inactive, so this entry cannot be active. Activate the parent first.",
+          "MASTER_HAS_CHILDREN": "{{code}} has entries below it, so it cannot move to another parent."
         }
       },
       "success": {
@@ -1960,6 +1965,226 @@
         "activateTitle": "Activate Company Branch?",
         "parent": "Company",
         "parentPlaceholder": "Select a company"
+      },
+      "sortOrder": "Sort order",
+      "sortOrderHint": "Lower numbers come first",
+      "regions": {
+        "title": "Regions",
+        "add": "Add Region",
+        "edit": "Edit Region",
+        "search": "Search regions...",
+        "emptyTitle": "No regions found",
+        "emptyHint": "Add a region above",
+        "loadFailed": "Failed to load regions.",
+        "activeHint": "Inactive entries cannot be chosen on employee records",
+        "deleteTitle": "Delete Region?",
+        "deactivateTitle": "Deactivate Region?",
+        "activateTitle": "Activate Region?"
+      },
+      "wilayas": {
+        "title": "Wilayas",
+        "add": "Add Wilaya",
+        "edit": "Edit Wilaya",
+        "search": "Search wilayas...",
+        "emptyTitle": "No wilayas found",
+        "emptyHint": "Add a wilaya above",
+        "loadFailed": "Failed to load wilayas.",
+        "activeHint": "Inactive entries cannot be chosen on employee records",
+        "deleteTitle": "Delete Wilaya?",
+        "deactivateTitle": "Deactivate Wilaya?",
+        "activateTitle": "Activate Wilaya?",
+        "parent": "Region",
+        "parentPlaceholder": "Select a region"
+      },
+      "provinces": {
+        "title": "Provinces",
+        "add": "Add Province",
+        "edit": "Edit Province",
+        "search": "Search provinces...",
+        "emptyTitle": "No provinces found",
+        "emptyHint": "Add a province above",
+        "loadFailed": "Failed to load provinces.",
+        "activeHint": "Inactive entries cannot be chosen on employee records",
+        "deleteTitle": "Delete Province?",
+        "deactivateTitle": "Deactivate Province?",
+        "activateTitle": "Activate Province?",
+        "parent": "Wilaya",
+        "parentPlaceholder": "Select a wilaya"
+      },
+      "cities": {
+        "title": "Cities",
+        "add": "Add City",
+        "edit": "Edit City",
+        "search": "Search cities...",
+        "emptyTitle": "No cities found",
+        "emptyHint": "Add a city above",
+        "loadFailed": "Failed to load cities.",
+        "activeHint": "Inactive entries cannot be chosen on employee records",
+        "deleteTitle": "Delete City?",
+        "deactivateTitle": "Deactivate City?",
+        "activateTitle": "Activate City?",
+        "parent": "Province",
+        "parentPlaceholder": "Select a province"
+      },
+      "religions": {
+        "title": "Religions",
+        "add": "Add Religion",
+        "edit": "Edit Religion",
+        "search": "Search religions...",
+        "emptyTitle": "No religions found",
+        "emptyHint": "Add a religion above",
+        "loadFailed": "Failed to load religions.",
+        "activeHint": "Inactive entries cannot be chosen on employee records",
+        "deleteTitle": "Delete Religion?",
+        "deactivateTitle": "Deactivate Religion?",
+        "activateTitle": "Activate Religion?"
+      },
+      "nationalities": {
+        "title": "Nationalities",
+        "add": "Add Nationality",
+        "edit": "Edit Nationality",
+        "search": "Search nationalities...",
+        "emptyTitle": "No nationalities found",
+        "emptyHint": "Add a nationality above",
+        "loadFailed": "Failed to load nationalities.",
+        "activeHint": "Inactive entries cannot be chosen on employee records",
+        "deleteTitle": "Delete Nationality?",
+        "deactivateTitle": "Deactivate Nationality?",
+        "activateTitle": "Activate Nationality?"
+      },
+      "contractTypes": {
+        "title": "Contract types",
+        "add": "Add Contract type",
+        "edit": "Edit Contract type",
+        "search": "Search contract types...",
+        "emptyTitle": "No contract types found",
+        "emptyHint": "Add a contract type above",
+        "loadFailed": "Failed to load contract types.",
+        "activeHint": "Inactive entries cannot be chosen on employee records",
+        "deleteTitle": "Delete Contract type?",
+        "deactivateTitle": "Deactivate Contract type?",
+        "activateTitle": "Activate Contract type?"
+      },
+      "professions": {
+        "title": "Professions",
+        "add": "Add Profession",
+        "edit": "Edit Profession",
+        "search": "Search professions...",
+        "emptyTitle": "No professions found",
+        "emptyHint": "Add a profession above",
+        "loadFailed": "Failed to load professions.",
+        "activeHint": "Inactive entries cannot be chosen on employee records",
+        "deleteTitle": "Delete Profession?",
+        "deactivateTitle": "Deactivate Profession?",
+        "activateTitle": "Activate Profession?"
+      },
+      "educationLevels": {
+        "title": "Education levels",
+        "add": "Add Education level",
+        "edit": "Edit Education level",
+        "search": "Search education levels...",
+        "emptyTitle": "No education levels found",
+        "emptyHint": "Add a education level above",
+        "loadFailed": "Failed to load education levels.",
+        "activeHint": "Inactive entries cannot be chosen on employee records",
+        "deleteTitle": "Delete Education level?",
+        "deactivateTitle": "Deactivate Education level?",
+        "activateTitle": "Activate Education level?"
+      },
+      "languages": {
+        "title": "Languages",
+        "add": "Add Language",
+        "edit": "Edit Language",
+        "search": "Search languages...",
+        "emptyTitle": "No languages found",
+        "emptyHint": "Add a language above",
+        "loadFailed": "Failed to load languages.",
+        "activeHint": "Inactive entries cannot be chosen on employee records",
+        "deleteTitle": "Delete Language?",
+        "deactivateTitle": "Deactivate Language?",
+        "activateTitle": "Activate Language?"
+      },
+      "languageLevels": {
+        "title": "Language levels",
+        "add": "Add Language level",
+        "edit": "Edit Language level",
+        "search": "Search language levels...",
+        "emptyTitle": "No language levels found",
+        "emptyHint": "Add a language level above",
+        "loadFailed": "Failed to load language levels.",
+        "activeHint": "Inactive entries cannot be chosen on employee records",
+        "deleteTitle": "Delete Language level?",
+        "deactivateTitle": "Deactivate Language level?",
+        "activateTitle": "Activate Language level?"
+      },
+      "houseTypes": {
+        "title": "House types",
+        "add": "Add House type",
+        "edit": "Edit House type",
+        "search": "Search house types...",
+        "emptyTitle": "No house types found",
+        "emptyHint": "Add a house type above",
+        "loadFailed": "Failed to load house types.",
+        "activeHint": "Inactive entries cannot be chosen on employee records",
+        "deleteTitle": "Delete House type?",
+        "deactivateTitle": "Deactivate House type?",
+        "activateTitle": "Activate House type?"
+      },
+      "relationTypes": {
+        "title": "Relation types",
+        "add": "Add Relation type",
+        "edit": "Edit Relation type",
+        "search": "Search relation types...",
+        "emptyTitle": "No relation types found",
+        "emptyHint": "Add a relation type above",
+        "loadFailed": "Failed to load relation types.",
+        "activeHint": "Inactive entries cannot be chosen on employee records",
+        "deleteTitle": "Delete Relation type?",
+        "deactivateTitle": "Deactivate Relation type?",
+        "activateTitle": "Activate Relation type?"
+      },
+      "relations": {
+        "title": "Relations",
+        "add": "Add Relation",
+        "edit": "Edit Relation",
+        "search": "Search relations...",
+        "emptyTitle": "No relations found",
+        "emptyHint": "Add a relation above",
+        "loadFailed": "Failed to load relations.",
+        "activeHint": "Inactive entries cannot be chosen on employee records",
+        "deleteTitle": "Delete Relation?",
+        "deactivateTitle": "Deactivate Relation?",
+        "activateTitle": "Activate Relation?",
+        "parent": "Relation type",
+        "parentPlaceholder": "Select a relation type"
+      },
+      "directorates": {
+        "title": "Directorates",
+        "add": "Add Directorate",
+        "edit": "Edit Directorate",
+        "search": "Search directorates...",
+        "emptyTitle": "No directorates found",
+        "emptyHint": "Add a directorate above",
+        "loadFailed": "Failed to load directorates.",
+        "activeHint": "Inactive entries cannot be chosen on employee records",
+        "deleteTitle": "Delete Directorate?",
+        "deactivateTitle": "Deactivate Directorate?",
+        "activateTitle": "Activate Directorate?",
+        "parent": "Company branch",
+        "parentPlaceholder": "Select a company branch"
+      },
+      "grades": {
+        "title": "Grades",
+        "add": "Add Grade",
+        "edit": "Edit Grade",
+        "search": "Search grades...",
+        "emptyTitle": "No grades found",
+        "emptyHint": "Add a grade above",
+        "loadFailed": "Failed to load grades.",
+        "activeHint": "Inactive entries cannot be chosen on employee records",
+        "deleteTitle": "Delete Grade?",
+        "deactivateTitle": "Deactivate Grade?",
+        "activateTitle": "Activate Grade?"
       }
     }
   },
@@ -2243,6 +2468,105 @@
           "deactivated": "Reason {{name}} deactivated."
         }
       }
+    }
+  },
+  "organisation": {
+    "retry": "Try again",
+    "saving": "Saving…",
+    "routes": {
+      "branchSetup": "Branch Setup",
+      "branchAssignments": "Branch Assignments"
+    },
+    "errors": {
+      "loadFailed": "Could not load the data. Check your connection and try again.",
+      "stale": "Someone else changed this branch while you were editing. Close this window, reload the list and try again.",
+      "rules": {
+        "BRANCH_INACTIVE": "This branch is inactive. Activate it before changing its location or manager.",
+        "MANAGER_NOT_ACTIVE": "This employee is deactivated and cannot manage a branch.",
+        "BRANCH_HAS_EMPLOYEES": "This branch still has active employees. Move them to another branch before changing its office location."
+      }
+    },
+    "summary": {
+      "employeesWithoutBranch": "Employees without a branch",
+      "branchesWithoutManager": "Active branches without a manager",
+      "branchesWithoutLocation": "Active branches without a location"
+    },
+    "reasons": {
+      "BRANCH_INACTIVE": "the branch is inactive",
+      "BRANCH_NOT_FOUND": "the branch does not exist",
+      "BRANCH_LOCATION_MISMATCH": "the branch is not in the employee’s office location",
+      "EMPLOYEE_NOT_FOUND": "the employee does not exist",
+      "EMPLOYEE_INACTIVE": "the employee is deactivated",
+      "NO_CURRENT_JOB": "the employee has no current job record",
+      "ALREADY_ASSIGNED": "the employee already has a branch"
+    },
+    "branchSetup": {
+      "title": "Branch Setup",
+      "subtitle": "Pick a location, then give each branch in it a manager. One manager per branch; one person may manage several branches.",
+      "totalChip": "{{count}} branches",
+      "withoutLocationChip": "{{count}} without a location",
+      "withoutManagerChip": "{{count}} without a manager",
+      "search": "Search by code, name or manager",
+      "emptyTitle": "No branches found",
+      "emptyHint": "Branches are created by the system administrator under Admin Config.",
+      "code": "Code",
+      "name": "Name",
+      "location": "Location",
+      "manager": "Branch manager",
+      "status": "Status",
+      "actions": "Actions",
+      "noLocation": "No location",
+      "noManager": "No manager",
+      "edit": "Edit {{name}}",
+      "editTitle": "Edit {{name}}",
+      "locationPlaceholder": "Select a location",
+      "managerHint": "Leave empty to clear the manager. Only active employees can manage a branch.",
+      "saved": "{{name}} was updated.",
+      "noLocationGroup": "No location set yet",
+      "groupCount": "{{count}} in this location",
+      "chooseManager": "Choose manager",
+      "changeManager": "Change",
+      "chooseManagerFor": "Choose a manager for {{name}}",
+      "changeManagerFor": "Change the manager of {{name}}",
+      "managerTitle": "Manager for {{name}}",
+      "atLocation": "Showing the employees who work at {{name}}."
+    },
+    "managerPicker": {
+      "current": "Selected:",
+      "clear": "Remove manager",
+      "search": "Search by name or code",
+      "showAll": "Show employees from every location",
+      "emptyHere": "No active employees work at this location. Turn on the switch to see everyone.",
+      "empty": "No employees found.",
+      "more": "Showing {{shown}} of {{total}}. Type in the search box to narrow the list."
+    },
+    "branchAssignments": {
+      "title": "Branch Assignments",
+      "subtitle": "Give each employee who has no branch yet their branch. Only branches in the employee’s office location are offered.",
+      "assign": "Assign selected ({{count}})",
+      "assigned": "{{count}} assigned.",
+      "skippedTitle": "{{count}} could not be assigned",
+      "search": "Search by name or employee code",
+      "emptyTitle": "Every active employee has a branch",
+      "emptyHint": "Nothing to assign.",
+      "employee": "Employee",
+      "department": "Department",
+      "location": "Office location",
+      "branch": "Branch",
+      "chooseFor": "Branch for {{name}}",
+      "branchPlaceholder": "Select a branch",
+      "pager": "Pages",
+      "pageOf": "Page {{page}} of {{total}}",
+      "confirmTitle": "Assign branches",
+      "confirmBody": "Assign {{count}} employees to the branch chosen for each of them? This sets their branch on their current job record.",
+      "confirm": "Assign",
+      "errors": {
+        "badRequest": "The request was not valid. Reload the page and try again."
+      }
+    },
+    "branchSelect": {
+      "placeholder": "Select a branch",
+      "loadFailed": "Could not load the branches. Try again."
     }
   }
 }

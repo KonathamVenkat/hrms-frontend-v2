@@ -1,0 +1,208 @@
+<div class="admin-page">
+  <div class="page-header">
+    <div class="header-left">
+      <h1 class="page-title">{{ 'organisation.branchAssignments.title' | translate }}</h1>
+      <p class="page-subtitle">{{ 'organisation.branchAssignments.subtitle' | translate }}</p>
+    </div>
+    <button
+      type="button"
+      class="btn-add"
+      data-testid="assign"
+      [disabled]="selectedCount() === 0 || assigning()"
+      (click)="openConfirm()"
+    >
+      <span aria-hidden="true" class="material-icons">done_all</span>
+      {{ 'organisation.branchAssignments.assign' | translate: { count: selectedCount() } }}
+    </button>
+  </div>
+
+  @if (summary(); as s) {
+    <div class="stat-tiles">
+      <div class="stat-tile">
+        <strong>{{ s.employeesWithoutBranch }}</strong>
+        <span>{{ 'organisation.summary.employeesWithoutBranch' | translate }}</span>
+      </div>
+      <div class="stat-tile">
+        <strong>{{ s.branchesWithoutManager }}</strong>
+        <span>{{ 'organisation.summary.branchesWithoutManager' | translate }}</span>
+      </div>
+      <div class="stat-tile">
+        <strong>{{ s.branchesWithoutLocation }}</strong>
+        <span>{{ 'organisation.summary.branchesWithoutLocation' | translate }}</span>
+      </div>
+    </div>
+  }
+
+  @if (assignedCount() !== null) {
+    <div class="alert alert-success" role="status">
+      <span aria-hidden="true" class="material-icons">check_circle</span>
+      {{ 'organisation.branchAssignments.assigned' | translate: { count: assignedCount() } }}
+    </div>
+  }
+  @if (skipped().length > 0) {
+    <div class="alert alert-error" role="alert" data-testid="skipped">
+      <span aria-hidden="true" class="material-icons">error_outline</span>
+      <div>
+        <strong>{{
+          'organisation.branchAssignments.skippedTitle' | translate: { count: skipped().length }
+        }}</strong>
+        <ul class="skipped-list">
+          @for (row of skipped(); track row.employeeId) {
+            <li>
+              {{ row.name }}: {{ 'organisation.reasons.' + row.reason | translate }}
+              <small class="muted">({{ row.reason }})</small>
+            </li>
+          }
+        </ul>
+      </div>
+    </div>
+  }
+
+  <div class="filter-bar">
+    <div class="search-wrap">
+      <span aria-hidden="true" class="material-icons">search</span>
+      <input
+        type="text"
+        [placeholder]="'organisation.branchAssignments.search' | translate"
+        [attr.aria-label]="'organisation.branchAssignments.search' | translate"
+        (input)="search($any($event.target).value)"
+      />
+    </div>
+  </div>
+
+  @if (loading() && rows().length === 0) {
+    <div class="loading-wrap" role="status">
+      <div class="spinner"></div>
+      <span>{{ 'common.loading' | translate }}</span>
+    </div>
+  } @else if (loadFailed()) {
+    <div class="alert alert-error" role="alert">
+      <span aria-hidden="true" class="material-icons">error_outline</span>
+      {{ 'organisation.errors.loadFailed' | translate }}
+      <button type="button" class="btn-cancel" data-testid="retry" (click)="retry()">
+        {{ 'organisation.retry' | translate }}
+      </button>
+    </div>
+  } @else if (rows().length === 0) {
+    <div class="empty-card">
+      <span aria-hidden="true" class="material-icons">task_alt</span>
+      <p>{{ 'organisation.branchAssignments.emptyTitle' | translate }}</p>
+      <small>{{ 'organisation.branchAssignments.emptyHint' | translate }}</small>
+    </div>
+  } @else {
+    <div class="table-card">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th scope="col">{{ 'organisation.branchAssignments.employee' | translate }}</th>
+            <th scope="col">{{ 'organisation.branchAssignments.department' | translate }}</th>
+            <th scope="col">{{ 'organisation.branchAssignments.location' | translate }}</th>
+            <th scope="col">{{ 'organisation.branchAssignments.branch' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (r of rows(); track r.employeeId) {
+            <tr class="data-row">
+              <td>
+                <div>{{ r.fullName }}</div>
+                <small class="muted"
+                  ><bdi>{{ r.employeeCode }}</bdi></small
+                >
+              </td>
+              <td>{{ r.departmentName }}</td>
+              <td>{{ r.locationName }}</td>
+              <td>
+                <select
+                  [attr.aria-label]="
+                    'organisation.branchAssignments.chooseFor' | translate: { name: r.fullName }
+                  "
+                  (change)="choose(r.employeeId, $any($event.target).value)"
+                >
+                  <option value="">
+                    {{ 'organisation.branchAssignments.branchPlaceholder' | translate }}
+                  </option>
+                  @for (b of branchesByLocation().get(r.locationId ?? -1) ?? []; track b.id) {
+                    <option [value]="b.id" [selected]="selection()[r.employeeId] === b.id">
+                      {{ b.nameEn }}
+                    </option>
+                  }
+                </select>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+      @if ((page()?.totalPages ?? 0) > 1) {
+        <nav class="pager" [attr.aria-label]="'organisation.branchAssignments.pager' | translate">
+          <button
+            type="button"
+            class="btn-cancel"
+            [disabled]="page()?.first"
+            (click)="goTo((page()?.number ?? 0) - 1)"
+          >
+            {{ 'common.previous' | translate }}
+          </button>
+          <span aria-live="polite">{{
+            'organisation.branchAssignments.pageOf'
+              | translate: { page: (page()?.number ?? 0) + 1, total: page()?.totalPages }
+          }}</span>
+          <button
+            type="button"
+            class="btn-cancel"
+            data-testid="next"
+            [disabled]="page()?.last"
+            (click)="goTo((page()?.number ?? 0) + 1)"
+          >
+            {{ 'common.next' | translate }}
+          </button>
+        </nav>
+      }
+    </div>
+  }
+</div>
+
+@if (confirmOpen()) {
+  <div class="modal-backdrop" (click)="cancelConfirm()">
+    <div
+      class="confirm-dialog"
+      (click)="$event.stopPropagation()"
+      [appAccessibleDialog]="'ba-confirm-title'"
+      (dialogClosed)="cancelConfirm()"
+      cdkTrapFocus
+      cdkTrapFocusAutoCapture
+    >
+      <div class="confirm-icon icon-info">
+        <span aria-hidden="true" class="material-icons">account_tree</span>
+      </div>
+      <h3 id="ba-confirm-title" class="confirm-title">
+        {{ 'organisation.branchAssignments.confirmTitle' | translate }}
+      </h3>
+      <p class="confirm-msg">
+        {{ 'organisation.branchAssignments.confirmBody' | translate: { count: selectedCount() } }}
+      </p>
+      @if (confirmError()) {
+        <div class="modal-alert confirm-alert" role="alert">
+          <span aria-hidden="true" class="material-icons">error_outline</span>
+          <span dir="auto">{{ confirmError() }}</span>
+        </div>
+      }
+      <div class="confirm-actions">
+        <button type="button" class="btn-cancel" (click)="cancelConfirm()">
+          {{ 'common.cancel' | translate }}
+        </button>
+        <button
+          type="button"
+          class="btn-confirm btn-success"
+          data-testid="confirm"
+          [disabled]="assigning()"
+          (click)="confirmAssign()"
+        >
+          @if (assigning()) {
+            <div class="btn-spinner"></div>
+          }
+          {{ 'organisation.branchAssignments.confirm' | translate }}
+        </button>
+      </div>
+    </div>
+  </div>
+}

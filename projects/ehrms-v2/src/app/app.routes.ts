@@ -6,6 +6,7 @@ import {
   BANK_BRANCHES,
   COMPANIES,
   COMPANY_BRANCHES,
+  REFERENCE_MASTER_ROUTES,
 } from './features/admin/masters/masters.config';
 
 export const routes: Routes = [
@@ -112,6 +113,17 @@ export const routes: Routes = [
               ),
             title: 'Company Branches · EHRMS',
           },
+          // The reference masters (geography, employee lists, directorates, grades) share one screen.
+          ...REFERENCE_MASTER_ROUTES.map(({ path, title, master }) => ({
+            path,
+            canActivate: [roleGuard('SYSTEM_ADMIN')],
+            data: { master },
+            loadComponent: () =>
+              import('./features/admin/masters/pages/master-data/master-data').then(
+                (m) => m.MasterData,
+              ),
+            title: `${title} · EHRMS`,
+          })),
           {
             path: 'leave-types',
             loadComponent: () =>
@@ -231,6 +243,12 @@ export const routes: Routes = [
         path: 'recruitment',
         loadChildren: () =>
           import('./features/recruitment/recruitment-routing').then((m) => m.RECRUITMENT_ROUTES),
+      },
+      {
+        path: 'organisation',
+        canActivate: [roleGuard(...HR_ROLES)],
+        loadChildren: () =>
+          import('./features/organisation/organisation-routing').then((m) => m.ORGANISATION_ROUTES),
       },
       {
         path: 'payroll',

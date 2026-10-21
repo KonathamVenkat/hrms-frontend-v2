@@ -158,6 +158,19 @@
               </div>
             </div>
             <div class="info-row">
+              <span class="info-label">{{ 'employee.jobDetails.fields.branch' | translate }}</span>
+              <div class="info-value">
+                @if (currentJob()!.branchName) {
+                  <span class="val-main">{{ currentJob()!.branchName }}</span>
+                  @if (currentJob()!.branchManagerName) {
+                    <span class="val-sub">{{ 'employee.jobDetails.fields.branchManager' | translate }}: {{ currentJob()!.branchManagerName }}</span>
+                  }
+                } @else {
+                  <span class="val-sub">{{ 'employee.jobDetails.fields.noBranch' | translate }}</span>
+                }
+              </div>
+            </div>
+            <div class="info-row">
               <span class="info-label">{{ 'employee.jobDetails.fields.workMode' | translate }}</span>
               <span class="work-mode-badge" [class]="getWorkModeBadge(currentJob()!.workMode)">
                 {{ currentJob()!.workMode.replace('_', ' ') }}
@@ -435,6 +448,16 @@
                 }
               </select>
             </div>
+          </div>
+
+          <div class="field">
+            <label for="jd-branch-id">{{ 'employee.jobDetails.formFields.branchLabel' | translate }}</label>
+            <app-branch-select
+              inputId="jd-branch-id"
+              [locationControl]="form.controls.locationId"
+              [control]="form.controls.companyBranchId"
+              [locked]="!isNewAssignment()"
+            />
           </div>
 
           <div class="field">
