@@ -2316,7 +2316,13 @@
         "deactivateTitle": "تعطيل درجة؟",
         "activateTitle": "تفعيل درجة؟"
       },
-      "pageOf": "صفحة {{page}} من {{pages}}"
+      "pageOf": "صفحة {{page}} من {{pages}}",
+      "pager": {
+        "showing": "عرض {{from}}–{{to}} من {{total}}",
+        "label": "الصفحات",
+        "prev": "الصفحة السابقة",
+        "next": "الصفحة التالية"
+      }
     }
   },
   "recruitment": {

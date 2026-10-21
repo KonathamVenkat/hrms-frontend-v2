@@ -1,7 +1,8 @@
 import { TestBed } from '@angular/core/testing';
+import { HttpErrorResponse } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 import { provideTranslateService } from '@ngx-translate/core';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 
 import { MasterData } from './master-data';
 import { MasterDataService } from '../../services/master-data';
@@ -153,6 +154,7 @@ describe('MasterData (reference masters)', () => {
       comp.setText('juba');
       vi.advanceTimersByTime(299);
       expect(svc.search).not.toHaveBeenCalled();
+      expect(comp.page()).toBe(2); // the old page and its pager stay until the request goes out
       vi.advanceTimersByTime(1);
 
       expect(svc.search).toHaveBeenCalledTimes(1);
@@ -191,6 +193,29 @@ describe('MasterData (reference masters)', () => {
       expect(comp.rangeFrom()).toBe(21);
       expect(comp.rangeTo()).toBe(40);
       expect(el.querySelector('.master-pager')).not.toBeNull();
+    });
+
+    it('shows a load error and clears it when the next page loads', () => {
+      const { svc, comp } = setup(config('cities'));
+      svc.search.mockReturnValueOnce(throwError(() => new HttpErrorResponse({ status: 500 })));
+      comp.changePage(1);
+      expect(comp.error()).not.toBeNull();
+
+      comp.changePage(0);
+
+      expect(comp.error()).toBeNull();
+      expect(comp.records().length).toBe(1);
+    });
+
+    it('hides the Total chip while a filter is on, because the count is then the filtered one', () => {
+      const { comp, fixture, el } = setup(config('cities'));
+      fixture.detectChanges();
+      expect(el.querySelector('.chip-total')).not.toBeNull();
+
+      comp.setStatus('active');
+      fixture.detectChanges();
+
+      expect(el.querySelector('.chip-total')).toBeNull();
     });
 
     it('does not page a master that is not server-paged', () => {

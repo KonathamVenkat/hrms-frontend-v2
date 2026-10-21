@@ -3,9 +3,11 @@
     <div class="header-left">
       <h1 class="page-title">{{ t + '.title' | translate }}</h1>
       <div class="stat-chips">
-        <span class="chip chip-total">{{
-          'admin.masters.totalChip' | translate: { count: totalCount() }
-        }}</span>
+        @if (!cfg.paged || !isFiltering()) {
+          <span class="chip chip-total">{{
+            'admin.masters.totalChip' | translate: { count: totalCount() }
+          }}</span>
+        }
         @if (!cfg.paged) {
           <span class="chip chip-active">{{
             'admin.masters.activeChip' | translate: { count: activeCount() }
@@ -169,15 +171,15 @@
       }
     </div>
     @if (cfg.paged && totalElements() > 0) {
-      <nav class="master-pager" [attr.aria-label]="'employee.list.paginationLabel' | translate">
+      <nav class="master-pager" [attr.aria-label]="'admin.masters.pager.label' | translate">
         <span role="status">{{
-          'employee.list.showing'
+          'admin.masters.pager.showing'
             | translate: { from: rangeFrom(), to: rangeTo(), total: totalElements() }
         }}</span>
         <button
           type="button"
           class="tab-btn"
-          [attr.aria-label]="'employee.list.prevPage' | translate"
+          [attr.aria-label]="'admin.masters.pager.prev' | translate"
           [disabled]="page() === 0"
           (click)="changePage(page() - 1)"
         >
@@ -189,7 +191,7 @@
         <button
           type="button"
           class="tab-btn"
-          [attr.aria-label]="'employee.list.nextPage' | translate"
+          [attr.aria-label]="'admin.masters.pager.next' | translate"
           [disabled]="page() >= totalPages() - 1"
           (click)="changePage(page() + 1)"
         >

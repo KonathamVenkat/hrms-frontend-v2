@@ -71,6 +71,13 @@ export class MasterData implements OnInit {
   private readonly typed$ = new Subject<void>();
   private readonly now$ = new Subject<void>();
 
+  /** A search text, status or parent filter is on, so a paged master's count is not its overall total. */
+  readonly isFiltering = computed(
+    () =>
+      this.filterText().trim() !== '' ||
+      this.filterActive() !== 'all' ||
+      this.filterParent() !== null,
+  );
   readonly totalCount = computed(() =>
     this.cfg.paged ? this.totalElements() : this.records().length,
   );
@@ -132,7 +139,15 @@ export class MasterData implements OnInit {
 
   /** Server-paged masters: a typing pause or any other change asks for a page; only the latest answer counts. */
   private listenForPages(): void {
-    merge(this.typed$.pipe(debounceTime(SEARCH_DEBOUNCE_MS)), this.now$)
+    merge(
+      this.typed$.pipe(
+        debounceTime(SEARCH_DEBOUNCE_MS),
+        // A new text starts from the first page, but only when the request goes out: until then the
+        // screen still shows the old page and its pager.
+        tap(() => this.page.set(0)),
+      ),
+      this.now$,
+    )
       .pipe(
         tap(() => this.loading.set(true)),
         switchMap(() =>
@@ -160,6 +175,7 @@ export class MasterData implements OnInit {
           this.error.set(res.message);
           return;
         }
+        this.error.set(null);
         this.records.set(res.data.content);
         this.totalElements.set(res.data.totalElements);
         this.totalPages.set(res.data.totalPages);
@@ -178,9 +194,7 @@ export class MasterData implements OnInit {
   /** Search box: a new text starts again from the first page, after a short typing pause. */
   setText(value: string): void {
     this.filterText.set(value);
-    if (!this.cfg.paged) return;
-    this.page.set(0);
-    this.typed$.next();
+    if (this.cfg.paged) this.typed$.next();
   }
 
   setStatus(status: StatusFilter): void {

@@ -55,15 +55,21 @@
   display: block;
   margin-inline: auto;
 }
-.logo-full {
-  display: none !important;
+.rail-logo .logo-full {
+  display: none;
 }
-:host-context(.nav-expanded) .logo-full {
-  display: block !important;
+:host-context(.nav-expanded) .rail-logo .logo-full {
+  display: block;
   margin-inline: 6px auto;
 }
-:host-context(.nav-expanded) .logo-mark {
-  display: none !important;
+:host-context(.nav-expanded) .rail-logo .logo-mark {
+  display: none;
+}
+/* The logo is navy: on the dark theme it sits on a light plate so it stays readable. */
+:host-context(.dark-mode) .rail-logo img {
+  padding: 4px;
+  border-radius: var(--radius-md);
+  background: #fff;
 }
 
 /* ── Nav list ── */
@@ -287,12 +293,12 @@
 
 /* ── Mobile: off-canvas drawer, always shows labels ── */
 @media (max-width: 767.98px) {
-  .logo-full {
-    display: block !important;
+  .rail-logo .logo-full {
+    display: block;
     margin-inline: 6px auto;
   }
-  .logo-mark {
-    display: none !important;
+  .rail-logo .logo-mark {
+    display: none;
   }
   :host,
   :host-context(.nav-expanded) {

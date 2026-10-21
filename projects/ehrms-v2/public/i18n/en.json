@@ -2316,7 +2316,13 @@
         "deactivateTitle": "Deactivate Grade?",
         "activateTitle": "Activate Grade?"
       },
-      "pageOf": "Page {{page}} of {{pages}}"
+      "pageOf": "Page {{page}} of {{pages}}",
+      "pager": {
+        "showing": "Showing {{from}}–{{to}} of {{total}}",
+        "label": "Pages",
+        "prev": "Previous page",
+        "next": "Next page"
+      }
     }
   },
   "recruitment": {
