@@ -17,11 +17,14 @@ import {
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { CdkTrapFocus } from '@angular/cdk/a11y';
 import { finalize } from 'rxjs';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 
 import { AccessibleDialogDirective } from '../../../../core/directives/accessible-dialog.directive';
 import { AddressService } from '../../services/address.service';
 import { EmployeeAddress } from '../../models/address.model';
+import { InfoLookup } from '../../models/employee-info.model';
+import { lookupOptions } from '../../utils/lookup-options';
+import { LanguageService } from '../../../../core/services/language.service';
 import { serverMessage } from '../../../../core/utils/http-error-message';
 import { timedMessage } from '../../../../core/utils/timed-message';
 import { FieldA11yDirective } from '../../../../core/directives/field-a11y.directive';
@@ -41,6 +44,7 @@ export class EmployeeAddressesComponent implements OnInit {
   private addressSvc = inject(AddressService);
   private destroyRef = inject(DestroyRef);
   private translate = inject(TranslateService);
+  private language = inject(LanguageService);
 
   // ── State ─────────────────────────────────────────────────
   addresses = signal<EmployeeAddress[]>([]);
@@ -78,8 +82,53 @@ export class EmployeeAddressesComponent implements OnInit {
     isPrimary: [false],
   });
 
+  // ── State / Province and City come from the masters; the saved English name is what the API stores ──
+  private provinces = signal<InfoLookup[]>([]);
+  private cities = signal<InfoLookup[]>([]);
+  private countries = signal<InfoLookup[]>([]);
+  private stateValue = toSignal(this.form.controls.stateProvince.valueChanges, { initialValue: '' });
+  private cityValue = toSignal(this.form.controls.city.valueChanges, { initialValue: '' });
+  private countryValue = toSignal(this.form.controls.country.valueChanges, { initialValue: this.form.controls.country.value });
+  readonly provinceOptions = computed(() =>
+    lookupOptions(this.provinces(), this.stateValue(), this.language.currentLang() === 'ar'),
+  );
+  readonly countryOptions = computed(() =>
+    lookupOptions(this.countries(), this.countryValue(), this.language.currentLang() === 'ar'),
+  );
+  /** Only the chosen province's cities; all of them while no province is chosen. */
+  readonly cityOptions = computed(() => {
+    const province = this.provinces().find((p) => p.name === this.stateValue());
+    const list = province ? this.cities().filter((c) => c.parentId === province.id) : this.cities();
+    return lookupOptions(list, this.cityValue(), this.language.currentLang() === 'ar');
+  });
+
   ngOnInit(): void {
     this.loadAddresses();
+    this.loadLookups();
+    // Choosing another province clears a city that belongs to a different one.
+    this.form.controls.stateProvince.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((name) => {
+        const province = this.provinces().find((p) => p.name === name);
+        const city = this.cities().find((c) => c.name === this.form.controls.city.value);
+        if (province && city && city.parentId !== province.id) this.form.controls.city.setValue('');
+      });
+  }
+
+  private loadLookups(): void {
+    const failed = () => this.error.set(this.translate.instant('employee.addresses.errors.lookups'));
+    this.addressSvc
+      .getProvinces()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({ next: (res) => this.provinces.set(res.data ?? []), error: failed });
+    this.addressSvc
+      .getCountries()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({ next: (res) => this.countries.set(res.data ?? []), error: failed });
+    this.addressSvc
+      .getCities()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({ next: (res) => this.cities.set(res.data ?? []), error: failed });
   }
 
   // ── Load ──────────────────────────────────────────────────

@@ -36,6 +36,8 @@ export interface MasterConfig {
   endpoint: string;
   icon: string;
   parent?: { endpoint: string; field: ParentField };
+  /** The master carries the country behind it (nationalities), edited on the screen. */
+  country?: boolean;
   /** The master has an optional sort order (grades), shown and edited on the screen. */
   sortOrder?: boolean;
   /** The list is long: the server pages, searches and filters it (GET <endpoint>/search). */
@@ -83,6 +85,7 @@ const NATIONALITIES: MasterConfig = {
   key: 'nationalities',
   endpoint: 'nationalities',
   icon: 'flag',
+  country: true,
 };
 const CONTRACT_TYPES: MasterConfig = {
   key: 'contractTypes',

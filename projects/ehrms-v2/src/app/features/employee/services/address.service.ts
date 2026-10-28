@@ -5,6 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { EmployeeAddress, EmployeeAddressRequest, ApiResponse } from '../models/address.model';
+import { InfoLookup } from '../models/employee-info.model';
 
 @Injectable({ providedIn: 'root' })
 export class AddressService {
@@ -12,6 +13,27 @@ export class AddressService {
 
   private url(employeeId: number): string {
     return `${environment.serviceUrl}/api/v1/employees/${employeeId}/addresses`;
+  }
+
+  /** Active provinces (the State / Province dropdown). */
+  getProvinces(): Observable<ApiResponse<InfoLookup[]>> {
+    return this.http.get<ApiResponse<InfoLookup[]>>(
+      `${environment.serviceUrl}/api/v1/lookups/provinces`,
+    );
+  }
+
+  /** Active countries (the Country dropdown): the country names kept on the nationalities. */
+  getCountries(): Observable<ApiResponse<InfoLookup[]>> {
+    return this.http.get<ApiResponse<InfoLookup[]>>(
+      `${environment.serviceUrl}/api/v1/lookups/countries`,
+    );
+  }
+
+  /** Active cities; each carries its province id as parentId. */
+  getCities(): Observable<ApiResponse<InfoLookup[]>> {
+    return this.http.get<ApiResponse<InfoLookup[]>>(
+      `${environment.serviceUrl}/api/v1/lookups/cities`,
+    );
   }
 
   getAll(employeeId: number): Observable<ApiResponse<EmployeeAddress[]>> {

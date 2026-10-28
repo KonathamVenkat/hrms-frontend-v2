@@ -1,0 +1,100 @@
+<div class="app-page">
+  <div class="page-header">
+    <div class="header-left">
+      <mat-icon class="header-icon" aria-hidden="true">inbox</mat-icon>
+      <div>
+        <h1 class="page-title">{{ 'workflow.inbox.title' | translate }}</h1>
+        <span class="subtitle">{{ 'workflow.inbox.subtitle' | translate }}</span>
+      </div>
+    </div>
+  </div>
+
+  @if (error()) {
+    <div class="alert alert-error" role="alert">
+      <span aria-hidden="true" class="material-icons">error_outline</span>
+      <span>{{ error() }}</span>
+      <button type="button" mat-stroked-button (click)="load()">
+        {{ 'workflow.inbox.retry' | translate }}
+      </button>
+    </div>
+  }
+
+  <mat-card class="table-card">
+    <mat-card-content>
+      <div class="table-wrapper" [attr.aria-busy]="loading()">
+        @if (loading()) {
+          <div class="center-spinner" role="status">
+            <mat-spinner diameter="44" />
+            <p>{{ 'common.loading' | translate }}</p>
+          </div>
+        } @else if (items().length === 0 && !error()) {
+          <div class="empty-state">
+            <mat-icon aria-hidden="true">inbox</mat-icon>
+            <p>{{ 'workflow.inbox.empty' | translate }}</p>
+            <small>{{ 'workflow.inbox.emptyHint' | translate }}</small>
+          </div>
+        } @else if (items().length > 0) {
+          <table mat-table [dataSource]="rows()" [trackBy]="trackRow" class="approval-table">
+            <ng-container matColumnDef="requester">
+              <th mat-header-cell *matHeaderCellDef>
+                {{ 'workflow.inbox.columns.requester' | translate }}
+              </th>
+              <td mat-cell *matCellDef="let r; dataSource: rows()" dir="auto">
+                <a class="ref-id" [routerLink]="['/app/workflow/requests', r.type, r.requestId]">
+                  @if (r.requesterName) {
+                    {{ r.requesterName }}
+                  } @else {
+                    {{ 'workflow.types.' + r.type | translate }} #{{ r.requestId }}
+                  }
+                </a>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="request">
+              <th mat-header-cell *matHeaderCellDef>
+                {{ 'workflow.inbox.columns.request' | translate }}
+              </th>
+              <td mat-cell *matCellDef="let r; dataSource: rows()" dir="auto">
+                <strong>{{ 'workflow.types.' + r.type | translate }}</strong>
+                @if (r.summary) {
+                  <br />{{ r.summary }}
+                }
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="step">
+              <th mat-header-cell *matHeaderCellDef>
+                {{ 'workflow.inbox.columns.step' | translate }}
+              </th>
+              <td mat-cell *matCellDef="let r; dataSource: rows()" dir="auto">
+                {{ r.stepLabel }}
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="submitted">
+              <th mat-header-cell *matHeaderCellDef>
+                {{ 'workflow.inbox.columns.submitted' | translate }}
+              </th>
+              <td mat-cell *matCellDef="let r; dataSource: rows()">
+                <bdi>{{ r.submitted }}</bdi>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="columns"></tr>
+            <tr mat-row *matRowDef="let row; columns: columns"></tr>
+          </table>
+        }
+      </div>
+      @if (total() > 0) {
+        <mat-paginator
+          [length]="total()"
+          [pageIndex]="pageIndex()"
+          [pageSize]="pageSize()"
+          [pageSizeOptions]="pageSizes"
+          [attr.aria-label]="'workflow.inbox.paginator' | translate"
+          (page)="onPage($event)"
+        />
+      }
+    </mat-card-content>
+  </mat-card>
+</div>

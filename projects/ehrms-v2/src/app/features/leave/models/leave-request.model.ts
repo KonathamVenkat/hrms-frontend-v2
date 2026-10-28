@@ -19,6 +19,9 @@ export interface LeaveRequest {
 
   // Status
   status: LeaveStatus;
+  /** Approval-workflow stage (PENDING_HEAD, APPROVED, ...); absent on requests that use the one-step approval. */
+  stage?: string;
+  targetDepartmentId?: number;
   approvedBy?: string;
   approvedAt?: string;
   remarks?: string; // maps to backend rejectionReason

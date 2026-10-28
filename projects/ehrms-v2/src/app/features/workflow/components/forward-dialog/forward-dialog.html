@@ -1,0 +1,114 @@
+<div class="dialog-overlay" (click)="close()">
+  <div
+    class="dialog-box"
+    (click)="$event.stopPropagation()"
+    [appAccessibleDialog]="'fd-title'"
+    (dialogClosed)="close()"
+    cdkTrapFocus
+    cdkTrapFocusAutoCapture
+  >
+    <div class="dialog-header">
+      <mat-icon class="warn-icon" aria-hidden="true">{{
+        danger() ? 'warning_amber' : 'help_outline'
+      }}</mat-icon>
+      <h3 id="fd-title">{{ 'workflow.dialog.' + kind() + '.title' | translate }}</h3>
+      <button
+        type="button"
+        mat-icon-button
+        [attr.aria-label]="'common.close' | translate"
+        (click)="close()"
+      >
+        <mat-icon aria-hidden="true">close</mat-icon>
+      </button>
+    </div>
+
+    <form class="dialog-body" [formGroup]="form" (ngSubmit)="submit()">
+      <p class="dialog-message">{{ 'workflow.dialog.' + kind() + '.message' | translate }}</p>
+      <p class="dialog-subject">
+        @if (requesterName()) {
+          <strong dir="auto">{{ requesterName() }}</strong>
+        }
+        @if (summary()) {
+          <span dir="auto">{{ summary() }}</span>
+        }
+      </p>
+
+      @if (kind() === 'OVERRIDE') {
+        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="full-width">
+          <mat-label>{{ 'workflow.dialog.outcome' | translate }}</mat-label>
+          <mat-select formControlName="outcome" required>
+            @for (o of outcomes(); track o) {
+              <mat-option [value]="o">{{ 'workflow.outcomes.' + o | translate }}</mat-option>
+            }
+          </mat-select>
+          @if (form.controls.outcome.invalid) {
+            <mat-error>{{ 'common.validation.required' | translate }}</mat-error>
+          }
+        </mat-form-field>
+      }
+
+      @if (needsDepartment()) {
+        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="full-width">
+          <mat-label>{{ 'workflow.dialog.department' | translate }}</mat-label>
+          <mat-select formControlName="targetDepartmentId" required>
+            @for (d of departments(); track d.id) {
+              <mat-option [value]="d.id">{{ isArabic() ? d.nameAr : d.name }}</mat-option>
+            }
+          </mat-select>
+          <mat-hint>{{ 'workflow.dialog.departmentHint' | translate }}</mat-hint>
+          @if (form.controls.targetDepartmentId.invalid) {
+            <mat-error>{{ 'common.validation.required' | translate }}</mat-error>
+          }
+        </mat-form-field>
+        @if (departmentsError()) {
+          <p class="field-error" role="alert">{{ departmentsError() }}</p>
+        }
+      }
+
+      @if (kind() !== 'CANCEL') {
+        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="full-width">
+          <mat-label>{{
+            (textRequired() ? 'workflow.dialog.reason' : 'workflow.dialog.comment') | translate
+          }}</mat-label>
+          <textarea
+            matInput
+            rows="3"
+            maxlength="500"
+            formControlName="text"
+            [required]="textRequired()"
+          ></textarea>
+          <mat-hint align="end">{{ form.controls.text.value.length }}/500</mat-hint>
+          @if (form.controls.text.invalid) {
+            <mat-error>{{ 'common.validation.required' | translate }}</mat-error>
+          }
+        </mat-form-field>
+      }
+
+      @if (error()) {
+        <div class="error-msg" role="alert">
+          <mat-icon aria-hidden="true">error</mat-icon>
+          <span>{{ error() }}</span>
+        </div>
+      }
+    </form>
+
+    <div class="dialog-actions">
+      <button type="button" mat-stroked-button (click)="close()" [disabled]="busy()">
+        {{ 'common.cancel' | translate }}
+      </button>
+      <button
+        type="button"
+        class="confirm-btn"
+        mat-flat-button
+        [color]="danger() ? 'warn' : 'primary'"
+        [disabled]="busy()"
+        (click)="submit()"
+      >
+        @if (busy()) {
+          <mat-spinner diameter="18" />
+        }
+        <span>{{ 'workflow.dialog.' + kind() + '.confirm' | translate }}</span>
+      </button>
+    </div>
+  </div>
+</div>

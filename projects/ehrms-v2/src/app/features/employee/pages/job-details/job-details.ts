@@ -31,10 +31,11 @@ import { fieldErrorMessage, isFieldInvalid } from '../../../../core/forms/field-
 import { BranchSelect } from '../../../organisation/components/branch-select/branch-select';
 import { DateInput } from '../../../../shared/date-input/date-input';
 import { DepartmentHeadCard } from '../../components/department-head/department-head';
+import { DepartmentSecretaryCard } from '../../components/department-secretary/department-secretary';
 
 @Component({
   selector: 'app-job-details',
-  imports: [BranchSelect, DateInput, DepartmentHeadCard,
+  imports: [BranchSelect, DateInput, DepartmentHeadCard, DepartmentSecretaryCard,
     ReactiveFormsModule,
     FieldA11yDirective,
     TranslatePipe,
@@ -48,6 +49,8 @@ import { DepartmentHeadCard } from '../../components/department-head/department-
 export class JobDetailsComponent implements OnInit {
   /** Passed from employee-detail. */
   readonly employeeId = input.required<number>();
+  /** Shown in confirmations (e.g. department secretary). */
+  readonly employeeName = input<string | null>(null);
 
   private fb = inject(FormBuilder);
   private jobSvc = inject(JobDetailsService);

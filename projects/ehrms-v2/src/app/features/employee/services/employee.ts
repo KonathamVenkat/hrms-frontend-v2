@@ -15,6 +15,7 @@ import {
   UpdateEmployeePayload,
   EmployeeDetailData,
 } from '../models/employee';
+import { InfoLookup } from '../models/employee-info.model';
 
 @Injectable({ providedIn: 'root' })
 export class EmployeeService {
@@ -55,6 +56,19 @@ export class EmployeeService {
   // ── Create employee + auth user ───────────────────────────
   createEmployee(payload: CreateEmployeePayload): Observable<ApiResponse<CreatedEmployee>> {
     return this.http.post<ApiResponse<CreatedEmployee>>(this.baseUrl, payload);
+  }
+
+  // ── Active nationalities (HR_ADMIN / HR_MANAGER) ──────────
+  getNationalities(): Observable<ApiResponse<InfoLookup[]>> {
+    return this.http.get<ApiResponse<InfoLookup[]>>(
+      `${environment.serviceUrl}/api/v1/lookups/nationalities`,
+    );
+  }
+
+  getReligions(): Observable<ApiResponse<InfoLookup[]>> {
+    return this.http.get<ApiResponse<InfoLookup[]>>(
+      `${environment.serviceUrl}/api/v1/lookups/religions`,
+    );
   }
 
   // ── Departments lookup ────────────────────────────────────

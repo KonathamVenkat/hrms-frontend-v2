@@ -1,0 +1,124 @@
+<div class="app-page request-detail-page">
+  <div class="page-header">
+    <div class="header-left">
+      <a
+        mat-icon-button
+        routerLink="/app/workflow/inbox"
+        [attr.aria-label]="'workflow.detail.backToInbox' | translate"
+      >
+        <mat-icon class="mirror-rtl" aria-hidden="true">arrow_back</mat-icon>
+      </a>
+      <div>
+        <h1 class="page-title" #pageTitle tabindex="-1">
+          @if (ref; as r) {
+            {{ 'workflow.types.' + r.type | translate }} #{{ r.id }}
+          } @else {
+            {{ 'workflow.routes.detail' | translate }}
+          }
+        </h1>
+        @if (status()?.requesterName; as name) {
+          <span class="subtitle" dir="auto">{{ name }}</span>
+        }
+      </div>
+    </div>
+
+    <!-- Hidden while (re)loading, e.g. after a 409, so nobody acts on the old state. -->
+    @if (!loading() && !loadError() && status(); as s) {
+      <div class="detail-actions">
+        @for (o of s.allowedOutcomes; track o) {
+          <button
+            type="button"
+            mat-flat-button
+            [color]="o === 'REJECT' ? 'warn' : 'primary'"
+            (click)="open(o)"
+          >
+            {{ 'workflow.outcomes.' + o | translate }}
+          </button>
+        }
+        @if (canCancel()) {
+          <button type="button" mat-stroked-button color="warn" (click)="open('CANCEL')">
+            {{ 'workflow.detail.cancel' | translate }}
+          </button>
+        }
+        @if (canOverride()) {
+          <button type="button" mat-stroked-button (click)="open('OVERRIDE')">
+            {{ 'workflow.detail.override' | translate }}
+          </button>
+        }
+      </div>
+    }
+  </div>
+
+  @if (notice(); as n) {
+    <div class="alert alert-info" role="status" aria-live="polite">
+      <span aria-hidden="true" class="material-icons">info</span>
+      <span>{{ n }}</span>
+    </div>
+  }
+
+  @if (loading()) {
+    <div class="center-spinner" role="status">
+      <mat-spinner diameter="44" />
+      <p>{{ 'common.loading' | translate }}</p>
+    </div>
+  } @else if (forbidden()) {
+    <div class="empty-state" role="alert">
+      <mat-icon aria-hidden="true">lock</mat-icon>
+      <p>{{ 'workflow.detail.forbidden' | translate }}</p>
+      <small>{{ 'workflow.detail.forbiddenHint' | translate }}</small>
+    </div>
+  } @else if (loadError()) {
+    <div class="alert alert-error" role="alert">
+      <span aria-hidden="true" class="material-icons">error_outline</span>
+      <span>{{ loadError() }}</span>
+      @if (ref) {
+        <button type="button" mat-stroked-button (click)="load()">
+          {{ 'workflow.inbox.retry' | translate }}
+        </button>
+      }
+    </div>
+  } @else if (status(); as s) {
+    <mat-card>
+      <mat-card-content>
+        <h2 class="card-heading">{{ 'workflow.detail.status' | translate }}</h2>
+        <p class="stage" dir="auto">
+          @if (isOpen()) {
+            {{ 'workflow.detail.waitingFor' | translate: { step: stepLabel() } }}
+          } @else {
+            {{ stageKey(s.stage) | translate }}
+          }
+        </p>
+        @if (s.summary) {
+          <p class="summary" dir="auto">{{ s.summary }}</p>
+        }
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card>
+      <mat-card-content>
+        <h2 class="card-heading">{{ 'workflow.history.title' | translate }}</h2>
+        @if (historyError()) {
+          <p class="field-error" role="alert">{{ historyError() }}</p>
+        } @else {
+          <app-history-timeline [items]="history()" />
+        }
+      </mat-card-content>
+    </mat-card>
+  }
+
+  @if (dialog(); as kind) {
+    <app-forward-dialog
+      [kind]="kind"
+      [requesterName]="status()?.requesterName ?? null"
+      [summary]="status()?.summary ?? null"
+      [pickDepartment]="pickDepartment()"
+      [departments]="departments()"
+      [departmentsError]="departmentsError()"
+      [outcomes]="overrideOutcomes"
+      [busy]="acting()"
+      [error]="dialogError()"
+      (confirmed)="submit($event)"
+      (closed)="closeDialog()"
+    />
+  }
+</div>

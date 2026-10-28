@@ -367,3 +367,23 @@
     backdrop-filter: none;
   }
 }
+
+/* Arabic letters look smaller than Latin at the same size: 16px for the whole Job Details tab. */
+:host-context(html[lang='ar']) {
+  font-size: 16px;
+}
+:host-context(html[lang='ar']) :is(
+    .tab-count,
+    .job-card-header,
+    .info-label,
+    .val-sub,
+    .val-code,
+    .grade-badge-sm,
+    .work-mode-badge,
+    .current-badge,
+    .tl-label,
+    .modal-sub,
+    button
+  ) {
+  font-size: 16px;
+}

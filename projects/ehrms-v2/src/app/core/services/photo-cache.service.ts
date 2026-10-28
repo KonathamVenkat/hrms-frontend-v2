@@ -24,6 +24,11 @@ export class PhotoCache {
     if (/^https?:\/\//.test(photoUrl)) {
       return of(photoUrl);
     }
+    // Anything else must be a path on our own backend. `//host/x` (and `/\host/x`) would leave this
+    // origin, and the request carries the session token, so it is never fetched.
+    if (!/^\/(?![/\\])/.test(photoUrl)) {
+      return of(null);
+    }
     const key = `${this.auth.getEmployeeId()}|${photoUrl}`;
     let photo$ = this.cache.get(key);
     if (!photo$) {

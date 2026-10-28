@@ -215,6 +215,11 @@
         </div>
       </div>
       <app-department-head [employeeId]="employeeId()" [departmentId]="currentJob()!.departmentId" />
+      <app-department-secretary
+        [employeeId]="employeeId()"
+        [departmentId]="currentJob()!.departmentId"
+        [employeeName]="employeeName()"
+      />
       <!-- end job-cards -->
     }
   }

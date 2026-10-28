@@ -1,0 +1,20 @@
+.dialog-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.dialog-message,
+.dialog-subject {
+  margin: 0;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+.dialog-subject {
+  display: flex;
+  flex-direction: column;
+}
+.field-error {
+  margin: 0;
+  font-size: 13px;
+  color: var(--status-rejected-fg);
+}

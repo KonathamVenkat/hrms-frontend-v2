@@ -209,13 +209,25 @@
   inline-size: 140px;
   flex-shrink: 0;
   color: var(--mat-sys-on-surface-variant);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
 }
 .info-value {
   flex: 1;
   min-inline-size: 0;
   overflow-wrap: anywhere;
+}
+/* Arabic letters look smaller than Latin at the same size: 16px on the Profile tab (decided per screen). */
+:host-context(html[lang='ar']) .cards-grid .info-label,
+:host-context(html[lang='ar']) .cards-grid .info-value {
+  font-size: 16px;
+  line-height: 1.6;
+}
+:host-context(html[lang='ar']) .detail-tab,
+:host-context(html[lang='ar']) .card-header,
+:host-context(html[lang='ar']) button,
+:host-context(html[lang='ar']) .status-badge {
+  font-size: 16px;
 }
 /* The Arabic name always reads right-to-left, whatever the UI language. */
 .info-value.arabic {

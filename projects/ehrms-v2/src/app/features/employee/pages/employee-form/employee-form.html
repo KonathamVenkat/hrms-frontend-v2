@@ -143,11 +143,21 @@
           <div class="field-row">
             <div class="field">
               <label for="ef-nationality">{{ 'employee.form.nationality' | translate }}</label>
-              <input id="ef-nationality" formControlName="nationality" [placeholder]="'employee.form.placeholders.nationality' | translate" />
+              <select id="ef-nationality" formControlName="nationality">
+                <option value="">{{ 'employee.form.selectNationality' | translate }}</option>
+                @for (n of nationalityOptions(); track n.value) {
+                  <option [value]="n.value">{{ n.label }}</option>
+                }
+              </select>
             </div>
             <div class="field">
               <label for="ef-religion">{{ 'employee.form.religion' | translate }}</label>
-              <input id="ef-religion" formControlName="religion" [placeholder]="'employee.form.placeholders.religion' | translate" />
+              <select id="ef-religion" formControlName="religion">
+                <option value="">{{ 'employee.form.selectReligion' | translate }}</option>
+                @for (r of religionOptions(); track r.value) {
+                  <option [value]="r.value">{{ r.label }}</option>
+                }
+              </select>
             </div>
           </div>
         </div>
@@ -279,25 +289,24 @@
             </div>
           </div>
 
-          <div class="field">
-            <label for="ef-hire-date">{{ 'employee.form.hireDate' | translate }} <span class="req">*</span></label>
-            <app-date-input inputId="ef-hire-date" formControlName="hireDate" />
-            @if (isInvalid('hireDate')) {
-              <span class="field-error" id="fe-hireDate">{{ getError('hireDate') }}</span>
-            }
-          </div>
-
           <div class="field-row">
             <div class="field">
+              <label for="ef-hire-date">{{ 'employee.form.hireDate' | translate }} <span class="req">*</span></label>
+              <app-date-input inputId="ef-hire-date" startView="multi-year" formControlName="hireDate" />
+              @if (isInvalid('hireDate')) {
+                <span class="field-error" id="fe-hireDate">{{ getError('hireDate') }}</span>
+              }
+            </div>
+            <div class="field">
               <label for="ef-probation-end-date">{{ 'employee.form.probationEndDate' | translate }}</label>
-              <app-date-input inputId="ef-probation-end-date" formControlName="probationEndDate" />
+              <app-date-input inputId="ef-probation-end-date" startView="multi-year" formControlName="probationEndDate" />
               @if (isInvalid('probationEndDate')) {
                 <span class="field-error" id="fe-probationEndDate">{{ getError('probationEndDate') }}</span>
               }
             </div>
             <div class="field">
               <label for="ef-confirmation-date">{{ 'employee.form.confirmationDate' | translate }}</label>
-              <app-date-input inputId="ef-confirmation-date" formControlName="confirmationDate" />
+              <app-date-input inputId="ef-confirmation-date" startView="multi-year" formControlName="confirmationDate" />
               @if (isInvalid('confirmationDate')) {
                 <span class="field-error" id="fe-confirmationDate">{{ getError('confirmationDate') }}</span>
               }

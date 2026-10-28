@@ -217,3 +217,10 @@ input[dir='rtl'] {
     backdrop-filter: none;
   }
 }
+
+/* Arabic: 16px section titles, buttons and badges, like the labels and values (see styles.css). */
+:host-context(html[lang='ar']) .card-header,
+:host-context(html[lang='ar']) button,
+:host-context(html[lang='ar']) .status-badge {
+  font-size: 16px;
+}

@@ -11,7 +11,24 @@ import { AuthService } from '../auth/auth.service';
 const PUBLIC_ENDPOINTS = ['/auth/login', '/auth/refresh', '/auth/logout'];
 
 /**
- * - Attaches the access token ONLY to requests for our own backend (never to third-party
+ * True only for a request to this app's backend API: the same origin as `environment.serviceUrl`
+ * (this site's own origin when that is empty, i.e. the backend serves the app) and under its
+ * `/api/` path. A string-prefix test is not enough: an empty `serviceUrl` matches every URL, and a
+ * protocol-relative address such as `//host/x` would send the token to another site.
+ */
+function isBackendRequest(url: string): boolean {
+  try {
+    const target = new URL(url, location.origin);
+    const backend = new URL(environment.serviceUrl || location.origin, location.origin);
+    const apiPath = `${backend.pathname.replace(/\/+$/, '')}/api/`;
+    return target.origin === backend.origin && target.pathname.startsWith(apiPath);
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * - Attaches the access token ONLY to requests for our own backend API (never to third-party
  *   or same-origin asset requests such as translation files).
  * - A 401 from the backend usually means the short-lived access token expired: renew it once
  *   with the refresh cookie and retry the request. If that fails too, the session is over
@@ -28,7 +45,7 @@ export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
   const router = inject(Router);
 
-  const isBackendCall = req.url.startsWith(environment.serviceUrl);
+  const isBackendCall = isBackendRequest(req.url);
   const isPublic = PUBLIC_ENDPOINTS.some((p) => req.url.includes(p));
   const token = auth.getToken();
 

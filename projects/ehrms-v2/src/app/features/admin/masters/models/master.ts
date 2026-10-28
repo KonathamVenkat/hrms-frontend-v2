@@ -12,6 +12,9 @@ export interface MasterRecord {
   code: string;
   name: string;
   nameAr: string;
+  /** Nationalities only: the country behind the nationality. */
+  countryName?: string;
+  countryNameAr?: string;
   /** Grades and language levels only. */
   sortOrder?: number;
   isActive: boolean;
@@ -31,6 +34,9 @@ export interface MasterRequest {
   code: string;
   name: string;
   nameAr: string;
+  /** Nationalities only; an empty string clears it, omitting it keeps it. */
+  countryName?: string;
+  countryNameAr?: string;
   /** Grades and language levels only; null clears it. */
   sortOrder?: number | null;
   isActive?: boolean;

@@ -13,7 +13,7 @@ import { Directive, input, output, OnInit, OnDestroy } from '@angular/core';
     role: 'dialog',
     'aria-modal': 'true',
     '[attr.aria-labelledby]': 'appAccessibleDialog()',
-    '(document:keydown.escape)': 'dialogClosed.emit()',
+    '(document:keydown.escape)': 'onEscape($event)',
   },
 })
 export class AccessibleDialogDirective implements OnInit, OnDestroy {
@@ -25,6 +25,11 @@ export class AccessibleDialogDirective implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.previouslyFocused = document.activeElement as HTMLElement | null;
+  }
+
+  /** An open dropdown inside the dialog (e.g. mat-select) handles Escape first and marks it handled. */
+  onEscape(event: Event): void {
+    if (!event.defaultPrevented) this.dialogClosed.emit();
   }
 
   ngOnDestroy(): void {

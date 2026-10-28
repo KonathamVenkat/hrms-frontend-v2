@@ -188,18 +188,28 @@
             <input id="addr-line2" formControlName="addressLine2" [placeholder]="'employee.addresses.fields.addressLine2Placeholder' | translate" />
           </div>
 
-          <!-- City + State -->
+          <!-- State / Province, then the City inside it -->
           <div class="field-row">
             <div class="field">
+              <label for="addr-state">{{ 'employee.addresses.fields.stateProvince' | translate }}</label>
+              <select id="addr-state" formControlName="stateProvince">
+                <option value="">{{ 'employee.addresses.fields.selectStateProvince' | translate }}</option>
+                @for (s of provinceOptions(); track s.value) {
+                  <option [value]="s.value">{{ s.label }}</option>
+                }
+              </select>
+            </div>
+            <div class="field">
               <label for="addr-city">{{ 'employee.addresses.fields.city' | translate }} <span class="req">*</span></label>
-              <input id="addr-city" formControlName="city" [placeholder]="'employee.addresses.fields.cityPlaceholder' | translate" />
+              <select id="addr-city" formControlName="city">
+                <option value="">{{ 'employee.addresses.fields.selectCity' | translate }}</option>
+                @for (c of cityOptions(); track c.value) {
+                  <option [value]="c.value">{{ c.label }}</option>
+                }
+              </select>
               @if (isInvalid('city')) {
                 <span class="field-error" id="fe-city">{{ getError('city') }}</span>
               }
-            </div>
-            <div class="field">
-              <label for="addr-state">{{ 'employee.addresses.fields.stateProvince' | translate }}</label>
-              <input id="addr-state" formControlName="stateProvince" [placeholder]="'employee.addresses.fields.stateProvincePlaceholder' | translate" />
             </div>
           </div>
 
@@ -207,7 +217,12 @@
           <div class="field-row">
             <div class="field">
               <label for="addr-country">{{ 'employee.addresses.fields.country' | translate }} <span class="req">*</span></label>
-              <input id="addr-country" formControlName="country" />
+              <select id="addr-country" formControlName="country">
+                <option value="">{{ 'employee.addresses.fields.selectCountry' | translate }}</option>
+                @for (c of countryOptions(); track c.value) {
+                  <option [value]="c.value">{{ c.label }}</option>
+                }
+              </select>
               @if (isInvalid('country')) {
                 <span class="field-error" id="fe-country">{{ getError('country') }}</span>
               }

@@ -282,6 +282,25 @@
               }
             </div>
           </div>
+          @if (cfg.country) {
+            <div class="field-row">
+              <div class="field">
+                <label for="ms-country">{{ 'admin.masters.countryName' | translate }}</label>
+                <input id="ms-country" formControlName="countryName" />
+                <span class="toggle-hint">{{ 'admin.masters.countryHint' | translate }}</span>
+                @if (isInvalid('countryName')) {
+                  <span class="field-error">{{ getError('countryName') }}</span>
+                }
+              </div>
+              <div class="field">
+                <label for="ms-country-ar">{{ 'admin.masters.countryNameAr' | translate }}</label>
+                <input id="ms-country-ar" formControlName="countryNameAr" dir="rtl" />
+                @if (isInvalid('countryNameAr')) {
+                  <span class="field-error">{{ getError('countryNameAr') }}</span>
+                }
+              </div>
+            </div>
+          }
           @if (cfg.sortOrder) {
             <div class="field">
               <label for="ms-sort">{{ 'admin.masters.sortOrder' | translate }}</label>

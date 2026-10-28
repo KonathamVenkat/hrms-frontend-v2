@@ -20,7 +20,7 @@ import { MasterDataService } from '../../services/master-data';
 import { MasterRecord, MasterRequest } from '../../models/master';
 import { MasterConfig } from '../../masters.config';
 
-type FormKey = 'code' | 'name' | 'nameAr' | 'parentId' | 'sortOrder';
+type FormKey = 'code' | 'name' | 'nameAr' | 'parentId' | 'sortOrder' | 'countryName' | 'countryNameAr';
 type ConfirmAction = 'toggle' | 'delete';
 type StatusFilter = 'all' | 'active' | 'inactive';
 
@@ -120,6 +120,8 @@ export class MasterData implements OnInit {
     name: ['', [Validators.required, Validators.maxLength(200)]],
     nameAr: ['', [Validators.required, Validators.maxLength(200)]],
     sortOrder: this.fb.control<number | null>(null, [Validators.min(0), Validators.max(9999)]),
+    countryName: ['', Validators.maxLength(200)],
+    countryNameAr: ['', Validators.maxLength(200)],
     isActive: [true],
   });
 
@@ -281,6 +283,8 @@ export class MasterData implements OnInit {
       name: r.name,
       nameAr: r.nameAr,
       sortOrder: r.sortOrder ?? null,
+      countryName: r.countryName ?? '',
+      countryNameAr: r.countryNameAr ?? '',
       isActive: r.isActive,
     });
     this.form.controls.code.disable();
@@ -309,6 +313,10 @@ export class MasterData implements OnInit {
     const field = this.cfg.parent?.field;
     if (field) payload[field] = v.parentId;
     if (this.cfg.sortOrder) payload.sortOrder = v.sortOrder;
+    if (this.cfg.country) {
+      payload.countryName = v.countryName.trim();
+      payload.countryNameAr = v.countryNameAr.trim();
+    }
     const id = this.editingId();
     const call =
       this.isEditMode() && id !== null

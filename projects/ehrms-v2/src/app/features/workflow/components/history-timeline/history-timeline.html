@@ -1,0 +1,39 @@
+@if (rows().length === 0) {
+  <p class="muted">{{ 'workflow.history.empty' | translate }}</p>
+} @else {
+  <ol class="timeline">
+    @for (h of rows(); track h.key) {
+      <li [class]="'row row-' + h.action.toLowerCase()">
+        <mat-icon aria-hidden="true">{{ h.icon }}</mat-icon>
+        <div class="body">
+          <p class="line">
+            <strong>{{ 'workflow.history.actions.' + h.action | translate }}</strong>
+            @if (h.stepLabelKey) {
+              <span class="step">{{ h.stepLabelKey | translate }}</span>
+            }
+            <span class="who" dir="auto">
+              @if (h.actorName) {
+                {{ h.actorName }}
+              } @else if (h.actorEmployeeId) {
+                {{ 'workflow.history.employee' | translate: { id: h.actorEmployeeId } }}
+              } @else {
+                {{ 'workflow.history.system' | translate }}
+              }
+              @if (h.roleKey) {
+                <span class="role">({{ h.roleKey | translate }})</span>
+              } @else if (h.actorRole) {
+                <span class="role">({{ h.actorRole }})</span>
+              }
+            </span>
+          </p>
+          <p class="when">
+            <bdi>{{ h.when }}</bdi>
+          </p>
+          @if (h.comment) {
+            <p class="comment" dir="auto">{{ h.comment }}</p>
+          }
+        </div>
+      </li>
+    }
+  </ol>
+}

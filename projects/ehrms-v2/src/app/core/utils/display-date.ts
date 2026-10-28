@@ -8,14 +8,25 @@ const DATE_LOCALES: Record<string, string> = {
   ar: 'ar-u-nu-latn',
 };
 
-/** Formats an ISO date (yyyy-MM-dd or a full timestamp) as "05 Jan 2026" in the given UI language. */
-export function formatDisplayDate(value: string | null | undefined, lang: string): string {
+const DATE_PARTS: Intl.DateTimeFormatOptions = { day: '2-digit', month: 'short', year: 'numeric' };
+
+function format(
+  value: string | null | undefined,
+  lang: string,
+  options: Intl.DateTimeFormatOptions,
+): string {
   if (!value) return '—';
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return value;
-  return date.toLocaleDateString(DATE_LOCALES[lang] ?? DATE_LOCALES['en'], {
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric',
-  });
+  return date.toLocaleString(DATE_LOCALES[lang] ?? DATE_LOCALES['en'], options);
+}
+
+/** Formats an ISO date (yyyy-MM-dd or a full timestamp) as "05 Jan 2026" in the given UI language. */
+export function formatDisplayDate(value: string | null | undefined, lang: string): string {
+  return format(value, lang, DATE_PARTS);
+}
+
+/** Formats an ISO timestamp as "05 Jan 2026, 09:30" in the given UI language. */
+export function formatDisplayDateTime(value: string | null | undefined, lang: string): string {
+  return format(value, lang, { ...DATE_PARTS, hour: '2-digit', minute: '2-digit' });
 }

@@ -100,6 +100,8 @@ export interface InfoLookup {
   code: string;
   name: string;
   nameAr: string;
+  /** A dependent master's parent id (a city's province); absent otherwise. */
+  parentId?: number;
 }
 
 export type LookupKind = 'relations' | 'languages' | 'language-levels' | 'education-levels';

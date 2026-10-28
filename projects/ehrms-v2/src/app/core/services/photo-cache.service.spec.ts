@@ -37,6 +37,14 @@ describe('PhotoCache', () => {
     expect(shown).toBe('https://cdn.example.com/a.png');
   });
 
+  it('never fetches an address that would leave this origin', () => {
+    for (const bad of ['//attacker.example/p.png', '/\\attacker.example/p.png', 'javascript:alert(1)', 'p.png']) {
+      let shown: string | null = 'unset';
+      cache.load(bad).subscribe((u) => (shown = u));
+      expect(shown).toBeNull();
+    }
+  });
+
   it('fetches an uploaded photo once and shares it between callers', () => {
     const shown: (string | null)[] = [];
     cache.load(PATH).subscribe((u) => shown.push(u));

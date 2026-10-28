@@ -245,6 +245,11 @@ export const routes: Routes = [
           import('./features/recruitment/recruitment-routing').then((m) => m.RECRUITMENT_ROUTES),
       },
       {
+        path: 'workflow',
+        loadChildren: () =>
+          import('./features/workflow/workflow-routing').then((m) => m.WORKFLOW_ROUTES),
+      },
+      {
         path: 'organisation',
         canActivate: [roleGuard(...HR_ROLES)],
         loadChildren: () =>

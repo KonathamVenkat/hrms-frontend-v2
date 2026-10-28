@@ -1,5 +1,13 @@
 // src/app/features/employee/pages/employee-form/employee-form.ts
-import { ChangeDetectionStrategy, Component, OnInit, signal, inject, DestroyRef } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  computed,
+  signal,
+  inject,
+  DestroyRef,
+} from '@angular/core';
 import {
   FormBuilder,
   Validators,
@@ -17,7 +25,10 @@ import {
   CreateEmployeePayload,
   UpdateEmployeePayload,
 } from '../../models/employee';
+import { InfoLookup } from '../../models/employee-info.model';
+import { LookupOption, lookupOptions } from '../../utils/lookup-options';
 import { Auth } from '../../../../core/auth/auth';
+import { LanguageService } from '../../../../core/services/language.service';
 import { getHttpErrorMessage } from '../../../../core/utils/http-error-message';
 import {
   NEW_PASSWORD_VALIDATORS,
@@ -65,6 +76,24 @@ export class EmployeeForm implements OnInit {
   private destroyRef = inject(DestroyRef);
   private auth = inject(Auth);
   private translate = inject(TranslateService);
+  private language = inject(LanguageService);
+
+  // ── Nationality / religion dropdowns: the stored value is the English name (the API keeps a string) ──
+  private nationalities = signal<InfoLookup[]>([]);
+  private religions = signal<InfoLookup[]>([]);
+  /** Edit mode: the saved values, kept selectable even when no longer in the master. */
+  private loadedNationality = signal('');
+  private loadedReligion = signal('');
+  readonly nationalityOptions = computed(() =>
+    this.lookupOptions(this.nationalities(), this.loadedNationality()),
+  );
+  readonly religionOptions = computed(() =>
+    this.lookupOptions(this.religions(), this.loadedReligion()),
+  );
+
+  private lookupOptions(list: InfoLookup[], saved: string): LookupOption[] {
+    return lookupOptions(list, saved, this.language.currentLang() === 'ar');
+  }
 
   // ── State ─────────────────────────────────────────────────
   loading = signal(false);
@@ -177,10 +206,23 @@ export class EmployeeForm implements OnInit {
 
     this.isHrAdmin.set(this.auth.getRole() === 'HR_ADMIN');
     this.configureForMode();
+    this.loadLookups();
 
     if (this.isEdit()) {
       this.loadEmployeeForEdit(this.empId()!);
     }
+  }
+
+  private loadLookups(): void {
+    const failed = () => this.error.set(this.translate.instant('employee.form.errors.lookups'));
+    this.empService
+      .getNationalities()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({ next: (res) => this.nationalities.set(res.data ?? []), error: failed });
+    this.empService
+      .getReligions()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({ next: (res) => this.religions.set(res.data ?? []), error: failed });
   }
 
   /** Mode-specific validators/enablement, plus re-validation of the date chain. */
@@ -233,6 +275,8 @@ export class EmployeeForm implements OnInit {
         next: (res) => {
           if (res.success && res.data) {
             const e = res.data;
+            this.loadedNationality.set(e.nationality ?? '');
+            this.loadedReligion.set(e.religion ?? '');
 
             if (!e.isActive) {
               // The backend refuses edits to a deactivated employee; say why up front.

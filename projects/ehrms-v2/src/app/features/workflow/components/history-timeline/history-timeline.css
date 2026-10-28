@@ -1,0 +1,51 @@
+.timeline {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.row {
+  display: flex;
+  gap: var(--space-3);
+  align-items: flex-start;
+}
+.row mat-icon {
+  flex: none;
+  color: var(--mat-sys-primary);
+}
+.row-rejected mat-icon,
+.row-cancelled mat-icon {
+  color: var(--status-rejected-fg);
+}
+.row-approved mat-icon {
+  color: var(--status-approved-fg);
+}
+.body p {
+  margin: 0;
+}
+.line {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-3);
+}
+.step {
+  padding-inline: var(--space-2);
+  border-radius: 999px;
+  background: var(--mat-sys-surface-container-high);
+  font-size: 13px;
+}
+.role,
+.when {
+  color: var(--mat-sys-on-surface-variant);
+  font-size: 13px;
+}
+.comment {
+  font-style: italic;
+  overflow-wrap: anywhere;
+}
+.muted {
+  margin: 0;
+  color: var(--mat-sys-on-surface-variant);
+}

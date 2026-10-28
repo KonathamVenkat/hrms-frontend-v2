@@ -3,13 +3,14 @@
 import { Component, OnInit, signal, inject, computed, DestroyRef, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CdkTrapFocus } from '@angular/cdk/a11y';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { finalize } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { LeaveRequestService } from '../../services/leave-request.service';
 import { LeaveRequest } from '../../models/leave-request.model';
+import { stageKey } from '../../../workflow/models/workflow.model';
 import { Auth } from '../../../../core/auth/auth'; // ✅ correct
 import { AccessibleDialogDirective } from '../../../../core/directives/accessible-dialog.directive';
 import { serverMessage } from '../../../../core/utils/http-error-message';
@@ -17,7 +18,7 @@ import { serverMessage } from '../../../../core/utils/http-error-message';
 @Component({
   selector: 'app-leave-list',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, TranslatePipe, CdkTrapFocus, AccessibleDialogDirective],
+  imports: [CommonModule, RouterLink, TranslatePipe, CdkTrapFocus, AccessibleDialogDirective],
   templateUrl: './leave-list.html',
   styleUrl: './leave-list.css',
 })
@@ -231,6 +232,8 @@ export class LeaveListPage implements OnInit {
     };
     return map[code] ?? '#64748b';
   }
+
+  readonly stageKey = stageKey;
 
   canCancel(leave: LeaveRequest): boolean {
     return leave.status === 'PENDING';

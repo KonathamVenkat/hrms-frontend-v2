@@ -68,3 +68,11 @@
   outline: 2px solid var(--mat-sys-primary);
   outline-offset: 2px;
 }
+
+/* Arabic: 16px, like the rest of the Job Details tab. */
+:host-context(html[lang='ar']) {
+  font-size: 16px;
+}
+:host-context(html[lang='ar']) :is(.head-card-title, button) {
+  font-size: 16px;
+}

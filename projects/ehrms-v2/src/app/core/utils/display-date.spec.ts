@@ -1,4 +1,4 @@
-import { formatDisplayDate } from './display-date';
+import { formatDisplayDate, formatDisplayDateTime } from './display-date';
 
 describe('formatDisplayDate', () => {
   it('shows a dash for empty values', () => {
@@ -22,5 +22,15 @@ describe('formatDisplayDate', () => {
 
   it('falls back to English for an unknown language', () => {
     expect(formatDisplayDate('2026-01-05', 'xx')).toBe(formatDisplayDate('2026-01-05', 'en'));
+  });
+});
+
+describe('formatDisplayDateTime', () => {
+  it('adds the time to the date and follows the UI language', () => {
+    const en = formatDisplayDateTime('2026-01-05T09:30:00', 'en');
+    expect(en).toContain('Jan');
+    expect(en).toContain('09:30');
+    expect(formatDisplayDateTime('2026-01-05T09:30:00', 'fr')).toContain('janv');
+    expect(formatDisplayDateTime(undefined, 'en')).toBe('—');
   });
 });

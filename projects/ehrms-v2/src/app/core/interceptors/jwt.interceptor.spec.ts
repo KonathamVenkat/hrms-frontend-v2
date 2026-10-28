@@ -67,3 +67,58 @@ describe('jwtInterceptor silent refresh', () => {
     expect(auth.getToken()).toBeNull();
   });
 });
+
+describe('jwtInterceptor token scope', () => {
+  const original = environment.serviceUrl;
+  let http: HttpClient;
+  let ctl: HttpTestingController;
+
+  function setup(serviceUrl: string): void {
+    environment.serviceUrl = serviceUrl;
+    TestBed.configureTestingModule({
+      providers: [
+        provideHttpClient(withInterceptors([jwtInterceptor])),
+        provideHttpClientTesting(),
+        provideRouter([{ path: 'auth/login', children: [] }]),
+      ],
+    });
+    http = TestBed.inject(HttpClient);
+    ctl = TestBed.inject(HttpTestingController);
+    TestBed.inject(Auth).saveSession(login('tok'));
+  }
+
+  afterEach(() => {
+    ctl.verify();
+    environment.serviceUrl = original;
+  });
+
+  it('adds the token to a backend API call', () => {
+    setup('http://localhost:8082');
+    http.get('http://localhost:8082/api/v1/x').subscribe();
+    expect(ctl.expectOne('http://localhost:8082/api/v1/x').request.headers.get('Authorization')).toBe('Bearer tok');
+  });
+
+  it('does not add the token to another host, a protocol-relative address or a non-API path', () => {
+    setup('http://localhost:8082');
+    for (const url of [
+      'https://evil.example/api/v1/x',
+      '//evil.example/api/v1/x',
+      'http://localhost:8082.evil.example/api/v1/x',
+      'http://localhost:8082/i18n/en.json',
+    ]) {
+      http.get(url).subscribe();
+      expect(ctl.expectOne(url).request.headers.has('Authorization')).toBe(false);
+    }
+  });
+
+  it('with an empty serviceUrl (same-origin hosting) adds the token only to /api/ on this origin', () => {
+    setup('');
+    http.get('/api/v1/x').subscribe();
+    expect(ctl.expectOne('/api/v1/x').request.headers.get('Authorization')).toBe('Bearer tok');
+
+    for (const url of ['//evil.example/p.png', 'https://evil.example/api/v1/x', '/i18n/en.json']) {
+      http.get(url).subscribe();
+      expect(ctl.expectOne(url).request.headers.has('Authorization')).toBe(false);
+    }
+  });
+});

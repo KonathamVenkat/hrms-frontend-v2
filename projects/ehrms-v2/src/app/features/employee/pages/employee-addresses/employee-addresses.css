@@ -144,14 +144,14 @@
 /* ── Address type selector (modal) ───────────────────────── */
 .type-selector {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  grid-template-columns: repeat(2, 1fr);
   gap: var(--space-2);
 }
 .type-btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-wrap: wrap;
+  white-space: nowrap;
   gap: var(--space-1);
   min-block-size: 44px;
   padding-inline: var(--space-3);
@@ -199,4 +199,24 @@
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
   }
+}
+
+/* Arabic: 16px everywhere on this tab (Arabic letters look smaller than Latin at the same size). */
+:host-context(html[lang='ar']) {
+  font-size: 16px;
+}
+:host-context(html[lang='ar']) .addr-count,
+:host-context(html[lang='ar']) .addr-type-badge,
+:host-context(html[lang='ar']) .primary-badge,
+:host-context(html[lang='ar']) .used-tag,
+:host-context(html[lang='ar']) button,
+:host-context(html[lang='ar']) .status-badge,
+:host-context(html[lang='ar']) .field-error,
+:host-context(html[lang='ar']) .field-hint,
+:host-context(html[lang='ar']) .toggle-label,
+:host-context(html[lang='ar']) .toggle-hint {
+  font-size: 16px;
+}
+:host-context(html[lang='ar']) :is(small, label, .req, .drop-hint) {
+  font-size: 16px;
 }

@@ -346,3 +346,28 @@
     backdrop-filter: none;
   }
 }
+
+/* Arabic: 16px everywhere on this tab (Arabic letters look smaller than Latin at the same size). */
+:host-context(html[lang='ar']) {
+  font-size: 16px;
+}
+:host-context(html[lang='ar']) .stat-chip,
+:host-context(html[lang='ar']) .ext-badge,
+:host-context(html[lang='ar']) .cat-badge,
+:host-context(html[lang='ar']) .expiry-badge,
+:host-context(html[lang='ar']) .doc-type,
+:host-context(html[lang='ar']) .doc-number,
+:host-context(html[lang='ar']) .date-label,
+:host-context(html[lang='ar']) .doc-footer,
+:host-context(html[lang='ar']) .selected-size,
+:host-context(html[lang='ar']) button,
+:host-context(html[lang='ar']) .status-badge,
+:host-context(html[lang='ar']) .field-error,
+:host-context(html[lang='ar']) .field-hint,
+:host-context(html[lang='ar']) .toggle-label,
+:host-context(html[lang='ar']) .toggle-hint {
+  font-size: 16px;
+}
+:host-context(html[lang='ar']) :is(small, label, .req, .drop-hint) {
+  font-size: 16px;
+}

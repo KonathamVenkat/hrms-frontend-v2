@@ -374,3 +374,11 @@
     transition: none;
   }
 }
+
+/* Arabic: 16px everywhere on this page (Arabic letters look smaller than Latin at the same size). */
+:host-context(html[lang='ar']) {
+  font-size: 16px;
+}
+:host-context(html[lang='ar']) :is(th, td, small, label, input, select, button, .count-badge, .emp-code, .status-badge, .type-badge, .pag-info, .page-size-wrap) {
+  font-size: 16px;
+}

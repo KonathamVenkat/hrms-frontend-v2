@@ -82,7 +82,9 @@
       "role": {
         "HR_ADMIN": "HR Admin",
         "HR_MANAGER": "HR Manager",
-        "EMPLOYEE": "Employee"
+        "EMPLOYEE": "Employee",
+        "GENERAL_MANAGER": "General Manager",
+        "SYSTEM_ADMIN": "System Admin"
       }
     },
     "unsavedChanges": "You have unsaved changes. Leave this page and lose them?"
@@ -148,6 +150,8 @@
       "selectBloodGroup": "Select blood group",
       "maritalStatus": "Marital Status",
       "selectMaritalStatus": "Select status",
+      "selectNationality": "Select nationality",
+      "selectReligion": "Select religion",
       "nationality": "Nationality",
       "religion": "Religion",
       "contactDetailsTitle": "Contact Details",
@@ -199,6 +203,7 @@
         "confirmationBeforeProbation": "Confirmation date must be after probation end date",
         "duplicateEmailOrUsername": "Duplicate email or username.",
         "inactive": "This employee is deactivated. Reactivate the employee from the detail page before editing.",
+        "lookups": "Could not load the nationality or religion list.",
         "loadFailed": "Failed to load employee data.",
         "fixValidation": "Please fix the validation errors before submitting.",
         "createFailed": "Failed to create employee.",
@@ -303,6 +308,9 @@
         "cityPlaceholder": "e.g. Juba",
         "stateProvince": "State / Province",
         "stateProvincePlaceholder": "e.g. Central Equatoria",
+        "selectCity": "Select city",
+        "selectStateProvince": "Select state / province",
+        "selectCountry": "Select country",
         "country": "Country",
         "postalCode": "Postal Code",
         "postalCodePlaceholder": "e.g. 100"
@@ -326,7 +334,8 @@
         "removeAction": "Remove"
       },
       "errors": {
-        "loadFailed": "Failed to load addresses."
+        "loadFailed": "Failed to load addresses.",
+        "lookups": "Could not load the city or province list."
       },
       "success": {
         "updated": "Address updated successfully",
@@ -491,6 +500,35 @@
       },
       "errors": {
         "loadFailed": "Could not load the department head.",
+        "stale": "The department was changed by someone else. Reload and try again.",
+        "rules": {
+          "EMP_INACTIVE": "This employee is deactivated. Reactivate the employee first.",
+          "DEPARTMENT_INACTIVE": "The department is inactive."
+        }
+      }
+    },
+    "departmentSecretary": {
+      "title": "Department secretary",
+      "retry": "Try again",
+      "loading": "Loading department secretary…",
+      "isSecretary": "This employee is the secretary of {{department}}.",
+      "otherSecretary": "{{name}} is the secretary of {{department}}.",
+      "noSecretary": "{{department}} has no secretary yet.",
+      "make": "Make department secretary",
+      "remove": "Remove as department secretary",
+      "makeTitle": "Make this employee department secretary?",
+      "removeTitle": "Remove as department secretary?",
+      "makeMsg": "The employee will receive requests for this department and forward them to the department head.",
+      "removeMsg": "Requests for this department will skip the secretary step until another employee is named.",
+      "replaceMsg": "{{name}} is the current secretary and will be replaced.",
+      "makeMsgNamed": "{{name}} will receive requests for this department and forward them to the department head.",
+      "removeMsgNamed": "{{name}} will no longer be secretary. Requests for this department will skip the secretary step until another employee is named.",
+      "success": {
+        "made": "Department secretary updated",
+        "removed": "Department secretary removed"
+      },
+      "errors": {
+        "loadFailed": "Could not load the department secretary.",
         "stale": "The department was changed by someone else. Reload and try again.",
         "rules": {
           "EMP_INACTIVE": "This employee is deactivated. Reactivate the employee first.",
@@ -2096,6 +2134,9 @@
         "parentPlaceholder": "Select a company"
       },
       "sortOrder": "Sort order",
+      "countryName": "Country",
+      "countryNameAr": "Country (Arabic)",
+      "countryHint": "The country behind this nationality. Only nationalities with a country are offered in the address Country list.",
       "sortOrderHint": "Lower numbers come first",
       "regions": {
         "title": "Regions",
@@ -2704,6 +2745,135 @@
     "branchSelect": {
       "placeholder": "Select a branch",
       "loadFailed": "Could not load the branches. Try again."
+    }
+  },
+  "workflow": {
+    "routes": {
+      "inbox": "Approvals inbox",
+      "detail": "Request"
+    },
+    "types": {
+      "LEAVE": "Leave request",
+      "ATTENDANCE_REGULARIZATION": "Attendance regularization",
+      "OVERTIME": "Overtime request",
+      "RECRUITMENT_REQUISITION": "Requisition"
+    },
+    "inbox": {
+      "title": "Approvals inbox",
+      "subtitle": "Requests waiting for your decision",
+      "empty": "Nothing is waiting for you",
+      "emptyHint": "New requests that need your action will appear here.",
+      "retry": "Try again",
+      "paginator": "Inbox pages",
+      "columns": {
+        "requester": "Employee",
+        "request": "Request",
+        "step": "Your step",
+        "submitted": "Submitted"
+      }
+    },
+    "detail": {
+      "backToInbox": "Back to the approvals inbox",
+      "status": "Status",
+      "waitingFor": "Waiting for: {{step}}",
+      "forbidden": "You cannot view this request",
+      "forbiddenHint": "Only the people involved in a request and HR can open it.",
+      "cancel": "Cancel request",
+      "override": "Override (HR admin)"
+    },
+    "outcomes": {
+      "FORWARD": "Forward",
+      "APPROVE": "Approve",
+      "REJECT": "Reject"
+    },
+    "stages": {
+      "PENDING_BRANCH": "Waiting for the branch manager",
+      "PENDING_SECRETARY": "Waiting for the department secretary",
+      "PENDING_HEAD": "Waiting for the department head",
+      "PENDING_GM": "Waiting for the general manager",
+      "PENDING_HR": "Waiting for HR",
+      "APPROVED": "Approved",
+      "REJECTED": "Rejected",
+      "CANCELLED": "Cancelled",
+        "UNKNOWN": "In progress"
+    },
+    "history": {
+      "title": "History",
+      "empty": "No history yet.",
+      "system": "System",
+      "employee": "Employee #{{id}}",
+      "steps": {
+        "BRANCH": "Branch manager",
+        "SECRETARY": "Department secretary",
+        "HEAD": "Department head",
+        "GM": "General manager",
+        "HR": "HR"
+      },
+      "actions": {
+        "SUBMITTED": "Submitted",
+        "FORWARDED": "Forwarded",
+        "APPROVED": "Approved",
+        "REJECTED": "Rejected",
+        "CANCELLED": "Cancelled",
+        "OVERRIDDEN": "Overridden by HR admin",
+        "AUTO_ROUTED": "Skipped automatically"
+      }
+    },
+    "dialog": {
+      "outcome": "Decision",
+      "department": "Department",
+      "departmentHint": "The department that will decide this request",
+      "reason": "Reason",
+      "comment": "Comment (optional)",
+      "FORWARD": {
+        "title": "Forward this request?",
+        "message": "This request will move to the next step:",
+        "confirm": "Forward"
+      },
+      "APPROVE": {
+        "title": "Approve this request?",
+        "message": "You approve this request:",
+        "confirm": "Approve"
+      },
+      "REJECT": {
+        "title": "Reject this request?",
+        "message": "This request will be rejected and the employee told why:",
+        "confirm": "Reject"
+      },
+      "CANCEL": {
+        "title": "Cancel this request?",
+        "message": "This request will be cancelled and cannot be reopened:",
+        "confirm": "Cancel request"
+      },
+      "OVERRIDE": {
+        "title": "Override the current step?",
+        "message": "You decide in place of the current approver. This is recorded in the history:",
+        "confirm": "Override"
+      }
+    },
+    "success": {
+      "FORWARD": "Request forwarded",
+      "APPROVE": "Request approved",
+      "REJECT": "Request rejected",
+      "CANCEL": "Request cancelled",
+      "OVERRIDE": "Step overridden"
+    },
+    "errors": {
+      "stale": "This request was already handled by someone else. Refreshing.",
+      "rules": {
+        "TARGET_DEPARTMENT_REQUIRED": "Choose the department for this request.",
+        "DEPARTMENT_INACTIVE": "The chosen department is not active.",
+        "SELF_APPROVAL": "You cannot act on your own request.",
+        "COMMENT_REQUIRED": "Give a reason for the rejection.",
+        "REASON_REQUIRED": "Give the reason for the override.",
+        "OUTCOME_NOT_ALLOWED": "This step does not offer that action.",
+        "NOT_IN_WORKFLOW": "This request does not use the approval workflow.",
+        "TEXT_TOO_LONG": "The text is too long.",
+        "WORKFLOW_DISABLED": "The approval workflow is not switched on for this request type.",
+        "WORKFLOW_NOT_PUBLISHED": "No approval workflow is published for this request type.",
+        "WORKFLOW_NOT_SUPPORTED": "This request type does not use the approval workflow.",
+        "USE_WORKFLOW": "This request is in the approval workflow. Decide it in My Approvals."
+      }
     }
   }
 }

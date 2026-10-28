@@ -440,7 +440,7 @@ html[dir='rtl'] * {
 .reset-input {
   flex: 1 1 auto; /* not flex:1, which collapses the height in the column layout */
   min-inline-size: 0;
-  min-block-size: 44px;
+  min-block-size: 52px;
   padding-inline: var(--space-3);
   border: 1px solid var(--mat-sys-outline);
   border-radius: var(--radius-md);
@@ -667,8 +667,9 @@ html[dir='rtl'] * {
   flex: 0 0 auto;
 }
 .field > label {
-  font-size: 13px;
-  font-weight: 600;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.5;
 }
 .req {
   color: var(--danger);
@@ -676,7 +677,7 @@ html[dir='rtl'] * {
 .field input:not([type='checkbox']):not([type='radio']),
 .field select,
 .field textarea {
-  min-block-size: 44px;
+  min-block-size: 52px;
   padding-inline: var(--space-3);
   border: 1px solid var(--mat-sys-outline);
   border-radius: var(--radius-md);
@@ -688,7 +689,6 @@ html[dir='rtl'] * {
 .field :is(input, textarea)[dir='rtl']:not([type='checkbox']):not([type='radio']) {
   font-size: 1.25rem;
   line-height: 1.6;
-  min-block-size: 52px;
 }
 .field textarea {
   padding-block: var(--space-3);
@@ -1281,6 +1281,9 @@ html[dir='rtl'] * {
   font-size: 18px;
   font-weight: 800;
 }
+.dialog-header .mat-mdc-icon-button {
+  --mat-icon-button-state-layer-size: 44px;
+}
 .dialog-header :is(.dialog-icon, .warn-icon) {
   inline-size: 28px;
   block-size: 28px;
@@ -1388,7 +1391,8 @@ html[dir='rtl'] * {
   display: none;
 }
 /* Reject dialog: the destructive action is solid red, not the primary gradient; icon and label share a baseline. */
-.dialog-actions .mat-mdc-unelevated-button.mat-warn:not(:disabled) {
+.dialog-actions .mat-mdc-unelevated-button.mat-warn:not(:disabled),
+.detail-actions .mat-mdc-unelevated-button.mat-warn:not(:disabled) {
   background-image: none;
   background-color: #b91c1c;
   box-shadow: none;
@@ -2801,4 +2805,15 @@ body
   gap: var(--space-4);
   padding: var(--space-3);
   border-block-start: 1px solid var(--mat-sys-outline-variant);
+}
+
+/* Arabic, employee create/edit form: 16px labels and values (Arabic reads smaller than Latin at the same size).
+   The Arabic name inputs keep their larger size from the rule above. */
+html:lang(ar) app-employee-form .field > label {
+  font-size: 16px;
+  line-height: 1.6;
+}
+html:lang(ar) app-employee-form .field :is(input, select, textarea):not([type='checkbox']):not([type='radio']):not([dir='rtl']) {
+  font-size: 16px;
+  line-height: 1.6;
 }

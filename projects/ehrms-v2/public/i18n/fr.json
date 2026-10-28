@@ -82,7 +82,9 @@
       "role": {
         "HR_ADMIN": "Administrateur RH",
         "HR_MANAGER": "Responsable RH",
-        "EMPLOYEE": "Employé"
+        "EMPLOYEE": "Employé",
+        "GENERAL_MANAGER": "Directeur général",
+        "SYSTEM_ADMIN": "Administrateur système"
       }
     },
     "unsavedChanges": "Vous avez des modifications non enregistrées. Quitter cette page et les perdre ?"
@@ -148,6 +150,8 @@
       "selectBloodGroup": "Sélectionner le groupe sanguin",
       "maritalStatus": "État civil",
       "selectMaritalStatus": "Sélectionner le statut",
+      "selectNationality": "Sélectionner la nationalité",
+      "selectReligion": "Sélectionner la religion",
       "nationality": "Nationalité",
       "religion": "Religion",
       "contactDetailsTitle": "Coordonnées",
@@ -199,6 +203,7 @@
         "confirmationBeforeProbation": "La date de confirmation doit être après la fin de la période d'essai",
         "duplicateEmailOrUsername": "E-mail ou nom d'utilisateur déjà utilisé.",
         "inactive": "Cet employé est désactivé. Réactivez-le depuis la page de détail avant de le modifier.",
+        "lookups": "Impossible de charger la liste des nationalités ou des religions.",
         "loadFailed": "Échec du chargement des données de l'employé.",
         "fixValidation": "Veuillez corriger les erreurs de validation avant l'envoi.",
         "createFailed": "Échec de la création de l'employé.",
@@ -303,6 +308,9 @@
         "cityPlaceholder": "ex. Djouba",
         "stateProvince": "État / Province",
         "stateProvincePlaceholder": "ex. État d'Équatoria-Central",
+        "selectCity": "Sélectionner la ville",
+        "selectStateProvince": "Sélectionner l'état / la province",
+        "selectCountry": "Sélectionner le pays",
         "country": "Pays",
         "postalCode": "Code postal",
         "postalCodePlaceholder": "ex. 100"
@@ -326,7 +334,8 @@
         "removeAction": "Supprimer"
       },
       "errors": {
-        "loadFailed": "Échec du chargement des adresses."
+        "loadFailed": "Échec du chargement des adresses.",
+        "lookups": "Impossible de charger la liste des villes ou des provinces."
       },
       "success": {
         "updated": "Adresse mise à jour avec succès",
@@ -491,6 +500,35 @@
       },
       "errors": {
         "loadFailed": "Impossible de charger le responsable du département.",
+        "stale": "Le département a été modifié par quelqu'un d'autre. Rechargez puis réessayez.",
+        "rules": {
+          "EMP_INACTIVE": "Cet employé est désactivé. Réactivez-le d'abord.",
+          "DEPARTMENT_INACTIVE": "Le département est inactif."
+        }
+      }
+    },
+    "departmentSecretary": {
+      "title": "Secrétaire du département",
+      "retry": "Réessayer",
+      "loading": "Chargement du secrétaire…",
+      "isSecretary": "Cet employé est le secrétaire de {{department}}.",
+      "otherSecretary": "{{name}} est le secrétaire de {{department}}.",
+      "noSecretary": "{{department}} n'a pas encore de secrétaire.",
+      "make": "Nommer secrétaire du département",
+      "remove": "Retirer comme secrétaire",
+      "makeTitle": "Nommer cet employé secrétaire du département ?",
+      "removeTitle": "Retirer comme secrétaire du département ?",
+      "makeMsg": "L'employé recevra les demandes de ce département et les transmettra au responsable.",
+      "removeMsg": "Les demandes de ce département passeront l'étape du secrétaire tant qu'un autre employé n'est pas nommé.",
+      "replaceMsg": "{{name}} est le secrétaire actuel et sera remplacé.",
+      "makeMsgNamed": "{{name}} recevra les demandes de ce département et les transmettra au responsable.",
+      "removeMsgNamed": "{{name}} ne sera plus secrétaire. Les demandes de ce département passeront l'étape du secrétaire tant qu'un autre employé n'est pas nommé.",
+      "success": {
+        "made": "Secrétaire du département mis à jour",
+        "removed": "Secrétaire du département retiré"
+      },
+      "errors": {
+        "loadFailed": "Impossible de charger le secrétaire du département.",
         "stale": "Le département a été modifié par quelqu'un d'autre. Rechargez puis réessayez.",
         "rules": {
           "EMP_INACTIVE": "Cet employé est désactivé. Réactivez-le d'abord.",
@@ -2096,6 +2134,9 @@
         "parentPlaceholder": "Sélectionner une société"
       },
       "sortOrder": "Ordre de tri",
+      "countryName": "Pays",
+      "countryNameAr": "Pays (arabe)",
+      "countryHint": "Le pays correspondant à cette nationalité. Seules les nationalités avec un pays apparaissent dans la liste Pays de l'adresse.",
       "sortOrderHint": "Les nombres les plus petits viennent en premier",
       "regions": {
         "title": "Régions",
@@ -2704,6 +2745,135 @@
     "branchSelect": {
       "placeholder": "Choisir une agence",
       "loadFailed": "Impossible de charger les agences. Réessayez."
+    }
+  },
+  "workflow": {
+    "routes": {
+      "inbox": "Boîte d'approbations",
+      "detail": "Demande"
+    },
+    "types": {
+      "LEAVE": "Demande de congé",
+      "ATTENDANCE_REGULARIZATION": "Régularisation de présence",
+      "OVERTIME": "Demande d'heures supplémentaires",
+      "RECRUITMENT_REQUISITION": "Demande de recrutement"
+    },
+    "inbox": {
+      "title": "Boîte d'approbations",
+      "subtitle": "Demandes en attente de votre décision",
+      "empty": "Rien n'attend votre action",
+      "emptyHint": "Les nouvelles demandes à traiter apparaîtront ici.",
+      "retry": "Réessayer",
+      "paginator": "Pages de la boîte",
+      "columns": {
+        "requester": "Employé",
+        "request": "Demande",
+        "step": "Votre étape",
+        "submitted": "Soumise le"
+      }
+    },
+    "detail": {
+      "backToInbox": "Retour à la boîte d'approbations",
+      "status": "Statut",
+      "waitingFor": "En attente de : {{step}}",
+      "forbidden": "Vous ne pouvez pas consulter cette demande",
+      "forbiddenHint": "Seules les personnes concernées et les RH peuvent l'ouvrir.",
+      "cancel": "Annuler la demande",
+      "override": "Forcer (admin RH)"
+    },
+    "outcomes": {
+      "FORWARD": "Transmettre",
+      "APPROVE": "Approuver",
+      "REJECT": "Rejeter"
+    },
+    "stages": {
+      "PENDING_BRANCH": "En attente du responsable de succursale",
+      "PENDING_SECRETARY": "En attente du secrétaire du département",
+      "PENDING_HEAD": "En attente du responsable du département",
+      "PENDING_GM": "En attente du directeur général",
+      "PENDING_HR": "En attente des RH",
+      "APPROVED": "Approuvée",
+      "REJECTED": "Rejetée",
+      "CANCELLED": "Annulée",
+        "UNKNOWN": "En cours"
+    },
+    "history": {
+      "title": "Historique",
+      "empty": "Aucun historique pour le moment.",
+      "system": "Système",
+      "employee": "Employé n° {{id}}",
+      "steps": {
+        "BRANCH": "Responsable de succursale",
+        "SECRETARY": "Secrétaire du département",
+        "HEAD": "Responsable du département",
+        "GM": "Directeur général",
+        "HR": "RH"
+      },
+      "actions": {
+        "SUBMITTED": "Soumise",
+        "FORWARDED": "Transmise",
+        "APPROVED": "Approuvée",
+        "REJECTED": "Rejetée",
+        "CANCELLED": "Annulée",
+        "OVERRIDDEN": "Forcée par l'admin RH",
+        "AUTO_ROUTED": "Passée automatiquement"
+      }
+    },
+    "dialog": {
+      "outcome": "Décision",
+      "department": "Département",
+      "departmentHint": "Le département qui décidera de cette demande",
+      "reason": "Motif",
+      "comment": "Commentaire (facultatif)",
+      "FORWARD": {
+        "title": "Transmettre cette demande ?",
+        "message": "Cette demande passera à l'étape suivante :",
+        "confirm": "Transmettre"
+      },
+      "APPROVE": {
+        "title": "Approuver cette demande ?",
+        "message": "Vous approuvez cette demande :",
+        "confirm": "Approuver"
+      },
+      "REJECT": {
+        "title": "Rejeter cette demande ?",
+        "message": "Cette demande sera rejetée et l'employé en sera informé :",
+        "confirm": "Rejeter"
+      },
+      "CANCEL": {
+        "title": "Annuler cette demande ?",
+        "message": "Cette demande sera annulée et ne pourra pas être rouverte :",
+        "confirm": "Annuler la demande"
+      },
+      "OVERRIDE": {
+        "title": "Forcer l'étape en cours ?",
+        "message": "Vous décidez à la place de l'approbateur actuel. Cela sera consigné dans l'historique :",
+        "confirm": "Forcer"
+      }
+    },
+    "success": {
+      "FORWARD": "Demande transmise",
+      "APPROVE": "Demande approuvée",
+      "REJECT": "Demande rejetée",
+      "CANCEL": "Demande annulée",
+      "OVERRIDE": "Étape forcée"
+    },
+    "errors": {
+      "stale": "Cette demande a déjà été traitée par quelqu'un d'autre. Actualisation.",
+      "rules": {
+        "TARGET_DEPARTMENT_REQUIRED": "Choisissez le département pour cette demande.",
+        "DEPARTMENT_INACTIVE": "Le département choisi n'est pas actif.",
+        "SELF_APPROVAL": "Vous ne pouvez pas traiter votre propre demande.",
+        "COMMENT_REQUIRED": "Indiquez le motif du rejet.",
+        "REASON_REQUIRED": "Indiquez le motif de la dérogation.",
+        "OUTCOME_NOT_ALLOWED": "Cette étape ne propose pas cette action.",
+        "NOT_IN_WORKFLOW": "Cette demande n'utilise pas le circuit d'approbation.",
+        "TEXT_TOO_LONG": "Le texte est trop long.",
+        "WORKFLOW_DISABLED": "Le circuit d'approbation n'est pas activé pour ce type de demande.",
+        "WORKFLOW_NOT_PUBLISHED": "Aucun circuit d'approbation n'est publié pour ce type de demande.",
+        "WORKFLOW_NOT_SUPPORTED": "Ce type de demande n'utilise pas le circuit d'approbation.",
+        "USE_WORKFLOW": "Cette demande est dans le circuit d'approbation. Décidez-la dans Mes approbations."
+      }
     }
   }
 }

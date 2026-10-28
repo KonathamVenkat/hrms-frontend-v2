@@ -170,6 +170,16 @@
                 <span class="card-reason" [attr.title]="leave.reason">{{ leave.reason }}</span>
               }
 
+              @if (leave.stage) {
+                <a
+                  class="attachment-link"
+                  [routerLink]="['/app/workflow/requests', 'LEAVE', leave.leaveReqId]"
+                >
+                  <span class="material-icons" aria-hidden="true">account_tree</span>
+                  {{ stageKey(leave.stage) | translate }}
+                </a>
+              }
+
               @if (leave.hasAttachment) {
                 <button type="button" class="attachment-link" (click)="downloadAttachment(leave)">
                   <span class="material-icons" aria-hidden="true">attach_file</span>
