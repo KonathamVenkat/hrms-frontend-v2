@@ -90,6 +90,7 @@ export interface ReferenceRecord extends InfoRecord {
   address?: string;
   phone?: string;
   email?: string;
+  dateOfBirth?: string;
 }
 
 /** What the form sends: one value per field of the section, plus the version when editing. */

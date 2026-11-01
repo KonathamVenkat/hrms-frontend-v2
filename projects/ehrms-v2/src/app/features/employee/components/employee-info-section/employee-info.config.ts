@@ -249,14 +249,20 @@ export const REFERENCES: SectionConfig<ReferenceRecord> = {
     text('fourthName', 100),
     arabic('fourthNameAr'),
     text('jobTitle', 80),
+    date('dateOfBirth', { noFuture: true }),
     { name: 'phone', labelKey: label('phone'), type: 'phone', max: 30 },
     { name: 'email', labelKey: label('email'), type: 'email', max: 200, wide: true },
     text('address', 200, { wide: true }),
   ],
-  card: (r) => ({
+  card: (r, ctx) => ({
     title: join(r.firstName, r.middleName, r.lastName, r.fourthName),
     titleAr: join(r.firstNameAr, r.middleNameAr, r.lastNameAr, r.fourthNameAr) || undefined,
-    meta: present(r.jobTitle, r.phone, r.email),
+    meta: present(
+      r.jobTitle,
+      r.dateOfBirth ? ctx.t('employee.info.born', { date: ctx.date(r.dateOfBirth) }) : undefined,
+      r.phone,
+      r.email,
+    ),
     chips: [],
   }),
 };
