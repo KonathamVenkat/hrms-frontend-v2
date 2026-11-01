@@ -132,6 +132,7 @@ export class MasterData implements OnInit {
     if (this.cfg.paged) return this.records();
     const text = this.filterText().toLowerCase();
     const status = this.filterActive();
+    const parent = this.filterParent();
     return this.records().filter((r) => {
       const matchText =
         !text ||
@@ -139,7 +140,8 @@ export class MasterData implements OnInit {
         r.code.toLowerCase().includes(text) ||
         r.nameAr.includes(this.filterText());
       const matchStatus = status === 'all' ? true : status === 'active' ? r.isActive : !r.isActive;
-      return matchText && matchStatus;
+      const matchParent = parent === null || this.parentOf(r) === parent;
+      return matchText && matchStatus && matchParent;
     });
   });
 
@@ -238,6 +240,14 @@ export class MasterData implements OnInit {
 
   setStatus(status: StatusFilter): void {
     this.filterActive.set(status);
+    this.changePage(0);
+  }
+
+  /** Back to the full list: no search text, every status, every parent. */
+  clearFilters(): void {
+    this.filterText.set('');
+    this.filterActive.set('all');
+    this.filterParent.set(null);
     this.changePage(0);
   }
 

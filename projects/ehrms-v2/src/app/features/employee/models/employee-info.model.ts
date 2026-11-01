@@ -23,6 +23,8 @@ export interface DependantRecord extends InfoRecord {
   lastName?: string;
   firstNameAr?: string;
   middleNameAr?: string;
+  fourthName?: string;
+  fourthNameAr?: string;
   lastNameAr?: string;
   gender?: InfoGender;
   dateOfBirth?: string;
@@ -81,6 +83,8 @@ export interface ReferenceRecord extends InfoRecord {
   lastName?: string;
   firstNameAr?: string;
   middleNameAr?: string;
+  fourthName?: string;
+  fourthNameAr?: string;
   lastNameAr?: string;
   jobTitle?: string;
   address?: string;

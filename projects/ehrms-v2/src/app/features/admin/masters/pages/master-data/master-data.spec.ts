@@ -291,4 +291,38 @@ describe('MasterData (reference masters)', () => {
       expect(el.querySelector('.master-pager')).toBeNull();
     });
   });
+
+  describe('parent filter on a master that is not server-paged (wilayas)', () => {
+    const wilaya = (id: number, regionId: number, name: string): MasterRecord => ({
+      id,
+      regionId,
+      code: `W${id}`,
+      name,
+      nameAr: 'x',
+      isActive: true,
+    });
+
+    function setupWilayas() {
+      const ctx = setup(config('wilayas'));
+      ctx.comp.records.set([wilaya(1, 1, 'Juba'), wilaya(2, 2, 'Wau')]);
+      return ctx;
+    }
+
+    it('narrows the cards to the chosen parent and clears everything with Clear filters', () => {
+      const { comp, el, fixture } = setupWilayas();
+      expect(el.querySelector('.btn-clear-filters')).toBeNull();
+
+      comp.setParentFilter('2');
+      comp.filterText.set('wa');
+      fixture.detectChanges();
+      expect(comp.filtered().map((r) => r.name)).toEqual(['Wau']);
+      expect(el.querySelector('.btn-clear-filters')).not.toBeNull();
+
+      comp.clearFilters();
+      fixture.detectChanges();
+      expect(comp.filtered().length).toBe(2);
+      expect(comp.filterParent()).toBeNull();
+      expect(el.querySelector('.btn-clear-filters')).toBeNull();
+    });
+  });
 });

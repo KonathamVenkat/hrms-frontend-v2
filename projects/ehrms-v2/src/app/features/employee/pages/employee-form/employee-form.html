@@ -99,6 +99,17 @@
 
           <div class="field-row">
             <div class="field">
+              <label for="ef-fourth-name">{{ 'employee.form.fourthName' | translate }}</label>
+              <input id="ef-fourth-name" formControlName="fourthName" [placeholder]="'employee.form.placeholders.fourthName' | translate" />
+            </div>
+            <div class="field">
+              <label for="ef-fourth-name-ar">{{ 'employee.form.fourthNameAr' | translate }}</label>
+              <input id="ef-fourth-name-ar" formControlName="fourthNameAr" [placeholder]="'employee.form.placeholders.fourthNameAr' | translate" dir="rtl" />
+            </div>
+          </div>
+
+          <div class="field-row">
+            <div class="field">
               <label for="ef-date-of-birth">{{ 'employee.form.dateOfBirth' | translate }} <span class="req">*</span></label>
               <app-date-input inputId="ef-date-of-birth" startView="multi-year" [startYearsAgo]="30" formControlName="dateOfBirth" />
               @if (isInvalid('dateOfBirth')) {

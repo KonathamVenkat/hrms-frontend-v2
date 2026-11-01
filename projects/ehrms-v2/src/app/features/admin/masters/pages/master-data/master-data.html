@@ -54,7 +54,7 @@
         </button>
       }
     </div>
-    @if (cfg.paged && cfg.parent) {
+    @if (cfg.parent) {
       <select
         class="filter-select"
         [attr.aria-label]="t + '.parent' | translate"
@@ -65,6 +65,12 @@
           <option [value]="p.id" [selected]="filterParent() === p.id">{{ p.name }}</option>
         }
       </select>
+    }
+    @if (isFiltering()) {
+      <button type="button" class="btn-clear-filters" (click)="clearFilters()">
+        <span aria-hidden="true" class="material-icons">filter_alt_off</span>
+        {{ 'common.clearFilters' | translate }}
+      </button>
     }
     <div class="tab-filter">
       <button

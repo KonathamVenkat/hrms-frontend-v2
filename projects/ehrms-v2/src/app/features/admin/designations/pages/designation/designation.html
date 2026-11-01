@@ -50,6 +50,19 @@
         </button>
       }
     </div>
+    @if (directorates().length) {
+      <select
+        class="filter-select"
+        [attr.aria-label]="'admin.designations.directorate' | translate"
+        [value]="filterDirectorate() ?? ''"
+        (change)="setDirectorateFilter($any($event.target).value)"
+      >
+        <option value="">{{ 'admin.designations.allDirectorates' | translate }}</option>
+        @for (dr of directorates(); track dr.id) {
+          <option [value]="dr.id">{{ dr.name }}</option>
+        }
+      </select>
+    }
     <select
       class="filter-select"
       [attr.aria-label]="'admin.designations.department' | translate"
@@ -58,10 +71,16 @@
     >
       <option value="">{{ 'admin.designations.allDepartments' | translate }}</option>
       <option value="none">{{ 'admin.designations.noDepartment' | translate }}</option>
-      @for (dep of departments(); track dep.deptId) {
+      @for (dep of filterDepartments(); track dep.deptId) {
         <option [value]="dep.deptId">{{ dep.name }}</option>
       }
     </select>
+    @if (hasFilters()) {
+      <button type="button" class="btn-clear-filters" (click)="clearFilters()">
+        <span aria-hidden="true" class="material-icons">filter_alt_off</span>
+        {{ 'common.clearFilters' | translate }}
+      </button>
+    }
     <div class="tab-filter">
       <button
         type="button"

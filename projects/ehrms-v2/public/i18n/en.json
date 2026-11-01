@@ -147,7 +147,9 @@
       "firstName": "First Name",
       "firstNameAr": "First Name (Arabic)",
       "middleName": "Middle Name",
+      "fourthName": "Fourth Name",
       "middleNameAr": "Middle Name (Arabic)",
+      "fourthNameAr": "Fourth Name (Arabic)",
       "lastName": "Last Name",
       "lastNameAr": "Last Name (Arabic)",
       "dateOfBirth": "Date of Birth",
@@ -189,7 +191,9 @@
         "firstName": "e.g. Ahmed",
         "firstNameAr": "e.g. أحمد",
         "middleName": "Optional",
+        "fourthName": "Optional",
         "middleNameAr": "Optional",
+        "fourthNameAr": "Optional",
         "lastName": "e.g. Al-Rashidi",
         "lastNameAr": "e.g. الراشدي",
         "nationality": "e.g. South Sudanese",
@@ -744,9 +748,11 @@
         "relationId": "Relation",
         "firstName": "First name",
         "middleName": "Middle name",
+        "fourthName": "Fourth name",
         "lastName": "Last name",
         "firstNameAr": "First name (Arabic)",
         "middleNameAr": "Middle name (Arabic)",
+        "fourthNameAr": "Fourth name (Arabic)",
         "lastNameAr": "Last name (Arabic)",
         "gender": "Gender",
         "dateOfBirth": "Date of birth",
@@ -2063,6 +2069,8 @@
       "activeChip": "{{count}} Active",
       "addDesignation": "Add Designation",
       "searchPlaceholder": "Search designations...",
+      "directorate": "Directorate",
+      "allDirectorates": "All directorates",
       "allDepartments": "All departments",
       "noDepartment": "No department",
       "profession": "Profession",
@@ -2170,6 +2178,7 @@
         "deactivateTitle": "Deactivate Bank Branch?",
         "activateTitle": "Activate Bank Branch?",
         "parent": "Bank",
+        "filterParentAll": "All banks",
         "parentPlaceholder": "Select a bank"
       },
       "companies": {
@@ -2198,6 +2207,7 @@
         "deactivateTitle": "Deactivate Company Branch?",
         "activateTitle": "Activate Company Branch?",
         "parent": "Company",
+        "filterParentAll": "All companies",
         "parentPlaceholder": "Select a company"
       },
       "sortOrder": "Sort order",
@@ -2235,6 +2245,7 @@
         "deactivateTitle": "Deactivate Wilaya?",
         "activateTitle": "Activate Wilaya?",
         "parent": "Region",
+        "filterParentAll": "All regions",
         "parentPlaceholder": "Select a region"
       },
       "provinces": {
@@ -2250,6 +2261,7 @@
         "deactivateTitle": "Deactivate Province?",
         "activateTitle": "Activate Province?",
         "parent": "Wilaya",
+        "filterParentAll": "All wilayas",
         "parentPlaceholder": "Select a wilaya"
       },
       "cities": {
@@ -2398,6 +2410,7 @@
         "deactivateTitle": "Deactivate Relation?",
         "activateTitle": "Activate Relation?",
         "parent": "Relation type",
+        "filterParentAll": "All relation types",
         "parentPlaceholder": "Select a relation type"
       },
       "directorates": {
@@ -2413,6 +2426,7 @@
         "deactivateTitle": "Deactivate Directorate?",
         "activateTitle": "Activate Directorate?",
         "parent": "Company branch",
+        "filterParentAll": "All company branches",
         "parentPlaceholder": "Select a company branch"
       },
       "grades": {

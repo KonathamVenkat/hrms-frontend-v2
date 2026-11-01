@@ -147,7 +147,9 @@
       "firstName": "Prénom",
       "firstNameAr": "Prénom (arabe)",
       "middleName": "Deuxième prénom",
+      "fourthName": "Quatrième nom",
       "middleNameAr": "Deuxième prénom (arabe)",
+      "fourthNameAr": "Quatrième nom (arabe)",
       "lastName": "Nom de famille",
       "lastNameAr": "Nom de famille (arabe)",
       "dateOfBirth": "Date de naissance",
@@ -189,7 +191,9 @@
         "firstName": "ex. Ahmed",
         "firstNameAr": "ex. أحمد",
         "middleName": "Facultatif",
+        "fourthName": "Facultatif",
         "middleNameAr": "Facultatif",
+        "fourthNameAr": "Facultatif",
         "lastName": "ex. Al-Rashidi",
         "lastNameAr": "ex. الراشدي",
         "nationality": "ex. Sud-Soudanais",
@@ -744,9 +748,11 @@
         "relationId": "Lien de parenté",
         "firstName": "Prénom",
         "middleName": "Deuxième prénom",
+        "fourthName": "Quatrième nom",
         "lastName": "Nom de famille",
         "firstNameAr": "Prénom (arabe)",
         "middleNameAr": "Deuxième prénom (arabe)",
+        "fourthNameAr": "Quatrième nom (arabe)",
         "lastNameAr": "Nom de famille (arabe)",
         "gender": "Sexe",
         "dateOfBirth": "Date de naissance",
@@ -2063,6 +2069,8 @@
       "activeChip": "{{count}} actives",
       "addDesignation": "Ajouter une désignation",
       "searchPlaceholder": "Rechercher une désignation...",
+      "directorate": "Direction",
+      "allDirectorates": "Toutes les directions",
       "allDepartments": "Tous les départements",
       "noDepartment": "Aucun département",
       "profession": "Profession",
@@ -2170,6 +2178,7 @@
         "deactivateTitle": "Désactiver l'agence ?",
         "activateTitle": "Activer l'agence ?",
         "parent": "Banque",
+        "filterParentAll": "Toutes les banques",
         "parentPlaceholder": "Sélectionner une banque"
       },
       "companies": {
@@ -2198,6 +2207,7 @@
         "deactivateTitle": "Désactiver la succursale ?",
         "activateTitle": "Activer la succursale ?",
         "parent": "Société",
+        "filterParentAll": "Toutes les sociétés",
         "parentPlaceholder": "Sélectionner une société"
       },
       "sortOrder": "Ordre de tri",
@@ -2235,6 +2245,7 @@
         "deactivateTitle": "Désactiver la wilaya ?",
         "activateTitle": "Activer la wilaya ?",
         "parent": "Région",
+        "filterParentAll": "Toutes les régions",
         "parentPlaceholder": "Sélectionner une région"
       },
       "provinces": {
@@ -2250,6 +2261,7 @@
         "deactivateTitle": "Désactiver la province ?",
         "activateTitle": "Activer la province ?",
         "parent": "Wilaya",
+        "filterParentAll": "Toutes les wilayas",
         "parentPlaceholder": "Sélectionner une wilaya"
       },
       "cities": {
@@ -2398,6 +2410,7 @@
         "deactivateTitle": "Désactiver le lien de parenté ?",
         "activateTitle": "Activer le lien de parenté ?",
         "parent": "Type de relation",
+        "filterParentAll": "Tous les types de relation",
         "parentPlaceholder": "Sélectionner un type de relation"
       },
       "directorates": {
@@ -2413,6 +2426,7 @@
         "deactivateTitle": "Désactiver la direction ?",
         "activateTitle": "Activer la direction ?",
         "parent": "Agence",
+        "filterParentAll": "Toutes les succursales",
         "parentPlaceholder": "Sélectionner une agence"
       },
       "grades": {

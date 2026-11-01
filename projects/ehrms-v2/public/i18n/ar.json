@@ -147,7 +147,9 @@
       "firstName": "الاسم الأول",
       "firstNameAr": "الاسم الأول (بالعربية)",
       "middleName": "الاسم الأوسط",
+      "fourthName": "الاسم الرابع",
       "middleNameAr": "الاسم الأوسط (بالعربية)",
+      "fourthNameAr": "الاسم الرابع (بالعربية)",
       "lastName": "اسم العائلة",
       "lastNameAr": "اسم العائلة (بالعربية)",
       "dateOfBirth": "تاريخ الميلاد",
@@ -189,7 +191,9 @@
         "firstName": "مثال: Ahmed",
         "firstNameAr": "مثال: أحمد",
         "middleName": "اختياري",
+        "fourthName": "اختياري",
         "middleNameAr": "اختياري",
+        "fourthNameAr": "اختياري",
         "lastName": "مثال: Al-Rashidi",
         "lastNameAr": "مثال: الراشدي",
         "nationality": "مثال: جنوب سوداني",
@@ -744,9 +748,11 @@
         "relationId": "صلة القرابة",
         "firstName": "الاسم الأول",
         "middleName": "الاسم الأوسط",
+        "fourthName": "الاسم الرابع",
         "lastName": "اسم العائلة",
         "firstNameAr": "الاسم الأول (بالعربية)",
         "middleNameAr": "الاسم الأوسط (بالعربية)",
+        "fourthNameAr": "الاسم الرابع (بالعربية)",
         "lastNameAr": "اسم العائلة (بالعربية)",
         "gender": "الجنس",
         "dateOfBirth": "تاريخ الميلاد",
@@ -2063,6 +2069,8 @@
       "activeChip": "{{count}} نشط",
       "addDesignation": "إضافة مسمى وظيفي",
       "searchPlaceholder": "البحث في المسميات الوظيفية...",
+      "directorate": "المديرية",
+      "allDirectorates": "كل المديريات",
       "allDepartments": "كل الأقسام",
       "noDepartment": "بدون قسم",
       "profession": "المهنة",
@@ -2170,6 +2178,7 @@
         "deactivateTitle": "إلغاء تفعيل فرع البنك؟",
         "activateTitle": "تفعيل فرع البنك؟",
         "parent": "البنك",
+        "filterParentAll": "كل البنوك",
         "parentPlaceholder": "اختر بنكاً"
       },
       "companies": {
@@ -2198,6 +2207,7 @@
         "deactivateTitle": "إلغاء تفعيل فرع الشركة؟",
         "activateTitle": "تفعيل فرع الشركة؟",
         "parent": "الشركة",
+        "filterParentAll": "كل الشركات",
         "parentPlaceholder": "اختر شركة"
       },
       "sortOrder": "ترتيب العرض",
@@ -2235,6 +2245,7 @@
         "deactivateTitle": "تعطيل ولاية؟",
         "activateTitle": "تفعيل ولاية؟",
         "parent": "إقليم",
+        "filterParentAll": "كل المناطق",
         "parentPlaceholder": "اختر إقليم"
       },
       "provinces": {
@@ -2250,6 +2261,7 @@
         "deactivateTitle": "تعطيل مقاطعة؟",
         "activateTitle": "تفعيل مقاطعة؟",
         "parent": "ولاية",
+        "filterParentAll": "كل الولايات",
         "parentPlaceholder": "اختر ولاية"
       },
       "cities": {
@@ -2398,6 +2410,7 @@
         "deactivateTitle": "تعطيل صلة قرابة؟",
         "activateTitle": "تفعيل صلة قرابة؟",
         "parent": "نوع قرابة",
+        "filterParentAll": "كل أنواع العلاقة",
         "parentPlaceholder": "اختر نوع قرابة"
       },
       "directorates": {
@@ -2413,6 +2426,7 @@
         "deactivateTitle": "تعطيل مديرية؟",
         "activateTitle": "تفعيل مديرية؟",
         "parent": "فرع الشركة",
+        "filterParentAll": "كل فروع الشركة",
         "parentPlaceholder": "اختر فرع الشركة"
       },
       "grades": {

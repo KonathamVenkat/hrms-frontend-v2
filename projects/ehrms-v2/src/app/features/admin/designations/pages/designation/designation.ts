@@ -59,13 +59,33 @@ export class Designations implements OnInit {
   /** '' = every department, 'none' = designations without a department, otherwise the department id. */
   filterDepartment = signal('');
   filterActive = signal<StatusFilter>('all');
+  /** Directorates for the filter list; empty (filter hidden) if they cannot be loaded. */
+  directorates = signal<MasterRecord[]>([]);
+  filterDirectorate = signal<number | null>(null);
 
   readonly activeCount = computed(() => this.designations().filter((d) => d.isActive).length);
+
+  /** The department filter lists only the departments of the chosen directorate. */
+  readonly filterDepartments = computed(() => {
+    const directorate = this.filterDirectorate();
+    return this.departments().filter((d) => directorate === null || d.directorateId === directorate);
+  });
+
+  /** Any search, status, directorate or department filter is on, so there is something to clear. */
+  readonly hasFilters = computed(
+    () =>
+      this.filterText() !== '' ||
+      this.filterDepartment() !== '' ||
+      this.filterActive() !== 'all' ||
+      this.filterDirectorate() !== null,
+  );
 
   readonly filtered = computed(() => {
     const text = this.filterText().toLowerCase();
     const dept = this.filterDepartment();
     const status = this.filterActive();
+    const directorate = this.filterDirectorate();
+    const departmentById = new Map(this.departments().map((dep) => [dep.deptId, dep] as const));
     return this.designations().filter((d) => {
       const matchText =
         !text ||
@@ -75,7 +95,10 @@ export class Designations implements OnInit {
       const matchDept =
         !dept || (dept === 'none' ? d.departmentId == null : String(d.departmentId) === dept);
       const matchStatus = status === 'all' ? true : status === 'active' ? d.isActive : !d.isActive;
-      return matchText && matchDept && matchStatus;
+      const matchDirectorate =
+        directorate === null ||
+        (d.departmentId != null && departmentById.get(d.departmentId)?.directorateId === directorate);
+      return matchText && matchDept && matchStatus && matchDirectorate;
     });
   });
 
@@ -96,6 +119,18 @@ export class Designations implements OnInit {
       }
     });
     this.load();
+  }
+
+  setDirectorateFilter(value: string): void {
+    this.filterDirectorate.set(value ? Number(value) : null);
+    this.filterDepartment.set(''); // the old department may not belong to the new directorate
+  }
+
+  clearFilters(): void {
+    this.filterText.set('');
+    this.filterActive.set('all');
+    this.filterDirectorate.set(null);
+    this.filterDepartment.set('');
   }
 
   load(): void {
@@ -122,6 +157,13 @@ export class Designations implements OnInit {
         next: (res) => {
           if (res.success) this.departments.set(res.data);
         },
+        error: () => undefined,
+      });
+    this.masterSvc
+      .getAll('directorates')
+      .pipe(takeUntilDestroyed(this.destroy))
+      .subscribe({
+        next: (res) => this.directorates.set(res.success ? res.data : []),
         error: () => undefined,
       });
     // Same for the professions: without them the form still saves, just without a profession.

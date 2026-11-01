@@ -43,21 +43,11 @@
   gap: var(--space-3);
   color: var(--mat-sys-on-surface);
 }
-.brand-logo svg {
-  padding: 8px;
-  box-sizing: content-box;
+/* The logo is navy: on the dark theme it sits on a light plate so it stays readable. */
+:host-context(.dark-mode) .brand-logo img {
+  padding: 6px 10px;
   border-radius: var(--radius-md);
-  background: var(--grad-primary);
-  box-shadow: var(--primary-shadow);
-  stroke: #fff;
-}
-.brand-logo svg path:last-child {
-  stroke: #fff;
-}
-.logo-text {
-  font-size: 20px;
-  font-weight: 800;
-  letter-spacing: 0.22em;
+  background: #fff;
 }
 
 .brand-headline {

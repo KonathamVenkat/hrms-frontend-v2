@@ -44,6 +44,8 @@ type CommonFormValue = {
   firstNameAr: string;
   middleName: string;
   middleNameAr: string;
+  fourthName: string;
+  fourthNameAr: string;
   lastName: string;
   lastNameAr: string;
   dateOfBirth: string;
@@ -168,6 +170,8 @@ export class EmployeeForm implements OnInit {
     firstNameAr: ['', [Validators.required, Validators.maxLength(200)]],
     middleName: ['', Validators.maxLength(100)],
     middleNameAr: ['', Validators.maxLength(200)],
+    fourthName: ['', Validators.maxLength(100)],
+    fourthNameAr: ['', Validators.maxLength(200)],
     lastName: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(100)]],
     lastNameAr: ['', [Validators.required, Validators.maxLength(200)]],
     dateOfBirth: ['', Validators.required],
@@ -295,6 +299,8 @@ export class EmployeeForm implements OnInit {
               firstNameAr: e.firstNameAr ?? '',
               middleName: e.middleName ?? '',
               middleNameAr: e.middleNameAr ?? '',
+              fourthName: e.fourthName ?? '',
+              fourthNameAr: e.fourthNameAr ?? '',
               lastName: e.lastName ?? '',
               lastNameAr: e.lastNameAr ?? '',
               dateOfBirth: e.dateOfBirth ?? '',
@@ -386,6 +392,8 @@ export class EmployeeForm implements OnInit {
       firstNameAr: v.firstNameAr,
       middleName: v.middleName || undefined,
       middleNameAr: v.middleNameAr || undefined,
+      fourthName: v.fourthName || undefined,
+      fourthNameAr: v.fourthNameAr || undefined,
       lastName: v.lastName,
       lastNameAr: v.lastNameAr,
       dateOfBirth: v.dateOfBirth,

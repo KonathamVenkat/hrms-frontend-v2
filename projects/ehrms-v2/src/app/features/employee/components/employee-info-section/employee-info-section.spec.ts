@@ -179,6 +179,8 @@ describe('EmployeeInfoSection', () => {
       firstName: 'Nyadak',
       lastName: 'Lado',
       middleName: null,
+      fourthName: null,
+      fourthNameAr: null,
       gender: null,
       isAlive: true,
     });

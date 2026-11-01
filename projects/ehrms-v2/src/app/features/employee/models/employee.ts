@@ -40,6 +40,8 @@ export interface CreateEmployeePayload {
   firstNameAr: string;
   middleName?: string;
   middleNameAr?: string;
+  fourthName?: string;
+  fourthNameAr?: string;
   lastName: string;
   lastNameAr: string;
   dateOfBirth: string;
@@ -86,6 +88,8 @@ export interface EmployeeDetailData {
   firstNameAr: string;
   middleName?: string;
   middleNameAr?: string;
+  fourthName?: string;
+  fourthNameAr?: string;
   lastName: string;
   lastNameAr: string;
   fullNameEn: string;
