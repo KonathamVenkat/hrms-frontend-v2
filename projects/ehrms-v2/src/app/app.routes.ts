@@ -65,6 +65,13 @@ export const routes: Routes = [
             title: 'Departments · EHRMS',
           },
           {
+            path: 'sections',
+            canActivate: [roleGuard('SYSTEM_ADMIN')],
+            loadComponent: () =>
+              import('./features/admin/sections/pages/section/section').then((m) => m.Sections),
+            title: 'Sections · EHRMS',
+          },
+          {
             path: 'designations',
             canActivate: [roleGuard('SYSTEM_ADMIN')],
             loadComponent: () =>

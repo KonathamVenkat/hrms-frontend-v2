@@ -101,6 +101,25 @@
                 }
               </div>
             </div>
+            @if (currentJob()!.sectionName) {
+              <div class="info-row">
+                <span class="info-label">{{ 'employee.jobDetails.fields.section' | translate }}</span>
+                <div class="info-value">
+                  <span class="val-main">{{ currentJob()!.sectionName }}</span>
+                  <span class="val-ar">{{ currentJob()!.sectionNameAr }}</span>
+                  <span class="val-code">{{ currentJob()!.sectionCode }}</span>
+                </div>
+              </div>
+            }
+            @if (currentJob()!.professionName) {
+              <div class="info-row">
+                <span class="info-label">{{ 'employee.jobDetails.fields.profession' | translate }}</span>
+                <div class="info-value">
+                  <span class="val-main">{{ currentJob()!.professionName }}</span>
+                  <span class="val-ar">{{ currentJob()!.professionNameAr }}</span>
+                </div>
+              </div>
+            }
             @if (currentJob()!.jobPositionId) {
               <div class="info-row">
                 <span class="info-label">{{ 'employee.jobDetails.fields.jobPosition' | translate }}</span>
@@ -267,6 +286,12 @@
                   <span class="tl-label">{{ 'employee.jobDetails.fields.department' | translate }}</span>
                   <span class="tl-value">{{ job.departmentName }}</span>
                 </div>
+                @if (job.sectionName) {
+                  <div class="tl-row">
+                    <span class="tl-label">{{ 'employee.jobDetails.fields.section' | translate }}</span>
+                    <span class="tl-value">{{ job.sectionName }}</span>
+                  </div>
+                }
                 <div class="tl-row">
                   <span class="tl-label">{{ 'employee.jobDetails.fields.designation' | translate }}</span>
                   <div class="tl-value">
@@ -387,6 +412,29 @@
                 <span class="field-error" id="fe-designationId">{{ getError('designationId') }}</span>
               }
             </div>
+          </div>
+
+          <div class="field">
+            <label for="jd-section-id">{{ 'employee.jobDetails.fields.section' | translate }}</label>
+            <select id="jd-section-id" formControlName="sectionId">
+              <option value="">{{ 'employee.jobDetails.formFields.selectSection' | translate }}</option>
+              @for (s of sections(); track s.id) {
+                <option [value]="s.id">{{ s.name }} ({{ s.code }})</option>
+              }
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="jd-profession-id">{{ 'employee.jobDetails.fields.profession' | translate }}</label>
+            <select id="jd-profession-id" formControlName="professionId">
+              <option [ngValue]="null">{{ 'employee.jobDetails.formFields.selectProfession' | translate }}</option>
+              @for (p of professions(); track p.id) {
+                <option [ngValue]="p.id">{{ p.name }}</option>
+              }
+            </select>
+            @if (isInvalid('professionId')) {
+              <span class="field-error" id="fe-professionId">{{ getError('professionId') }}</span>
+            }
           </div>
 
           <div class="field">

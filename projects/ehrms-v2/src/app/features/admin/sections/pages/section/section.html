@@ -1,0 +1,376 @@
+<div class="admin-page">
+  <div class="page-header">
+    <div class="header-left">
+      <span aria-hidden="true" class="material-icons header-icon">account_tree</span>
+      <h1 class="page-title">{{ 'admin.sections.title' | translate }}</h1>
+      <div class="stat-chips">
+        <span class="chip chip-total">{{
+          'admin.sections.totalChip' | translate: { count: sections().length }
+        }}</span>
+        <span class="chip chip-active">{{
+          'admin.sections.activeChip' | translate: { count: activeCount() }
+        }}</span>
+      </div>
+    </div>
+    <button type="button" class="btn-add" (click)="openCreate()">
+      <span aria-hidden="true" class="material-icons">add</span>
+      {{ 'admin.sections.addSection' | translate }}
+    </button>
+  </div>
+
+  @if (successMsg()) {
+    <div class="alert alert-success" role="status">
+      <span aria-hidden="true" class="material-icons">check_circle</span>{{ successMsg() }}
+    </div>
+  }
+  @if (error() && !showModal()) {
+    <div class="alert alert-error" role="alert">
+      <span aria-hidden="true" class="material-icons">error_outline</span>{{ error() }}
+    </div>
+  }
+
+  <div class="filter-bar">
+    <div class="search-wrap">
+      <span aria-hidden="true" class="material-icons">search</span>
+      <input
+        type="text"
+        [placeholder]="'admin.sections.searchPlaceholder' | translate"
+        [attr.aria-label]="'admin.sections.searchPlaceholder' | translate"
+        [value]="filterText()"
+        (input)="filterText.set($any($event.target).value)"
+      />
+      @if (filterText()) {
+        <button
+          type="button"
+          class="clear-btn"
+          [attr.aria-label]="'common.clear' | translate"
+          (click)="filterText.set('')"
+        >
+          <span aria-hidden="true" class="material-icons">close</span>
+        </button>
+      }
+    </div>
+    @if (directorates().length) {
+      <select
+        class="filter-select"
+        [attr.aria-label]="'admin.sections.directorate' | translate"
+        [value]="filterDirectorate() ?? ''"
+        (change)="setDirectorateFilter($any($event.target).value)"
+      >
+        <option value="">{{ 'admin.sections.allDirectorates' | translate }}</option>
+        @for (dr of directorates(); track dr.id) {
+          <option [value]="dr.id">{{ dr.name }}</option>
+        }
+      </select>
+    }
+    @if (departments().length) {
+      <select
+        class="filter-select"
+        [attr.aria-label]="'admin.sections.department' | translate"
+        [value]="filterDepartment() ?? ''"
+        (change)="setDepartmentFilter($any($event.target).value)"
+      >
+        <option value="">{{ 'admin.sections.allDepartments' | translate }}</option>
+        @for (dp of filterDepartments(); track dp.deptId) {
+          <option [value]="dp.deptId">{{ dp.name }}</option>
+        }
+      </select>
+    }
+    @if (hasFilters()) {
+      <button type="button" class="btn-clear-filters" (click)="clearFilters()">
+        <span aria-hidden="true" class="material-icons">filter_alt_off</span>
+        {{ 'common.clearFilters' | translate }}
+      </button>
+    }
+    <div class="tab-filter">
+      <button
+        type="button"
+        class="tab-btn"
+        [class.active]="filterActive() === 'all'"
+        (click)="filterActive.set('all')"
+      >
+        {{ 'common.all' | translate }}
+      </button>
+      <button
+        type="button"
+        class="tab-btn"
+        [class.active]="filterActive() === 'active'"
+        (click)="filterActive.set('active')"
+      >
+        {{ 'common.active' | translate }}
+      </button>
+      <button
+        type="button"
+        class="tab-btn"
+        [class.active]="filterActive() === 'inactive'"
+        (click)="filterActive.set('inactive')"
+      >
+        {{ 'common.inactive' | translate }}
+      </button>
+    </div>
+  </div>
+
+  @if (loading()) {
+    <div class="loading-wrap">
+      <div class="spinner"></div>
+      <span>{{ 'common.loading' | translate }}</span>
+    </div>
+  }
+
+  @if (!loading()) {
+    <!-- The card, grid and badge classes are named after office locations but shared by the admin screens. -->
+    <div class="locations-grid">
+      @if (filtered().length === 0) {
+        <div class="empty-card">
+          <span aria-hidden="true" class="material-icons">account_tree</span>
+          <p>{{ 'admin.sections.emptyTitle' | translate }}</p>
+          <small>{{ 'admin.sections.emptyHint' | translate }}</small>
+        </div>
+      }
+      @for (s of filtered(); track s.id) {
+        <div class="loc-card" [class.inactive-card]="!s.isActive">
+          <div class="card-top">
+            <div class="loc-code-wrap">
+              <span class="loc-code">{{ s.code }}</span>
+            </div>
+            <div class="card-actions">
+              <button
+                type="button"
+                class="act-btn btn-edit"
+                [attr.aria-label]="'common.edit' | translate"
+                (click)="openEdit(s)"
+              >
+                <span aria-hidden="true" class="material-icons">edit</span>
+              </button>
+              <button
+                type="button"
+                class="act-btn"
+                [class.btn-deactivate]="s.isActive"
+                [class.btn-activate]="!s.isActive"
+                [attr.aria-label]="
+                  (s.isActive ? 'admin.sections.deactivate' : 'admin.sections.activate')
+                    | translate
+                "
+                (click)="openConfirm(s, 'toggle')"
+              >
+                <span aria-hidden="true" class="material-icons">{{
+                  s.isActive ? 'toggle_off' : 'toggle_on'
+                }}</span>
+              </button>
+              <button
+                type="button"
+                class="act-btn btn-delete"
+                [attr.aria-label]="'admin.sections.delete' | translate"
+                (click)="openConfirm(s, 'delete')"
+              >
+                <span aria-hidden="true" class="material-icons">delete</span>
+              </button>
+            </div>
+          </div>
+          <h2 class="loc-name">{{ s.name }}</h2>
+          <p class="loc-name-ar">{{ s.nameAr }}</p>
+          <div class="card-footer">
+            <span
+              class="status-badge"
+              [class.status-active]="s.isActive"
+              [class.status-inactive]="!s.isActive"
+            >
+              <span class="status-dot"></span
+              >{{ (s.isActive ? 'common.active' : 'common.inactive') | translate }}
+            </span>
+            @if (departmentName(s); as dept) {
+              <span class="tz-badge">{{ dept }}</span>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>
+
+<!-- MODAL -->
+@if (showModal()) {
+  <div class="modal-backdrop" (click)="closeModal()">
+    <div
+      class="modal"
+      (click)="$event.stopPropagation()"
+      [appAccessibleDialog]="'dp-modal-title'"
+      (dialogClosed)="closeModal()"
+      cdkTrapFocus
+      cdkTrapFocusAutoCapture
+    >
+      <div class="modal-header">
+        <h2 id="dp-modal-title" class="modal-title">
+          {{
+            (isEditMode() ? 'admin.sections.editTitle' : 'admin.sections.addSection')
+              | translate
+          }}
+        </h2>
+        <button
+          type="button"
+          class="modal-close"
+          [attr.aria-label]="'common.close' | translate"
+          (click)="closeModal()"
+        >
+          <span aria-hidden="true" class="material-icons">close</span>
+        </button>
+      </div>
+      @if (error()) {
+        <div class="modal-alert" role="alert">
+          <span aria-hidden="true" class="material-icons">error_outline</span>{{ error() }}
+        </div>
+      }
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+        <div class="modal-body">
+          <div class="field">
+            <label for="dp-dept"
+              >{{ 'admin.sections.department' | translate }} <span class="req">*</span></label
+            >
+            <select id="dp-dept" formControlName="departmentId">
+              <option [ngValue]="0">{{ 'admin.sections.departmentPlaceholder' | translate }}</option>
+              @for (dp of departmentOptions(); track dp.deptId) {
+                <option [ngValue]="dp.deptId">{{ dp.name }} ({{ dp.code }})</option>
+              }
+            </select>
+            @if (isInvalid('departmentId')) {
+              <span class="field-error">{{ getError('departmentId') }}</span>
+            }
+          </div>
+          <div class="field">
+            <label for="dp-code"
+              >{{ 'admin.sections.code' | translate }} <span class="req">*</span></label
+            >
+            <input
+              id="dp-code"
+              formControlName="code"
+              [placeholder]="'admin.sections.codePlaceholder' | translate"
+            />
+            @if (isInvalid('code')) {
+              <span class="field-error">{{ getError('code') }}</span>
+            }
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="dp-name-en"
+                >{{ 'admin.sections.nameEn' | translate }} <span class="req">*</span></label
+              >
+              <input
+                id="dp-name-en"
+                formControlName="name"
+                [placeholder]="'admin.sections.nameEnPlaceholder' | translate"
+              />
+              @if (isInvalid('name')) {
+                <span class="field-error">{{ getError('name') }}</span>
+              }
+            </div>
+            <div class="field">
+              <label for="dp-name-ar"
+                >{{ 'admin.sections.nameAr' | translate }} <span class="req">*</span></label
+              >
+              <input id="dp-name-ar" formControlName="nameAr" dir="rtl" />
+              @if (isInvalid('nameAr')) {
+                <span class="field-error">{{ getError('nameAr') }}</span>
+              }
+            </div>
+          </div>
+          @if (isEditMode()) {
+            <label class="toggle-item">
+              <div class="toggle-info">
+                <span class="toggle-label">{{ 'common.active' | translate }}</span>
+                <span class="toggle-hint">{{ 'admin.sections.activeHint' | translate }}</span>
+              </div>
+              <div class="toggle-wrap">
+                <input type="checkbox" formControlName="isActive" class="toggle-inp" />
+                <span class="toggle-slider"></span>
+              </div>
+            </label>
+          }
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-cancel" (click)="closeModal()">
+            {{ 'common.cancel' | translate }}
+          </button>
+          <button type="submit" class="btn-save" [disabled]="saving()">
+            @if (saving()) {
+              <div class="btn-spinner"></div>
+              <span>{{ 'admin.sections.saving' | translate }}</span>
+            } @else {
+              <span aria-hidden="true" class="material-icons">save</span>
+              <span>{{
+                (isEditMode() ? 'admin.sections.update' : 'admin.sections.addSection')
+                  | translate
+              }}</span>
+            }
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}
+
+<!-- CONFIRM: deactivate / activate / delete -->
+@if (confirmItem(); as item) {
+  <div class="modal-backdrop" (click)="cancelConfirm()">
+    <div
+      class="confirm-dialog"
+      (click)="$event.stopPropagation()"
+      [appAccessibleDialog]="'dp-confirm-title'"
+      (dialogClosed)="cancelConfirm()"
+      cdkTrapFocus
+      cdkTrapFocusAutoCapture
+    >
+      @let deleting = confirmAction() === 'delete';
+      @let warn = deleting || item.isActive;
+      <div class="confirm-icon" [class.icon-warn]="warn" [class.icon-info]="!warn">
+        <span aria-hidden="true" class="material-icons">{{
+          deleting ? 'delete' : 'account_tree'
+        }}</span>
+      </div>
+      <h3 id="dp-confirm-title" class="confirm-title">
+        {{
+          (deleting
+            ? 'admin.sections.deleteTitle'
+            : item.isActive
+              ? 'admin.sections.deactivateTitle'
+              : 'admin.sections.activateTitle'
+          ) | translate
+        }}
+      </h3>
+      <p class="confirm-msg">
+        <strong>{{ item.name }}</strong>
+        @if (deleting) {
+          <br />{{ 'admin.sections.deleteHint' | translate }}
+        }
+      </p>
+      @if (confirmError()) {
+        <div class="modal-alert confirm-alert" role="alert">
+          <span aria-hidden="true" class="material-icons">error_outline</span
+          ><span dir="auto">{{ confirmError() }}</span>
+        </div>
+      }
+      <div class="confirm-actions">
+        <button type="button" class="btn-cancel" (click)="cancelConfirm()">
+          {{ (confirmError() ? 'common.close' : 'common.cancel') | translate }}
+        </button>
+        @if (!confirmError()) {
+          <button
+            type="button"
+            class="btn-confirm"
+            [class.btn-danger]="warn"
+            [class.btn-success]="!warn"
+            (click)="confirm()"
+          >
+            {{
+              (deleting
+                ? 'admin.sections.delete'
+                : item.isActive
+                  ? 'admin.sections.deactivate'
+                  : 'admin.sections.activate'
+              ) | translate
+            }}
+          </button>
+        }
+      </div>
+    </div>
+  </div>
+}

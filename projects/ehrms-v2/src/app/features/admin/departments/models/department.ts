@@ -5,6 +5,8 @@ export interface Department {
   name: string;
   nameAr: string;
   description?: string;
+  /** Read-only here: the directorate the department sits under. */
+  directorateId?: number;
   headEmployeeId?: number;
   /** Read-only; the head is set from the employee's job details. */
   headEmployeeName?: string;

@@ -136,7 +136,6 @@
 }
 .job-card-header .material-icons {
   font-size: 18px;
-  color: var(--mat-sys-primary);
 }
 .job-card-body {
   padding-block: var(--space-1);

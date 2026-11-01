@@ -40,6 +40,8 @@ export interface MasterConfig {
   country?: boolean;
   /** The master has an optional sort order (grades), shown and edited on the screen. */
   sortOrder?: boolean;
+  /** The master has an optional pay range (grades), shown and edited on the screen. */
+  salaryRange?: boolean;
   /** The list is long: the server pages, searches and filters it (GET <endpoint>/search). */
   paged?: boolean;
 }
@@ -128,6 +130,7 @@ const GRADES: MasterConfig = {
   endpoint: 'grades',
   icon: 'trending_up',
   sortOrder: true,
+  salaryRange: true,
 };
 
 /** Route path (under /app/admin), tab title and screen config of each reference master. */

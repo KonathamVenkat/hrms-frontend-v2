@@ -93,12 +93,7 @@
                       [attr.aria-current]="isChildActive(child.subMenuAction) ? 'page' : null"
                       (click)="navigate(child.subMenuAction)">
 
-                      <!-- Active dot indicator -->
-                      @if (isChildActive(child.subMenuAction)) {
-                        <span class="flyout-dot" aria-hidden="true"></span>
-                      } @else {
-                        <span class="flyout-dot-placeholder" aria-hidden="true"></span>
-                      }
+                      <span class="material-icons flyout-link-icon" aria-hidden="true">{{ subIcon(child.subMenuAction) }}</span>
 
                       {{ child.subMenuName }}
                     </button>

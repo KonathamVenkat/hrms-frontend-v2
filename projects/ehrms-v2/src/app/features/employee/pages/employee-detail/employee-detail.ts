@@ -193,6 +193,18 @@ export class EmployeeDetail implements OnInit {
       });
   }
 
+  /** Re-reads the record without the loading state, so the open tab keeps its place. */
+  refreshEmployee(): void {
+    const id = this.employee()?.employeeId;
+    if (!id) return;
+    this.empService
+      .getEmployee(id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((res) => {
+        if (res.success && res.data) this.employee.set(res.data);
+      });
+  }
+
   onPhotoChanged(url: string | undefined): void {
     const emp = this.employee();
     this.employee.update((e) => (e ? { ...e, profilePhotoUrl: url } : e));

@@ -5,6 +5,8 @@ export interface Designation {
   title: string;
   titleAr?: string;
   gradeLevel?: string;
+  professionId?: number;
+  professionName?: string;
   departmentId?: number;
   departmentName?: string;
   isActive: boolean;
@@ -18,6 +20,7 @@ export interface DesignationRequest {
   title: string;
   titleAr?: string;
   gradeLevel?: string;
+  professionId?: number;
   departmentId?: number;
   isActive?: boolean;
   /** Version the screen was loaded with; the server answers 409 if the row changed since. */

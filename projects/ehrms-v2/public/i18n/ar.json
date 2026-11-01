@@ -2,6 +2,7 @@
   "common": {
     "search": "بحث",
     "clear": "مسح",
+    "clearFilters": "مسح عوامل التصفية",
     "cancel": "إلغاء",
     "close": "إغلاق",
     "back": "رجوع",
@@ -49,6 +50,12 @@
       "december": "ديسمبر"
     },
     "enums": {
+      "addressType": {
+        "PERMANENT": "دائم",
+        "CURRENT": "حالي",
+        "EMERGENCY": "طوارئ",
+        "MAILING": "بريدي"
+      },
       "employmentStatus": {
         "ACTIVE": "نشط",
         "PROBATION": "فترة تجربة",
@@ -558,6 +565,8 @@
       "fields": {
         "department": "القسم",
         "designation": "المسمى الوظيفي",
+        "section": "القسم الفرعي",
+        "profession": "المهنة",
         "jobPosition": "المنصب الوظيفي",
         "reportingManager": "المدير المباشر",
         "functionalManager": "المدير الوظيفي",
@@ -583,6 +592,8 @@
       "formFields": {
         "selectDepartment": "اختر القسم",
         "selectDesignation": "اختر المسمى الوظيفي",
+        "selectSection": "بدون قسم فرعي",
+        "selectProfession": "اختر المهنة",
         "jobPositionIdPlaceholder": "رمز مرجعي اختياري للمنصب",
         "searchPlaceholder": "البحث بالاسم أو الرمز...",
         "managerSelectDepartmentFirst": "اختر القسم أولاً",
@@ -602,7 +613,8 @@
       "update": "تحديث",
       "errors": {
         "loadFailed": "فشل تحميل تفاصيل الوظيفة.",
-        "saveFailed": "فشلت العملية. حاول مرة أخرى."
+        "saveFailed": "فشلت العملية. حاول مرة أخرى.",
+        "professionMismatch": "يجب أن تطابق المهنة مهنة المسمى الوظيفي المختار"
       },
       "success": {
         "assigned": "تم حفظ التعيين الوظيفي الجديد بنجاح",
@@ -1950,6 +1962,8 @@
       "totalChip": "{{count}} إجمالي",
       "activeChip": "{{count}} نشط",
       "addDepartment": "إضافة قسم",
+      "directorate": "المديرية",
+      "allDirectorates": "كل المديريات",
       "searchPlaceholder": "البحث في الأقسام...",
       "emptyTitle": "لا توجد أقسام",
       "emptyHint": "أضف قسماً من الأعلى",
@@ -1983,6 +1997,7 @@
         "rules": {
           "DEPARTMENT_IN_USE": "القسم {{code}} مستخدم في مسميات وظيفية أو سجلات وظائف الموظفين. عطّله بدلاً من حذفه.",
           "DEPARTMENT_HAS_ACTIVE_DESIGNATIONS": "لا يزال القسم {{code}} يحتوي على مسميات وظيفية نشطة. عطّلها أولاً.",
+          "DEPARTMENT_HAS_ACTIVE_SECTIONS": "لا يزال القسم {{code}} يحتوي على أقسام فرعية نشطة. عطّلها أولاً.",
           "HEAD_EMPLOYEE_INACTIVE": "رئيس القسم المحدد ليس موظفاً نشطاً."
         }
       },
@@ -1994,6 +2009,54 @@
         "deleted": "تم حذف \"{{name}}\""
       }
     },
+    "sections": {
+      "title": "الأقسام الفرعية",
+      "totalChip": "{{count}} إجمالي",
+      "activeChip": "{{count}} نشط",
+      "addSection": "إضافة قسم فرعي",
+      "directorate": "المديرية",
+      "allDirectorates": "كل المديريات",
+      "department": "القسم",
+      "allDepartments": "كل الأقسام",
+      "departmentPlaceholder": "اختر القسم",
+      "searchPlaceholder": "ابحث في الأقسام الفرعية...",
+      "emptyTitle": "لم يتم العثور على أقسام فرعية",
+      "emptyHint": "أضف قسماً فرعياً من الأعلى",
+      "editTitle": "تعديل قسم فرعي",
+      "code": "الرمز",
+      "codePlaceholder": "مثال: SEC-001",
+      "nameEn": "اسم القسم الفرعي (EN)",
+      "nameEnPlaceholder": "مثال: Geological Studies",
+      "nameAr": "اسم القسم الفرعي (AR)",
+      "activeHint": "لا يمكن اختيار الأقسام الفرعية غير النشطة للموظفين",
+      "saving": "جارٍ الحفظ...",
+      "update": "تحديث",
+      "deactivateTitle": "تعطيل قسم فرعي؟",
+      "activateTitle": "تفعيل قسم فرعي؟",
+      "deleteTitle": "حذف قسم فرعي؟",
+      "deleteHint": "لا يمكن التراجع عن ذلك. لا يمكن حذف قسم فرعي قيد الاستخدام؛ عطّله بدلاً من ذلك.",
+      "deactivate": "تعطيل",
+      "activate": "تفعيل",
+      "delete": "حذف",
+      "errors": {
+        "loadFailed": "تعذّر تحميل الأقسام الفرعية.",
+        "duplicate": "يوجد قسم فرعي بهذا الرمز بالفعل.",
+        "patternCode": "استخدم الأحرف الكبيرة والأرقام والواصلة والشرطة السفلية فقط.",
+        "stale": "تم تغيير هذا السجل بواسطة شخص آخر. أعد تحميله وكرر التعديل.",
+        "rules": {
+          "SECTION_IN_USE": "القسم الفرعي {{code}} مستخدم في سجلات الوظائف، لذلك لا يمكن حذفه أو نقله إلى قسم آخر.",
+          "MASTER_IN_USE": "القسم الفرعي {{code}} مستخدم في سجلات الوظائف، لذلك لا يمكن حذفه أو نقله إلى قسم آخر.",
+          "PARENT_INACTIVE": "القسم غير نشط، لذلك لا يمكنه احتواء قسم فرعي نشط. فعّل القسم أولاً."
+        }
+      },
+      "success": {
+        "created": "\"{{name}}\" تم الإنشاء",
+        "updated": "\"{{name}}\" تم التحديث",
+        "activated": "\"{{name}}\" تم التفعيل",
+        "deactivated": "\"{{name}}\" تم التعطيل",
+        "deleted": "\"{{name}}\" تم الحذف"
+      }
+    },
     "designations": {
       "title": "المسميات الوظيفية",
       "totalChip": "{{count}} إجمالي",
@@ -2002,6 +2065,8 @@
       "searchPlaceholder": "البحث في المسميات الوظيفية...",
       "allDepartments": "كل الأقسام",
       "noDepartment": "بدون قسم",
+      "profession": "المهنة",
+      "noProfession": "بدون مهنة",
       "department": "القسم",
       "emptyTitle": "لا توجد مسميات وظيفية",
       "editTitle": "تعديل المسمى الوظيفي",
@@ -2026,6 +2091,7 @@
         "code": "الرمز",
         "title": "المسمى",
         "department": "القسم",
+        "profession": "المهنة",
         "grade": "الدرجة",
         "status": "الحالة",
         "actions": "الإجراءات"
@@ -2036,7 +2102,8 @@
         "stale": "تم تغيير هذا السجل بواسطة شخص آخر. أعد تحميله وكرر التعديل.",
         "rules": {
           "DESIGNATION_IN_USE": "المسمى الوظيفي {{code}} مستخدم في سجلات وظائف الموظفين، لذلك لا يمكن حذفه أو نقله إلى قسم آخر.",
-          "DEPARTMENT_INACTIVE": "القسم غير نشط، لذلك لا يمكنه احتواء مسمى وظيفي نشط. فعّل القسم أو عطّل هذا المسمى."
+          "DEPARTMENT_INACTIVE": "القسم غير نشط، لذلك لا يمكنه احتواء مسمى وظيفي نشط. فعّل القسم أو عطّل هذا المسمى.",
+          "PROFESSION_INACTIVE": "المهنة غير نشطة، لذلك لا يمكنها احتواء مسمى وظيفي نشط. فعّل المهنة أو عطّل هذا المسمى."
         }
       },
       "success": {
@@ -2138,6 +2205,10 @@
       "countryNameAr": "الدولة (بالعربية)",
       "countryHint": "الدولة التي ترتبط بهذه الجنسية. تظهر في قائمة الدولة في العنوان الجنسيات التي لها دولة فقط.",
       "sortOrderHint": "الأرقام الأصغر تظهر أولاً",
+      "minSalary": "الحد الأدنى للراتب",
+      "maxSalary": "الحد الأقصى للراتب",
+      "salaryHint": "نطاق الراتب لهذه الدرجة. اتركه فارغاً إذا لم يكن للدرجة نطاق.",
+      "salaryRangeError": "لا يمكن أن يكون الحد الأقصى للراتب أقل من الحد الأدنى",
       "regions": {
         "title": "الأقاليم",
         "add": "إضافة إقليم",

@@ -238,11 +238,14 @@ html {
 
   // Gradients. The angle flips under [dir='rtl'] (below) so a "start to end" sweep reads the same in Arabic.
   --grad-angle: 135deg;
-  --grad-primary: linear-gradient(var(--grad-angle), #2563eb, #7c3aed);
+  // Primary buttons, active pills and active pagination: deep navy blue (white text is ~13:1 on it).
+  --grad-primary: linear-gradient(180deg, #1c27a0, #18238b);
+  // Initials avatars use the same navy as the primary buttons.
+  --grad-avatar: var(--grad-primary);
   // CTA: darkest stop first so white label text stays >= 4.5:1 across the whole button.
   --grad-cta: linear-gradient(180deg, #d2450b, #b23a09);
   --cta-shadow: 0 8px 18px rgb(194 65 12 / 35%), inset 0 1px 0 rgb(255 255 255 / 40%);
-  --primary-shadow: 0 8px 18px rgb(79 70 229 / 32%), inset 0 1px 0 rgb(255 255 255 / 40%);
+  --primary-shadow: 0 8px 18px rgb(26 36 147 / 35%), inset 0 1px 0 rgb(255 255 255 / 25%);
   // Pastel KPI / feature card tints (dark text on them; see --kpi-fg).
   --grad-kpi-blue: linear-gradient(
     var(--grad-angle),

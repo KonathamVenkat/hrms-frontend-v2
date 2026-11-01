@@ -1,6 +1,7 @@
 <div class="admin-page">
   <div class="page-header">
     <div class="header-left">
+      <span aria-hidden="true" class="material-icons header-icon">{{ cfg.icon }}</span>
       <h1 class="page-title">{{ t + '.title' | translate }}</h1>
       <div class="stat-chips">
         @if (!cfg.paged || !isFiltering()) {
@@ -166,6 +167,12 @@
             @if (cfg.sortOrder && r.sortOrder !== undefined) {
               <span class="tz-badge">#{{ r.sortOrder }}</span>
             }
+            @if (cfg.salaryRange && (r.minSalary !== undefined || r.maxSalary !== undefined)) {
+              <span class="tz-badge"
+                >{{ r.minSalary !== undefined ? (r.minSalary | number: '1.3-3') : '…' }} –
+                {{ r.maxSalary !== undefined ? (r.maxSalary | number: '1.3-3') : '…' }}</span
+              >
+            }
           </div>
         </div>
       }
@@ -310,6 +317,41 @@
                 <span class="field-error">{{ getError('sortOrder') }}</span>
               }
             </div>
+          }
+          @if (cfg.salaryRange) {
+            <div class="field-row">
+              <div class="field">
+                <label for="ms-min-salary">{{ 'admin.masters.minSalary' | translate }}</label>
+                <input
+                  id="ms-min-salary"
+                  type="number"
+                  min="0"
+                  step="0.001"
+                  formControlName="minSalary"
+                />
+                @if (isInvalid('minSalary')) {
+                  <span class="field-error">{{ getError('minSalary') }}</span>
+                }
+              </div>
+              <div class="field">
+                <label for="ms-max-salary">{{ 'admin.masters.maxSalary' | translate }}</label>
+                <input
+                  id="ms-max-salary"
+                  type="number"
+                  min="0"
+                  step="0.001"
+                  formControlName="maxSalary"
+                />
+                @if (isInvalid('maxSalary')) {
+                  <span class="field-error">{{ getError('maxSalary') }}</span>
+                } @else if (salaryRangeInvalid()) {
+                  <span class="field-error">{{
+                    'admin.masters.salaryRangeError' | translate
+                  }}</span>
+                }
+              </div>
+            </div>
+            <span class="toggle-hint">{{ 'admin.masters.salaryHint' | translate }}</span>
           }
           @if (isEditMode()) {
             <label class="toggle-item">

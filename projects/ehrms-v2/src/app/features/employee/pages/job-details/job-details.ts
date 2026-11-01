@@ -3,12 +3,19 @@ import {
   Component,
   OnInit,
   input,
+  output,
   signal,
   inject,
   computed,
   DestroyRef,
 } from '@angular/core';
-import { FormBuilder, Validators, ReactiveFormsModule, AbstractControl } from '@angular/forms';
+import {
+  FormBuilder,
+  Validators,
+  ReactiveFormsModule,
+  AbstractControl,
+  ValidationErrors,
+} from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { CdkTrapFocus } from '@angular/cdk/a11y';
 import { catchError, finalize, of, switchMap, tap } from 'rxjs';
@@ -19,7 +26,8 @@ import { FieldA11yDirective } from '../../../../core/directives/field-a11y.direc
 import { JobDetailsService } from '../../services/job-details.service';
 import { EmployeeService } from '../../services/employee';
 import { JobDetails } from '../../models/job-details.model';
-import { DepartmentLookup, DesignationLookup, ManagerLookup } from '../../models/employee';
+import { DepartmentLookup, DesignationLookup, ManagerLookup, SectionLookup } from '../../models/employee';
+import { InfoLookup } from '../../models/employee-info.model';
 import { timedMessage } from '../../../../core/utils/timed-message';
 
 // Import Phase 1 admin lookups
@@ -51,6 +59,8 @@ export class JobDetailsComponent implements OnInit {
   readonly employeeId = input.required<number>();
   /** Shown in confirmations (e.g. department secretary). */
   readonly employeeName = input<string | null>(null);
+  /** Emitted after the current job is assigned/updated so the page header can refresh. */
+  readonly jobSaved = output<void>();
 
   private fb = inject(FormBuilder);
   private jobSvc = inject(JobDetailsService);
@@ -78,6 +88,9 @@ export class JobDetailsComponent implements OnInit {
   departments = signal<DepartmentLookup[]>([]);
   designations = signal<DesignationLookup[]>([]);
   filteredDesignations = signal<DesignationLookup[]>([]);
+  /** Active sections of the department chosen in the form (from the database). */
+  sections = signal<SectionLookup[]>([]);
+  professions = signal<InfoLookup[]>([]);
   locations = signal<OfficeLocation[]>([]);
   shifts = signal<WorkShift[]>([]);
   /** Manager/executive-grade people of the department chosen in the form (from the database). */
@@ -120,6 +133,8 @@ export class JobDetailsComponent implements OnInit {
   readonly form = this.fb.group({
     departmentId: this.fb.control<number | null>(null, Validators.required),
     designationId: this.fb.control<number | null>(null, Validators.required),
+    sectionId: this.fb.control<number | null>(null),
+    professionId: this.fb.control<number | null>(null, (c) => this.professionMismatch(c)),
     jobPositionId: this.fb.nonNullable.control('', Validators.maxLength(20)),
     reportingManagerId: this.fb.control<number | null>(null),
     functionalManagerId: this.fb.control<number | null>(null),
@@ -133,8 +148,29 @@ export class JobDetailsComponent implements OnInit {
 
   ngOnInit(): void {
     this.watchDepartment();
+    this.watchDesignation();
     this.loadCurrentJob();
     this.loadLookups();
+  }
+
+  /** A designation that has a profession fixes it: the profession field follows the designation. */
+  private watchDesignation(): void {
+    this.form.controls.designationId.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((id) => {
+        const designation = this.designations().find((d) => d.id === Number(id));
+        this.form.controls.professionId.setValue(designation?.professionId ?? null);
+      });
+  }
+
+  /** The chosen profession must be the designation's own when the designation has one. */
+  private professionMismatch(control: AbstractControl): ValidationErrors | null {
+    const designationId = control.parent?.get('designationId')?.value;
+    const designation = this.designations().find((d) => d.id === Number(designationId));
+    const expected = designation?.professionId;
+    return expected && control.value && Number(control.value) !== expected
+      ? { professionMismatch: true }
+      : null;
   }
 
   /** Cascades the designation list from the chosen department. */
@@ -169,6 +205,22 @@ export class JobDetailsComponent implements OnInit {
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((res) => this.managers.set(res?.success ? res.data : []));
+
+    // The sections are those of the chosen department; the old choice no longer applies.
+    this.form.controls.departmentId.valueChanges
+      .pipe(
+        tap(() => {
+          this.form.controls.sectionId.setValue(null);
+          this.sections.set([]);
+        }),
+        switchMap((deptId) =>
+          deptId
+            ? this.empSvc.getSectionsByDepartment(+deptId).pipe(catchError(() => of(null)))
+            : of(null),
+        ),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((res) => this.sections.set(res?.success ? res.data : []));
   }
 
   /**
@@ -258,6 +310,16 @@ export class JobDetailsComponent implements OnInit {
         },
       });
 
+    // Professions
+    this.empSvc
+      .getProfessions()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (res) => {
+          if (res.success) this.professions.set(res.data);
+        },
+      });
+
     // Office locations
     this.locationSvc
       .getActive()
@@ -285,9 +347,13 @@ export class JobDetailsComponent implements OnInit {
     this.form.controls.effectiveFrom.setValidators([Validators.required]);
     this.form.controls.effectiveFrom.updateValueAndValidity();
     this.setManagersEditable(true);
+    this.form.controls.professionId.enable();
+    this.form.controls.sectionId.enable();
     this.form.reset({
       departmentId: null,
       designationId: null,
+      sectionId: null,
+      professionId: null,
       jobPositionId: '',
       reportingManagerId: null,
       functionalManagerId: null,
@@ -325,6 +391,21 @@ export class JobDetailsComponent implements OnInit {
       effectiveFrom: job.effectiveFrom,
       remarks: job.remarks ?? '',
     });
+    // Same for the section: a set one is locked, an empty one can be filled in. The options load for the department.
+    this.form.controls.sectionId.setValue(job.sectionId ?? null);
+    if (job.sectionId != null) {
+      this.form.controls.sectionId.disable();
+    } else {
+      this.form.controls.sectionId.enable();
+    }
+    // A profession that is set only changes with a new assignment, like the designation. An empty one can be
+    // filled in here; the designation's own profession (set above by the designation change) is the default.
+    if (job.professionId != null) {
+      this.form.controls.professionId.setValue(job.professionId);
+      this.form.controls.professionId.disable();
+    } else {
+      this.form.controls.professionId.enable();
+    }
 
     this.showModal.set(true);
   }
@@ -360,6 +441,8 @@ export class JobDetailsComponent implements OnInit {
     const payload = {
       departmentId: Number(v.departmentId),
       designationId: Number(v.designationId),
+      sectionId: v.sectionId ? +v.sectionId : null,
+      professionId: v.professionId ?? undefined,
       jobPositionId: v.jobPositionId || undefined,
       reportingManagerId: v.reportingManagerId ? +v.reportingManagerId : undefined,
       functionalManagerId: v.functionalManagerId ? +v.functionalManagerId : undefined,
@@ -385,6 +468,7 @@ export class JobDetailsComponent implements OnInit {
         if (res.success) {
           this.currentJob.set(res.data);
           this.history.set([]); // reset history cache
+          this.jobSaved.emit();
           this.closeModal();
           this.showSuccess(
             this.translate.instant(
@@ -414,7 +498,9 @@ export class JobDetailsComponent implements OnInit {
   }
 
   getError(name: string): string {
-    return fieldErrorMessage(this.form.get(name), this.translate);
+    return fieldErrorMessage(this.form.get(name), this.translate, {
+      professionMismatch: 'employee.jobDetails.errors.professionMismatch',
+    });
   }
 
   getWorkModeBadge(mode: string): string {

@@ -224,7 +224,6 @@
 }
 .form-card-header .material-icons {
   font-size: 20px;
-  color: var(--mat-sys-primary);
 }
 .form-card-body {
   display: flex;

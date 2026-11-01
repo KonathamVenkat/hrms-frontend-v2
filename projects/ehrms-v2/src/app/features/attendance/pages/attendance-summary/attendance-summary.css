@@ -19,12 +19,6 @@
   align-items: center;
   gap: var(--space-4);
 }
-.header-icon {
-  inline-size: 40px;
-  block-size: 40px;
-  font-size: 40px;
-  color: var(--mat-sys-primary);
-}
 .page-header h2 {
   margin: 0;
   font-size: 28px;
@@ -74,10 +68,19 @@
   padding: var(--space-5) var(--space-3);
 }
 .card-icon {
-  inline-size: 28px;
-  block-size: 28px;
-  font-size: 28px;
-  color: var(--mat-sys-on-surface-variant);
+  --tile-a: #60a5fa;
+  --tile-b: #2563eb;
+  display: inline-grid;
+  place-items: center;
+  inline-size: 44px;
+  block-size: 44px;
+  border-radius: 13px;
+  background: linear-gradient(160deg, var(--tile-a), var(--tile-b));
+  color: #fff;
+  font-size: 24px;
+  box-shadow:
+    0 2px 6px rgb(15 23 42 / 22%),
+    inset 0 1px 0 rgb(255 255 255 / 45%);
 }
 .stat-num {
   font-size: 32px;
@@ -99,29 +102,45 @@
 }
 
 /* Accent colours: status tokens (light/dark aware). */
-.present-card .card-icon,
 .present-card .stat-num {
   color: var(--status-active-fg);
 }
-.absent-card .card-icon,
 .absent-card .stat-num {
   color: var(--status-rejected-fg);
 }
-.late-card .card-icon,
 .late-card .stat-num {
   color: var(--status-pending-fg);
 }
-.half-card .card-icon,
 .half-card .stat-num {
   color: var(--status-approved-fg);
 }
-.leave-card .card-icon,
 .leave-card .stat-num {
   color: var(--mat-sys-secondary);
 }
+.present-card .card-icon {
+  --tile-a: #34d399;
+  --tile-b: #059669;
+}
+.absent-card .card-icon {
+  --tile-a: #f87171;
+  --tile-b: #b91c1c;
+}
+.late-card .card-icon {
+  --tile-a: #fbbf24;
+  --tile-b: #d97706;
+}
+.half-card .card-icon {
+  --tile-a: #60a5fa;
+  --tile-b: #2563eb;
+}
+.leave-card .card-icon {
+  --tile-a: #a78bfa;
+  --tile-b: #7c3aed;
+}
 .hours-card .card-icon,
 .ot-card .card-icon {
-  color: var(--mat-sys-primary);
+  --tile-a: #fb923c;
+  --tile-b: #c2410c;
 }
 
 /* Attendance % card. Ring colour is bound from the component. */

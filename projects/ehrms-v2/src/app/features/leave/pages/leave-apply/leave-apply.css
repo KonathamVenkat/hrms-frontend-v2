@@ -79,7 +79,6 @@
 .form-card-header .material-icons,
 .sidebar-header .material-icons {
   font-size: 20px;
-  color: var(--mat-sys-primary);
 }
 .form-body {
   display: flex;

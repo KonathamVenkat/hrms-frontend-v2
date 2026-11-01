@@ -11,6 +11,7 @@ import {
   DepartmentLookup,
   ManagerLookup,
   DesignationLookup,
+  SectionLookup,
   CreateEmployeePayload,
   UpdateEmployeePayload,
   EmployeeDetailData,
@@ -23,6 +24,7 @@ export class EmployeeService {
   private baseUrl = `${environment.serviceUrl}/api/v1/employees`;
   private deptUrl = `${environment.serviceUrl}/api/v1/departments`;
   private desigUrl = `${environment.serviceUrl}/api/v1/designations`;
+  private sectionUrl = `${environment.serviceUrl}/api/v1/sections`;
 
   // ── GET paginated employee list ───────────────────────────
   getEmployees(params: EmployeeQueryParams = {}): Observable<ApiResponse<EmployeePage>> {
@@ -71,6 +73,12 @@ export class EmployeeService {
     );
   }
 
+  getProfessions(): Observable<ApiResponse<InfoLookup[]>> {
+    return this.http.get<ApiResponse<InfoLookup[]>>(
+      `${environment.serviceUrl}/api/v1/lookups/professions`,
+    );
+  }
+
   // ── Departments lookup ────────────────────────────────────
   getDepartments(): Observable<ApiResponse<DepartmentLookup[]>> {
     return this.http.get<ApiResponse<DepartmentLookup[]>>(`${this.deptUrl}/lookup`);
@@ -91,6 +99,11 @@ export class EmployeeService {
     return this.http.get<ApiResponse<DesignationLookup[]>>(
       `${this.desigUrl}/lookup/by-department/${deptId}`,
     );
+  }
+
+  // ── Sections of a department (cascading) ──────────────────
+  getSectionsByDepartment(deptId: number): Observable<ApiResponse<SectionLookup[]>> {
+    return this.http.get<ApiResponse<SectionLookup[]>>(`${this.sectionUrl}/lookup/by-department/${deptId}`);
   }
 
   // ── Update employee ───────────────────────────────────────

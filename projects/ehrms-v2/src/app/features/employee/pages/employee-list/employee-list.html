@@ -75,22 +75,6 @@
       }
     </select>
 
-    <!-- Status filter -->
-    <select
-      [attr.aria-label]="'employee.list.statusLabel' | translate"
-      [value]="filter().employmentStatus"
-      (change)="
-        filter.update((f) => ({ ...f, employmentStatus: $any($event.target).value }));
-        onFilterChange()
-      "
-      class="filter-select"
-    >
-      <option value="">{{ 'employee.list.allStatus' | translate }}</option>
-      @for (s of statuses; track s) {
-        <option [value]="s">{{ 'common.enums.employmentStatus.' + s | translate }}</option>
-      }
-    </select>
-
     <!-- Active status filter -->
     <select
       [attr.aria-label]="'employee.list.activeLabel' | translate"
@@ -110,6 +94,28 @@
         {{ 'employee.list.clearFilters' | translate }}
       </button>
     }
+
+    <!-- Status chips: same filter as before, one tap instead of a dropdown -->
+    <div class="status-chips" role="group" [attr.aria-label]="'employee.list.statusLabel' | translate">
+      <button
+        type="button"
+        class="chip"
+        [attr.aria-pressed]="filter().employmentStatus === ''"
+        (click)="filter.update((f) => ({ ...f, employmentStatus: '' })); onFilterChange()"
+      >
+        {{ 'employee.list.allStatus' | translate }}
+      </button>
+      @for (s of statuses; track s) {
+        <button
+          type="button"
+          class="chip"
+          [attr.aria-pressed]="filter().employmentStatus === s"
+          (click)="filter.update((f) => ({ ...f, employmentStatus: s })); onFilterChange()"
+        >
+          {{ 'common.enums.employmentStatus.' + s | translate }}
+        </button>
+      }
+    </div>
   </div>
 
   <!-- ── Table Card ───────────────────────────────────────── -->

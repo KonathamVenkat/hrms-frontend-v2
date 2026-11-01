@@ -114,16 +114,65 @@
 }
 /* Active item is a filled gradient pill (flips with dir); the pill itself is the indicator. */
 .rail-btn.active {
-  background: var(--grad-primary);
-  color: #fff;
-  box-shadow: var(--primary-shadow);
+  background: var(--glass-bg-strong);
+  color: var(--mat-sys-on-surface);
+  box-shadow: var(--shadow-1);
 }
+/* Active item: a small dot on the end edge of the rail. */
+.rail-btn.active::after {
+  content: '';
+  position: absolute;
+  inset-inline-end: -7px;
+  inset-block-start: 50%;
+  inline-size: 4px;
+  block-size: 4px;
+  border-radius: 50%;
+  background: var(--mat-sys-primary);
+  transform: translateY(-50%);
+}
+/* Dock tile: each module gets its own colour (cycles by position, since the menu comes from the database). */
 .rail-icon {
-  font-size: 22px;
-  inline-size: 22px;
-  block-size: 22px;
+  display: grid;
+  place-items: center;
+  inline-size: 36px;
+  block-size: 36px;
   flex-shrink: 0;
+  border-radius: 11px;
+  background: linear-gradient(160deg, var(--tile-a, #60a5fa), var(--tile-b, #2563eb));
+  color: #fff;
+  font-size: 20px;
+  box-shadow:
+    0 3px 8px rgb(15 23 42 / 25%),
+    inset 0 1px 0 rgb(255 255 255 / 45%);
   user-select: none;
+  transition: transform var(--motion-fast) var(--motion-ease);
+}
+.rail-btn:hover .rail-icon {
+  transform: translateY(-2px) scale(1.08);
+}
+.rail-item:nth-child(6n + 2) {
+  --tile-a: #a78bfa;
+  --tile-b: #7c3aed;
+}
+.rail-item:nth-child(6n + 3) {
+  --tile-a: #34d399;
+  --tile-b: #059669;
+}
+.rail-item:nth-child(6n + 4) {
+  --tile-a: #fbbf24;
+  --tile-b: #d97706;
+}
+.rail-item:nth-child(6n + 5) {
+  --tile-a: #fb923c;
+  --tile-b: #c2410c;
+}
+.rail-item:nth-child(6n) {
+  --tile-a: #f472b6;
+  --tile-b: #be185d;
+}
+.rail-error .rail-icon {
+  --tile-a: #94a3b8;
+  --tile-b: #475569;
 }
 .rail-label {
   display: none;
@@ -197,9 +246,17 @@
   border-block-end: var(--border-subtle);
 }
 .flyout-header-icon {
+  display: grid;
+  place-items: center;
+  inline-size: 28px;
+  block-size: 28px;
+  border-radius: 9px;
+  background: linear-gradient(160deg, var(--tile-a, #60a5fa), var(--tile-b, #2563eb));
+  color: #fff;
   font-size: 18px;
-  inline-size: 18px;
-  block-size: 18px;
+  box-shadow:
+    0 2px 6px rgb(15 23 42 / 22%),
+    inset 0 1px 0 rgb(255 255 255 / 45%);
 }
 .flyout-list {
   list-style: none;
@@ -232,15 +289,19 @@
   color: var(--mat-sys-on-primary-container);
   font-weight: 600;
 }
-.flyout-dot,
-.flyout-dot-placeholder {
-  inline-size: 6px;
-  block-size: 6px;
+.flyout-link-icon {
+  display: grid;
+  place-items: center;
+  inline-size: 28px;
+  block-size: 28px;
   flex-shrink: 0;
-}
-.flyout-dot {
-  border-radius: 50%;
-  background: var(--mat-sys-primary);
+  border-radius: 9px;
+  background: linear-gradient(160deg, var(--tile-a, #60a5fa), var(--tile-b, #2563eb));
+  color: #fff;
+  font-size: 18px;
+  box-shadow:
+    0 2px 6px rgb(15 23 42 / 22%),
+    inset 0 1px 0 rgb(255 255 255 / 45%);
 }
 
 /* ── Sign out ── */
@@ -253,9 +314,9 @@
 .logout-btn {
   color: var(--danger);
 }
-.logout-btn:hover {
-  background: var(--status-rejected-bg);
-  color: var(--status-rejected-fg);
+.logout-btn .rail-icon {
+  --tile-a: #f87171;
+  --tile-b: #b91c1c;
 }
 
 /* ── Loading / error ── */
@@ -340,7 +401,23 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .sidebar-rail {
+  .sidebar-rail,
+  .rail-icon {
     transition: none;
   }
+  .rail-btn:hover .rail-icon {
+    transform: none;
+  }
+}
+
+/* Arabic: a wider submenu and 16px menu text (Arabic letters read smaller than Latin at the same size). */
+:host-context(html[lang='ar']) {
+  --flyout-w: 300px;
+}
+:host-context(html[lang='ar']) :is(.flyout-link, .flyout-header, .rail-label, .rail-tooltip) {
+  font-size: 16px;
+  line-height: 1.6;
+}
+:host-context(html[lang='ar']) .flyout-link {
+  min-block-size: 48px;
 }

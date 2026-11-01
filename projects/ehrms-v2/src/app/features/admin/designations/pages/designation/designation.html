@@ -1,6 +1,7 @@
 <div class="admin-page">
   <div class="page-header">
     <div class="header-left">
+      <span aria-hidden="true" class="material-icons header-icon">badge</span>
       <h1 class="page-title">{{ 'admin.designations.title' | translate }}</h1>
       <div class="stat-chips">
         <span class="chip chip-total">{{
@@ -105,6 +106,7 @@
             <th>{{ 'admin.designations.columns.code' | translate }}</th>
             <th>{{ 'admin.designations.columns.title' | translate }}</th>
             <th>{{ 'admin.designations.columns.department' | translate }}</th>
+            <th>{{ 'admin.designations.columns.profession' | translate }}</th>
             <th>{{ 'admin.designations.columns.grade' | translate }}</th>
             <th>{{ 'admin.designations.columns.status' | translate }}</th>
             <th>{{ 'admin.designations.columns.actions' | translate }}</th>
@@ -113,7 +115,7 @@
         <tbody>
           @if (filtered().length === 0) {
             <tr>
-              <td colspan="7">
+              <td colspan="8">
                 <div class="empty-state">
                   <span aria-hidden="true" class="material-icons">badge</span>
                   <p>{{ 'admin.designations.emptyTitle' | translate }}</p>
@@ -136,6 +138,7 @@
                 </div>
               </td>
               <td>{{ d.departmentName || '—' }}</td>
+              <td>{{ d.professionName || '—' }}</td>
               <td>
                 @if (d.gradeLevel) {
                   <span class="tz-badge">{{ d.gradeLevel }}</span>
@@ -289,6 +292,17 @@
                       ? dep.name
                       : dep.name + ' (' + ('common.inactive' | translate) + ')'
                   }}
+                </option>
+              }
+            </select>
+          </div>
+          <div class="field">
+            <label for="dg-prof">{{ 'admin.designations.profession' | translate }}</label>
+            <select id="dg-prof" formControlName="professionId">
+              <option [ngValue]="null">{{ 'admin.designations.noProfession' | translate }}</option>
+              @for (p of professions(); track p.id) {
+                <option [ngValue]="p.id">
+                  {{ p.isActive ? p.name : p.name + ' (' + ('common.inactive' | translate) + ')' }}
                 </option>
               }
             </select>

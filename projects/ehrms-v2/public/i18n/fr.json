@@ -2,6 +2,7 @@
   "common": {
     "search": "Rechercher",
     "clear": "Effacer",
+    "clearFilters": "Effacer les filtres",
     "cancel": "Annuler",
     "close": "Fermer",
     "back": "Retour",
@@ -49,6 +50,12 @@
       "december": "Décembre"
     },
     "enums": {
+      "addressType": {
+        "PERMANENT": "Permanente",
+        "CURRENT": "Actuelle",
+        "EMERGENCY": "Urgence",
+        "MAILING": "Postale"
+      },
       "employmentStatus": {
         "ACTIVE": "Actif",
         "PROBATION": "Période d'essai",
@@ -558,6 +565,8 @@
       "fields": {
         "department": "Département",
         "designation": "Poste",
+        "section": "Section",
+        "profession": "Profession",
         "jobPosition": "Position du poste",
         "reportingManager": "Manager hiérarchique",
         "functionalManager": "Manager fonctionnel",
@@ -583,6 +592,8 @@
       "formFields": {
         "selectDepartment": "Sélectionner le département",
         "selectDesignation": "Sélectionner le poste",
+        "selectSection": "Aucune section",
+        "selectProfession": "Sélectionner la profession",
         "jobPositionIdPlaceholder": "Code de référence de poste (facultatif)",
         "searchPlaceholder": "Rechercher par nom ou code...",
         "managerSelectDepartmentFirst": "Sélectionnez d’abord un département",
@@ -602,7 +613,8 @@
       "update": "Mettre à jour",
       "errors": {
         "loadFailed": "Échec du chargement des détails du poste.",
-        "saveFailed": "L'opération a échoué. Veuillez réessayer."
+        "saveFailed": "L'opération a échoué. Veuillez réessayer.",
+        "professionMismatch": "La profession doit être celle de la fonction choisie"
       },
       "success": {
         "assigned": "Nouvelle affectation enregistrée avec succès",
@@ -1950,6 +1962,8 @@
       "totalChip": "{{count}} au total",
       "activeChip": "{{count}} actifs",
       "addDepartment": "Ajouter un département",
+      "directorate": "Direction",
+      "allDirectorates": "Toutes les directions",
       "searchPlaceholder": "Rechercher un département...",
       "emptyTitle": "Aucun département trouvé",
       "emptyHint": "Ajoutez un département ci-dessus",
@@ -1983,6 +1997,7 @@
         "rules": {
           "DEPARTMENT_IN_USE": "Le département {{code}} est utilisé par des désignations ou des dossiers d’emploi. Désactivez-le plutôt que de le supprimer.",
           "DEPARTMENT_HAS_ACTIVE_DESIGNATIONS": "Le département {{code}} a encore des désignations actives. Désactivez-les d’abord.",
+          "DEPARTMENT_HAS_ACTIVE_SECTIONS": "Le département {{code}} a encore des sections actives. Désactivez-les d’abord.",
           "HEAD_EMPLOYEE_INACTIVE": "Le responsable de département choisi n’est pas un employé actif."
         }
       },
@@ -1994,6 +2009,54 @@
         "deleted": "« {{name}} » supprimé"
       }
     },
+    "sections": {
+      "title": "Sections",
+      "totalChip": "{{count}} au total",
+      "activeChip": "{{count}} actives",
+      "addSection": "Ajouter une section",
+      "directorate": "Direction",
+      "allDirectorates": "Toutes les directions",
+      "department": "Département",
+      "allDepartments": "Tous les départements",
+      "departmentPlaceholder": "Sélectionner un département",
+      "searchPlaceholder": "Rechercher des sections...",
+      "emptyTitle": "Aucune section trouvée",
+      "emptyHint": "Ajoutez une section ci-dessus",
+      "editTitle": "Modifier la section",
+      "code": "Code",
+      "codePlaceholder": "ex. SEC-001",
+      "nameEn": "Nom de la section (EN)",
+      "nameEnPlaceholder": "ex. Études géologiques",
+      "nameAr": "Nom de la section (AR)",
+      "activeHint": "Les sections inactives ne peuvent pas être choisies pour les employés",
+      "saving": "Enregistrement...",
+      "update": "Mettre à jour",
+      "deactivateTitle": "Désactiver la section ?",
+      "activateTitle": "Activer la section ?",
+      "deleteTitle": "Supprimer la section ?",
+      "deleteHint": "Action irréversible. Une section utilisée ne peut pas être supprimée ; désactivez-la plutôt.",
+      "deactivate": "Désactiver",
+      "activate": "Activer",
+      "delete": "Supprimer",
+      "errors": {
+        "loadFailed": "Échec du chargement des sections.",
+        "duplicate": "Une section avec ce code existe déjà.",
+        "patternCode": "Utilisez uniquement des majuscules, chiffres, tirets et tirets bas.",
+        "stale": "Cet enregistrement a été modifié par quelqu’un d’autre. Rechargez-le et refaites votre modification.",
+        "rules": {
+          "SECTION_IN_USE": "La section {{code}} est utilisée par des dossiers d’emploi : elle ne peut être ni supprimée ni déplacée vers un autre département.",
+          "MASTER_IN_USE": "La section {{code}} est utilisée par des dossiers d’emploi : elle ne peut être ni supprimée ni déplacée vers un autre département.",
+          "PARENT_INACTIVE": "Le département est inactif et ne peut pas contenir de section active. Activez d’abord le département."
+        }
+      },
+      "success": {
+        "created": "\"{{name}}\" créée",
+        "updated": "\"{{name}}\" mise à jour",
+        "activated": "\"{{name}}\" activée",
+        "deactivated": "\"{{name}}\" désactivée",
+        "deleted": "\"{{name}}\" supprimée"
+      }
+    },
     "designations": {
       "title": "Désignations",
       "totalChip": "{{count}} au total",
@@ -2002,6 +2065,8 @@
       "searchPlaceholder": "Rechercher une désignation...",
       "allDepartments": "Tous les départements",
       "noDepartment": "Aucun département",
+      "profession": "Profession",
+      "noProfession": "Aucune profession",
       "department": "Département",
       "emptyTitle": "Aucune désignation trouvée",
       "editTitle": "Modifier la désignation",
@@ -2026,6 +2091,7 @@
         "code": "Code",
         "title": "Intitulé",
         "department": "Département",
+        "profession": "Profession",
         "grade": "Grade",
         "status": "Statut",
         "actions": "Actions"
@@ -2036,7 +2102,8 @@
         "stale": "Cet enregistrement a été modifié par quelqu’un d’autre. Rechargez-le et refaites votre modification.",
         "rules": {
           "DESIGNATION_IN_USE": "La désignation {{code}} est utilisée par des dossiers d’emploi : elle ne peut être ni supprimée ni déplacée vers un autre département.",
-          "DEPARTMENT_INACTIVE": "Le département est inactif et ne peut pas contenir une désignation active. Activez le département ou désactivez cette désignation."
+          "DEPARTMENT_INACTIVE": "Le département est inactif et ne peut pas contenir une désignation active. Activez le département ou désactivez cette désignation.",
+          "PROFESSION_INACTIVE": "La profession est inactive et ne peut pas contenir une désignation active. Activez la profession ou désactivez cette désignation."
         }
       },
       "success": {
@@ -2138,6 +2205,10 @@
       "countryNameAr": "Pays (arabe)",
       "countryHint": "Le pays correspondant à cette nationalité. Seules les nationalités avec un pays apparaissent dans la liste Pays de l'adresse.",
       "sortOrderHint": "Les nombres les plus petits viennent en premier",
+      "minSalary": "Salaire minimum",
+      "maxSalary": "Salaire maximum",
+      "salaryHint": "Fourchette de salaire de ce grade. Laissez vide si le grade n'a pas de fourchette.",
+      "salaryRangeError": "Le salaire maximum ne peut pas être inférieur au salaire minimum",
       "regions": {
         "title": "Régions",
         "add": "Ajouter une région",

@@ -381,21 +381,28 @@ html[dir='rtl'] * {
   backdrop-filter: var(--glass-blur);
 }
 .confirm-icon {
+  --tile-a: #34d399;
+  --tile-b: #059669;
   inline-size: 60px;
   block-size: 60px;
   margin: 0 auto var(--space-4);
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 50%;
+  border-radius: 18px;
+  background: linear-gradient(160deg, var(--tile-a), var(--tile-b));
+  color: #fff;
+  box-shadow:
+    0 4px 12px rgb(15 23 42 / 25%),
+    inset 0 1px 0 rgb(255 255 255 / 45%);
 }
 .confirm-icon.icon-warn {
-  background: var(--status-rejected-bg);
-  color: var(--status-rejected-fg);
+  --tile-a: #f87171;
+  --tile-b: #b91c1c;
 }
 .confirm-icon.icon-info {
-  background: var(--status-active-bg);
-  color: var(--status-active-fg);
+  --tile-a: #34d399;
+  --tile-b: #059669;
 }
 .confirm-icon .material-icons {
   font-size: 30px;
@@ -873,8 +880,8 @@ html[dir='rtl'] * {
   border-block-start: 1px solid var(--mat-sys-outline-variant);
 }
 .confirm-icon.icon-star {
-  background: var(--status-pending-bg);
-  color: var(--status-pending-fg);
+  --tile-a: #fbbf24;
+  --tile-b: #d97706;
 }
 .btn-confirm.btn-star-confirm {
   background: #b45309;
@@ -911,12 +918,6 @@ html[dir='rtl'] * {
   display: flex;
   align-items: center;
   gap: var(--space-4);
-}
-.app-page .header-icon {
-  inline-size: 40px;
-  block-size: 40px;
-  font-size: 40px;
-  color: var(--mat-sys-primary);
 }
 .app-page .page-header h2 {
   margin: 0;
@@ -1053,17 +1054,14 @@ html[dir='rtl'] * {
   letter-spacing: 0.04em;
   color: var(--mat-sys-on-surface-variant);
 }
-.app-page .pending-stat :is(mat-icon, .stat-num) {
+.app-page .pending-stat .stat-num {
   color: var(--status-pending-fg);
 }
-.app-page .approved-stat :is(mat-icon, .stat-num) {
+.app-page .approved-stat .stat-num {
   color: var(--status-approved-fg);
 }
-.app-page .rejected-stat :is(mat-icon, .stat-num) {
+.app-page .rejected-stat .stat-num {
   color: var(--status-rejected-fg);
-}
-.app-page :is(.hours-stat, .total-stat) mat-icon {
-  color: var(--mat-sys-primary);
 }
 
 /* Tables */
@@ -1285,10 +1283,17 @@ html[dir='rtl'] * {
   --mat-icon-button-state-layer-size: 44px;
 }
 .dialog-header :is(.dialog-icon, .warn-icon) {
-  inline-size: 28px;
-  block-size: 28px;
-  font-size: 28px;
-  color: var(--status-pending-fg);
+  display: inline-grid;
+  place-items: center;
+  inline-size: 40px;
+  block-size: 40px;
+  border-radius: 12px;
+  background: linear-gradient(160deg, #fbbf24, #d97706);
+  color: #fff;
+  font-size: 24px;
+  box-shadow:
+    0 2px 6px rgb(15 23 42 / 22%),
+    inset 0 1px 0 rgb(255 255 255 / 45%);
 }
 .dialog-body {
   display: flex;
@@ -1685,6 +1690,28 @@ html[dir='rtl'] * {
 }
 .admin-page .clear-btn .material-icons {
   font-size: 18px;
+}
+.admin-page .btn-clear-filters {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-block-size: 44px;
+  padding-inline: var(--space-4);
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: var(--radius-md);
+  background: var(--table-surface);
+  color: var(--mat-sys-on-surface-variant);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+.admin-page .btn-clear-filters:hover {
+  border-color: var(--danger);
+  color: var(--danger);
+}
+.admin-page .btn-clear-filters:focus-visible {
+  outline: 2px solid var(--mat-sys-primary);
+  outline-offset: 2px;
 }
 .admin-page .filter-select {
   block-size: 44px;
@@ -2816,4 +2843,209 @@ html:lang(ar) app-employee-form .field > label {
 html:lang(ar) app-employee-form .field :is(input, select, textarea):not([type='checkbox']):not([type='radio']):not([dir='rtl']) {
   font-size: 16px;
   line-height: 1.6;
+}
+
+
+/* ── Dock tiles: section / tab icons as small coloured squares (same look as the sidebar) ── */
+.detail-tab .material-icons,
+.info-card .card-header .material-icons,
+.form-page .card .card-header .material-icons {
+  --tile-a: #60a5fa;
+  --tile-b: #2563eb;
+  display: inline-grid;
+  place-items: center;
+  inline-size: 28px;
+  block-size: 28px;
+  flex-shrink: 0;
+  border-radius: 9px;
+  background: linear-gradient(160deg, var(--tile-a), var(--tile-b));
+  color: #fff;
+  box-shadow:
+    0 2px 6px rgb(15 23 42 / 22%),
+    inset 0 1px 0 rgb(255 255 255 / 45%);
+}
+.detail-tab:nth-child(6n + 2) .material-icons,
+.info-card:nth-child(6n + 2) .card-header .material-icons,
+.form-page .card:nth-child(6n + 2) .card-header .material-icons {
+  --tile-a: #a78bfa;
+  --tile-b: #7c3aed;
+}
+.detail-tab:nth-child(6n + 3) .material-icons,
+.info-card:nth-child(6n + 3) .card-header .material-icons,
+.form-page .card:nth-child(6n + 3) .card-header .material-icons {
+  --tile-a: #34d399;
+  --tile-b: #059669;
+}
+.detail-tab:nth-child(6n + 4) .material-icons,
+.info-card:nth-child(6n + 4) .card-header .material-icons,
+.form-page .card:nth-child(6n + 4) .card-header .material-icons {
+  --tile-a: #fbbf24;
+  --tile-b: #d97706;
+}
+.detail-tab:nth-child(6n + 5) .material-icons,
+.info-card:nth-child(6n + 5) .card-header .material-icons,
+.form-page .card:nth-child(6n + 5) .card-header .material-icons {
+  --tile-a: #fb923c;
+  --tile-b: #c2410c;
+}
+.detail-tab:nth-child(6n) .material-icons,
+.info-card:nth-child(6n) .card-header .material-icons,
+.form-page .card:nth-child(6n) .card-header .material-icons {
+  --tile-a: #f472b6;
+  --tile-b: #be185d;
+}
+
+/* Other section headers (department head/secretary, identity, job details, leave pages) use the same tiles. */
+.head-card-header .material-icons,
+.secretary-card-header .material-icons,
+.info-card-header .material-icons,
+.job-card-header .material-icons,
+.form-section-title .material-icons,
+.form-card-header .material-icons,
+.panel-card-header .material-icons,
+.sidebar-header .material-icons {
+  --tile-a: #60a5fa;
+  --tile-b: #2563eb;
+  display: inline-grid;
+  place-items: center;
+  inline-size: 28px;
+  block-size: 28px;
+  flex-shrink: 0;
+  border-radius: 9px;
+  background: linear-gradient(160deg, var(--tile-a), var(--tile-b));
+  color: #fff;
+  box-shadow:
+    0 2px 6px rgb(15 23 42 / 22%),
+    inset 0 1px 0 rgb(255 255 255 / 45%);
+}
+:nth-child(6n + 2) > .head-card-header .material-icons,
+:nth-child(6n + 2) > .secretary-card-header .material-icons,
+:nth-child(6n + 2) > .info-card-header .material-icons,
+:nth-child(6n + 2) > .job-card-header .material-icons,
+:nth-child(6n + 2) > .form-section-title .material-icons,
+:nth-child(6n + 2) > .form-card-header .material-icons,
+:nth-child(6n + 2) > .panel-card-header .material-icons,
+:nth-child(6n + 2) > .sidebar-header .material-icons {
+  --tile-a: #a78bfa;
+  --tile-b: #7c3aed;
+}
+:nth-child(6n + 3) > .head-card-header .material-icons,
+:nth-child(6n + 3) > .secretary-card-header .material-icons,
+:nth-child(6n + 3) > .info-card-header .material-icons,
+:nth-child(6n + 3) > .job-card-header .material-icons,
+:nth-child(6n + 3) > .form-section-title .material-icons,
+:nth-child(6n + 3) > .form-card-header .material-icons,
+:nth-child(6n + 3) > .panel-card-header .material-icons,
+:nth-child(6n + 3) > .sidebar-header .material-icons {
+  --tile-a: #34d399;
+  --tile-b: #059669;
+}
+:nth-child(6n + 4) > .head-card-header .material-icons,
+:nth-child(6n + 4) > .secretary-card-header .material-icons,
+:nth-child(6n + 4) > .info-card-header .material-icons,
+:nth-child(6n + 4) > .job-card-header .material-icons,
+:nth-child(6n + 4) > .form-section-title .material-icons,
+:nth-child(6n + 4) > .form-card-header .material-icons,
+:nth-child(6n + 4) > .panel-card-header .material-icons,
+:nth-child(6n + 4) > .sidebar-header .material-icons {
+  --tile-a: #fbbf24;
+  --tile-b: #d97706;
+}
+:nth-child(6n + 5) > .head-card-header .material-icons,
+:nth-child(6n + 5) > .secretary-card-header .material-icons,
+:nth-child(6n + 5) > .info-card-header .material-icons,
+:nth-child(6n + 5) > .job-card-header .material-icons,
+:nth-child(6n + 5) > .form-section-title .material-icons,
+:nth-child(6n + 5) > .form-card-header .material-icons,
+:nth-child(6n + 5) > .panel-card-header .material-icons,
+:nth-child(6n + 5) > .sidebar-header .material-icons {
+  --tile-a: #fb923c;
+  --tile-b: #c2410c;
+}
+:nth-child(6n) > .head-card-header .material-icons,
+:nth-child(6n) > .secretary-card-header .material-icons,
+:nth-child(6n) > .info-card-header .material-icons,
+:nth-child(6n) > .job-card-header .material-icons,
+:nth-child(6n) > .form-section-title .material-icons,
+:nth-child(6n) > .form-card-header .material-icons,
+:nth-child(6n) > .panel-card-header .material-icons,
+:nth-child(6n) > .sidebar-header .material-icons {
+  --tile-a: #f472b6;
+  --tile-b: #be185d;
+}
+
+/* ── Attendance / payroll / approvals: page-header, card-title and stat icons as dock tiles ── */
+.page-header mat-icon.header-icon,
+.app-page :is(.form-card, .table-card, .history-card) mat-card-title mat-icon,
+.table-card mat-card-title mat-icon,
+.form-card mat-card-title mat-icon,
+.summary-section .section-title mat-icon,
+.app-page :is(.stat-mini, .stat-card) mat-icon {
+  --tile-a: #60a5fa;
+  --tile-b: #2563eb;
+  display: inline-grid;
+  place-items: center;
+  flex-shrink: 0;
+  border-radius: 9px;
+  background: linear-gradient(160deg, var(--tile-a), var(--tile-b));
+  color: #fff;
+  box-shadow:
+    0 2px 6px rgb(15 23 42 / 22%),
+    inset 0 1px 0 rgb(255 255 255 / 45%);
+}
+.page-header mat-icon.header-icon {
+  --tile-a: #a78bfa;
+  --tile-b: #7c3aed;
+  inline-size: 48px;
+  block-size: 48px;
+  border-radius: 14px;
+  font-size: 26px;
+}
+:is(.form-card, .table-card, .history-card) mat-card-title mat-icon,
+.summary-section .section-title mat-icon {
+  inline-size: 30px;
+  block-size: 30px;
+  font-size: 18px;
+}
+.table-card mat-card-title mat-icon {
+  --tile-a: #a78bfa;
+  --tile-b: #7c3aed;
+}
+.summary-section .section-title mat-icon {
+  --tile-a: #34d399;
+  --tile-b: #059669;
+}
+.app-page :is(.stat-mini, .stat-card) mat-icon {
+  inline-size: 44px;
+  block-size: 44px;
+  border-radius: 13px;
+  font-size: 24px;
+}
+.app-page .pending-stat mat-icon {
+  --tile-a: #fbbf24;
+  --tile-b: #d97706;
+}
+.app-page .approved-stat mat-icon {
+  --tile-a: #34d399;
+  --tile-b: #059669;
+}
+.app-page .rejected-stat mat-icon {
+  --tile-a: #f87171;
+  --tile-b: #b91c1c;
+}
+
+/* Admin page headers: the icon beside the title, as a tile. */
+.page-header .header-left > .header-icon {
+  display: inline-grid;
+  place-items: center;
+  flex-shrink: 0;
+  inline-size: 48px;
+  block-size: 48px;
+  border-radius: 14px;
+  background: linear-gradient(160deg, #a78bfa, #7c3aed);
+  color: #fff;
+  font-size: 26px;
+  box-shadow:
+    0 2px 6px rgb(15 23 42 / 22%),
+    inset 0 1px 0 rgb(255 255 255 / 45%);
 }

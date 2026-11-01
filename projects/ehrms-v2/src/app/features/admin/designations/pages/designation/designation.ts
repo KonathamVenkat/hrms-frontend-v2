@@ -18,6 +18,8 @@ import { DesignationService } from '../../services/designation';
 import { Designation, DesignationRequest } from '../../models/designation';
 import { DepartmentService } from '../../../departments/services/department';
 import { Department } from '../../../departments/models/department';
+import { MasterDataService } from '../../../masters/services/master-data';
+import { MasterRecord } from '../../../masters/models/master';
 import { AccessibleDialogDirective } from '../../../../../core/directives/accessible-dialog.directive';
 
 type FormKey = 'code' | 'title' | 'titleAr' | 'gradeLevel';
@@ -35,11 +37,13 @@ export class Designations implements OnInit {
   private fb = inject(NonNullableFormBuilder);
   private svc = inject(DesignationService);
   private departmentSvc = inject(DepartmentService);
+  private masterSvc = inject(MasterDataService);
   private destroy = inject(DestroyRef);
   private translate = inject(TranslateService);
 
   designations = signal<Designation[]>([]);
   departments = signal<Department[]>([]);
+  professions = signal<MasterRecord[]>([]);
   loading = signal(false);
   saving = signal(false);
   error = signal<string | null>(null);
@@ -80,6 +84,7 @@ export class Designations implements OnInit {
     title: ['', [Validators.required, Validators.maxLength(200)]],
     titleAr: ['', Validators.maxLength(200)],
     gradeLevel: ['', Validators.maxLength(10)],
+    professionId: this.fb.control<number | null>(null),
     departmentId: this.fb.control<number | null>(null),
     isActive: [true],
   });
@@ -119,6 +124,16 @@ export class Designations implements OnInit {
         },
         error: () => undefined,
       });
+    // Same for the professions: without them the form still saves, just without a profession.
+    this.masterSvc
+      .getAll('professions')
+      .pipe(takeUntilDestroyed(this.destroy))
+      .subscribe({
+        next: (res) => {
+          if (res.success) this.professions.set(res.data);
+        },
+        error: () => undefined,
+      });
   }
 
   openCreate(): void {
@@ -139,6 +154,7 @@ export class Designations implements OnInit {
       title: d.title,
       titleAr: d.titleAr ?? '',
       gradeLevel: d.gradeLevel ?? '',
+      professionId: d.professionId ?? null,
       departmentId: d.departmentId ?? null,
       isActive: d.isActive,
     });
@@ -163,6 +179,7 @@ export class Designations implements OnInit {
       title: v.title.trim(),
       titleAr: v.titleAr.trim() || undefined,
       gradeLevel: v.gradeLevel.trim() || undefined,
+      professionId: v.professionId ?? undefined,
       departmentId: v.departmentId ?? undefined,
       isActive: v.isActive,
       version: this.editingVersion,

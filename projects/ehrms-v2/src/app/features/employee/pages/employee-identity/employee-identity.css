@@ -91,7 +91,6 @@
 }
 .info-card-header .material-icons {
   font-size: 18px;
-  color: var(--mat-sys-primary);
 }
 .info-card-body {
   padding-block: var(--space-1);
@@ -201,8 +200,7 @@
   font-weight: 700;
 }
 .form-section-title .material-icons {
-  font-size: 20px;
-  color: var(--mat-sys-primary);
+  font-size: 18px;
 }
 .form-grid {
   display: grid;

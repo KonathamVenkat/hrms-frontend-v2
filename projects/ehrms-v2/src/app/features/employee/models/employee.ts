@@ -14,12 +14,23 @@ export interface ManagerLookup {
   gradeLevel: string;
 }
 
+/** One active section of a department, for the cascading dropdown (GET /api/v1/sections/lookup/by-department/{id}). */
+export interface SectionLookup {
+  id: number;
+  code: string;
+  name: string;
+  nameAr: string;
+  departmentId: number;
+}
+
 export interface DesignationLookup {
   id: number;
   code: string;
   title: string;
   titleAr: string;
   gradeLevel: string;
+  /** The profession of the designation; absent when it has none. */
+  professionId?: number;
   departmentId: number;
 }
 

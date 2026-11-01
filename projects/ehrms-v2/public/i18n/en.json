@@ -2,6 +2,7 @@
   "common": {
     "search": "Search",
     "clear": "Clear",
+    "clearFilters": "Clear filters",
     "cancel": "Cancel",
     "close": "Close",
     "back": "Back",
@@ -49,6 +50,12 @@
       "december": "December"
     },
     "enums": {
+      "addressType": {
+        "PERMANENT": "Permanent",
+        "CURRENT": "Current",
+        "EMERGENCY": "Emergency",
+        "MAILING": "Mailing"
+      },
       "employmentStatus": {
         "ACTIVE": "Active",
         "PROBATION": "Probation",
@@ -558,6 +565,8 @@
       "fields": {
         "department": "Department",
         "designation": "Designation",
+        "section": "Section",
+        "profession": "Profession",
         "jobPosition": "Job Position",
         "reportingManager": "Reporting Manager",
         "functionalManager": "Functional Manager",
@@ -583,6 +592,8 @@
       "formFields": {
         "selectDepartment": "Select department",
         "selectDesignation": "Select designation",
+        "selectSection": "No section",
+        "selectProfession": "Select profession",
         "jobPositionIdPlaceholder": "Optional position reference code",
         "searchPlaceholder": "Search by name or code...",
         "managerSelectDepartmentFirst": "Select a department first",
@@ -602,7 +613,8 @@
       "update": "Update",
       "errors": {
         "loadFailed": "Failed to load job details.",
-        "saveFailed": "Operation failed. Please try again."
+        "saveFailed": "Operation failed. Please try again.",
+        "professionMismatch": "The profession must be the one of the selected designation"
       },
       "success": {
         "assigned": "New job assignment saved successfully",
@@ -1950,6 +1962,8 @@
       "totalChip": "{{count}} Total",
       "activeChip": "{{count}} Active",
       "addDepartment": "Add Department",
+      "directorate": "Directorate",
+      "allDirectorates": "All directorates",
       "searchPlaceholder": "Search departments...",
       "emptyTitle": "No departments found",
       "emptyHint": "Add a department above",
@@ -1983,7 +1997,56 @@
         "rules": {
           "DEPARTMENT_IN_USE": "Department {{code}} is used by designations or employee job records. Deactivate it instead of deleting it.",
           "DEPARTMENT_HAS_ACTIVE_DESIGNATIONS": "Department {{code}} still has active designations. Deactivate them first.",
+          "DEPARTMENT_HAS_ACTIVE_SECTIONS": "Department {{code}} still has active sections. Deactivate them first.",
           "HEAD_EMPLOYEE_INACTIVE": "The selected department head is not an active employee."
+        }
+      },
+      "success": {
+        "created": "\"{{name}}\" created",
+        "updated": "\"{{name}}\" updated",
+        "activated": "\"{{name}}\" activated",
+        "deactivated": "\"{{name}}\" deactivated",
+        "deleted": "\"{{name}}\" deleted"
+      }
+    },
+    "sections": {
+      "title": "Sections",
+      "totalChip": "{{count}} Total",
+      "activeChip": "{{count}} Active",
+      "addSection": "Add Section",
+      "directorate": "Directorate",
+      "allDirectorates": "All directorates",
+      "department": "Department",
+      "allDepartments": "All departments",
+      "departmentPlaceholder": "Select a department",
+      "searchPlaceholder": "Search sections...",
+      "emptyTitle": "No sections found",
+      "emptyHint": "Add a section above",
+      "editTitle": "Edit Section",
+      "code": "Code",
+      "codePlaceholder": "e.g. SEC-001",
+      "nameEn": "Section Name (EN)",
+      "nameEnPlaceholder": "e.g. Geological Studies",
+      "nameAr": "Section Name (AR)",
+      "activeHint": "Inactive sections cannot be chosen for employees",
+      "saving": "Saving...",
+      "update": "Update",
+      "deactivateTitle": "Deactivate Section?",
+      "activateTitle": "Activate Section?",
+      "deleteTitle": "Delete Section?",
+      "deleteHint": "This cannot be undone. A section that is in use cannot be deleted; deactivate it instead.",
+      "deactivate": "Deactivate",
+      "activate": "Activate",
+      "delete": "Delete",
+      "errors": {
+        "loadFailed": "Failed to load sections.",
+        "duplicate": "A section with this code already exists.",
+        "patternCode": "Use capital letters, numbers, hyphens and underscores only.",
+        "stale": "This record was changed by someone else. Reload it and repeat your change.",
+        "rules": {
+          "SECTION_IN_USE": "Section {{code}} is used by employee job records, so it cannot be deleted or moved to another department.",
+          "MASTER_IN_USE": "Section {{code}} is used by employee job records, so it cannot be deleted or moved to another department.",
+          "PARENT_INACTIVE": "The department is inactive, so it cannot hold an active section. Activate the department first."
         }
       },
       "success": {
@@ -2002,6 +2065,8 @@
       "searchPlaceholder": "Search designations...",
       "allDepartments": "All departments",
       "noDepartment": "No department",
+      "profession": "Profession",
+      "noProfession": "No profession",
       "department": "Department",
       "emptyTitle": "No designations found",
       "editTitle": "Edit Designation",
@@ -2026,6 +2091,7 @@
         "code": "Code",
         "title": "Title",
         "department": "Department",
+        "profession": "Profession",
         "grade": "Grade",
         "status": "Status",
         "actions": "Actions"
@@ -2036,7 +2102,8 @@
         "stale": "This record was changed by someone else. Reload it and repeat your change.",
         "rules": {
           "DESIGNATION_IN_USE": "Designation {{code}} is used by employee job records, so it cannot be deleted or moved to another department.",
-          "DEPARTMENT_INACTIVE": "The department is inactive, so it cannot hold an active designation. Activate the department or deactivate this designation."
+          "DEPARTMENT_INACTIVE": "The department is inactive, so it cannot hold an active designation. Activate the department or deactivate this designation.",
+          "PROFESSION_INACTIVE": "The profession is inactive, so it cannot hold an active designation. Activate the profession or deactivate this designation."
         }
       },
       "success": {
@@ -2138,6 +2205,10 @@
       "countryNameAr": "Country (Arabic)",
       "countryHint": "The country behind this nationality. Only nationalities with a country are offered in the address Country list.",
       "sortOrderHint": "Lower numbers come first",
+      "minSalary": "Minimum salary",
+      "maxSalary": "Maximum salary",
+      "salaryHint": "Pay range of this grade. Leave empty if the grade has no range.",
+      "salaryRangeError": "Maximum salary cannot be lower than minimum salary",
       "regions": {
         "title": "Regions",
         "add": "Add Region",

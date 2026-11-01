@@ -1,6 +1,7 @@
 <div class="admin-page">
   <div class="page-header">
     <div class="header-left">
+      <span aria-hidden="true" class="material-icons header-icon">apartment</span>
       <h1 class="page-title">{{ 'admin.departments.title' | translate }}</h1>
       <div class="stat-chips">
         <span class="chip chip-total">{{
@@ -49,6 +50,25 @@
         </button>
       }
     </div>
+    @if (directorates().length) {
+      <select
+        class="filter-select"
+        [attr.aria-label]="'admin.departments.directorate' | translate"
+        [value]="filterDirectorate() ?? ''"
+        (change)="setDirectorateFilter($any($event.target).value)"
+      >
+        <option value="">{{ 'admin.departments.allDirectorates' | translate }}</option>
+        @for (dr of directorates(); track dr.id) {
+          <option [value]="dr.id">{{ dr.name }}</option>
+        }
+      </select>
+    }
+    @if (hasFilters()) {
+      <button type="button" class="btn-clear-filters" (click)="clearFilters()">
+        <span aria-hidden="true" class="material-icons">filter_alt_off</span>
+        {{ 'common.clearFilters' | translate }}
+      </button>
+    }
     <div class="tab-filter">
       <button
         type="button"

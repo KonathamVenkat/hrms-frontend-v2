@@ -15,6 +15,8 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { finalize } from 'rxjs';
 import { getHttpErrorMessage } from '../../../../../core/utils/http-error-message';
 import { DepartmentService } from '../../services/department';
+import { MasterDataService } from '../../../masters/services/master-data';
+import { MasterRecord } from '../../../masters/models/master';
 import { Department, DepartmentRequest } from '../../models/department';
 import { AccessibleDialogDirective } from '../../../../../core/directives/accessible-dialog.directive';
 
@@ -32,6 +34,7 @@ type StatusFilter = 'all' | 'active' | 'inactive';
 export class Departments implements OnInit {
   private fb = inject(NonNullableFormBuilder);
   private svc = inject(DepartmentService);
+  private masters = inject(MasterDataService);
   private destroy = inject(DestroyRef);
   private translate = inject(TranslateService);
 
@@ -53,12 +56,27 @@ export class Departments implements OnInit {
   confirmError = signal<string | null>(null);
   filterText = signal('');
   filterActive = signal<StatusFilter>('all');
+  /** Directorates for the filter list; empty (filter hidden) if they cannot be loaded. */
+  directorates = signal<MasterRecord[]>([]);
+  filterDirectorate = signal<number | null>(null);
+
+  /** Any search, status or list filter is on, so there is something to clear. */
+  readonly hasFilters = computed(
+    () => this.filterText() !== '' || this.filterActive() !== 'all' || this.filterDirectorate() !== null,
+  );
+
+  clearFilters(): void {
+    this.filterText.set('');
+    this.filterActive.set('all');
+    this.filterDirectorate.set(null);
+  }
 
   readonly activeCount = computed(() => this.departments().filter((d) => d.isActive).length);
 
   readonly filtered = computed(() => {
     const text = this.filterText().toLowerCase();
     const status = this.filterActive();
+    const directorate = this.filterDirectorate();
     return this.departments().filter((d) => {
       const matchText =
         !text ||
@@ -66,7 +84,8 @@ export class Departments implements OnInit {
         d.code.toLowerCase().includes(text) ||
         d.nameAr.includes(this.filterText());
       const matchStatus = status === 'all' ? true : status === 'active' ? d.isActive : !d.isActive;
-      return matchText && matchStatus;
+      const matchDirectorate = directorate === null || d.directorateId === directorate;
+      return matchText && matchStatus && matchDirectorate;
     });
   });
 
@@ -85,7 +104,22 @@ export class Departments implements OnInit {
         this.form.controls.code.setValue(v.toUpperCase(), { emitEvent: false });
       }
     });
+    this.loadDirectorates();
     this.load();
+  }
+
+  private loadDirectorates(): void {
+    this.masters
+      .getAll('directorates')
+      .pipe(takeUntilDestroyed(this.destroy))
+      .subscribe({
+        next: (res) => this.directorates.set(res.success ? res.data : []),
+        error: () => this.directorates.set([]),
+      });
+  }
+
+  setDirectorateFilter(value: string): void {
+    this.filterDirectorate.set(value ? Number(value) : null);
   }
 
   load(): void {

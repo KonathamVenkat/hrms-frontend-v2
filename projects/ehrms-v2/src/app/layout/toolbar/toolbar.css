@@ -125,7 +125,7 @@
   inline-size: 34px;
   block-size: 34px;
   border-radius: 50%;
-  background: var(--grad-primary);
+  background: var(--grad-avatar);
   color: #fff;
   font-size: 13px;
   font-weight: 600;

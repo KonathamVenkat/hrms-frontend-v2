@@ -26,8 +26,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--grad-primary);
+  background: var(--grad-avatar);
   border-color: transparent;
+  box-shadow:
+    var(--shadow-2),
+    inset 0 1px 0 rgb(255 255 255 / 45%);
   color: #fff;
   font-size: 30px;
   font-weight: 700;

@@ -14,6 +14,17 @@ export interface JobDetails {
   designationTitleAr: string;
   gradeLevel?: string;
 
+  // Section (absent when the record has none)
+  sectionId?: number;
+  sectionCode?: string;
+  sectionName?: string;
+  sectionNameAr?: string;
+
+  // Profession (absent when the record has none)
+  professionId?: number;
+  professionName?: string;
+  professionNameAr?: string;
+
   // Position
   jobPositionId?: string;
 
@@ -60,6 +71,10 @@ export interface JobDetails {
 export interface JobDetailsRequest {
   departmentId: number;
   designationId: number;
+  /** Optional section of the chosen department; once set it can only change with a new assignment. */
+  sectionId?: number | null;
+  /** Defaults to the designation's profession; when both are set they must be the same. */
+  professionId?: number;
   jobPositionId?: string;
   reportingManagerId?: number;
   functionalManagerId?: number;

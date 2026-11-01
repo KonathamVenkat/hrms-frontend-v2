@@ -28,7 +28,20 @@
 }
 
 .info-icon {
-  color: var(--mat-sys-primary);
+  --tile-a: #a78bfa;
+  --tile-b: #7c3aed;
+  display: inline-grid;
+  place-items: center;
+  inline-size: 40px;
+  block-size: 40px;
+  flex-shrink: 0;
+  border-radius: 12px;
+  background: linear-gradient(160deg, var(--tile-a), var(--tile-b));
+  color: #fff;
+  font-size: 22px;
+  box-shadow:
+    0 2px 6px rgb(15 23 42 / 22%),
+    inset 0 1px 0 rgb(255 255 255 / 45%);
 }
 
 .section-title {

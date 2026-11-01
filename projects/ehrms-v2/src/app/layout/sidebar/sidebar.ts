@@ -42,6 +42,63 @@ export const ICON_COLOR_MAP: Record<string, { color: string; bg: string; activeB
 
 const DEFAULT_ICON_STYLE = { color: '#64748b', bg: '#f8fafc', activeBg: '#64748b' };
 
+// ── Sub menu icons — keyed by the last segment of the item's route ──
+const SUB_ICON_BY_ROUTE: Record<string, string> = {
+  profile: 'person',
+  list: 'people',
+  create: 'person_add',
+  branches: 'account_tree',
+  'branch-assignments': 'swap_horiz',
+  departments: 'apartment',
+  designations: 'badge',
+  banks: 'account_balance',
+  'bank-branches': 'account_balance_wallet',
+  companies: 'business',
+  'company-branches': 'domain',
+  'leave-types': 'beach_access',
+  'holiday-calendar': 'event',
+  'work-shifts': 'schedule',
+  'office-locations': 'location_on',
+  'document-types': 'folder_open',
+  'audit-events': 'fact_check',
+  balances: 'savings',
+  requests: 'list_alt',
+  apply: 'edit_calendar',
+  approval: 'fact_check',
+  calendar: 'calendar_month',
+  log: 'fingerprint',
+  dashboard: 'bar_chart',
+  request: 'assignment_late',
+  'request-approval': 'fact_check',
+  overtime: 'more_time',
+  'overtime-approval': 'timer',
+  components: 'tune',
+  structures: 'schema',
+  'employee-salary': 'paid',
+  requisitions: 'work',
+  stages: 'linear_scale',
+  'rejection-reasons': 'block',
+  inbox: 'inbox',
+  directorates: 'corporate_fare',
+  sections: 'account_tree',
+  regions: 'public',
+  wilayas: 'map',
+  provinces: 'terrain',
+  cities: 'location_city',
+  grades: 'military_tech',
+  'contract-types': 'description',
+  professions: 'engineering',
+  'education-levels': 'school',
+  nationalities: 'flag',
+  religions: 'self_improvement',
+  languages: 'translate',
+  'language-levels': 'signal_cellular_alt',
+  'house-types': 'home',
+  'relation-types': 'family_restroom',
+  relations: 'group',
+};
+const DEFAULT_SUB_ICON = 'article';
+
 @Component({
   selector: 'app-sidebar',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -120,6 +177,12 @@ export class Sidebar implements OnInit {
   }
 
   // ── Icon color helpers ─────────────────────────────────
+  /** Icon for a sub menu item, from its route (the menu data carries none). */
+  subIcon(route: string): string {
+    const last = route.split('?')[0].split('/').filter(Boolean).pop() ?? '';
+    return SUB_ICON_BY_ROUTE[last] ?? DEFAULT_SUB_ICON;
+  }
+
   getIconStyle(icon: string): { color: string; bg: string; activeBg: string } {
     return ICON_COLOR_MAP[icon] ?? DEFAULT_ICON_STYLE;
   }

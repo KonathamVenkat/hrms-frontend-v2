@@ -53,8 +53,20 @@
   gap: var(--space-2);
 }
 .type-icon {
-  font-size: 20px;
-  color: var(--mat-sys-primary);
+  --tile-a: #60a5fa;
+  --tile-b: #2563eb;
+  display: inline-grid;
+  place-items: center;
+  inline-size: 32px;
+  block-size: 32px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  background: linear-gradient(160deg, var(--tile-a), var(--tile-b));
+  color: #fff;
+  font-size: 18px;
+  box-shadow:
+    0 2px 6px rgb(15 23 42 / 22%),
+    inset 0 1px 0 rgb(255 255 255 / 45%);
 }
 .addr-type-badge {
   padding: 2px var(--space-3);

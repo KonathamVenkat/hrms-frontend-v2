@@ -17,6 +17,9 @@ export interface MasterRecord {
   countryNameAr?: string;
   /** Grades and language levels only. */
   sortOrder?: number;
+  /** Grades only: the pay range, both optional. */
+  minSalary?: number;
+  maxSalary?: number;
   isActive: boolean;
   createdAt?: string;
   updatedAt?: string;
@@ -39,6 +42,9 @@ export interface MasterRequest {
   countryNameAr?: string;
   /** Grades and language levels only; null clears it. */
   sortOrder?: number | null;
+  /** Grades only; null clears the pay range. */
+  minSalary?: number | null;
+  maxSalary?: number | null;
   isActive?: boolean;
   /** Version the screen was loaded with; the server answers 409 if the row changed since. */
   version?: number;

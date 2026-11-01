@@ -105,6 +105,70 @@ describe('MasterData (reference masters)', () => {
     );
   });
 
+  it('shows the pay range only for grades, and sends it (null when left empty)', () => {
+    const { comp, svc, fixture, el } = setup(config('grades'));
+    comp.openCreate();
+    fixture.detectChanges();
+    expect(el.querySelector('#ms-min-salary')).not.toBeNull();
+    expect(el.querySelector('#ms-max-salary')).not.toBeNull();
+
+    comp.form.patchValue({
+      code: 'G25',
+      name: 'Grade 25',
+      nameAr: 'x',
+      minSalary: 500,
+      maxSalary: 900.5,
+    });
+    comp.onSubmit();
+    expect(svc.create).toHaveBeenLastCalledWith(
+      'grades',
+      expect.objectContaining({ minSalary: 500, maxSalary: 900.5 }),
+    );
+
+    comp.openCreate();
+    comp.form.patchValue({ code: 'G26', name: 'Grade 26', nameAr: 'x' });
+    comp.onSubmit();
+    expect(svc.create).toHaveBeenLastCalledWith(
+      'grades',
+      expect.objectContaining({ minSalary: null, maxSalary: null }),
+    );
+  });
+
+  it('has no pay range on a master without one', () => {
+    const { comp, svc, fixture, el } = setup(config('religions'));
+    comp.openCreate();
+    fixture.detectChanges();
+    expect(el.querySelector('#ms-min-salary')).toBeNull();
+
+    comp.form.patchValue({ code: 'R1', name: 'R', nameAr: 'x' });
+    comp.onSubmit();
+    const payload = (svc.create as unknown as { mock: { calls: unknown[][] } }).mock.calls[0][1];
+    expect(payload).not.toHaveProperty('minSalary');
+  });
+
+  it('does not save a maximum below the minimum, or a negative amount, and shows why', () => {
+    const { comp, svc, fixture, el } = setup(config('grades'));
+    comp.openCreate();
+    comp.form.patchValue({
+      code: 'G99',
+      name: 'Grade 99',
+      nameAr: 'x',
+      minSalary: 600,
+      maxSalary: 599.999,
+    });
+    comp.form.controls.maxSalary.markAsTouched();
+    comp.onSubmit();
+    fixture.detectChanges();
+    expect(svc.create).not.toHaveBeenCalled();
+    expect(comp.salaryRangeInvalid()).toBe(true);
+    expect(el.querySelector('.field-error')).not.toBeNull();
+
+    comp.form.patchValue({ minSalary: -1, maxSalary: null });
+    comp.onSubmit();
+    expect(svc.create).not.toHaveBeenCalled();
+    expect(comp.form.controls.minSalary.invalid).toBe(true);
+  });
+
   it('has no sort order field on a master without one', () => {
     const { comp, fixture, el } = setup(config('religions'));
     comp.openCreate();

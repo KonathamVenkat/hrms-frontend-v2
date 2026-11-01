@@ -7,9 +7,16 @@ import {
   inject,
   signal,
 } from '@angular/core';
+import { DecimalPipe } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
-import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  NonNullableFormBuilder,
+  ReactiveFormsModule,
+  ValidationErrors,
+  Validators,
+} from '@angular/forms';
 import { CdkTrapFocus } from '@angular/cdk/a11y';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
@@ -20,9 +27,25 @@ import { MasterDataService } from '../../services/master-data';
 import { MasterRecord, MasterRequest } from '../../models/master';
 import { MasterConfig } from '../../masters.config';
 
-type FormKey = 'code' | 'name' | 'nameAr' | 'parentId' | 'sortOrder' | 'countryName' | 'countryNameAr';
+type FormKey =
+  | 'code'
+  | 'name'
+  | 'nameAr'
+  | 'parentId'
+  | 'sortOrder'
+  | 'minSalary'
+  | 'maxSalary'
+  | 'countryName'
+  | 'countryNameAr';
 type ConfirmAction = 'toggle' | 'delete';
 type StatusFilter = 'all' | 'active' | 'inactive';
+
+/** A pay range whose maximum is below its minimum; an empty side is not an error. */
+function salaryRange(group: AbstractControl): ValidationErrors | null {
+  const min = group.get('minSalary')?.value as number | null;
+  const max = group.get('maxSalary')?.value as number | null;
+  return min !== null && max !== null && max < min ? { salaryRange: true } : null;
+}
 
 /** Rows per page and typing pause for the masters the server pages (cities). */
 const PAGE_SIZE = 20;
@@ -35,7 +58,13 @@ const SEARCH_DEBOUNCE_MS = 300;
 @Component({
   selector: 'app-master-data',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ReactiveFormsModule, TranslatePipe, CdkTrapFocus, AccessibleDialogDirective],
+  imports: [
+    ReactiveFormsModule,
+    TranslatePipe,
+    CdkTrapFocus,
+    AccessibleDialogDirective,
+    DecimalPipe,
+  ],
   templateUrl: './master-data.html',
 })
 export class MasterData implements OnInit {
@@ -114,16 +143,24 @@ export class MasterData implements OnInit {
     });
   });
 
-  readonly form = this.fb.group({
-    parentId: [0],
-    code: ['', [Validators.required, Validators.maxLength(30), Validators.pattern('^[A-Z0-9_]+$')]],
-    name: ['', [Validators.required, Validators.maxLength(200)]],
-    nameAr: ['', [Validators.required, Validators.maxLength(200)]],
-    sortOrder: this.fb.control<number | null>(null, [Validators.min(0), Validators.max(9999)]),
-    countryName: ['', Validators.maxLength(200)],
-    countryNameAr: ['', Validators.maxLength(200)],
-    isActive: [true],
-  });
+  readonly form = this.fb.group(
+    {
+      parentId: [0],
+      code: [
+        '',
+        [Validators.required, Validators.maxLength(30), Validators.pattern('^[A-Z0-9_]+$')],
+      ],
+      name: ['', [Validators.required, Validators.maxLength(200)]],
+      nameAr: ['', [Validators.required, Validators.maxLength(200)]],
+      sortOrder: this.fb.control<number | null>(null, [Validators.min(0), Validators.max(9999)]),
+      minSalary: this.fb.control<number | null>(null, Validators.min(0)),
+      maxSalary: this.fb.control<number | null>(null, Validators.min(0)),
+      countryName: ['', Validators.maxLength(200)],
+      countryNameAr: ['', Validators.maxLength(200)],
+      isActive: [true],
+    },
+    { validators: salaryRange },
+  );
 
   ngOnInit(): void {
     if (this.cfg.parent) {
@@ -283,6 +320,8 @@ export class MasterData implements OnInit {
       name: r.name,
       nameAr: r.nameAr,
       sortOrder: r.sortOrder ?? null,
+      minSalary: r.minSalary ?? null,
+      maxSalary: r.maxSalary ?? null,
       countryName: r.countryName ?? '',
       countryNameAr: r.countryNameAr ?? '',
       isActive: r.isActive,
@@ -313,6 +352,10 @@ export class MasterData implements OnInit {
     const field = this.cfg.parent?.field;
     if (field) payload[field] = v.parentId;
     if (this.cfg.sortOrder) payload.sortOrder = v.sortOrder;
+    if (this.cfg.salaryRange) {
+      payload.minSalary = v.minSalary;
+      payload.maxSalary = v.maxSalary;
+    }
     if (this.cfg.country) {
       payload.countryName = v.countryName.trim();
       payload.countryNameAr = v.countryNameAr.trim();
@@ -399,10 +442,16 @@ export class MasterData implements OnInit {
     return c.invalid && c.touched;
   }
 
+  /** The maximum is below the minimum; shown under the maximum once it has been touched. */
+  salaryRangeInvalid(): boolean {
+    return this.form.hasError('salaryRange') && this.form.controls.maxSalary.touched;
+  }
+
   getError(name: FormKey): string {
     const c = this.form.controls[name];
     if (!c.errors || !c.touched) return '';
-    if (name === 'sortOrder') return this.translate.instant('common.validation.invalid');
+    if (name === 'sortOrder' || name === 'minSalary' || name === 'maxSalary')
+      return this.translate.instant('common.validation.invalid');
     if (c.errors['required'] || c.errors['min']) {
       return this.translate.instant('common.validation.required');
     }

@@ -89,6 +89,26 @@
             }
           }
         </div>
+
+        <!-- Key facts at a glance -->
+        <dl class="facts">
+          <div>
+            <dt>{{ 'employee.list.columns.department' | translate }}</dt>
+            <dd>{{ getValue(employee()!.departmentName) }}</dd>
+          </div>
+          <div>
+            <dt>{{ 'employee.list.columns.designation' | translate }}</dt>
+            <dd>{{ getValue(employee()!.designationTitle) }}</dd>
+          </div>
+          <div>
+            <dt>{{ 'employee.form.hireDate' | translate }}</dt>
+            <dd class="num">{{ formatDate(employee()!.hireDate) }}</dd>
+          </div>
+          <div>
+            <dt>{{ 'employee.form.employmentType' | translate }}</dt>
+            <dd>{{ 'common.enums.employmentType.' + employee()!.employmentType | translate }}</dd>
+          </div>
+        </dl>
       </div>
       <!-- end profile-card -->
 
@@ -297,6 +317,7 @@
           aria-labelledby="detail-tab-job"
           [employeeId]="employee()!.employeeId"
           [employeeName]="employee()!.fullNameEn"
+          (jobSaved)="refreshEmployee()"
         />
       }
       <!-- Tab panel — add after job tab -->
