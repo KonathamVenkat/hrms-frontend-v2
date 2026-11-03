@@ -312,12 +312,6 @@
           </div>
         }
 
-        @if (attempted() && form.hasError('nothingEntered')) {
-          <div class="modal-alert" role="alert">
-            <span class="material-icons" aria-hidden="true">error_outline</span>{{ 'employee.identity.errors.nothingEntered' | translate }}
-          </div>
-        }
-
     <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
       <div class="modal-body">
       <!-- ── National Identity section ───────────────── -->
@@ -328,7 +322,7 @@
         </div>
         <div class="form-grid">
           <div class="field">
-            <label for="id-national-id">{{ 'employee.identity.fields.nationalId' | translate }}</label>
+            <label for="id-national-id">{{ 'employee.identity.fields.nationalId' | translate }} <span class="req" aria-hidden="true">*</span></label>
             <div class="pii-input-wrap">
               <input
                 id="id-national-id"
@@ -464,7 +458,7 @@
         </div>
         <div class="form-grid">
           <div class="field">
-            <label for="id-passport-number">{{ 'employee.identity.fields.passportNumber' | translate }}</label>
+            <label for="id-passport-number">{{ 'employee.identity.fields.passportNumber' | translate }} <span class="req" aria-hidden="true">*</span></label>
             <input id="id-passport-number" formControlName="passportNumber" [placeholder]="'employee.identity.placeholders.passportNumber' | translate" />
             @if (isInvalid('passportNumber')) {
               <span class="field-error" id="fe-passportNumber">{{ getError('passportNumber') }}</span>

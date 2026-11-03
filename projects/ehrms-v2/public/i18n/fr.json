@@ -513,7 +513,6 @@
       "errors": {
         "loadFailed": "Échec du chargement des informations d'identité.",
         "saveFailed": "Échec de l'enregistrement des informations d'identité.",
-        "nothingEntered": "Saisissez au moins une information avant d'enregistrer.",
         "visaDates": "La date d'expiration du visa ne peut pas précéder sa date de délivrance.",
         "residenceDates": "La date de fin de validité de la résidence ne peut pas précéder la date de résidence.",
         "futureIssue": "La date de délivrance de la pièce d'identité ne peut pas être dans le futur."

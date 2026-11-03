@@ -43,6 +43,11 @@ function localToday(): string {
   return `${now.getFullYear()}-${two(now.getMonth() + 1)}-${two(now.getDate())}`;
 }
 
+/** Whitespace is not a value: a number made of spaces counts as missing (the server trims too). */
+function notBlank(control: AbstractControl): ValidationErrors | null {
+  return String(control.value ?? '').trim() ? null : { required: true };
+}
+
 /** The date rules the server also enforces: an end is not before its start, an issue date is not in the future. */
 function identityDates(group: AbstractControl): ValidationErrors | null {
   const value = (name: string): string => String(group.get(name)?.value ?? '');
@@ -95,8 +100,6 @@ export class EmployeeIdentityComponent implements OnInit {
   successMsg = signal<string | null>(null);
   private readonly showSuccess = timedMessage(this.successMsg, this.destroyRef);
   editMode = signal(false);
-  /** True once Save was pressed on a form that could not be saved, so the "enter something" message shows. */
-  attempted = signal(false);
   /** The "unsaved changes" question: asked when the form is closed after something was typed. */
   readonly discard = new DiscardPrompt(
     () => this.editMode() && this.form.dirty,
@@ -116,7 +119,7 @@ export class EmployeeIdentityComponent implements OnInit {
 
   readonly form = this.fb.nonNullable.group({
     // National Identity
-    nationalId: ['', Validators.maxLength(200)],
+    nationalId: ['', [Validators.required, notBlank, Validators.maxLength(200)]],
     nationalIdType: ['', Validators.maxLength(40)],
     nationalIdIssueDate: [''],
     nationalIdIssuePlace: ['', Validators.maxLength(80)],
@@ -125,7 +128,7 @@ export class EmployeeIdentityComponent implements OnInit {
     residencePlace: ['', Validators.maxLength(80)],
     residenceValidUntil: [''],
     // Passport
-    passportNumber: ['', Validators.maxLength(200)],
+    passportNumber: ['', [Validators.required, notBlank, Validators.maxLength(200)]],
     // Tax & Social Security
     taxId: ['', Validators.maxLength(200)],
     socialSecurityNumber: ['', Validators.maxLength(200)],
@@ -141,7 +144,7 @@ export class EmployeeIdentityComponent implements OnInit {
     workPermitExpiry: [''],
     // Biometric
     biometricId: ['', Validators.maxLength(100)],
-  }, { validators: [identityDates, (group) => this.nothingEntered(group)] });
+  }, { validators: [identityDates] });
 
   ngOnInit(): void {
     this.loadIdentity();
@@ -198,7 +201,6 @@ export class EmployeeIdentityComponent implements OnInit {
       biometricId: info?.biometricId ?? '',
     });
     this.form.markAsPristine();
-    this.attempted.set(false);
     this.error.set(null);
     this.revealed.set(new Set());
     this.editMode.set(true);
@@ -227,10 +229,7 @@ export class EmployeeIdentityComponent implements OnInit {
   onSubmit(): void {
     if (this.saving()) return;
     this.form.markAllAsTouched();
-    if (this.form.invalid) {
-      this.attempted.set(true);
-      return;
-    }
+    if (this.form.invalid) return;
     this.saving.set(true);
     this.error.set(null);
 
@@ -291,13 +290,6 @@ export class EmployeeIdentityComponent implements OnInit {
   }
 
   // ── Validation ────────────────────────────────────────────
-  /** A first save needs at least one detail; clearing a saved record is allowed (the server agrees). */
-  private nothingEntered(group: AbstractControl): ValidationErrors | null {
-    if (this.hasData()) return null;
-    const values = Object.values(group.value as Record<string, string>);
-    return values.every((v) => !String(v ?? '').trim()) ? { nothingEntered: true } : null;
-  }
-
   /** The form-level rule that belongs under a given date field. */
   private readonly dateRules: Record<string, string> = {
     visaExpiryDate: 'visaDates',

@@ -82,6 +82,7 @@ describe('EmployeeIdentityComponent national ID details and residence', () => {
     employeeIdentityId: 1,
     employeeId: 5,
     nationalId: '123456789',
+    passportNumber: 'P1234567',
     nationalIdType: 'By birth',
     nationalIdIssueDate: '1986-09-22',
     nationalIdIssuePlace: 'Omdurman',
@@ -209,9 +210,16 @@ describe('EmployeeIdentityComponent edit form (modal with the unsaved-changes qu
   });
 });
 
-describe('EmployeeIdentityComponent validation and the empty first save', () => {
+describe('EmployeeIdentityComponent mandatory numbers and validation', () => {
   const none: IdentityInfo = { employeeId: 5, masked: false };
-  const saved: IdentityInfo = { employeeIdentityId: 1, employeeId: 5, nationalId: '123456789', masked: false, version: 1 };
+  const saved: IdentityInfo = {
+    employeeIdentityId: 1,
+    employeeId: 5,
+    nationalId: '123456789',
+    passportNumber: 'P1234567',
+    masked: false,
+    version: 1,
+  };
 
   function save(identity: IdentityInfo) {
     const ctx = setup(identity);
@@ -220,7 +228,19 @@ describe('EmployeeIdentityComponent validation and the empty first save', () => 
     return { ...ctx, service };
   }
 
-  it('does not save a first form with nothing in it, and says why', () => {
+  it('marks the National ID and the Passport number as required, on the label and for screen readers', () => {
+    const { component, fixture, el } = save(none);
+    component.openEdit();
+    fixture.detectChanges();
+
+    expect(el.querySelector('label[for=id-national-id] .req')).not.toBeNull();
+    expect(el.querySelector('label[for=id-passport-number] .req')).not.toBeNull();
+    expect(el.querySelector('#id-national-id')?.getAttribute('aria-required')).toBe('true');
+    expect(el.querySelector('#id-passport-number')?.getAttribute('aria-required')).toBe('true');
+    expect(el.querySelector('label[for=id-tax-id] .req')).toBeNull();
+  });
+
+  it('does not save an empty form, and says under each number that it is required', () => {
     const { component, fixture, el, service } = save(none);
     component.openEdit();
     fixture.detectChanges();
@@ -229,39 +249,62 @@ describe('EmployeeIdentityComponent validation and the empty first save', () => 
     fixture.detectChanges();
 
     expect(service).not.toHaveBeenCalled();
-    expect(component.attempted()).toBe(true);
     expect(component.saving()).toBe(false);
-    expect(el.querySelector('.modal-alert')?.textContent).toContain('employee.identity.errors.nothingEntered');
+    expect(el.querySelector('#fe-nationalId')?.textContent).toContain('common.validation.required');
+    expect(el.querySelector('#fe-passportNumber')?.textContent).toContain('common.validation.required');
+    expect(el.querySelector('#id-national-id')?.getAttribute('aria-invalid')).toBe('true');
   });
 
-  it('treats spaces only as nothing', () => {
+  it('does not save with only one of the two numbers, and names the missing one', () => {
+    const { component, fixture, el, service } = save(none);
+    component.openEdit();
+    component.form.patchValue({ nationalId: '123456789' });
+    component.onSubmit();
+    fixture.detectChanges();
+
+    expect(service).not.toHaveBeenCalled();
+    expect(el.querySelector('#fe-nationalId')).toBeNull();
+    expect(el.querySelector('#fe-passportNumber')?.textContent).toContain('common.validation.required');
+
+    component.form.patchValue({ nationalId: '', passportNumber: 'P1234567' });
+    component.onSubmit();
+    fixture.detectChanges();
+    expect(service).not.toHaveBeenCalled();
+    expect(el.querySelector('#fe-nationalId')?.textContent).toContain('common.validation.required');
+  });
+
+  it('treats spaces only as missing', () => {
     const { component, service } = save(none);
     component.openEdit();
-    component.form.patchValue({ nationalId: '   ', visaType: ' ' });
+    component.form.patchValue({ nationalId: '   ', passportNumber: ' ' });
 
     component.onSubmit();
 
     expect(service).not.toHaveBeenCalled();
+    expect(component.form.controls.nationalId.hasError('required')).toBe(true);
+    expect(component.form.controls.passportNumber.hasError('required')).toBe(true);
   });
 
-  it('saves a first form that has a single detail', () => {
+  it('saves when both numbers are there, even if every other detail is empty', () => {
     const { component, service } = save(none);
     component.openEdit();
-    component.form.patchValue({ taxId: 'TAX-1' });
+    component.form.patchValue({ nationalId: '123456789', passportNumber: 'P1234567' });
 
     component.onSubmit();
 
     expect(service).toHaveBeenCalledTimes(1);
+    expect(service.mock.calls[0][1]).toMatchObject({ nationalId: '123456789', passportNumber: 'P1234567' });
   });
 
-  it('lets a saved record be cleared completely', () => {
+  it('does not let a saved record lose either number', () => {
     const { component, service } = save(saved);
     component.openEdit();
-    component.form.patchValue({ nationalId: '' });
+    component.form.patchValue({ passportNumber: '' });
 
     component.onSubmit();
 
-    expect(service).toHaveBeenCalledTimes(1);
+    expect(service).not.toHaveBeenCalled();
+    expect(component.isInvalid('passportNumber')).toBe(true);
   });
 
   it('refuses text longer than the server allows, field by field, with a message', () => {
@@ -333,7 +376,6 @@ describe('EmployeeIdentityComponent validation and the empty first save', () => 
   it('does not send a second save while one is in flight', () => {
     const { component, service } = save(saved);
     component.openEdit();
-    component.form.patchValue({ taxId: 'TAX-1' });
     component.saving.set(true);
 
     component.onSubmit();
