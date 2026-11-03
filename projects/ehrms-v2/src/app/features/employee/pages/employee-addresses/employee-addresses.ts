@@ -20,6 +20,8 @@ import { finalize } from 'rxjs';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 
 import { AccessibleDialogDirective } from '../../../../core/directives/accessible-dialog.directive';
+import { DiscardPrompt } from '../../../../core/forms/discard-prompt';
+import { DiscardChanges } from '../../../../shared/discard-changes/discard-changes';
 import { AddressService } from '../../services/address.service';
 import { EmployeeAddress } from '../../models/address.model';
 import { InfoLookup } from '../../models/employee-info.model';
@@ -32,7 +34,7 @@ import { fieldErrorMessage, isFieldInvalid } from '../../../../core/forms/field-
 
 @Component({
   selector: 'app-employee-addresses',
-  imports: [ReactiveFormsModule, FieldA11yDirective, TranslatePipe, CdkTrapFocus, AccessibleDialogDirective],
+  imports: [DiscardChanges, ReactiveFormsModule, FieldA11yDirective, TranslatePipe, CdkTrapFocus, AccessibleDialogDirective],
   templateUrl: './employee-addresses.html',
   styleUrl: './employee-addresses.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -54,6 +56,8 @@ export class EmployeeAddressesComponent implements OnInit {
   successMsg = signal<string | null>(null);
   private readonly showSuccess = timedMessage(this.successMsg, this.destroyRef);
   showModal = signal(false);
+  /** The "unsaved changes" question: asked when this form is closed after something was typed. */
+  readonly discard = new DiscardPrompt(() => this.showModal() && (this.form.dirty), () => !this.isEditMode() && !this.loading() && this.addresses().length === 0);
   isEditMode = signal(false);
   editingId = signal<number | null>(null);
   private editingVersion = signal<number | undefined>(undefined);
@@ -187,8 +191,20 @@ export class EmployeeAddressesComponent implements OnInit {
     this.showModal.set(true);
   }
 
+  /** Cancel, the X and Escape: ask first when something was typed. */
+  requestClose(): void {
+    this.discard.request(() => this.closeModal());
+  }
+
+  /** "Discard changes" in the unsaved-changes question. */
+  discardChanges(): void {
+    this.closeModal();
+  }
+
   closeModal(): void {
     this.showModal.set(false);
+    this.discard.keep();
+    this.form.markAsPristine();
     this.error.set(null);
   }
 

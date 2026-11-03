@@ -61,6 +61,8 @@ export interface SectionConfig<R extends InfoRecord> {
   fields: readonly FieldConfig[];
   /** Two date fields where the end cannot be before the start. */
   dateRange?: { from: string; to: string };
+  /** Its first record must be saved before its form can be closed (the guided flow). */
+  required?: boolean;
   card(record: R, ctx: CardContext): CardView;
 }
 
@@ -110,6 +112,7 @@ const present = (...items: (string | undefined)[]): string[] =>
 
 export const DEPENDANTS: SectionConfig<DependantRecord> = {
   key: 'dependants',
+  required: true,
   endpoint: 'dependants',
   icon: 'people',
   fields: [
@@ -147,6 +150,7 @@ export const DEPENDANTS: SectionConfig<DependantRecord> = {
 
 export const EDUCATION: SectionConfig<EducationRecord> = {
   key: 'education',
+  required: true,
   endpoint: 'education',
   icon: 'school',
   fields: [
@@ -168,6 +172,7 @@ export const EDUCATION: SectionConfig<EducationRecord> = {
 
 export const TRAINING: SectionConfig<TrainingRecord> = {
   key: 'training',
+  required: true,
   endpoint: 'training',
   icon: 'workspace_premium',
   fields: [
@@ -188,6 +193,7 @@ export const TRAINING: SectionConfig<TrainingRecord> = {
 
 export const LANGUAGES: SectionConfig<LanguageRecord> = {
   key: 'languages',
+  required: true,
   endpoint: 'languages',
   icon: 'translate',
   fields: [
@@ -216,6 +222,7 @@ export const LANGUAGES: SectionConfig<LanguageRecord> = {
 
 export const EXPERIENCE: SectionConfig<ExperienceRecord> = {
   key: 'experience',
+  required: true,
   endpoint: 'experience',
   icon: 'business_center',
   fields: [
@@ -245,6 +252,7 @@ export const EXPERIENCE: SectionConfig<ExperienceRecord> = {
 
 export const REFERENCES: SectionConfig<ReferenceRecord> = {
   key: 'references',
+  required: true,
   endpoint: 'references',
   icon: 'contact_phone',
   fields: [

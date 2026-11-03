@@ -188,10 +188,13 @@
 <!-- ══════════════════════════════════════════════════════════ -->
 @if (showModal()) {
   <div class="modal-backdrop">
-    <div
+    @if (discard.asking()) {
+    <app-discard-changes [kind]="discard.kind()" (keep)="discard.keep()" (discard)="discardChanges()" />
+  }
+  <div
       class="modal"
       [appAccessibleDialog]="'doc-modal-title'"
-      (dialogClosed)="closeModal()"
+      (dialogClosed)="requestClose()"
       cdkTrapFocus
       cdkTrapFocusAutoCapture
     >
@@ -199,9 +202,11 @@
         <h2 id="doc-modal-title" class="modal-title">
           {{ (isEditMode() ? 'employee.documents.modal.editTitle' : 'employee.documents.modal.uploadTitle') | translate }}
         </h2>
-        <button type="button" class="modal-close" [attr.aria-label]="'common.close' | translate" (click)="closeModal()">
+        @if (!discard.mustFill()) {
+          <button type="button" class="modal-close" [attr.aria-label]="'common.close' | translate" (click)="requestClose()">
           <span class="material-icons" aria-hidden="true">close</span>
         </button>
+        }
       </div>
 
       @if (error()) {
@@ -320,7 +325,9 @@
         </div>
 
         <div class="modal-footer">
-          <button type="button" class="btn-cancel" (click)="closeModal()">{{ 'common.cancel' | translate }}</button>
+          @if (!discard.mustFill()) {
+            <button type="button" class="btn-cancel" (click)="requestClose()">{{ 'common.cancel' | translate }}</button>
+          }
           <button type="submit" class="btn-save" [disabled]="saving()">
             @if (saving()) {
               <div class="btn-spinner"></div>

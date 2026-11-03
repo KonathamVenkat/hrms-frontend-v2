@@ -22,6 +22,8 @@ import { catchError, finalize, of, switchMap, tap } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { AccessibleDialogDirective } from '../../../../core/directives/accessible-dialog.directive';
+import { DiscardPrompt } from '../../../../core/forms/discard-prompt';
+import { DiscardChanges } from '../../../../shared/discard-changes/discard-changes';
 import { FieldA11yDirective } from '../../../../core/directives/field-a11y.directive';
 import { JobDetailsService } from '../../services/job-details.service';
 import { EmployeeService } from '../../services/employee';
@@ -43,7 +45,7 @@ import { DepartmentSecretaryCard } from '../../components/department-secretary/d
 
 @Component({
   selector: 'app-job-details',
-  imports: [BranchSelect, DateInput, DepartmentHeadCard, DepartmentSecretaryCard,
+  imports: [DiscardChanges, BranchSelect, DateInput, DepartmentHeadCard, DepartmentSecretaryCard,
     ReactiveFormsModule,
     FieldA11yDirective,
     TranslatePipe,
@@ -82,6 +84,8 @@ export class JobDetailsComponent implements OnInit {
   // ── View mode ─────────────────────────────────────────────
   activeTab = signal<'current' | 'history'>('current');
   showModal = signal(false);
+  /** The "unsaved changes" question: asked when this form is closed after something was typed. */
+  readonly discard = new DiscardPrompt(() => this.showModal() && (this.form.dirty), () => this.isNewAssignment() && !this.loading() && !this.currentJob());
   isNewAssignment = signal(true); // true = new SCD record, false = minor update
 
   // ── Lookup data (from Phase 1 admin config) ───────────────
@@ -473,8 +477,20 @@ export class JobDetailsComponent implements OnInit {
     this.showModal.set(true);
   }
 
+  /** Cancel, the X and Escape: ask first when something was typed. */
+  requestClose(): void {
+    this.discard.request(() => this.closeModal());
+  }
+
+  /** "Discard changes" in the unsaved-changes question. */
+  discardChanges(): void {
+    this.closeModal();
+  }
+
   closeModal(): void {
     this.showModal.set(false);
+    this.discard.keep();
+    this.form.markAsPristine();
     this.error.set(null);
   }
 

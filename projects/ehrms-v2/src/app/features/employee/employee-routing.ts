@@ -2,6 +2,7 @@
 // ── Add 'detail/:id' route ────────────────────────────────────
 
 import { Routes } from '@angular/router';
+import { unsavedChangesGuard } from '../../core/guards/unsaved-changes.guard';
 
 export const EMPLOYEE_ROUTES: Routes = [
   {
@@ -23,6 +24,8 @@ export const EMPLOYEE_ROUTES: Routes = [
     path: 'detail/:id', // ← ADD THIS
     loadComponent: () =>
       import('./pages/employee-detail/employee-detail').then((m) => m.EmployeeDetail),
+    // A form open on one of the tabs may hold edits that were not saved.
+    canDeactivate: [unsavedChangesGuard],
     title: 'employee.routes.detail',
   },
   {

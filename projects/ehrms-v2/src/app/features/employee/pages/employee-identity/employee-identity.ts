@@ -11,7 +11,13 @@ import {
   inject,
   DestroyRef,
 } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, AbstractControl } from '@angular/forms';
+import {
+  FormBuilder,
+  ReactiveFormsModule,
+  AbstractControl,
+  ValidationErrors,
+  Validators,
+} from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { finalize } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -20,14 +26,50 @@ import { IdentityService } from '../../services/identity.service';
 import { IdentityInfo } from '../../models/identity.model';
 import { formatDisplayDate } from '../../../../core/utils/display-date';
 import { serverMessage } from '../../../../core/utils/http-error-message';
+import { fieldErrorMessage } from '../../../../core/forms/field-errors';
 import { timedMessage } from '../../../../core/utils/timed-message';
 import { LanguageService } from '../../../../core/services/language.service';
 import { FieldA11yDirective } from '../../../../core/directives/field-a11y.directive';
+import { AccessibleDialogDirective } from '../../../../core/directives/accessible-dialog.directive';
+import { DiscardPrompt } from '../../../../core/forms/discard-prompt';
+import { DiscardChanges } from '../../../../shared/discard-changes/discard-changes';
+import { CdkTrapFocus } from '@angular/cdk/a11y';
 import { DateInput } from '../../../../shared/date-input/date-input';
+
+/** Today as YYYY-MM-DD in the browser's own (local) time, the same shape as the date inputs. */
+function localToday(): string {
+  const now = new Date();
+  const two = (n: number) => String(n).padStart(2, '0');
+  return `${now.getFullYear()}-${two(now.getMonth() + 1)}-${two(now.getDate())}`;
+}
+
+/** The date rules the server also enforces: an end is not before its start, an issue date is not in the future. */
+function identityDates(group: AbstractControl): ValidationErrors | null {
+  const value = (name: string): string => String(group.get(name)?.value ?? '');
+  const errors: ValidationErrors = {};
+  if (value('visaIssueDate') && value('visaExpiryDate') && value('visaExpiryDate') < value('visaIssueDate')) {
+    errors['visaDates'] = true;
+  }
+  if (value('residenceDate') && value('residenceValidUntil') && value('residenceValidUntil') < value('residenceDate')) {
+    errors['residenceDates'] = true;
+  }
+  if (value('nationalIdIssueDate') && value('nationalIdIssueDate') > localToday()) {
+    errors['futureIssue'] = true;
+  }
+  return Object.keys(errors).length ? errors : null;
+}
 
 @Component({
   selector: 'app-employee-identity',
-  imports: [DateInput, ReactiveFormsModule, FieldA11yDirective, TranslatePipe],
+  imports: [
+    AccessibleDialogDirective,
+    CdkTrapFocus,
+    DateInput,
+    DiscardChanges,
+    ReactiveFormsModule,
+    FieldA11yDirective,
+    TranslatePipe,
+  ],
   templateUrl: './employee-identity.html',
   styleUrl: './employee-identity.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -53,6 +95,13 @@ export class EmployeeIdentityComponent implements OnInit {
   successMsg = signal<string | null>(null);
   private readonly showSuccess = timedMessage(this.successMsg, this.destroyRef);
   editMode = signal(false);
+  /** True once Save was pressed on a form that could not be saved, so the "enter something" message shows. */
+  attempted = signal(false);
+  /** The "unsaved changes" question: asked when the form is closed after something was typed. */
+  readonly discard = new DiscardPrompt(
+    () => this.editMode() && this.form.dirty,
+    () => !this.hasData() && !this.loading(),
+  );
   hasData = signal(false);
   // The backend masks identity numbers for everyone except HR_ADMIN and the employee themself.
   isMasked = computed(() => this.identity()?.masked === true);
@@ -67,32 +116,32 @@ export class EmployeeIdentityComponent implements OnInit {
 
   readonly form = this.fb.nonNullable.group({
     // National Identity
-    nationalId: [''],
-    nationalIdType: [''],
+    nationalId: ['', Validators.maxLength(200)],
+    nationalIdType: ['', Validators.maxLength(40)],
     nationalIdIssueDate: [''],
-    nationalIdIssuePlace: [''],
+    nationalIdIssuePlace: ['', Validators.maxLength(80)],
     // Residence
     residenceDate: [''],
-    residencePlace: [''],
+    residencePlace: ['', Validators.maxLength(80)],
     residenceValidUntil: [''],
     // Passport
-    passportNumber: [''],
+    passportNumber: ['', Validators.maxLength(200)],
     // Tax & Social Security
-    taxId: [''],
-    socialSecurityNumber: [''],
+    taxId: ['', Validators.maxLength(200)],
+    socialSecurityNumber: ['', Validators.maxLength(200)],
     // Driving License
-    drivingLicenseNumber: [''],
+    drivingLicenseNumber: ['', Validators.maxLength(100)],
     // Visa
-    visaNumber: [''],
-    visaType: [''],
+    visaNumber: ['', Validators.maxLength(100)],
+    visaType: ['', Validators.maxLength(50)],
     visaIssueDate: [''],
     visaExpiryDate: [''],
     // Work Permit
-    workPermitNumber: [''],
+    workPermitNumber: ['', Validators.maxLength(100)],
     workPermitExpiry: [''],
     // Biometric
-    biometricId: [''],
-  });
+    biometricId: ['', Validators.maxLength(100)],
+  }, { validators: [identityDates, (group) => this.nothingEntered(group)] });
 
   ngOnInit(): void {
     this.loadIdentity();
@@ -148,14 +197,27 @@ export class EmployeeIdentityComponent implements OnInit {
       workPermitExpiry: info?.workPermitExpiry ?? '',
       biometricId: info?.biometricId ?? '',
     });
+    this.form.markAsPristine();
+    this.attempted.set(false);
     this.error.set(null);
     this.revealed.set(new Set());
     this.editMode.set(true);
     this.focusAfterRender('#id-national-id');
   }
 
+  /** Cancel, the X and Escape: ask first when something was typed. */
+  requestClose(): void {
+    this.discard.request(() => this.cancelEdit());
+  }
+
+  /** "Discard changes" in the unsaved-changes question. */
+  discardChanges(): void {
+    this.cancelEdit();
+  }
+
   cancelEdit(): void {
     this.editMode.set(false);
+    this.discard.keep();
     this.focusAfterRender('.btn-edit-info');
     this.error.set(null);
     this.revealed.set(new Set());
@@ -163,6 +225,12 @@ export class EmployeeIdentityComponent implements OnInit {
 
   // ── Submit ────────────────────────────────────────────────
   onSubmit(): void {
+    if (this.saving()) return;
+    this.form.markAllAsTouched();
+    if (this.form.invalid) {
+      this.attempted.set(true);
+      return;
+    }
     this.saving.set(true);
     this.error.set(null);
 
@@ -220,6 +288,39 @@ export class EmployeeIdentityComponent implements OnInit {
     afterNextRender(() => this.host.nativeElement.querySelector<HTMLElement>(selector)?.focus(), {
       injector: this.injector,
     });
+  }
+
+  // ── Validation ────────────────────────────────────────────
+  /** A first save needs at least one detail; clearing a saved record is allowed (the server agrees). */
+  private nothingEntered(group: AbstractControl): ValidationErrors | null {
+    if (this.hasData()) return null;
+    const values = Object.values(group.value as Record<string, string>);
+    return values.every((v) => !String(v ?? '').trim()) ? { nothingEntered: true } : null;
+  }
+
+  /** The form-level rule that belongs under a given date field. */
+  private readonly dateRules: Record<string, string> = {
+    visaExpiryDate: 'visaDates',
+    residenceValidUntil: 'residenceDates',
+    nationalIdIssueDate: 'futureIssue',
+  };
+
+  private dateRuleOf(name: string): string | null {
+    const rule = this.dateRules[name];
+    return rule && this.form.hasError(rule) ? rule : null;
+  }
+
+  /** An error shows once the field was touched (or Save was pressed, which touches every field). */
+  isInvalid(name: string): boolean {
+    const control = this.form.get(name);
+    return !!control && control.touched && (control.invalid || this.dateRuleOf(name) !== null);
+  }
+
+  getError(name: string): string {
+    const own = fieldErrorMessage(this.form.get(name), this.translate);
+    if (own) return own;
+    const rule = this.dateRuleOf(name);
+    return rule ? this.translate.instant('employee.identity.errors.' + rule) : '';
   }
 
   // ── Helpers ───────────────────────────────────────────────

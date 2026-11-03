@@ -392,6 +392,16 @@
           [employeeId]="employee()!.employeeId"
         />
       }
+
+      <!-- ── Continue: the guided flow to the next tab ───── -->
+      @if (nextTab(); as next) {
+        <div class="continue-bar">
+          <button type="button" class="btn-save btn-continue" (click)="goToNextTab()">
+            <span>{{ 'employee.detail.continueTo' | translate: { tab: (next.labelKey | translate) } }}</span>
+            <span class="material-icons mirror-rtl" aria-hidden="true">arrow_forward</span>
+          </button>
+        </div>
+      }
     </div>
     <!-- end content -->
 

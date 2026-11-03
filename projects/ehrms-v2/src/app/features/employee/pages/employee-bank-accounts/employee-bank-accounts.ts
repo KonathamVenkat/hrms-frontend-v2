@@ -16,6 +16,8 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { finalize } from 'rxjs';
 
 import { AccessibleDialogDirective } from '../../../../core/directives/accessible-dialog.directive';
+import { DiscardPrompt } from '../../../../core/forms/discard-prompt';
+import { DiscardChanges } from '../../../../shared/discard-changes/discard-changes';
 import { FieldA11yDirective } from '../../../../core/directives/field-a11y.directive';
 import { fieldErrorMessage, isFieldInvalid } from '../../../../core/forms/field-errors';
 import { getHttpErrorMessage } from '../../../../core/utils/http-error-message';
@@ -37,7 +39,7 @@ type FormKey = 'bankId' | 'accountNumber' | 'iban' | 'accountHolderName';
 @Component({
   selector: 'app-employee-bank-accounts',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
+  imports: [DiscardChanges, 
     ReactiveFormsModule,
     FieldA11yDirective,
     TranslatePipe,
@@ -65,6 +67,8 @@ export class EmployeeBankAccountsComponent implements OnInit {
   successMsg = signal<string | null>(null);
   private readonly showSuccess = timedMessage(this.successMsg, this.destroyRef);
   showModal = signal(false);
+  /** The "unsaved changes" question: asked when this form is closed after something was typed. */
+  readonly discard = new DiscardPrompt(() => this.showModal() && (this.form.dirty), () => !this.isEditMode() && !this.loading() && this.accounts().length === 0);
   isEditMode = signal(false);
   private editing = signal<EmployeeBankAccount | null>(null);
   confirmItem = signal<EmployeeBankAccount | null>(null);
@@ -207,8 +211,20 @@ export class EmployeeBankAccountsComponent implements OnInit {
     this.showModal.set(true);
   }
 
+  /** Cancel, the X and Escape: ask first when something was typed. */
+  requestClose(): void {
+    this.discard.request(() => this.closeModal());
+  }
+
+  /** "Discard changes" in the unsaved-changes question. */
+  discardChanges(): void {
+    this.closeModal();
+  }
+
   closeModal(): void {
     this.showModal.set(false);
+    this.discard.keep();
+    this.form.markAsPristine();
     this.error.set(null);
   }
 

@@ -1,4 +1,6 @@
 import { signal } from '@angular/core';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute, Router, convertToParamMap, provideRouter } from '@angular/router';
 import { provideTranslateService } from '@ngx-translate/core';
@@ -12,6 +14,7 @@ import { AuthService } from '../../../../core/auth/auth.service';
 import { LanguageService } from '../../../../core/services/language.service';
 import { OwnPhoto } from '../../../../core/services/own-photo.service';
 import { PhotoCache } from '../../../../core/services/photo-cache.service';
+import { UnsavedChangesTracker } from '../../../../core/forms/discard-prompt';
 
 const employee = {
   employeeId: 7,
@@ -33,7 +36,18 @@ const employee = {
 } as EmployeeDetailData;
 
 function setup(opts: { self: boolean; role: string; routeId?: string }) {
-  const employees = { getEmployee: vi.fn(() => of({ success: true, message: '', statusCode: 200, data: employee })) };
+  const none = () => of({ success: true, message: '', statusCode: 200, data: [] });
+  const employees = {
+    getEmployee: vi.fn(() => of({ success: true, message: '', statusCode: 200, data: employee })),
+    // The Job Details tab, once opened, asks the same service for its dropdown lists.
+    getDepartments: none,
+    getDesignations: none,
+    getProfessions: none,
+    getSpecializations: none,
+    getContractTypes: none,
+    getDepartmentManagers: none,
+    getSectionsByDepartment: none,
+  };
   const ownPhoto = { set: vi.fn(), url: signal<string | undefined>(undefined) };
   const roles = [opts.role];
 
@@ -42,6 +56,9 @@ function setup(opts: { self: boolean; role: string; routeId?: string }) {
     providers: [
       provideTranslateService(),
       provideRouter([]),
+      // The tab components inside the page load their own data; the requests are never answered here.
+      provideHttpClient(),
+      provideHttpClientTesting(),
       {
         provide: ActivatedRoute,
         useValue: {
@@ -135,5 +152,91 @@ describe('EmployeeDetail for an HR user opening someone else', () => {
     component.employee.update((e) => (e ? { ...e, employeeId: 9 } : e));
     component.onPhotoChanged('/api/v1/employees/9/photo?v=1');
     expect(ownPhoto.set).not.toHaveBeenCalled();
+  });
+});
+
+describe('EmployeeDetail guided flow (Continue to the next tab)', () => {
+  it('starts on Profile with a Continue button that names the next tab', () => {
+    const { component, el } = setup({ self: false, role: 'HR_ADMIN', routeId: '7' });
+
+    expect(component.activeDetailTab()).toBe('profile');
+    expect(component.nextTab()?.id).toBe('job');
+    const button = el.querySelector<HTMLButtonElement>('.btn-continue');
+    expect(button).not.toBeNull();
+    expect(button?.textContent).toContain('employee.detail.continueTo');
+    expect(button?.getAttribute('type')).toBe('button');
+  });
+
+  it('walks through every tab in order, one click each, and offers nothing after the last', () => {
+    const { component, fixture, el } = setup({ self: false, role: 'HR_ADMIN', routeId: '7' });
+    const seen: string[] = [component.activeDetailTab()];
+
+    for (let i = 0; i < 8; i++) {
+      el.querySelector<HTMLButtonElement>('.btn-continue')?.click();
+      fixture.detectChanges();
+      seen.push(component.activeDetailTab());
+    }
+
+    expect(seen).toEqual(['profile', 'job', 'addresses', 'identity', 'bank', 'documents', 'family', 'qualifications', 'experience']);
+    expect(component.nextTab()).toBeNull();
+    expect(el.querySelector('.btn-continue')).toBeNull();
+  });
+
+  it('marks only the open tab as active, for the red bar and for screen readers', () => {
+    const { component, fixture, el } = setup({ self: false, role: 'HR_ADMIN', routeId: '7' });
+
+    component.goToNextTab();
+    fixture.detectChanges();
+
+    const active = [...el.querySelectorAll('[role=tab].active')].map((t) => t.id);
+    expect(active).toEqual(['detail-tab-job']);
+    expect(el.querySelector('#detail-tab-job')?.getAttribute('aria-selected')).toBe('true');
+    expect(el.querySelector('#detail-tab-profile')?.getAttribute('aria-selected')).toBe('false');
+  });
+
+  it('skips the tabs an employee may not read when they continue through their own profile', () => {
+    const { component, fixture, el } = setup({ self: true, role: 'EMPLOYEE' });
+    const seen: string[] = [component.activeDetailTab()];
+
+    while (component.nextTab()) {
+      el.querySelector<HTMLButtonElement>('.btn-continue')?.click();
+      fixture.detectChanges();
+      seen.push(component.activeDetailTab());
+    }
+
+    expect(seen).toEqual(['profile', 'identity', 'bank', 'family', 'qualifications', 'experience']);
+  });
+
+  it('does nothing on the last tab', () => {
+    const { component } = setup({ self: false, role: 'HR_ADMIN', routeId: '7' });
+    component.activeDetailTab.set('experience');
+
+    component.goToNextTab();
+
+    expect(component.activeDetailTab()).toBe('experience');
+  });
+});
+
+describe('EmployeeDetail unsaved changes', () => {
+  it('has unsaved changes while a form on one of the tabs does, and warns before the browser tab closes', () => {
+    const { component } = setup({ self: false, role: 'HR_ADMIN', routeId: '7' });
+    const tracker = TestBed.inject(UnsavedChangesTracker);
+    const forget = tracker.register(() => true);
+
+    expect(component.hasUnsavedChanges()).toBe(true);
+    const event = new Event('beforeunload', { cancelable: true }) as BeforeUnloadEvent;
+    component.onBeforeUnload(event);
+    expect(event.defaultPrevented).toBe(true);
+
+    forget();
+  });
+
+  it('lets the browser close without a warning when every form is saved or closed', () => {
+    const { component } = setup({ self: false, role: 'HR_ADMIN', routeId: '7' });
+
+    expect(component.hasUnsavedChanges()).toBe(false);
+    const event = new Event('beforeunload', { cancelable: true }) as BeforeUnloadEvent;
+    component.onBeforeUnload(event);
+    expect(event.defaultPrevented).toBe(false);
   });
 });

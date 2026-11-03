@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
+import { unsavedChangesGuard } from './core/guards/unsaved-changes.guard';
 import { HR_ROLES, roleGuard } from './core/guards/role.guard';
 import {
   BANKS,
@@ -42,6 +43,7 @@ export const routes: Routes = [
           import('./features/employee/pages/employee-detail/employee-detail').then(
             (m) => m.EmployeeDetail,
           ),
+        canDeactivate: [unsavedChangesGuard],
         title: 'employee.routes.profile',
       },
       {

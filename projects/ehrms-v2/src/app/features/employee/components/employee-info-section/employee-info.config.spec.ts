@@ -141,3 +141,11 @@ describe('employee-info.config', () => {
     expect(view.meta).toEqual(['Director', '+211 1', 'j@x.test']);
   });
 });
+
+describe('employee-info.config required sections', () => {
+  it('requires a first record in every section, so none of their forms can be closed empty', () => {
+    for (const section of [DEPENDANTS, EDUCATION, TRAINING, LANGUAGES, EXPERIENCE, REFERENCES]) {
+      expect(section.required, section.key).toBe(true);
+    }
+  });
+});

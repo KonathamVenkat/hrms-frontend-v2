@@ -24,6 +24,8 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { finalize, map, merge } from 'rxjs';
 
 import { AccessibleDialogDirective } from '../../../../core/directives/accessible-dialog.directive';
+import { DiscardPrompt } from '../../../../core/forms/discard-prompt';
+import { DiscardChanges } from '../../../../shared/discard-changes/discard-changes';
 import { FieldA11yDirective } from '../../../../core/directives/field-a11y.directive';
 import { fieldErrorMessage, isFieldInvalid } from '../../../../core/forms/field-errors';
 import { LanguageService } from '../../../../core/services/language.service';
@@ -112,7 +114,7 @@ function buildForm(
 @Component({
   selector: 'app-employee-info-section',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
+  imports: [DiscardChanges, 
     ReactiveFormsModule,
     FieldA11yDirective,
     DateInput,
@@ -144,6 +146,8 @@ export class EmployeeInfoSection<R extends InfoRecord> implements OnInit {
   successMsg = signal<string | null>(null);
   private readonly showSuccess = timedMessage(this.successMsg, this.destroyRef);
   showModal = signal(false);
+  /** The "unsaved changes" question: asked when this form is closed after something was typed. */
+  readonly discard = new DiscardPrompt(() => this.showModal() && (this.form().dirty), () => !this.isEditMode() && !this.loading() && this.config().required === true && this.records().length === 0);
   isEditMode = signal(false);
   private editing = signal<R | null>(null);
   confirmItem = signal<Row<R> | null>(null);
@@ -263,8 +267,20 @@ export class EmployeeInfoSection<R extends InfoRecord> implements OnInit {
     this.showModal.set(true);
   }
 
+  /** Cancel, the X and Escape: ask first when something was typed. */
+  requestClose(): void {
+    this.discard.request(() => this.closeModal());
+  }
+
+  /** "Discard changes" in the unsaved-changes question. */
+  discardChanges(): void {
+    this.closeModal();
+  }
+
   closeModal(): void {
     this.showModal.set(false);
+    this.discard.keep();
+    this.form().markAsPristine();
     this.error.set(null);
   }
 

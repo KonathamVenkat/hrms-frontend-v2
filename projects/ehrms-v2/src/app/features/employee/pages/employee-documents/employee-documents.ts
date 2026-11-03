@@ -23,6 +23,8 @@ import { finalize } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { AccessibleDialogDirective } from '../../../../core/directives/accessible-dialog.directive';
+import { DiscardPrompt } from '../../../../core/forms/discard-prompt';
+import { DiscardChanges } from '../../../../shared/discard-changes/discard-changes';
 import { EmployeeDocumentService } from '../../services/document.service';
 import {
   EmployeeDocument,
@@ -36,7 +38,7 @@ import { DateInput } from '../../../../shared/date-input/date-input';
 
 @Component({
   selector: 'app-employee-documents',
-  imports: [DateInput, SlicePipe, ReactiveFormsModule, FieldA11yDirective, TranslatePipe, CdkTrapFocus, AccessibleDialogDirective],
+  imports: [DiscardChanges, DateInput, SlicePipe, ReactiveFormsModule, FieldA11yDirective, TranslatePipe, CdkTrapFocus, AccessibleDialogDirective],
   templateUrl: './employee-documents.html',
   styleUrl: './employee-documents.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -60,6 +62,8 @@ export class EmployeeDocumentsComponent implements OnInit {
 
   // ── Modal state ───────────────────────────────────────────
   showModal = signal(false);
+  /** The "unsaved changes" question: asked when this form is closed after something was typed. */
+  readonly discard = new DiscardPrompt(() => this.showModal() && (this.form.dirty || this.selectedFile() !== null), () => !this.isEditMode() && !this.loading() && this.documents().length === 0);
   isEditMode = signal(false);
   editingId = signal<number | null>(null);
   showConfirm = signal(false);
@@ -240,8 +244,20 @@ export class EmployeeDocumentsComponent implements OnInit {
     this.showModal.set(true);
   }
 
+  /** Cancel, the X and Escape: ask first when something was typed. */
+  requestClose(): void {
+    this.discard.request(() => this.closeModal());
+  }
+
+  /** "Discard changes" in the unsaved-changes question. */
+  discardChanges(): void {
+    this.closeModal();
+  }
+
   closeModal(): void {
     this.showModal.set(false);
+    this.discard.keep();
+    this.form.markAsPristine();
     this.selectedFile.set(null);
     this.error.set(null);
   }

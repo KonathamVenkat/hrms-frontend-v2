@@ -50,7 +50,7 @@
   <!-- ══════════════════════════════════════════════════════ -->
   <!-- VIEW MODE                                             -->
   <!-- ══════════════════════════════════════════════════════ -->
-  @if (!loading() && !editMode()) {
+  @if (!loading()) {
     @if (!hasData()) {
       <div class="empty-state">
         <span class="material-icons" aria-hidden="true">badge</span>
@@ -283,16 +283,43 @@
   }
 
   <!-- ══════════════════════════════════════════════════════ -->
-  <!-- EDIT MODE — Inline form (no modal)                    -->
+  <!-- EDIT MODE — Modal form                                -->
   <!-- ══════════════════════════════════════════════════════ -->
   @if (!loading() && editMode()) {
-    @if (error()) {
-      <div class="alert alert-error" role="alert">
-        <span class="material-icons" aria-hidden="true">error_outline</span>{{ error() }}
-      </div>
-    }
+    <div class="modal-backdrop">
+      @if (discard.asking()) {
+        <app-discard-changes [kind]="discard.kind()" (keep)="discard.keep()" (discard)="discardChanges()" />
+      }
+      <div
+        class="modal modal-wide"
+        [appAccessibleDialog]="'identity-modal-title'"
+        (dialogClosed)="requestClose()"
+        cdkTrapFocus
+        cdkTrapFocusAutoCapture
+      >
+        <div class="modal-header">
+          <h2 id="identity-modal-title" class="modal-title">{{ 'employee.identity.title' | translate }}</h2>
+          @if (!discard.mustFill()) {
+            <button type="button" class="modal-close" [attr.aria-label]="'common.close' | translate" (click)="requestClose()">
+            <span class="material-icons" aria-hidden="true">close</span>
+          </button>
+          }
+        </div>
+
+        @if (error()) {
+          <div class="modal-alert" role="alert">
+            <span class="material-icons" aria-hidden="true">error_outline</span>{{ error() }}
+          </div>
+        }
+
+        @if (attempted() && form.hasError('nothingEntered')) {
+          <div class="modal-alert" role="alert">
+            <span class="material-icons" aria-hidden="true">error_outline</span>{{ 'employee.identity.errors.nothingEntered' | translate }}
+          </div>
+        }
 
     <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+      <div class="modal-body">
       <!-- ── National Identity section ───────────────── -->
       <div class="form-section">
         <div class="form-section-title">
@@ -319,10 +346,16 @@
                 <span class="material-icons" aria-hidden="true">{{ isRevealed('nationalId') ? 'visibility_off' : 'visibility' }}</span>
               </button>
             </div>
+            @if (isInvalid('nationalId')) {
+              <span class="field-error" id="fe-nationalId">{{ getError('nationalId') }}</span>
+            }
           </div>
           <div class="field">
             <label for="id-tax-id">{{ 'employee.identity.fields.taxId' | translate }}</label>
             <input id="id-tax-id" formControlName="taxId" [placeholder]="'employee.identity.placeholders.taxId' | translate" />
+            @if (isInvalid('taxId')) {
+              <span class="field-error" id="fe-taxId">{{ getError('taxId') }}</span>
+            }
           </div>
           <div class="field">
             <label for="id-ssn">{{ 'employee.identity.fields.socialSecurityNumber' | translate }}</label>
@@ -343,6 +376,9 @@
                 <span class="material-icons" aria-hidden="true">{{ isRevealed('socialSecurityNumber') ? 'visibility_off' : 'visibility' }}</span>
               </button>
             </div>
+            @if (isInvalid('socialSecurityNumber')) {
+              <span class="field-error" id="fe-socialSecurityNumber">{{ getError('socialSecurityNumber') }}</span>
+            }
           </div>
           <div class="field">
             <label for="id-biometric-id">{{ 'employee.identity.fields.biometricId' | translate }}</label>
@@ -363,18 +399,30 @@
                 <span class="material-icons" aria-hidden="true">{{ isRevealed('biometricId') ? 'visibility_off' : 'visibility' }}</span>
               </button>
             </div>
+            @if (isInvalid('biometricId')) {
+              <span class="field-error" id="fe-biometricId">{{ getError('biometricId') }}</span>
+            }
           </div>
           <div class="field">
             <label for="id-national-id-type">{{ 'employee.identity.fields.nationalIdType' | translate }}</label>
             <input id="id-national-id-type" formControlName="nationalIdType" maxlength="40" [placeholder]="'employee.identity.placeholders.nationalIdType' | translate" />
+            @if (isInvalid('nationalIdType')) {
+              <span class="field-error" id="fe-nationalIdType">{{ getError('nationalIdType') }}</span>
+            }
           </div>
           <div class="field">
             <label for="id-national-id-issue-date">{{ 'employee.identity.fields.nationalIdIssueDate' | translate }}</label>
             <app-date-input inputId="id-national-id-issue-date" formControlName="nationalIdIssueDate" />
+            @if (isInvalid('nationalIdIssueDate')) {
+              <span class="field-error" id="fe-nationalIdIssueDate">{{ getError('nationalIdIssueDate') }}</span>
+            }
           </div>
           <div class="field">
             <label for="id-national-id-issue-place">{{ 'employee.identity.fields.nationalIdIssuePlace' | translate }}</label>
             <input id="id-national-id-issue-place" formControlName="nationalIdIssuePlace" maxlength="80" [placeholder]="'employee.identity.placeholders.nationalIdIssuePlace' | translate" />
+            @if (isInvalid('nationalIdIssuePlace')) {
+              <span class="field-error" id="fe-nationalIdIssuePlace">{{ getError('nationalIdIssuePlace') }}</span>
+            }
           </div>
         </div>
       </div>
@@ -393,10 +441,16 @@
           <div class="field">
             <label for="id-residence-place">{{ 'employee.identity.fields.residencePlace' | translate }}</label>
             <input id="id-residence-place" formControlName="residencePlace" maxlength="80" [placeholder]="'employee.identity.placeholders.residencePlace' | translate" />
+            @if (isInvalid('residencePlace')) {
+              <span class="field-error" id="fe-residencePlace">{{ getError('residencePlace') }}</span>
+            }
           </div>
           <div class="field">
             <label for="id-residence-valid-until">{{ 'employee.identity.fields.residenceValidUntil' | translate }}</label>
             <app-date-input inputId="id-residence-valid-until" formControlName="residenceValidUntil" />
+            @if (isInvalid('residenceValidUntil')) {
+              <span class="field-error" id="fe-residenceValidUntil">{{ getError('residenceValidUntil') }}</span>
+            }
           </div>
         </div>
       </div>
@@ -412,10 +466,16 @@
           <div class="field">
             <label for="id-passport-number">{{ 'employee.identity.fields.passportNumber' | translate }}</label>
             <input id="id-passport-number" formControlName="passportNumber" [placeholder]="'employee.identity.placeholders.passportNumber' | translate" />
+            @if (isInvalid('passportNumber')) {
+              <span class="field-error" id="fe-passportNumber">{{ getError('passportNumber') }}</span>
+            }
           </div>
           <div class="field">
             <label for="id-driving-license">{{ 'employee.identity.fields.drivingLicenseNumber' | translate }}</label>
             <input id="id-driving-license" formControlName="drivingLicenseNumber" [placeholder]="'employee.identity.placeholders.drivingLicenseNumber' | translate" />
+            @if (isInvalid('drivingLicenseNumber')) {
+              <span class="field-error" id="fe-drivingLicenseNumber">{{ getError('drivingLicenseNumber') }}</span>
+            }
           </div>
         </div>
       </div>
@@ -430,10 +490,16 @@
           <div class="field">
             <label for="id-visa-number">{{ 'employee.identity.fields.visaNumber' | translate }}</label>
             <input id="id-visa-number" formControlName="visaNumber" [placeholder]="'employee.identity.placeholders.visaNumber' | translate" />
+            @if (isInvalid('visaNumber')) {
+              <span class="field-error" id="fe-visaNumber">{{ getError('visaNumber') }}</span>
+            }
           </div>
           <div class="field">
             <label for="id-visa-type">{{ 'employee.identity.fields.visaType' | translate }}</label>
             <input id="id-visa-type" formControlName="visaType" [placeholder]="'employee.identity.placeholders.visaType' | translate" />
+            @if (isInvalid('visaType')) {
+              <span class="field-error" id="fe-visaType">{{ getError('visaType') }}</span>
+            }
           </div>
           <div class="field">
             <label for="id-visa-issue-date">{{ 'employee.identity.fields.issueDate' | translate }}</label>
@@ -442,6 +508,9 @@
           <div class="field">
             <label for="id-visa-expiry-date">{{ 'employee.identity.fields.expiryDate' | translate }}</label>
             <app-date-input inputId="id-visa-expiry-date" formControlName="visaExpiryDate" />
+            @if (isInvalid('visaExpiryDate')) {
+              <span class="field-error" id="fe-visaExpiryDate">{{ getError('visaExpiryDate') }}</span>
+            }
           </div>
         </div>
       </div>
@@ -456,6 +525,9 @@
           <div class="field">
             <label for="id-work-permit-number">{{ 'employee.identity.fields.workPermitNumber' | translate }}</label>
             <input id="id-work-permit-number" formControlName="workPermitNumber" [placeholder]="'employee.identity.placeholders.workPermitNumber' | translate" />
+            @if (isInvalid('workPermitNumber')) {
+              <span class="field-error" id="fe-workPermitNumber">{{ getError('workPermitNumber') }}</span>
+            }
           </div>
           <div class="field">
             <label for="id-work-permit-expiry">{{ 'employee.identity.fields.workPermitExpiry' | translate }}</label>
@@ -464,9 +536,13 @@
         </div>
       </div>
 
+      </div>
+
       <!-- ── Form actions ─────────────────────────────── -->
-      <div class="form-actions">
-        <button type="button" class="btn-cancel" (click)="cancelEdit()">{{ 'common.cancel' | translate }}</button>
+      <div class="modal-footer">
+        @if (!discard.mustFill()) {
+          <button type="button" class="btn-cancel" (click)="requestClose()">{{ 'common.cancel' | translate }}</button>
+        }
         <button type="submit" class="btn-save" [disabled]="saving()">
           @if (saving()) {
             <div class="btn-spinner"></div>
@@ -478,5 +554,7 @@
         </button>
       </div>
     </form>
+      </div>
+    </div>
   }
 </div>

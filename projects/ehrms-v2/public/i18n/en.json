@@ -94,7 +94,18 @@
         "SYSTEM_ADMIN": "System Admin"
       }
     },
-    "unsavedChanges": "You have unsaved changes. Leave this page and lose them?"
+    "unsavedChanges": "You have unsaved changes. Leave this page and lose them?",
+    "discard": {
+      "title": "You have unsaved changes",
+      "message": "Close without saving? What you typed will be lost.",
+      "keep": "Keep editing",
+      "discard": "Discard changes",
+      "empty": {
+        "title": "Nothing has been entered yet",
+        "message": "Fill in the required details and save them. Then use Continue to go to the next tab.",
+        "keep": "Enter details"
+      }
+    }
   },
   "employee": {
     "list": {
@@ -297,7 +308,8 @@
         "submitting": "Saving...",
         "success": "Temporary password set. Give it to the employee securely."
       },
-      "tabsLabel": "Employee sections"
+      "tabsLabel": "Employee sections",
+      "continueTo": "Continue to {{tab}}"
     },
     "addresses": {
       "title": "Addresses",
@@ -500,7 +512,11 @@
       "saveIdentityInfo": "Save Identity Info",
       "errors": {
         "loadFailed": "Failed to load identity info.",
-        "saveFailed": "Failed to save identity info."
+        "saveFailed": "Failed to save identity info.",
+        "nothingEntered": "Enter at least one detail before saving.",
+        "visaDates": "The visa expiry date cannot be before its issue date.",
+        "residenceDates": "The residence valid-until date cannot be before the residence date.",
+        "futureIssue": "The national ID issue date cannot be in the future."
       },
       "success": {
         "saved": "Identity information saved successfully"

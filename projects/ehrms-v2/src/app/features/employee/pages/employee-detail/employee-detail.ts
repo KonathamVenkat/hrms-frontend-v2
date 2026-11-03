@@ -1,5 +1,16 @@
 // src/app/features/employee/pages/employee-detail/employee-detail.ts
-import { ChangeDetectionStrategy, Component, OnInit, signal, computed, inject, DestroyRef } from '@angular/core';
+import {
+  afterNextRender,
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  ElementRef,
+  Injector,
+  OnInit,
+  signal,
+  computed,
+  inject,
+} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { finalize, Observable } from 'rxjs';
@@ -31,6 +42,8 @@ import {
 import { getHttpErrorMessage } from '../../../../core/utils/http-error-message';
 import { formatDisplayDate } from '../../../../core/utils/display-date';
 import { LanguageService } from '../../../../core/services/language.service';
+import { HasUnsavedChanges } from '../../../../core/guards/unsaved-changes.guard';
+import { UnsavedChangesTracker } from '../../../../core/forms/discard-prompt';
 
 type DetailTab =
   | 'profile'
@@ -64,8 +77,9 @@ type DetailTab =
   templateUrl: './employee-detail.html',
   styleUrl: './employee-detail.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: { '(window:beforeunload)': 'onBeforeUnload($event)' },
 })
-export class EmployeeDetail implements OnInit {
+export class EmployeeDetail implements OnInit, HasUnsavedChanges {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private empService = inject(EmployeeService);
@@ -75,6 +89,9 @@ export class EmployeeDetail implements OnInit {
   private authService = inject(AuthService);
   private snackBar = inject(MatSnackBar);
   private language = inject(LanguageService);
+  private host = inject<ElementRef<HTMLElement>>(ElementRef);
+  private unsaved = inject(UnsavedChangesTracker);
+  private injector = inject(Injector);
   private ownPhoto = inject(OwnPhoto);
 
   // ── State ─────────────────────────────────────────────────
@@ -116,6 +133,12 @@ export class EmployeeDetail implements OnInit {
       ? this.tabs.filter((tab) => this.selfTabs.includes(tab.id))
       : this.tabs,
   );
+  /** The tab after the open one among those this viewer sees; null on the last one (the guided flow ends there). */
+  readonly nextTab = computed(() => {
+    const tabs = this.visibleTabs();
+    const index = tabs.findIndex((tab) => tab.id === this.activeDetailTab());
+    return index >= 0 && index < tabs.length - 1 ? tabs[index + 1] : null;
+  });
   /** The identity details are read-only for everyone but an HR_ADMIN. */
   readonly identityReadOnly = computed(() => this.selfMode() && !this.isHrAdmin());
 
@@ -338,6 +361,34 @@ export class EmployeeDetail implements OnInit {
       ON_HOLD: 'status-inactive',
     };
     return map[status] ?? 'status-inactive';
+  }
+
+  /** A form open on one of the tabs holds edits that were not saved (the route guard asks before leaving). */
+  hasUnsavedChanges(): boolean {
+    return this.unsaved.hasUnsavedChanges();
+  }
+
+  /** Closing the browser tab or reloading: the browser shows its own warning. */
+  onBeforeUnload(event: BeforeUnloadEvent): void {
+    if (this.hasUnsavedChanges()) event.preventDefault();
+  }
+
+  /**
+   * The Continue button: opens the next tab, brings the tab bar into view and focuses the new tab so a screen
+   * reader announces where the user is. Nothing is saved or discarded differently from clicking the tab.
+   */
+  goToNextTab(): void {
+    const next = this.nextTab();
+    if (!next) return;
+    this.activeDetailTab.set(next.id);
+    afterNextRender(
+      () => {
+        const tab = this.host.nativeElement.querySelector<HTMLElement>('#detail-tab-' + next.id);
+        tab?.scrollIntoView({ block: 'start' });
+        tab?.focus({ preventScroll: true });
+      },
+      { injector: this.injector },
+    );
   }
 
   /** Arrow keys, Home and End move between tabs (the arrows follow the reading direction). */

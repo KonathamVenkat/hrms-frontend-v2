@@ -3076,3 +3076,62 @@ html:lang(ar) app-employee-form .field :is(input, select, textarea):not([type='c
   color: var(--mat-sys-on-surface-variant);
   overflow-wrap: anywhere;
 }
+
+/* Employee detail: the open tab has a red bar under it (the error colour of the theme, so it also works in dark mode),
+   and a Continue button at the end of every tab walks the user to the next one. */
+.detail-tab {
+  position: relative;
+  scroll-margin-block-start: var(--space-3);
+}
+.detail-tab.active::after {
+  content: '';
+  position: absolute;
+  inset-inline: var(--space-3);
+  inset-block-end: 0;
+  block-size: 2px;
+  border-radius: 2px;
+  /* A thin red line. It grows out of the middle when the tab opens, then keeps breathing (shrinks and fades a little, then
+     grows back to full), which is easy to notice even on a 2px line. Reduced motion turns it into a still line. */
+  background: var(--mat-sys-error);
+  transform-origin: center;
+  animation:
+    tab-bar-in 0.35s ease-out,
+    tab-bar-breathe 1.6s ease-in-out 0.35s infinite;
+}
+@keyframes tab-bar-in {
+  from {
+    transform: scaleX(0);
+    opacity: 0;
+  }
+  to {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+}
+@keyframes tab-bar-breathe {
+  0%,
+  100% {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scaleX(0.55);
+    opacity: 0.35;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .detail-tab.active::after {
+    animation: none;
+    background: var(--mat-sys-error);
+  }
+}
+.continue-bar {
+  display: flex;
+  justify-content: flex-end;
+  margin-block-start: var(--space-5);
+}
+
+/* A modal with a wide form (identity details). */
+.modal.modal-wide {
+  max-inline-size: 880px;
+}

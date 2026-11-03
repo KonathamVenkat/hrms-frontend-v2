@@ -94,7 +94,18 @@
         "SYSTEM_ADMIN": "Administrateur système"
       }
     },
-    "unsavedChanges": "Vous avez des modifications non enregistrées. Quitter cette page et les perdre ?"
+    "unsavedChanges": "Vous avez des modifications non enregistrées. Quitter cette page et les perdre ?",
+    "discard": {
+      "title": "Vous avez des modifications non enregistrées",
+      "message": "Fermer sans enregistrer ? Ce que vous avez saisi sera perdu.",
+      "keep": "Continuer la saisie",
+      "discard": "Abandonner les modifications",
+      "empty": {
+        "title": "Rien n'a encore été saisi",
+        "message": "Renseignez les informations requises et enregistrez-les. Utilisez ensuite Continuer pour passer à l'onglet suivant.",
+        "keep": "Saisir les informations"
+      }
+    }
   },
   "employee": {
     "list": {
@@ -297,7 +308,8 @@
         "submitting": "Enregistrement...",
         "success": "Mot de passe temporaire défini. Communiquez-le à l'employé de façon sécurisée."
       },
-      "tabsLabel": "Sections de l'employé"
+      "tabsLabel": "Sections de l'employé",
+      "continueTo": "Continuer vers {{tab}}"
     },
     "addresses": {
       "title": "Adresses",
@@ -500,7 +512,11 @@
       "saveIdentityInfo": "Enregistrer les infos d'identité",
       "errors": {
         "loadFailed": "Échec du chargement des informations d'identité.",
-        "saveFailed": "Échec de l'enregistrement des informations d'identité."
+        "saveFailed": "Échec de l'enregistrement des informations d'identité.",
+        "nothingEntered": "Saisissez au moins une information avant d'enregistrer.",
+        "visaDates": "La date d'expiration du visa ne peut pas précéder sa date de délivrance.",
+        "residenceDates": "La date de fin de validité de la résidence ne peut pas précéder la date de résidence.",
+        "futureIssue": "La date de délivrance de la pièce d'identité ne peut pas être dans le futur."
       },
       "success": {
         "saved": "Informations d'identité enregistrées avec succès"
