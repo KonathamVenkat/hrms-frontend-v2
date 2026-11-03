@@ -166,6 +166,16 @@
                 <span class="info-value">{{ formatDate(employee()!.dateOfBirth) }}</span>
               </div>
               <div class="info-row">
+                <span class="info-label">{{ 'employee.form.placeOfBirth' | translate }}</span>
+                <span class="info-value">{{ getValue(employee()!.placeOfBirth) }}</span>
+              </div>
+              @if (employee()!.notes) {
+                <div class="info-row">
+                  <span class="info-label">{{ 'employee.form.notes' | translate }}</span>
+                  <span class="info-value notes-text">{{ employee()!.notes }}</span>
+                </div>
+              }
+              <div class="info-row">
                 <span class="info-label">{{ 'employee.form.gender' | translate }}</span>
                 <span class="info-value">{{ 'common.enums.gender.' + employee()!.gender | translate }}</span>
               </div>

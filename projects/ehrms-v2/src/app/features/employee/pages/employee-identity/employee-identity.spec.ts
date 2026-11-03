@@ -76,3 +76,48 @@ describe('EmployeeIdentityComponent masking', () => {
     expect(component.editMode()).toBe(false);
   });
 });
+
+describe('EmployeeIdentityComponent national ID details and residence', () => {
+  const real: IdentityInfo = {
+    employeeIdentityId: 1,
+    employeeId: 5,
+    nationalId: '123456789',
+    nationalIdType: 'By birth',
+    nationalIdIssueDate: '1986-09-22',
+    nationalIdIssuePlace: 'Omdurman',
+    residenceDate: '2020-01-01',
+    residencePlace: 'Wad Balal',
+    residenceValidUntil: '2030-01-01',
+    masked: false,
+    version: 4,
+  };
+
+  it('opens the edit form with the new fields filled in', () => {
+    const { component } = setup(real);
+
+    component.openEdit();
+
+    expect(component.form.getRawValue()).toMatchObject({
+      nationalIdType: 'By birth',
+      nationalIdIssueDate: '1986-09-22',
+      nationalIdIssuePlace: 'Omdurman',
+      residenceDate: '2020-01-01',
+      residencePlace: 'Wad Balal',
+      residenceValidUntil: '2030-01-01',
+    });
+  });
+
+  it('sends the new fields on save, and leaves an emptied one out so the backend clears it', () => {
+    const { component } = setup(real);
+    const save = TestBed.inject(IdentityService).save as ReturnType<typeof vi.fn>;
+    save.mockReturnValue(of({ success: true, message: '', statusCode: 200, data: real }));
+
+    component.openEdit();
+    component.form.patchValue({ nationalIdIssuePlace: '', residenceValidUntil: '2031-02-03' });
+    component.onSubmit();
+
+    const payload = save.mock.calls[0][1];
+    expect(payload).toMatchObject({ nationalIdType: 'By birth', residencePlace: 'Wad Balal', residenceValidUntil: '2031-02-03', version: 4 });
+    expect(payload.nationalIdIssuePlace).toBeUndefined();
+  });
+});

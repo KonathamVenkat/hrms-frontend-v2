@@ -223,6 +223,8 @@ export const EXPERIENCE: SectionConfig<ExperienceRecord> = {
     { ...arabic('employerNameAr'), wide: true },
     text('jobTitle', 100),
     text('place', 100),
+    text('workAddress', 300, { wide: true }),
+    { name: 'workPhone', labelKey: label('workPhone'), type: 'phone', max: 30 },
     date('startDate'),
     date('endDate'),
   ],
@@ -230,7 +232,13 @@ export const EXPERIENCE: SectionConfig<ExperienceRecord> = {
   card: (r, ctx) => ({
     title: r.employerName,
     titleAr: r.employerNameAr,
-    meta: present(r.jobTitle, r.place, ...period(ctx, r.startDate, r.endDate)),
+    meta: present(
+      r.jobTitle,
+      r.place,
+      r.workAddress,
+      r.workPhone,
+      ...period(ctx, r.startDate, r.endDate),
+    ),
     chips: [],
   }),
 };

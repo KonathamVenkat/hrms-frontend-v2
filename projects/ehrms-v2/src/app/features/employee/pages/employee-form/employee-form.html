@@ -132,6 +132,21 @@
 
           <div class="field-row">
             <div class="field">
+              <label for="ef-place-of-birth">{{ 'employee.form.placeOfBirth' | translate }}</label>
+              <input id="ef-place-of-birth" formControlName="placeOfBirth" maxlength="200" [placeholder]="'employee.form.placeholders.placeOfBirth' | translate" />
+            </div>
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label for="ef-notes">{{ 'employee.form.notes' | translate }}</label>
+              <textarea id="ef-notes" formControlName="notes" rows="3" maxlength="1000" aria-describedby="ef-notes-hint" [placeholder]="'employee.form.placeholders.notes' | translate"></textarea>
+              <span class="field-hint" id="ef-notes-hint">{{ 'employee.form.notesHint' | translate }}</span>
+            </div>
+          </div>
+
+          <div class="field-row">
+            <div class="field">
               <label for="ef-blood-group">{{ 'employee.form.bloodGroup' | translate }}</label>
               <select id="ef-blood-group" formControlName="bloodGroup">
                 <option value="">{{ 'employee.form.selectBloodGroup' | translate }}</option>

@@ -68,6 +68,13 @@ export class EmployeeIdentityComponent implements OnInit {
   readonly form = this.fb.nonNullable.group({
     // National Identity
     nationalId: [''],
+    nationalIdType: [''],
+    nationalIdIssueDate: [''],
+    nationalIdIssuePlace: [''],
+    // Residence
+    residenceDate: [''],
+    residencePlace: [''],
+    residenceValidUntil: [''],
     // Passport
     passportNumber: [''],
     // Tax & Social Security
@@ -123,6 +130,12 @@ export class EmployeeIdentityComponent implements OnInit {
     const info = this.identity();
     this.form.patchValue({
       nationalId: info?.nationalId ?? '',
+      nationalIdType: info?.nationalIdType ?? '',
+      nationalIdIssueDate: info?.nationalIdIssueDate ?? '',
+      nationalIdIssuePlace: info?.nationalIdIssuePlace ?? '',
+      residenceDate: info?.residenceDate ?? '',
+      residencePlace: info?.residencePlace ?? '',
+      residenceValidUntil: info?.residenceValidUntil ?? '',
       passportNumber: info?.passportNumber ?? '',
       taxId: info?.taxId ?? '',
       socialSecurityNumber: info?.socialSecurityNumber ?? '',
@@ -156,6 +169,12 @@ export class EmployeeIdentityComponent implements OnInit {
     const v = this.form.getRawValue();
     const payload = {
       nationalId: v.nationalId || undefined,
+      nationalIdType: v.nationalIdType || undefined,
+      nationalIdIssueDate: v.nationalIdIssueDate || undefined,
+      nationalIdIssuePlace: v.nationalIdIssuePlace || undefined,
+      residenceDate: v.residenceDate || undefined,
+      residencePlace: v.residencePlace || undefined,
+      residenceValidUntil: v.residenceValidUntil || undefined,
       passportNumber: v.passportNumber || undefined,
       taxId: v.taxId || undefined,
       socialSecurityNumber: v.socialSecurityNumber || undefined,

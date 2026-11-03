@@ -25,6 +25,24 @@ export interface JobDetails {
   professionName?: string;
   professionNameAr?: string;
 
+  // Specialization and contract (absent when the record has none)
+  specializationId?: number;
+  specializationName?: string;
+  specializationNameAr?: string;
+  contractTypeId?: number;
+  contractTypeName?: string;
+  contractTypeNameAr?: string;
+  contractStartDate?: string; // YYYY-MM-DD
+  contractEndDate?: string;
+
+  // Appointment references and the current work address
+  formRequestNo?: string;
+  appointmentRequestNo?: string;
+  afe?: string;
+  companyIdCardNo?: string;
+  currentWorkAddress?: string;
+  currentWorkPhone?: string;
+
   // Position
   jobPositionId?: string;
 
@@ -76,6 +94,18 @@ export interface JobDetailsRequest {
   /** Defaults to the designation's profession; when both are set they must be the same. */
   professionId?: number;
   jobPositionId?: string;
+  /** Optional master choices; the backend refuses an inactive one. */
+  specializationId?: number | null;
+  contractTypeId?: number | null;
+  /** The contract end cannot be before its start. */
+  contractStartDate?: string | null;
+  contractEndDate?: string | null;
+  formRequestNo?: string;
+  appointmentRequestNo?: string;
+  afe?: string;
+  companyIdCardNo?: string;
+  currentWorkAddress?: string;
+  currentWorkPhone?: string;
   reportingManagerId?: number;
   functionalManagerId?: number;
   locationId: number;

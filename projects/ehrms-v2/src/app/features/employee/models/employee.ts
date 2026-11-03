@@ -45,6 +45,9 @@ export interface CreateEmployeePayload {
   lastName: string;
   lastNameAr: string;
   dateOfBirth: string;
+  placeOfBirth?: string;
+  /** HR notes; the backend leaves them out when the employee reads their own record. */
+  notes?: string;
   gender: string;
   bloodGroup?: string;
   maritalStatus?: string;
@@ -95,6 +98,9 @@ export interface EmployeeDetailData {
   fullNameEn: string;
   fullNameAr: string;
   dateOfBirth: string;
+  placeOfBirth?: string;
+  /** HR notes; the backend leaves them out when the employee reads their own record. */
+  notes?: string;
   gender: string;
   bloodGroup?: string;
   maritalStatus?: string;

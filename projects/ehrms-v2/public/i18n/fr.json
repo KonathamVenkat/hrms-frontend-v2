@@ -201,7 +201,9 @@
         "personalEmail": "personal@example.com",
         "personalPhone": "+968 9xxx xxxx",
         "workPhone": "+968 2xxx xxxx",
-        "username": "ex. ahmed.rashidi"
+        "username": "ex. ahmed.rashidi",
+        "placeOfBirth": "ex. Khartoum",
+        "notes": "Notes facultatives pour les RH"
       },
       "passwordPlaceholder": "Minimum 8 caractères",
       "saving": "Enregistrement...",
@@ -220,7 +222,10 @@
         "createFailed": "Échec de la création de l'employé.",
         "updateFailed": "Échec de la mise à jour de l'employé.",
         "notFound": "Employé introuvable."
-      }
+      },
+      "placeOfBirth": "Lieu de naissance",
+      "notes": "Notes",
+      "notesHint": "Visibles uniquement par les RH. L'employé ne voit pas ces notes."
     },
     "detail": {
       "photo": {
@@ -440,7 +445,8 @@
         "passport": "Passeport",
         "visa": "Visa",
         "workPermit": "Permis de travail",
-        "passportLicense": "Passeport & Permis"
+        "passportLicense": "Passeport & Permis",
+        "residence": "Résidence"
       },
       "fields": {
         "nationalId": "Carte d'identité nationale",
@@ -458,7 +464,13 @@
         "expiryDate": "Date d'expiration",
         "permitNumber": "Numéro de permis",
         "workPermitNumber": "Numéro de permis de travail",
-        "workPermitExpiry": "Expiration du permis de travail"
+        "workPermitExpiry": "Expiration du permis de travail",
+        "nationalIdType": "Type de pièce d'identité nationale",
+        "nationalIdIssueDate": "Date de délivrance de la pièce d'identité",
+        "nationalIdIssuePlace": "Lieu de délivrance de la pièce d'identité",
+        "residenceDate": "Date de résidence",
+        "residencePlace": "Lieu de résidence",
+        "residenceValidUntil": "Résidence valable jusqu'au"
       },
       "expiredTag": "Expiré",
       "expiringSoonTag": "Expire bientôt",
@@ -479,7 +491,10 @@
         "drivingLicenseNumber": "ex. OM-DL-12345",
         "visaNumber": "Numéro de référence du visa",
         "visaType": "ex. Visa de travail, résidence",
-        "workPermitNumber": "Référence du permis de travail"
+        "workPermitNumber": "Référence du permis de travail",
+        "nationalIdType": "ex. Par naissance",
+        "nationalIdIssuePlace": "ex. Omdurman",
+        "residencePlace": "ex. Wad Balal"
       },
       "saving": "Enregistrement...",
       "saveIdentityInfo": "Enregistrer les infos d'identité",
@@ -564,7 +579,8 @@
         "organisation": "Organisation",
         "managers": "Managers",
         "workLocation": "Lieu de travail",
-        "shiftEffectiveDate": "Équipe & date d'effet"
+        "shiftEffectiveDate": "Équipe & date d'effet",
+        "appointment": "Détails de l'affectation"
       },
       "fields": {
         "department": "Département",
@@ -582,7 +598,18 @@
         "reportsTo": "Rapporte à",
         "branch": "Agence",
         "branchManager": "Responsable d’agence",
-        "noBranch": "Aucune agence affectée"
+        "noBranch": "Aucune agence affectée",
+        "specialization": "Spécialisation",
+        "contractType": "Type de contrat",
+        "contractPeriod": "Période du contrat",
+        "contractStart": "Début du contrat",
+        "contractEnd": "Fin du contrat",
+        "formRequestNo": "N° de demande du formulaire",
+        "appointmentRequestNo": "N° de demande d'affectation",
+        "afe": "AFE",
+        "companyIdCardNo": "N° de carte d'identité de l'entreprise",
+        "currentWorkAddress": "Adresse de travail actuelle",
+        "currentWorkPhone": "Téléphone professionnel"
       },
       "notAssigned": "Non attribué",
       "present": "Présent",
@@ -611,14 +638,17 @@
         "effectiveFromLabel": "Effectif à partir du",
         "effectiveFromHint": "L'affectation précédente sera clôturée la veille de cette date",
         "remarksPlaceholder": "ex. Transfert dû à une restructuration du département...",
-        "branchLabel": "Agence"
+        "branchLabel": "Agence",
+        "selectSpecialization": "Choisir une spécialisation",
+        "selectContractType": "Choisir un type de contrat"
       },
       "saving": "Enregistrement...",
       "update": "Mettre à jour",
       "errors": {
         "loadFailed": "Échec du chargement des détails du poste.",
         "saveFailed": "L'opération a échoué. Veuillez réessayer.",
-        "professionMismatch": "La profession doit être celle de la fonction choisie"
+        "professionMismatch": "La profession doit être celle de la fonction choisie",
+        "contractEndBeforeStart": "La fin du contrat ne peut pas précéder son début."
       },
       "success": {
         "assigned": "Nouvelle affectation enregistrée avec succès",
@@ -777,7 +807,9 @@
         "employerNameAr": "Employeur (arabe)",
         "jobTitle": "Intitulé du poste",
         "place": "Lieu",
-        "email": "E-mail"
+        "email": "E-mail",
+        "workAddress": "Adresse du lieu de travail",
+        "workPhone": "Téléphone professionnel"
       },
       "dependants": {
         "title": "Personnes à charge",
@@ -2448,6 +2480,19 @@
         "label": "Pages",
         "prev": "Page précédente",
         "next": "Page suivante"
+      },
+      "specializations": {
+        "title": "Spécialisations",
+        "add": "Ajouter une spécialisation",
+        "edit": "Modifier la spécialisation",
+        "search": "Rechercher des spécialisations...",
+        "emptyTitle": "Aucune spécialisation trouvée",
+        "emptyHint": "Ajoutez une spécialisation ci-dessus",
+        "loadFailed": "Échec du chargement des spécialisations.",
+        "activeHint": "Les entrées inactives ne peuvent pas être choisies sur les dossiers des employés",
+        "deleteTitle": "Supprimer la spécialisation ?",
+        "deactivateTitle": "Désactiver la spécialisation ?",
+        "activateTitle": "Activer la spécialisation ?"
       }
     }
   },
@@ -2880,7 +2925,7 @@
       "APPROVED": "Approuvée",
       "REJECTED": "Rejetée",
       "CANCELLED": "Annulée",
-        "UNKNOWN": "En cours"
+      "UNKNOWN": "En cours"
     },
     "history": {
       "title": "Historique",

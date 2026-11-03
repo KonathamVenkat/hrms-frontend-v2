@@ -129,6 +129,45 @@
                 }
               </span>
             </div>
+            <div class="info-row">
+              <span class="info-label">{{ 'employee.identity.fields.nationalIdType' | translate }}</span>
+              <span class="info-value">{{ getValue(identity()!.nationalIdType) }}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">{{ 'employee.identity.fields.nationalIdIssueDate' | translate }}</span>
+              <span class="info-value">{{ formatDate(identity()!.nationalIdIssueDate) }}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">{{ 'employee.identity.fields.nationalIdIssuePlace' | translate }}</span>
+              <span class="info-value">{{ getValue(identity()!.nationalIdIssuePlace) }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Residence ───────────────────────────────── -->
+        <div class="info-card" [class.card-danger]="isExpired(identity()!.residenceValidUntil)">
+          <div class="info-card-header">
+            <span class="material-icons" aria-hidden="true">home</span>
+            {{ 'employee.identity.sections.residence' | translate }}
+            @if (isExpired(identity()!.residenceValidUntil)) {
+              <span class="expiry-tag tag-expired">{{ 'employee.identity.expiredTag' | translate }}</span>
+            }
+          </div>
+          <div class="info-card-body">
+            <div class="info-row">
+              <span class="info-label">{{ 'employee.identity.fields.residenceDate' | translate }}</span>
+              <span class="info-value">{{ formatDate(identity()!.residenceDate) }}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">{{ 'employee.identity.fields.residencePlace' | translate }}</span>
+              <span class="info-value">{{ getValue(identity()!.residencePlace) }}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">{{ 'employee.identity.fields.residenceValidUntil' | translate }}</span>
+              <span class="info-value" [class.text-danger]="isExpired(identity()!.residenceValidUntil)">
+                {{ formatDate(identity()!.residenceValidUntil) }}
+              </span>
+            </div>
           </div>
         </div>
 
@@ -325,8 +364,43 @@
               </button>
             </div>
           </div>
+          <div class="field">
+            <label for="id-national-id-type">{{ 'employee.identity.fields.nationalIdType' | translate }}</label>
+            <input id="id-national-id-type" formControlName="nationalIdType" maxlength="40" [placeholder]="'employee.identity.placeholders.nationalIdType' | translate" />
+          </div>
+          <div class="field">
+            <label for="id-national-id-issue-date">{{ 'employee.identity.fields.nationalIdIssueDate' | translate }}</label>
+            <app-date-input inputId="id-national-id-issue-date" formControlName="nationalIdIssueDate" />
+          </div>
+          <div class="field">
+            <label for="id-national-id-issue-place">{{ 'employee.identity.fields.nationalIdIssuePlace' | translate }}</label>
+            <input id="id-national-id-issue-place" formControlName="nationalIdIssuePlace" maxlength="80" [placeholder]="'employee.identity.placeholders.nationalIdIssuePlace' | translate" />
+          </div>
         </div>
       </div>
+
+      <!-- ── Residence section ────────────────────────── -->
+      <div class="form-section">
+        <div class="form-section-title">
+          <span class="material-icons" aria-hidden="true">home</span>
+          {{ 'employee.identity.sections.residence' | translate }}
+        </div>
+        <div class="form-grid">
+          <div class="field">
+            <label for="id-residence-date">{{ 'employee.identity.fields.residenceDate' | translate }}</label>
+            <app-date-input inputId="id-residence-date" formControlName="residenceDate" />
+          </div>
+          <div class="field">
+            <label for="id-residence-place">{{ 'employee.identity.fields.residencePlace' | translate }}</label>
+            <input id="id-residence-place" formControlName="residencePlace" maxlength="80" [placeholder]="'employee.identity.placeholders.residencePlace' | translate" />
+          </div>
+          <div class="field">
+            <label for="id-residence-valid-until">{{ 'employee.identity.fields.residenceValidUntil' | translate }}</label>
+            <app-date-input inputId="id-residence-valid-until" formControlName="residenceValidUntil" />
+          </div>
+        </div>
+      </div>
+
 
       <!-- ── Passport & License section ──────────────── -->
       <div class="form-section">

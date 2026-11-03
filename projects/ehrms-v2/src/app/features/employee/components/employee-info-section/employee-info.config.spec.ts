@@ -45,6 +45,17 @@ describe('employee-info.config', () => {
     expect(byName('relationId')).toMatchObject({ required: true, lookup: 'relations' });
   });
 
+  it('shows where a previous job was: address and telephone, and offers both on the form', () => {
+    const view = EXPERIENCE.card(
+      { ...record, employerName: 'Ministry', jobTitle: 'Clerk', workAddress: 'Block 3, Khartoum', workPhone: '+249 123' },
+      context('en'),
+    );
+
+    expect(view.meta).toEqual(['Clerk', 'Block 3, Khartoum', '+249 123']);
+    expect(EXPERIENCE.fields.find((f) => f.name === 'workAddress')).toMatchObject({ type: 'text', max: 300, wide: true });
+    expect(EXPERIENCE.fields.find((f) => f.name === 'workPhone')).toMatchObject({ type: 'phone', max: 30 });
+  });
+
   it('shows a dependant with both names, the relation as a chip and what is known about them', () => {
     const r: DependantRecord = {
       ...record,

@@ -73,6 +73,9 @@ export interface ExperienceRecord extends InfoRecord {
   employerNameAr?: string;
   jobTitle?: string;
   place?: string;
+  /** Address and telephone of the previous workplace. */
+  workAddress?: string;
+  workPhone?: string;
   startDate?: string;
   endDate?: string;
 }

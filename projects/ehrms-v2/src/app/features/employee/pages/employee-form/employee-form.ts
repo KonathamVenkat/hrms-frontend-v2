@@ -49,6 +49,8 @@ type CommonFormValue = {
   lastName: string;
   lastNameAr: string;
   dateOfBirth: string;
+  placeOfBirth: string;
+  notes: string;
   gender: string;
   bloodGroup: string;
   maritalStatus: string;
@@ -175,6 +177,8 @@ export class EmployeeForm implements OnInit {
     lastName: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(100)]],
     lastNameAr: ['', [Validators.required, Validators.maxLength(200)]],
     dateOfBirth: ['', Validators.required],
+    placeOfBirth: ['', Validators.maxLength(200)],
+    notes: ['', Validators.maxLength(1000)],
     gender: ['', Validators.required],
     bloodGroup: [''],
     maritalStatus: [''],
@@ -304,6 +308,8 @@ export class EmployeeForm implements OnInit {
               lastName: e.lastName ?? '',
               lastNameAr: e.lastNameAr ?? '',
               dateOfBirth: e.dateOfBirth ?? '',
+              placeOfBirth: e.placeOfBirth ?? '',
+              notes: e.notes ?? '',
               gender: e.gender ?? '',
               bloodGroup: e.bloodGroup ?? '',
               maritalStatus: e.maritalStatus ?? '',
@@ -397,6 +403,8 @@ export class EmployeeForm implements OnInit {
       lastName: v.lastName,
       lastNameAr: v.lastNameAr,
       dateOfBirth: v.dateOfBirth,
+      placeOfBirth: v.placeOfBirth || undefined,
+      notes: v.notes || undefined,
       gender: v.gender,
       bloodGroup: v.bloodGroup || undefined,
       maritalStatus: v.maritalStatus || undefined,

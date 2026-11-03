@@ -2,6 +2,12 @@ export interface IdentityInfo {
   employeeIdentityId?: number;
   employeeId: number;
   nationalId?: string;
+  nationalIdType?: string;
+  nationalIdIssueDate?: string; // YYYY-MM-DD
+  nationalIdIssuePlace?: string;
+  residenceDate?: string;
+  residencePlace?: string;
+  residenceValidUntil?: string;
   passportNumber?: string;
   taxId?: string;
   socialSecurityNumber?: string;
@@ -25,6 +31,12 @@ export interface IdentityInfo {
 
 export interface IdentityInfoRequest {
   nationalId?: string;
+  nationalIdType?: string;
+  nationalIdIssueDate?: string;
+  nationalIdIssuePlace?: string;
+  residenceDate?: string;
+  residencePlace?: string;
+  residenceValidUntil?: string;
   passportNumber?: string;
   taxId?: string;
   socialSecurityNumber?: string;

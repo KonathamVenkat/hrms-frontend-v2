@@ -201,7 +201,9 @@
         "personalEmail": "personal@example.com",
         "personalPhone": "+968 9xxx xxxx",
         "workPhone": "+968 2xxx xxxx",
-        "username": "مثال: ahmed.rashidi"
+        "username": "مثال: ahmed.rashidi",
+        "placeOfBirth": "مثال: الخرطوم",
+        "notes": "ملاحظات اختيارية للموارد البشرية"
       },
       "passwordPlaceholder": "8 أحرف على الأقل",
       "saving": "جارٍ الحفظ...",
@@ -220,7 +222,10 @@
         "createFailed": "فشل إنشاء الموظف.",
         "updateFailed": "فشل تحديث الموظف.",
         "notFound": "الموظف غير موجود."
-      }
+      },
+      "placeOfBirth": "مكان الميلاد",
+      "notes": "ملاحظات",
+      "notesHint": "تظهر للموارد البشرية فقط ولا يراها الموظف."
     },
     "detail": {
       "photo": {
@@ -440,7 +445,8 @@
         "passport": "جواز السفر",
         "visa": "التأشيرة",
         "workPermit": "تصريح العمل",
-        "passportLicense": "جواز السفر ورخصة القيادة"
+        "passportLicense": "جواز السفر ورخصة القيادة",
+        "residence": "الإقامة"
       },
       "fields": {
         "nationalId": "الرقم الوطني",
@@ -458,7 +464,13 @@
         "expiryDate": "تاريخ الانتهاء",
         "permitNumber": "رقم التصريح",
         "workPermitNumber": "رقم تصريح العمل",
-        "workPermitExpiry": "تاريخ انتهاء تصريح العمل"
+        "workPermitExpiry": "تاريخ انتهاء تصريح العمل",
+        "nationalIdType": "نوع الرقم الوطني",
+        "nationalIdIssueDate": "تاريخ إصدار الرقم الوطني",
+        "nationalIdIssuePlace": "مكان إصدار الرقم الوطني",
+        "residenceDate": "تاريخ الإقامة",
+        "residencePlace": "مكان الإقامة",
+        "residenceValidUntil": "الإقامة سارية حتى"
       },
       "expiredTag": "منتهي الصلاحية",
       "expiringSoonTag": "قريب الانتهاء",
@@ -479,7 +491,10 @@
         "drivingLicenseNumber": "مثال: OM-DL-12345",
         "visaNumber": "الرقم المرجعي للتأشيرة",
         "visaType": "مثال: تأشيرة عمل، إقامة",
-        "workPermitNumber": "المرجع الخاص بتصريح العمل"
+        "workPermitNumber": "المرجع الخاص بتصريح العمل",
+        "nationalIdType": "مثال: بالميلاد",
+        "nationalIdIssuePlace": "مثال: أم درمان",
+        "residencePlace": "مثال: ود بلال"
       },
       "saving": "جارٍ الحفظ...",
       "saveIdentityInfo": "حفظ معلومات الهوية",
@@ -564,7 +579,8 @@
         "organisation": "المؤسسة",
         "managers": "المدراء",
         "workLocation": "موقع العمل",
-        "shiftEffectiveDate": "المناوبة وتاريخ السريان"
+        "shiftEffectiveDate": "المناوبة وتاريخ السريان",
+        "appointment": "تفاصيل التعيين"
       },
       "fields": {
         "department": "القسم",
@@ -582,7 +598,18 @@
         "reportsTo": "يرفع تقاريره إلى",
         "branch": "الفرع",
         "branchManager": "مدير الفرع",
-        "noBranch": "لم يُعيَّن فرع بعد"
+        "noBranch": "لم يُعيَّن فرع بعد",
+        "specialization": "التخصص",
+        "contractType": "نوع العقد",
+        "contractPeriod": "فترة العقد",
+        "contractStart": "بداية العقد",
+        "contractEnd": "نهاية العقد",
+        "formRequestNo": "رقم طلب الاستمارة",
+        "appointmentRequestNo": "رقم طلب التعيين",
+        "afe": "AFE",
+        "companyIdCardNo": "رقم بطاقة الشركة",
+        "currentWorkAddress": "عنوان العمل الحالي",
+        "currentWorkPhone": "هاتف العمل"
       },
       "notAssigned": "غير معيّن",
       "present": "حتى الآن",
@@ -611,14 +638,17 @@
         "effectiveFromLabel": "ساري من",
         "effectiveFromHint": "سيتم إغلاق التعيين السابق في اليوم السابق لهذا التاريخ",
         "remarksPlaceholder": "مثال: نقل بسبب إعادة هيكلة القسم...",
-        "branchLabel": "الفرع"
+        "branchLabel": "الفرع",
+        "selectSpecialization": "اختر التخصص",
+        "selectContractType": "اختر نوع العقد"
       },
       "saving": "جارٍ الحفظ...",
       "update": "تحديث",
       "errors": {
         "loadFailed": "فشل تحميل تفاصيل الوظيفة.",
         "saveFailed": "فشلت العملية. حاول مرة أخرى.",
-        "professionMismatch": "يجب أن تطابق المهنة مهنة المسمى الوظيفي المختار"
+        "professionMismatch": "يجب أن تطابق المهنة مهنة المسمى الوظيفي المختار",
+        "contractEndBeforeStart": "لا يمكن أن تكون نهاية العقد قبل بدايته."
       },
       "success": {
         "assigned": "تم حفظ التعيين الوظيفي الجديد بنجاح",
@@ -777,7 +807,9 @@
         "employerNameAr": "جهة العمل (بالعربية)",
         "jobTitle": "المسمى الوظيفي",
         "place": "المكان",
-        "email": "البريد الإلكتروني"
+        "email": "البريد الإلكتروني",
+        "workAddress": "عنوان العمل",
+        "workPhone": "هاتف العمل"
       },
       "dependants": {
         "title": "المُعالون",
@@ -2448,6 +2480,19 @@
         "label": "الصفحات",
         "prev": "الصفحة السابقة",
         "next": "الصفحة التالية"
+      },
+      "specializations": {
+        "title": "التخصصات",
+        "add": "إضافة تخصص",
+        "edit": "تعديل التخصص",
+        "search": "ابحث في التخصصات...",
+        "emptyTitle": "لا توجد تخصصات",
+        "emptyHint": "أضف تخصصاً من الأعلى",
+        "loadFailed": "تعذر تحميل التخصصات.",
+        "activeHint": "لا يمكن اختيار العناصر غير النشطة في سجلات الموظفين",
+        "deleteTitle": "حذف التخصص؟",
+        "deactivateTitle": "إيقاف التخصص؟",
+        "activateTitle": "تفعيل التخصص؟"
       }
     }
   },
@@ -2880,7 +2925,7 @@
       "APPROVED": "تمت الموافقة",
       "REJECTED": "مرفوض",
       "CANCELLED": "ملغى",
-        "UNKNOWN": "قيد المعالجة"
+      "UNKNOWN": "قيد المعالجة"
     },
     "history": {
       "title": "السجل",

@@ -201,7 +201,9 @@
         "personalEmail": "personal@example.com",
         "personalPhone": "+968 9xxx xxxx",
         "workPhone": "+968 2xxx xxxx",
-        "username": "e.g. ahmed.rashidi"
+        "username": "e.g. ahmed.rashidi",
+        "placeOfBirth": "e.g. Khartoum",
+        "notes": "Optional notes for HR"
       },
       "passwordPlaceholder": "Minimum 8 characters",
       "saving": "Saving...",
@@ -220,7 +222,10 @@
         "createFailed": "Failed to create employee.",
         "updateFailed": "Failed to update employee.",
         "notFound": "Employee not found."
-      }
+      },
+      "placeOfBirth": "Place of birth",
+      "notes": "Notes",
+      "notesHint": "Visible to HR only. The employee does not see these notes."
     },
     "detail": {
       "photo": {
@@ -440,7 +445,8 @@
         "passport": "Passport",
         "visa": "Visa",
         "workPermit": "Work Permit",
-        "passportLicense": "Passport & License"
+        "passportLicense": "Passport & License",
+        "residence": "Residence"
       },
       "fields": {
         "nationalId": "National ID",
@@ -458,7 +464,13 @@
         "expiryDate": "Expiry Date",
         "permitNumber": "Permit Number",
         "workPermitNumber": "Work Permit Number",
-        "workPermitExpiry": "Work Permit Expiry"
+        "workPermitExpiry": "Work Permit Expiry",
+        "nationalIdType": "National ID type",
+        "nationalIdIssueDate": "National ID issue date",
+        "nationalIdIssuePlace": "National ID issue place",
+        "residenceDate": "Residence date",
+        "residencePlace": "Place of residence",
+        "residenceValidUntil": "Residence valid until"
       },
       "expiredTag": "Expired",
       "expiringSoonTag": "Expiring Soon",
@@ -479,7 +491,10 @@
         "drivingLicenseNumber": "e.g. OM-DL-12345",
         "visaNumber": "Visa reference number",
         "visaType": "e.g. Work Visa, Residence",
-        "workPermitNumber": "Work permit reference"
+        "workPermitNumber": "Work permit reference",
+        "nationalIdType": "e.g. By birth",
+        "nationalIdIssuePlace": "e.g. Omdurman",
+        "residencePlace": "e.g. Wad Balal"
       },
       "saving": "Saving...",
       "saveIdentityInfo": "Save Identity Info",
@@ -564,7 +579,8 @@
         "organisation": "Organisation",
         "managers": "Managers",
         "workLocation": "Work Location",
-        "shiftEffectiveDate": "Shift & Effective Date"
+        "shiftEffectiveDate": "Shift & Effective Date",
+        "appointment": "Appointment details"
       },
       "fields": {
         "department": "Department",
@@ -582,7 +598,18 @@
         "reportsTo": "Reports To",
         "branch": "Branch",
         "branchManager": "Branch manager",
-        "noBranch": "No branch assigned yet"
+        "noBranch": "No branch assigned yet",
+        "specialization": "Specialization",
+        "contractType": "Contract type",
+        "contractPeriod": "Contract period",
+        "contractStart": "Contract start",
+        "contractEnd": "Contract end",
+        "formRequestNo": "Form request no.",
+        "appointmentRequestNo": "Appointment request no.",
+        "afe": "AFE",
+        "companyIdCardNo": "Company ID card no.",
+        "currentWorkAddress": "Current work address",
+        "currentWorkPhone": "Work telephone"
       },
       "notAssigned": "Not assigned",
       "present": "Present",
@@ -611,14 +638,17 @@
         "effectiveFromLabel": "Effective From",
         "effectiveFromHint": "Previous assignment will be closed on the day before this date",
         "remarksPlaceholder": "e.g. Transfer due to department restructuring...",
-        "branchLabel": "Branch"
+        "branchLabel": "Branch",
+        "selectSpecialization": "Select specialization",
+        "selectContractType": "Select contract type"
       },
       "saving": "Saving...",
       "update": "Update",
       "errors": {
         "loadFailed": "Failed to load job details.",
         "saveFailed": "Operation failed. Please try again.",
-        "professionMismatch": "The profession must be the one of the selected designation"
+        "professionMismatch": "The profession must be the one of the selected designation",
+        "contractEndBeforeStart": "The contract end cannot be before its start."
       },
       "success": {
         "assigned": "New job assignment saved successfully",
@@ -777,7 +807,9 @@
         "employerNameAr": "Employer (Arabic)",
         "jobTitle": "Job title",
         "place": "Place",
-        "email": "E-mail"
+        "email": "E-mail",
+        "workAddress": "Work address",
+        "workPhone": "Work telephone"
       },
       "dependants": {
         "title": "Dependants",
@@ -2448,6 +2480,19 @@
         "label": "Pages",
         "prev": "Previous page",
         "next": "Next page"
+      },
+      "specializations": {
+        "title": "Specializations",
+        "add": "Add Specialization",
+        "edit": "Edit Specialization",
+        "search": "Search specializations...",
+        "emptyTitle": "No specializations found",
+        "emptyHint": "Add a specialization above",
+        "loadFailed": "Failed to load specializations.",
+        "activeHint": "Inactive entries cannot be chosen on employee records",
+        "deleteTitle": "Delete Specialization?",
+        "deactivateTitle": "Deactivate Specialization?",
+        "activateTitle": "Activate Specialization?"
       }
     }
   },
@@ -2880,7 +2925,7 @@
       "APPROVED": "Approved",
       "REJECTED": "Rejected",
       "CANCELLED": "Cancelled",
-        "UNKNOWN": "In progress"
+      "UNKNOWN": "In progress"
     },
     "history": {
       "title": "History",

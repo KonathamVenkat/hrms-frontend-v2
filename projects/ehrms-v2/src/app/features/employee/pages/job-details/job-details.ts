@@ -91,6 +91,8 @@ export class JobDetailsComponent implements OnInit {
   /** Active sections of the department chosen in the form (from the database). */
   sections = signal<SectionLookup[]>([]);
   professions = signal<InfoLookup[]>([]);
+  specializations = signal<InfoLookup[]>([]);
+  contractTypes = signal<InfoLookup[]>([]);
   locations = signal<OfficeLocation[]>([]);
   shifts = signal<WorkShift[]>([]);
   /** Manager/executive-grade people of the department chosen in the form (from the database). */
@@ -136,6 +138,16 @@ export class JobDetailsComponent implements OnInit {
     sectionId: this.fb.control<number | null>(null),
     professionId: this.fb.control<number | null>(null, (c) => this.professionMismatch(c)),
     jobPositionId: this.fb.nonNullable.control('', Validators.maxLength(20)),
+    specializationId: this.fb.control<number | null>(null),
+    contractTypeId: this.fb.control<number | null>(null),
+    contractStartDate: this.fb.nonNullable.control(''),
+    contractEndDate: this.fb.nonNullable.control('', (c) => this.contractEndBeforeStart(c)),
+    formRequestNo: this.fb.nonNullable.control('', Validators.maxLength(30)),
+    appointmentRequestNo: this.fb.nonNullable.control('', Validators.maxLength(30)),
+    afe: this.fb.nonNullable.control('', Validators.maxLength(30)),
+    companyIdCardNo: this.fb.nonNullable.control('', Validators.maxLength(30)),
+    currentWorkAddress: this.fb.nonNullable.control('', Validators.maxLength(300)),
+    currentWorkPhone: this.fb.nonNullable.control('', [Validators.maxLength(30), Validators.pattern(/^[0-9+() -]*$/)]),
     reportingManagerId: this.fb.control<number | null>(null),
     functionalManagerId: this.fb.control<number | null>(null),
     locationId: this.fb.control<number | null>(null, Validators.required),
@@ -147,10 +159,23 @@ export class JobDetailsComponent implements OnInit {
   });
 
   ngOnInit(): void {
+    this.watchContractStart();
     this.watchDepartment();
     this.watchDesignation();
     this.loadCurrentJob();
     this.loadLookups();
+  }
+
+  /** The contract end is checked against the start, so a changed start re-checks the end. */
+  private watchContractStart(): void {
+    this.form.controls.contractStartDate.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.form.controls.contractEndDate.updateValueAndValidity());
+  }
+
+  private contractEndBeforeStart(control: AbstractControl): ValidationErrors | null {
+    const start = control.parent?.get('contractStartDate')?.value;
+    return start && control.value && control.value < start ? { contractEndBeforeStart: true } : null;
   }
 
   /** A designation that has a profession fixes it: the profession field follows the designation. */
@@ -320,6 +345,24 @@ export class JobDetailsComponent implements OnInit {
         },
       });
 
+    // Specializations and contract types
+    this.empSvc
+      .getSpecializations()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (res) => {
+          if (res.success) this.specializations.set(res.data);
+        },
+      });
+    this.empSvc
+      .getContractTypes()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (res) => {
+          if (res.success) this.contractTypes.set(res.data);
+        },
+      });
+
     // Office locations
     this.locationSvc
       .getActive()
@@ -355,6 +398,16 @@ export class JobDetailsComponent implements OnInit {
       sectionId: null,
       professionId: null,
       jobPositionId: '',
+      specializationId: null,
+      contractTypeId: null,
+      contractStartDate: '',
+      contractEndDate: '',
+      formRequestNo: '',
+      appointmentRequestNo: '',
+      afe: '',
+      companyIdCardNo: '',
+      currentWorkAddress: '',
+      currentWorkPhone: '',
       reportingManagerId: null,
       functionalManagerId: null,
       locationId: null,
@@ -382,6 +435,16 @@ export class JobDetailsComponent implements OnInit {
       departmentId: job.departmentId,
       designationId: job.designationId,
       jobPositionId: job.jobPositionId ?? '',
+      specializationId: job.specializationId ?? null,
+      contractTypeId: job.contractTypeId ?? null,
+      contractStartDate: job.contractStartDate ?? '',
+      contractEndDate: job.contractEndDate ?? '',
+      formRequestNo: job.formRequestNo ?? '',
+      appointmentRequestNo: job.appointmentRequestNo ?? '',
+      afe: job.afe ?? '',
+      companyIdCardNo: job.companyIdCardNo ?? '',
+      currentWorkAddress: job.currentWorkAddress ?? '',
+      currentWorkPhone: job.currentWorkPhone ?? '',
       reportingManagerId: job.reportingManagerId ?? null,
       functionalManagerId: job.functionalManagerId ?? null,
       locationId: job.locationId,
@@ -444,6 +507,16 @@ export class JobDetailsComponent implements OnInit {
       sectionId: v.sectionId ? +v.sectionId : null,
       professionId: v.professionId ?? undefined,
       jobPositionId: v.jobPositionId || undefined,
+      specializationId: v.specializationId ?? null,
+      contractTypeId: v.contractTypeId ?? null,
+      contractStartDate: v.contractStartDate || null,
+      contractEndDate: v.contractEndDate || null,
+      formRequestNo: v.formRequestNo.trim(),
+      appointmentRequestNo: v.appointmentRequestNo.trim(),
+      afe: v.afe.trim(),
+      companyIdCardNo: v.companyIdCardNo.trim(),
+      currentWorkAddress: v.currentWorkAddress.trim(),
+      currentWorkPhone: v.currentWorkPhone.trim(),
       reportingManagerId: v.reportingManagerId ? +v.reportingManagerId : undefined,
       functionalManagerId: v.functionalManagerId ? +v.functionalManagerId : undefined,
       locationId: Number(v.locationId),
@@ -500,6 +573,7 @@ export class JobDetailsComponent implements OnInit {
   getError(name: string): string {
     return fieldErrorMessage(this.form.get(name), this.translate, {
       professionMismatch: 'employee.jobDetails.errors.professionMismatch',
+      contractEndBeforeStart: 'employee.jobDetails.errors.contractEndBeforeStart',
     });
   }
 

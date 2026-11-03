@@ -49,6 +49,8 @@ function setup() {
         { id: 8, code: 'ENG', name: 'Engineer', nameAr: 'x' },
       ]),
     ),
+    getSpecializations: vi.fn(() => reply([{ id: 3, code: 'COST', name: 'Cost accounting', nameAr: 'x' }])),
+    getContractTypes: vi.fn(() => reply([{ id: 4, code: 'PERM', name: 'Permanent', nameAr: 'x' }])),
     getDepartmentManagers: vi.fn(() => reply([])),
     getSectionsByDepartment: vi.fn(() => reply([geology, survey])),
   };
@@ -234,5 +236,99 @@ describe('JobDetailsComponent section', () => {
     comp.openEditCurrent();
 
     expect(comp.form.controls.sectionId.enabled).toBe(true);
+  });
+
+  it('loads the specialization and contract type lists once', () => {
+    const { comp, empSvc } = setup();
+
+    expect(empSvc.getSpecializations).toHaveBeenCalledTimes(1);
+    expect(empSvc.getContractTypes).toHaveBeenCalledTimes(1);
+    expect(comp.specializations().map((s) => s.name)).toEqual(['Cost accounting']);
+    expect(comp.contractTypes().map((c) => c.name)).toEqual(['Permanent']);
+  });
+
+  it('sends the appointment fields trimmed, and null for an empty choice or date', () => {
+    const { comp, jobSvc } = setup();
+    fill(comp, 21);
+    comp.form.patchValue({ specializationId: 3, afe: ' AFE9 ', currentWorkAddress: ' Block 3 ' });
+    comp.onSubmit();
+
+    expect(jobSvc.assignJob).toHaveBeenCalledWith(
+      5,
+      expect.objectContaining({
+        specializationId: 3,
+        contractTypeId: null,
+        contractStartDate: null,
+        contractEndDate: null,
+        afe: 'AFE9',
+        formRequestNo: '',
+        currentWorkAddress: 'Block 3',
+      }),
+    );
+  });
+
+  it('refuses a contract that ends before it starts, says why, and sends nothing', () => {
+    const { comp, jobSvc } = setup();
+    fill(comp, 21);
+    comp.form.patchValue({ contractStartDate: '2026-05-02', contractEndDate: '2026-05-01' });
+    comp.form.controls.contractEndDate.markAsTouched();
+
+    expect(comp.form.controls.contractEndDate.hasError('contractEndBeforeStart')).toBe(true);
+    expect(comp.isInvalid('contractEndDate')).toBe(true);
+    comp.onSubmit();
+    expect(jobSvc.assignJob).not.toHaveBeenCalled();
+
+    // Moving the start back makes the end valid again without touching the end field.
+    comp.form.controls.contractStartDate.setValue('2026-04-01');
+    expect(comp.form.controls.contractEndDate.valid).toBe(true);
+  });
+
+  it('accepts a contract that ends the day it starts', () => {
+    const { comp } = setup();
+    fill(comp, 21);
+    comp.form.patchValue({ contractStartDate: '2026-05-01', contractEndDate: '2026-05-01' });
+
+    expect(comp.form.controls.contractEndDate.valid).toBe(true);
+  });
+
+  it('refuses a work phone with letters and a value over the lengths the backend allows', () => {
+    const { comp, jobSvc } = setup();
+    fill(comp, 21);
+    comp.form.patchValue({ currentWorkPhone: '12ab', afe: 'x'.repeat(31), currentWorkAddress: 'y'.repeat(301) });
+
+    expect(comp.form.controls.currentWorkPhone.hasError('pattern')).toBe(true);
+    expect(comp.form.controls.afe.hasError('maxlength')).toBe(true);
+    expect(comp.form.controls.currentWorkAddress.hasError('maxlength')).toBe(true);
+    comp.onSubmit();
+    expect(jobSvc.assignJob).not.toHaveBeenCalled();
+  });
+
+  it('fills the appointment fields from the current record when editing, and sends them back', () => {
+    const { comp, jobSvc } = setup();
+    comp.currentJob.set({
+      jobDetailsId: 1,
+      employeeId: 5,
+      departmentId: 10,
+      designationId: 20,
+      locationId: 30,
+      workMode: 'ON_SITE',
+      effectiveFrom: '2026-01-01',
+      specializationId: 3,
+      contractTypeId: 4,
+      contractStartDate: '2026-01-01',
+      contractEndDate: '2026-12-31',
+      afe: 'A1',
+      currentWorkPhone: '+249 123',
+    } as JobDetails);
+    comp.openEditCurrent();
+
+    expect(comp.form.controls.specializationId.value).toBe(3);
+    expect(comp.form.controls.contractEndDate.value).toBe('2026-12-31');
+    expect(comp.form.controls.afe.value).toBe('A1');
+    comp.onSubmit();
+    expect(jobSvc.updateCurrentJob).toHaveBeenCalledWith(
+      5,
+      expect.objectContaining({ specializationId: 3, contractTypeId: 4, contractEndDate: '2026-12-31', afe: 'A1', currentWorkPhone: '+249 123' }),
+    );
   });
 });

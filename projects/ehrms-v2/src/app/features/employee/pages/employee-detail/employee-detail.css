@@ -244,6 +244,10 @@
   font-size: 16px;
 }
 /* The Arabic name always reads right-to-left, whatever the UI language. */
+/* HR notes keep their line breaks. */
+.info-value.notes-text {
+  white-space: pre-wrap;
+}
 .info-value.arabic {
   direction: rtl;
   text-align: start;

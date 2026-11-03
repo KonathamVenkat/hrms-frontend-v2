@@ -79,6 +79,18 @@ export class EmployeeService {
     );
   }
 
+  getSpecializations(): Observable<ApiResponse<InfoLookup[]>> {
+    return this.http.get<ApiResponse<InfoLookup[]>>(
+      `${environment.serviceUrl}/api/v1/lookups/specializations`,
+    );
+  }
+
+  getContractTypes(): Observable<ApiResponse<InfoLookup[]>> {
+    return this.http.get<ApiResponse<InfoLookup[]>>(
+      `${environment.serviceUrl}/api/v1/lookups/contract-types`,
+    );
+  }
+
   // ── Departments lookup ────────────────────────────────────
   getDepartments(): Observable<ApiResponse<DepartmentLookup[]>> {
     return this.http.get<ApiResponse<DepartmentLookup[]>>(`${this.deptUrl}/lookup`);

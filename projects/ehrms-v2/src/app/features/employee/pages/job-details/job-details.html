@@ -126,6 +126,66 @@
                 <span class="info-value val-main">{{ currentJob()!.jobPositionId }}</span>
               </div>
             }
+            @if (currentJob()!.specializationName) {
+              <div class="info-row">
+                <span class="info-label">{{ 'employee.jobDetails.fields.specialization' | translate }}</span>
+                <div class="info-value">
+                  <span class="val-main">{{ currentJob()!.specializationName }}</span>
+                  <span class="val-ar">{{ currentJob()!.specializationNameAr }}</span>
+                </div>
+              </div>
+            }
+            @if (currentJob()!.contractTypeName) {
+              <div class="info-row">
+                <span class="info-label">{{ 'employee.jobDetails.fields.contractType' | translate }}</span>
+                <div class="info-value">
+                  <span class="val-main">{{ currentJob()!.contractTypeName }}</span>
+                  <span class="val-ar">{{ currentJob()!.contractTypeNameAr }}</span>
+                </div>
+              </div>
+            }
+            @if (currentJob()!.contractStartDate || currentJob()!.contractEndDate) {
+              <div class="info-row">
+                <span class="info-label">{{ 'employee.jobDetails.fields.contractPeriod' | translate }}</span>
+                <span class="info-value val-main">{{ currentJob()!.contractStartDate ?? '—' }} → {{ currentJob()!.contractEndDate ?? '—' }}</span>
+              </div>
+            }
+            @if (currentJob()!.formRequestNo) {
+              <div class="info-row">
+                <span class="info-label">{{ 'employee.jobDetails.fields.formRequestNo' | translate }}</span>
+                <span class="info-value val-main">{{ currentJob()!.formRequestNo }}</span>
+              </div>
+            }
+            @if (currentJob()!.appointmentRequestNo) {
+              <div class="info-row">
+                <span class="info-label">{{ 'employee.jobDetails.fields.appointmentRequestNo' | translate }}</span>
+                <span class="info-value val-main">{{ currentJob()!.appointmentRequestNo }}</span>
+              </div>
+            }
+            @if (currentJob()!.afe) {
+              <div class="info-row">
+                <span class="info-label">{{ 'employee.jobDetails.fields.afe' | translate }}</span>
+                <span class="info-value val-main">{{ currentJob()!.afe }}</span>
+              </div>
+            }
+            @if (currentJob()!.companyIdCardNo) {
+              <div class="info-row">
+                <span class="info-label">{{ 'employee.jobDetails.fields.companyIdCardNo' | translate }}</span>
+                <span class="info-value val-main">{{ currentJob()!.companyIdCardNo }}</span>
+              </div>
+            }
+            @if (currentJob()!.currentWorkAddress) {
+              <div class="info-row">
+                <span class="info-label">{{ 'employee.jobDetails.fields.currentWorkAddress' | translate }}</span>
+                <span class="info-value val-main">{{ currentJob()!.currentWorkAddress }}</span>
+              </div>
+            }
+            @if (currentJob()!.currentWorkPhone) {
+              <div class="info-row">
+                <span class="info-label">{{ 'employee.jobDetails.fields.currentWorkPhone' | translate }}</span>
+                <bdi class="info-value val-main">{{ currentJob()!.currentWorkPhone }}</bdi>
+              </div>
+            }
           </div>
         </div>
 
@@ -539,6 +599,79 @@
               </span>
             </div>
           }
+
+          <!-- ── Section: Appointment details ────────────── -->
+          <div class="form-section-title">{{ 'employee.jobDetails.sections.appointment' | translate }}</div>
+
+          <div class="field-row">
+            <div class="field">
+              <label for="jd-specialization-id">{{ 'employee.jobDetails.fields.specialization' | translate }}</label>
+              <select id="jd-specialization-id" formControlName="specializationId">
+                <option [ngValue]="null">{{ 'employee.jobDetails.formFields.selectSpecialization' | translate }}</option>
+                @for (s of specializations(); track s.id) {
+                  <option [ngValue]="s.id">{{ s.name }}</option>
+                }
+              </select>
+            </div>
+            <div class="field">
+              <label for="jd-contract-type-id">{{ 'employee.jobDetails.fields.contractType' | translate }}</label>
+              <select id="jd-contract-type-id" formControlName="contractTypeId">
+                <option [ngValue]="null">{{ 'employee.jobDetails.formFields.selectContractType' | translate }}</option>
+                @for (c of contractTypes(); track c.id) {
+                  <option [ngValue]="c.id">{{ c.name }}</option>
+                }
+              </select>
+            </div>
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label for="jd-contract-start">{{ 'employee.jobDetails.fields.contractStart' | translate }}</label>
+              <app-date-input inputId="jd-contract-start" formControlName="contractStartDate" />
+            </div>
+            <div class="field">
+              <label for="jd-contract-end">{{ 'employee.jobDetails.fields.contractEnd' | translate }}</label>
+              <app-date-input inputId="jd-contract-end" formControlName="contractEndDate" />
+              @if (isInvalid('contractEndDate')) {
+                <span class="field-error" id="fe-contractEndDate">{{ getError('contractEndDate') }}</span>
+              }
+            </div>
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label for="jd-form-request-no">{{ 'employee.jobDetails.fields.formRequestNo' | translate }}</label>
+              <input id="jd-form-request-no" formControlName="formRequestNo" maxlength="30" />
+            </div>
+            <div class="field">
+              <label for="jd-appointment-request-no">{{ 'employee.jobDetails.fields.appointmentRequestNo' | translate }}</label>
+              <input id="jd-appointment-request-no" formControlName="appointmentRequestNo" maxlength="30" />
+            </div>
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label for="jd-afe">{{ 'employee.jobDetails.fields.afe' | translate }}</label>
+              <input id="jd-afe" formControlName="afe" maxlength="30" />
+            </div>
+            <div class="field">
+              <label for="jd-company-id-card-no">{{ 'employee.jobDetails.fields.companyIdCardNo' | translate }}</label>
+              <input id="jd-company-id-card-no" formControlName="companyIdCardNo" maxlength="30" />
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="jd-current-work-address">{{ 'employee.jobDetails.fields.currentWorkAddress' | translate }}</label>
+            <input id="jd-current-work-address" formControlName="currentWorkAddress" maxlength="300" />
+          </div>
+
+          <div class="field">
+            <label for="jd-current-work-phone">{{ 'employee.jobDetails.fields.currentWorkPhone' | translate }}</label>
+            <input id="jd-current-work-phone" type="tel" formControlName="currentWorkPhone" maxlength="30" inputmode="tel" />
+            @if (isInvalid('currentWorkPhone')) {
+              <span class="field-error" id="fe-currentWorkPhone">{{ getError('currentWorkPhone') }}</span>
+            }
+          </div>
 
           <!-- ── Remarks ─────────────────────────────────── -->
           <div class="field">

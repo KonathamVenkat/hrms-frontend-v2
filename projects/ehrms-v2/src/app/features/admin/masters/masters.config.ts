@@ -11,6 +11,7 @@ export type MasterKey =
   | 'nationalities'
   | 'contractTypes'
   | 'professions'
+  | 'specializations'
   | 'educationLevels'
   | 'languages'
   | 'languageLevels'
@@ -95,6 +96,11 @@ const CONTRACT_TYPES: MasterConfig = {
   icon: 'description',
 };
 const PROFESSIONS: MasterConfig = { key: 'professions', endpoint: 'professions', icon: 'work' };
+const SPECIALIZATIONS: MasterConfig = {
+  key: 'specializations',
+  endpoint: 'specializations',
+  icon: 'workspace_premium',
+};
 const EDUCATION_LEVELS: MasterConfig = {
   key: 'educationLevels',
   endpoint: 'education-levels',
@@ -143,6 +149,7 @@ export const REFERENCE_MASTER_ROUTES: { path: string; title: string; master: Mas
   { path: 'nationalities', title: 'Nationalities', master: NATIONALITIES },
   { path: 'contract-types', title: 'Contract Types', master: CONTRACT_TYPES },
   { path: 'professions', title: 'Professions', master: PROFESSIONS },
+  { path: 'specializations', title: 'Specializations', master: SPECIALIZATIONS },
   { path: 'education-levels', title: 'Education Levels', master: EDUCATION_LEVELS },
   { path: 'languages', title: 'Languages', master: LANGUAGES },
   { path: 'language-levels', title: 'Language Levels', master: LANGUAGE_LEVELS },
