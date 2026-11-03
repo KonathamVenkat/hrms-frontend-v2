@@ -54,7 +54,7 @@
   padding-inline: 10px;
   border-radius: 12px;
   background: var(--mat-sys-surface-container);
-  font-size: 14px;
+  font-size: 17px;
 }
 
 .info-list {
@@ -83,7 +83,7 @@
 
 .info-name {
   margin: 0;
-  font-size: 16px;
+  font-size: 17px;
   font-weight: 700;
 }
 
@@ -93,7 +93,7 @@
   flex-wrap: wrap;
   gap: 4px 14px;
   margin: 4px 0 0;
-  font-size: 14px;
+  font-size: 17px;
   color: var(--mat-sys-on-surface-variant);
 }
 
@@ -102,7 +102,7 @@
   border-radius: 12px;
   background: var(--mat-sys-secondary-container);
   color: var(--mat-sys-on-secondary-container);
-  font-size: 14px;
+  font-size: 17px;
   font-weight: 600;
 }
 
@@ -116,7 +116,7 @@
   align-items: center;
   gap: 6px;
   margin: var(--space-4, 16px) 0 0;
-  font-size: 14px;
+  font-size: 17px;
   font-weight: 600;
   color: var(--mat-sys-on-surface-variant);
 }
@@ -126,7 +126,7 @@
 }
 
 .inactive-card .info-name {
-  font-size: 15px;
+  font-size: 17px;
   font-weight: 600;
 }
 
@@ -148,7 +148,7 @@
 
 /* Arabic: 16px everywhere on this tab (Arabic letters look smaller than Latin at the same size). */
 :host-context(html[lang='ar']) {
-  font-size: 16px;
+  font-size: 17px;
 }
 :host-context(html[lang='ar']) .info-count,
 :host-context(html[lang='ar']) .info-meta,
@@ -162,8 +162,11 @@
 :host-context(html[lang='ar']) .field-hint,
 :host-context(html[lang='ar']) .toggle-label,
 :host-context(html[lang='ar']) .toggle-hint {
-  font-size: 16px;
+  font-size: 17px;
 }
 :host-context(html[lang='ar']) :is(small, label, .req, .drop-hint) {
-  font-size: 16px;
+  font-size: 17px;
+}
+:host-context(html[lang='ar']) :is(label) {
+  font-size: 17px;
 }

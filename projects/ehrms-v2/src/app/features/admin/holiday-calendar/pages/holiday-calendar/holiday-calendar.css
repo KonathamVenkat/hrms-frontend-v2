@@ -17,7 +17,7 @@
   border-block-end: 1px solid var(--mat-sys-outline-variant);
 }
 .month-name {
-  font-size: 16px;
+  font-size: 17px;
   font-weight: 800;
 }
 .holiday-list {
@@ -58,7 +58,7 @@
   font-variant-numeric: tabular-nums;
 }
 .date-dow {
-  font-size: 14px;
+  font-size: 17px;
   font-weight: 600;
 }
 
@@ -82,7 +82,7 @@
   font-size: 14px;
 }
 .h-desc {
-  font-size: 13px;
+  font-size: 17px;
   font-style: italic;
   color: var(--mat-sys-on-surface-variant);
 }

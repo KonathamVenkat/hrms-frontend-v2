@@ -10,7 +10,7 @@
   border-radius: 999px;
   background: var(--mat-sys-primary-container);
   color: var(--mat-sys-on-primary-container);
-  font-size: 14px;
+  font-size: 17px;
   font-weight: 700;
 }
 
@@ -77,7 +77,7 @@
   border-radius: 999px;
   background: var(--status-pending-bg);
   color: var(--status-pending-fg);
-  font-size: 14px;
+  font-size: 17px;
   font-weight: 700;
 }
 .primary-badge .material-icons {
@@ -133,7 +133,7 @@
 
 /* Arabic: 16px everywhere on this tab (Arabic letters look smaller than Latin at the same size). */
 :host-context(html[lang='ar']) {
-  font-size: 16px;
+  font-size: 17px;
 }
 :host-context(html[lang='ar']) .ba-count,
 :host-context(html[lang='ar']) .primary-badge,
@@ -143,8 +143,11 @@
 :host-context(html[lang='ar']) .field-hint,
 :host-context(html[lang='ar']) .toggle-label,
 :host-context(html[lang='ar']) .toggle-hint {
-  font-size: 16px;
+  font-size: 17px;
 }
 :host-context(html[lang='ar']) :is(small, label, .req, .drop-hint) {
-  font-size: 16px;
+  font-size: 17px;
+}
+:host-context(html[lang='ar']) :is(label) {
+  font-size: 17px;
 }

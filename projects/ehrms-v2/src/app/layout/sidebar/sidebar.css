@@ -104,6 +104,7 @@
   gap: var(--space-3);
   cursor: pointer;
   font: var(--mat-sys-label-large);
+  font-size: 17px;
   transition:
     background var(--motion-fast),
     color var(--motion-fast);
@@ -201,6 +202,7 @@
   background: var(--mat-sys-inverse-surface);
   color: var(--mat-sys-inverse-on-surface);
   font: var(--mat-sys-label-medium);
+  font-size: 17px;
   white-space: nowrap;
   padding: 6px 10px;
   border-radius: var(--radius-sm);
@@ -241,6 +243,7 @@
   gap: var(--space-2);
   padding: var(--space-3) var(--space-4);
   font: var(--mat-sys-label-large);
+  font-size: 17px;
   font-weight: 600;
   color: var(--mat-sys-primary);
   border-block-end: var(--border-subtle);
@@ -277,6 +280,7 @@
   background: transparent;
   color: var(--mat-sys-on-surface-variant);
   font: var(--mat-sys-body-medium);
+  font-size: 17px;
   text-align: start;
   cursor: pointer;
 }
@@ -410,12 +414,12 @@
   }
 }
 
-/* Arabic: a wider submenu and 16px menu text (Arabic letters read smaller than Latin at the same size). */
+/* Arabic: a wider submenu; menu text is 17px in both languages (client requirement). */
 :host-context(html[lang='ar']) {
   --flyout-w: 300px;
 }
 :host-context(html[lang='ar']) :is(.flyout-link, .flyout-header, .rail-label, .rail-tooltip) {
-  font-size: 16px;
+  font-size: 17px;
   line-height: 1.6;
 }
 :host-context(html[lang='ar']) .flyout-link {

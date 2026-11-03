@@ -15,7 +15,7 @@
 }
 .field-error {
   margin: 0;
-  font-size: 13px;
+  font-size: 17px;
   color: var(--status-rejected-fg);
 }
 .empty-state a {

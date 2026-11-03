@@ -46,7 +46,7 @@
   z-index: 1;
   padding-inline: 4px;
   background: var(--table-surface);
-  font-size: 14px;
+  font-size: 17px;
   color: var(--mat-sys-on-surface-variant);
 }
 .filter-actions {
@@ -89,7 +89,7 @@
   background: transparent;
 }
 .audit-table th {
-  font-size: 14px;
+  font-size: 17px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -109,7 +109,7 @@
   border-radius: 999px;
   background: var(--mat-sys-secondary-container);
   color: var(--mat-sys-on-secondary-container);
-  font-size: 14px;
+  font-size: 17px;
   font-weight: 700;
   letter-spacing: 0.02em;
 }

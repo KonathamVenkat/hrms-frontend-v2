@@ -10,7 +10,7 @@
   border: 1.5px solid #e8edf0;
   border-radius: 8px;
   font: inherit;
-  font-size: 13px;
+  font-size: 17px;
   background: #f8fafc;
 }
 
@@ -19,7 +19,7 @@
   align-items: center;
   gap: 8px;
   min-height: 44px;
-  font-size: 13px;
+  font-size: 17px;
   cursor: pointer;
 }
 
@@ -32,7 +32,7 @@
   padding: 8px 12px;
   border-radius: 8px;
   background: #e6f4f1;
-  font-size: 13px;
+  font-size: 17px;
 }
 
 .mp-clear {
@@ -87,18 +87,18 @@
 }
 
 .mp-name {
-  font-size: 13px;
+  font-size: 17px;
   font-weight: 600;
 }
 
 .mp-meta {
-  font-size: 14px;
+  font-size: 17px;
   color: #475569;
 }
 
 .mp-status {
   margin: 8px 0;
-  font-size: 14px;
+  font-size: 17px;
   color: #475569;
 }
 

@@ -60,7 +60,7 @@
 }
 .brand-sub {
   margin: 0;
-  font-size: 16px;
+  font-size: 17px;
   line-height: 1.6;
   color: var(--mat-sys-on-surface-variant);
 }
@@ -118,13 +118,13 @@
   justify-content: center;
 }
 .stitle {
-  font-size: 16px;
+  font-size: 17px;
   font-weight: 700;
   color: var(--mat-sys-on-surface);
 }
 .ssub {
   margin-block-start: 2px;
-  font-size: 14px;
+  font-size: 17px;
   color: var(--mat-sys-on-surface-variant);
 }
 
@@ -324,7 +324,7 @@
 }
 .form-header p {
   margin: 10px 0 0;
-  font-size: 16px;
+  font-size: 17px;
   color: var(--mat-sys-on-surface-variant);
 }
 
@@ -344,7 +344,7 @@
   flex-shrink: 0;
 }
 .error-banner span {
-  font-size: 14px;
+  font-size: 17px;
   color: var(--status-rejected-fg);
   line-height: 1.5;
 }
@@ -356,7 +356,7 @@
 
 .forgot-note {
   margin: 0 0 var(--space-5);
-  font-size: 14px;
+  font-size: 17px;
   line-height: 1.5;
   color: var(--mat-sys-on-surface-variant);
 }
@@ -373,7 +373,7 @@
 .submit-btn {
   inline-size: 100%;
   block-size: 52px;
-  font-size: 16px;
+  font-size: 17px;
   font-weight: 700;
   display: flex;
   /* Material puts the icon first; reversed so the arrow follows the label. */
@@ -400,7 +400,7 @@
 
 .footer-text {
   text-align: center;
-  font-size: 14px;
+  font-size: 17px;
   color: var(--mat-sys-on-surface-variant);
   margin-block-start: var(--space-6);
 }

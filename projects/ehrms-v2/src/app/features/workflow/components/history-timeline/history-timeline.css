@@ -34,12 +34,12 @@
   padding-inline: var(--space-2);
   border-radius: 999px;
   background: var(--mat-sys-surface-container-high);
-  font-size: 13px;
+  font-size: 17px;
 }
 .role,
 .when {
   color: var(--mat-sys-on-surface-variant);
-  font-size: 13px;
+  font-size: 17px;
 }
 .comment {
   font-style: italic;

@@ -52,7 +52,7 @@
   background: var(--mat-sys-primary-container);
   color: var(--mat-sys-on-primary-container);
   font-family: 'IBM Plex Mono', monospace;
-  font-size: 14px;
+  font-size: 17px;
   font-weight: 600;
 }
 
@@ -102,7 +102,7 @@
   gap: var(--space-2);
   padding: var(--space-4) var(--space-5) 0;
   color: var(--mat-sys-on-surface);
-  font-size: 16px;
+  font-size: 17px;
   font-weight: 800;
 }
 .card-header .material-icons {
@@ -110,7 +110,7 @@
 }
 .card-hint {
   margin-inline-start: auto;
-  font-size: 14px;
+  font-size: 17px;
   font-weight: 400;
   text-transform: none;
   letter-spacing: 0;
@@ -223,5 +223,5 @@ input[dir='rtl'] {
 :host-context(html[lang='ar']) .card-header,
 :host-context(html[lang='ar']) button,
 :host-context(html[lang='ar']) .status-badge {
-  font-size: 16px;
+  font-size: 17px;
 }

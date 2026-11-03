@@ -11,7 +11,7 @@
   gap: var(--space-1);
   padding: 2px var(--space-3);
   border-radius: 999px;
-  font-size: 14px;
+  font-size: 17px;
   font-weight: 700;
 }
 .chip .material-icons {
@@ -84,7 +84,7 @@
   padding: var(--space-3) var(--space-5);
   background: var(--table-header-bg);
   color: var(--mat-sys-on-surface-variant);
-  font-size: 14px;
+  font-size: 17px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -108,21 +108,22 @@
   border-block-end: 0;
 }
 .info-label {
-  inline-size: 140px;
+  inline-size: 180px;
   flex-shrink: 0;
   color: var(--mat-sys-on-surface-variant);
-  font-size: 13px;
-  font-weight: 600;
+  font-size: 17px;
+  font-weight: 700;
 }
 .info-value {
   flex: 1;
   min-inline-size: 0;
   overflow-wrap: anywhere;
+  font-size: 17px;
 }
 /* Identifiers are left-to-right data in a monospace face, aligned to the start. */
 .mono {
   font-family: 'IBM Plex Mono', monospace;
-  font-size: 13px;
+  font-size: 17px;
   unicode-bidi: plaintext;
 }
 .text-danger {
@@ -137,7 +138,7 @@
   margin-inline-start: auto;
   padding: 1px var(--space-2);
   border-radius: 999px;
-  font-size: 14px;
+  font-size: 17px;
   letter-spacing: 0;
   text-transform: none;
 }
@@ -233,7 +234,7 @@
     grid-template-columns: 1fr;
   }
   .info-label {
-    inline-size: 110px;
+    inline-size: 140px;
   }
 }
 @media (prefers-reduced-transparency: reduce) {
@@ -247,7 +248,7 @@
 
 /* Arabic: 16px everywhere on this tab (Arabic letters look smaller than Latin at the same size). */
 :host-context(html[lang='ar']) {
-  font-size: 16px;
+  font-size: 17px;
 }
 :host-context(html[lang='ar']) .chip,
 :host-context(html[lang='ar']) .info-card-header,
@@ -260,8 +261,11 @@
 :host-context(html[lang='ar']) .field-hint,
 :host-context(html[lang='ar']) .toggle-label,
 :host-context(html[lang='ar']) .toggle-hint {
-  font-size: 16px;
+  font-size: 17px;
 }
 :host-context(html[lang='ar']) :is(small, label, .req, .drop-hint) {
-  font-size: 16px;
+  font-size: 17px;
+}
+:host-context(html[lang='ar']) :is(label, .info-label, .info-value, .mono) {
+  font-size: 17px;
 }

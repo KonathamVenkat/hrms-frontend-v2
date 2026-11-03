@@ -3,7 +3,7 @@
 }
 .card-heading {
   margin: 0 0 var(--space-3);
-  font-size: 16px;
+  font-size: 17px;
 }
 .stage {
   margin: 0;
@@ -26,6 +26,6 @@
 }
 .field-error {
   margin: 0;
-  font-size: 13px;
+  font-size: 17px;
   color: var(--status-rejected-fg);
 }

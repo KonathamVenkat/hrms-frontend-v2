@@ -10,7 +10,7 @@
   flex-wrap: wrap;
   gap: var(--space-2);
   margin: var(--space-4) 0 var(--space-3);
-  font-size: 16px;
+  font-size: 17px;
   font-weight: 700;
 }
 .preview-title mat-icon {
@@ -21,7 +21,7 @@
 }
 .preview-note {
   margin-inline-start: var(--space-1);
-  font-size: 14px;
+  font-size: 17px;
   font-weight: 400;
   color: var(--mat-sys-on-surface-variant);
 }
@@ -30,7 +30,7 @@
 }
 .preview-group-label {
   margin-block-end: var(--space-2);
-  font-size: 14px;
+  font-size: 17px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -62,7 +62,7 @@
 }
 .preview-basis {
   min-inline-size: 120px;
-  font-size: 13px;
+  font-size: 17px;
   color: var(--mat-sys-on-surface-variant);
 }
 .preview-amount {
@@ -151,7 +151,7 @@
   font-weight: 700;
 }
 .history-dates {
-  font-size: 13px;
+  font-size: 17px;
   color: var(--mat-sys-on-surface-variant);
 }
 .current-badge {
@@ -159,7 +159,7 @@
   border-radius: 999px;
   background: var(--status-active-bg);
   color: var(--status-active-fg);
-  font-size: 14px;
+  font-size: 17px;
   font-weight: 700;
 }
 .history-amounts {
@@ -173,13 +173,13 @@
   gap: 2px;
 }
 .amount-label {
-  font-size: 14px;
+  font-size: 17px;
   font-weight: 600;
   text-transform: uppercase;
   color: var(--mat-sys-on-surface-variant);
 }
 .amount-val {
-  font-size: 16px;
+  font-size: 17px;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
 }
@@ -193,7 +193,7 @@
 }
 .history-remarks {
   margin-block-start: var(--space-2);
-  font-size: 13px;
+  font-size: 17px;
   font-style: italic;
   color: var(--mat-sys-on-surface-variant);
 }

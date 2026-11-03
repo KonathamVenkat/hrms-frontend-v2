@@ -27,7 +27,7 @@
   border-radius: 999px;
   background: var(--mat-sys-primary-container);
   color: var(--mat-sys-on-primary-container);
-  font-size: 14px;
+  font-size: 17px;
   font-weight: 700;
 }
 .pending-chip {
@@ -38,7 +38,7 @@
   border-radius: 999px;
   background: var(--status-pending-bg);
   color: var(--status-pending-fg);
-  font-size: 14px;
+  font-size: 17px;
   font-weight: 700;
 }
 .pending-chip .material-icons {
@@ -165,7 +165,7 @@
 .type-badge {
   padding: 4px var(--space-3);
   border-radius: 999px;
-  font-size: 14px;
+  font-size: 17px;
   font-weight: 700;
   white-space: nowrap;
 }
@@ -205,7 +205,7 @@
   font-variant-numeric: tabular-nums;
 }
 .date-arrow {
-  font-size: 16px;
+  font-size: 17px;
   color: var(--mat-sys-on-surface-variant);
 }
 :host-context([dir='rtl']) .date-arrow {
@@ -219,7 +219,7 @@
   border-radius: 999px;
   background: var(--status-approved-bg);
   color: var(--status-approved-fg);
-  font-size: 14px;
+  font-size: 17px;
   font-weight: 700;
   white-space: nowrap;
 }
@@ -235,7 +235,7 @@
   gap: var(--space-1) var(--space-4);
   padding-block-start: var(--space-2);
   border-block-start: 1px solid var(--mat-sys-outline-variant);
-  font-size: 13px;
+  font-size: 17px;
   color: var(--mat-sys-on-surface-variant);
 }
 .card-reason {
@@ -292,7 +292,7 @@
   gap: var(--space-3);
 }
 .pag-info {
-  font-size: 13px;
+  font-size: 17px;
   color: var(--mat-sys-on-surface-variant);
 }
 .pag-btns {
@@ -348,7 +348,7 @@
   font-weight: 700;
 }
 .confirm-dates {
-  font-size: 13px;
+  font-size: 17px;
   color: var(--mat-sys-on-surface-variant);
 }
 .confirm-days {
@@ -356,7 +356,7 @@
   border-radius: 999px;
   background: var(--status-approved-bg);
   color: var(--status-approved-fg);
-  font-size: 14px;
+  font-size: 17px;
   font-weight: 700;
 }
 

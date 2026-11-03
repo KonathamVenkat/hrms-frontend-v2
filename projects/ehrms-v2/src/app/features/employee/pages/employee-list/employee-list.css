@@ -26,7 +26,7 @@
   border-radius: 999px;
   background: var(--mat-sys-primary-container);
   color: var(--mat-sys-on-primary-container);
-  font-size: 14px;
+  font-size: 17px;
   font-weight: 700;
 }
 
@@ -186,7 +186,7 @@
   border-radius: 50%;
   background: var(--grad-avatar);
   color: #fff;
-  font-size: 13px;
+  font-size: 17px;
   font-weight: 700;
   box-shadow: var(--shadow-1);
 }
@@ -199,13 +199,13 @@
   font-weight: 700;
 }
 .emp-code {
-  font-size: 13px;
+  font-size: 17px;
   font-weight: 600;
   color: var(--mat-sys-on-surface-variant);
   font-variant-numeric: tabular-nums;
 }
 .emp-email {
-  font-size: 13px;
+  font-size: 17px;
   color: var(--mat-sys-on-surface-variant);
   overflow-wrap: anywhere;
 }
@@ -217,7 +217,7 @@
   gap: 6px;
   padding: 3px var(--space-3);
   border-radius: 999px;
-  font-size: 14px;
+  font-size: 17px;
   font-weight: 700;
 }
 /* This template draws its own dot (.status-dot); skip the global one. */
@@ -236,7 +236,7 @@
   display: inline-block;
   padding: 3px var(--space-3);
   border-radius: 999px;
-  font-size: 14px;
+  font-size: 17px;
   font-weight: 600;
 }
 
@@ -299,7 +299,7 @@
 }
 .empty-state p {
   margin: 0;
-  font-size: 16px;
+  font-size: 17px;
   font-weight: 600;
 }
 .empty-state small {
@@ -319,7 +319,7 @@
 .pag-info,
 .page-size-wrap {
   color: var(--mat-sys-on-surface-variant);
-  font-size: 13px;
+  font-size: 17px;
 }
 
 .pag-btns {
@@ -428,7 +428,7 @@
   .emp-table td:nth-child(2),
   .emp-table td:nth-child(3) {
     color: var(--mat-sys-on-surface-variant);
-    font-size: 14px;
+    font-size: 17px;
   }
   .emp-table td:nth-child(4),
   .emp-table td:nth-child(5) {
@@ -470,8 +470,11 @@
 
 /* Arabic: 16px everywhere on this page (Arabic letters look smaller than Latin at the same size). */
 :host-context(html[lang='ar']) {
-  font-size: 16px;
+  font-size: 17px;
 }
 :host-context(html[lang='ar']) :is(th, td, small, label, input, select, button, .count-badge, .emp-code, .status-badge, .type-badge, .pag-info, .page-size-wrap) {
-  font-size: 16px;
+  font-size: 17px;
+}
+:host-context(html[lang='ar']) :is(label) {
+  font-size: 17px;
 }

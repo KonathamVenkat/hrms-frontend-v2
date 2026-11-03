@@ -49,7 +49,7 @@
   padding: 0 var(--space-2);
   border-radius: 999px;
   background: rgb(255 255 255 / 25%);
-  font-size: 14px;
+  font-size: 17px;
 }
 .tab-btn:not(.active) .tab-count {
   background: var(--mat-sys-primary-container);
@@ -100,7 +100,7 @@
 }
 .empty-job p {
   margin: 0;
-  font-size: 16px;
+  font-size: 17px;
   font-weight: 600;
 }
 .empty-job small {
@@ -129,7 +129,7 @@
   padding: var(--space-3) var(--space-5);
   background: var(--table-header-bg);
   color: var(--mat-sys-on-surface-variant);
-  font-size: 14px;
+  font-size: 17px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -152,17 +152,25 @@
   border-block-end: 0;
 }
 .info-label {
-  inline-size: 130px;
+  inline-size: 180px;
   flex-shrink: 0;
   color: var(--mat-sys-on-surface-variant);
-  font-size: 13px;
-  font-weight: 600;
+  font-size: 17px;
+  font-weight: 700;
 }
 .info-value {
   display: flex;
   flex-direction: column;
   flex: 1;
   min-inline-size: 0;
+}
+.info-value,
+.tl-value,
+.val-main,
+.val-ar,
+.val-sub,
+.val-code {
+  font-size: 17px;
 }
 .val-main {
   font-weight: 700;
@@ -175,11 +183,9 @@
 }
 .val-sub {
   color: var(--mat-sys-on-surface-variant);
-  font-size: 13px;
 }
 .val-code {
   font-family: 'IBM Plex Mono', monospace;
-  font-size: 14px;
   color: var(--mat-sys-primary);
   unicode-bidi: plaintext;
 }
@@ -194,7 +200,7 @@
   border-radius: 999px;
   background: var(--status-approved-bg);
   color: var(--status-approved-fg);
-  font-size: 14px;
+  font-size: 17px;
   font-weight: 700;
 }
 .grade-badge-sm {
@@ -206,12 +212,12 @@
   align-self: flex-start;
   padding: 2px var(--space-3);
   border-radius: 999px;
-  font-size: 14px;
+  font-size: 17px;
   font-weight: 700;
   text-transform: capitalize;
 }
 .work-mode-badge.sm {
-  font-size: 14px;
+  font-size: 17px;
 }
 .wm-onsite {
   background: var(--status-active-bg);
@@ -306,7 +312,7 @@
   border-radius: 999px;
   background: var(--status-active-bg);
   color: var(--status-active-fg);
-  font-size: 14px;
+  font-size: 17px;
   font-weight: 700;
 }
 .timeline-details {
@@ -320,10 +326,11 @@
   padding-block: var(--space-2);
 }
 .tl-label {
-  inline-size: 120px;
+  inline-size: 180px;
   flex-shrink: 0;
   color: var(--mat-sys-on-surface-variant);
-  font-size: 13px;
+  font-size: 17px;
+  font-weight: 700;
   font-weight: 600;
 }
 .tl-value {
@@ -340,7 +347,7 @@
 .modal-sub {
   margin: 2px 0 0;
   color: var(--mat-sys-on-surface-variant);
-  font-size: 13px;
+  font-size: 17px;
 }
 .form-section-title {
   padding-block-end: var(--space-1);
@@ -354,7 +361,7 @@
   }
   .info-label,
   .tl-label {
-    inline-size: 100px;
+    inline-size: 130px;
   }
 }
 @media (prefers-reduced-transparency: reduce) {
@@ -369,7 +376,7 @@
 
 /* Arabic letters look smaller than Latin at the same size: 16px for the whole Job Details tab. */
 :host-context(html[lang='ar']) {
-  font-size: 16px;
+  font-size: 17px;
 }
 :host-context(html[lang='ar']) :is(
     .tab-count,
@@ -384,5 +391,10 @@
     .modal-sub,
     button
   ) {
-  font-size: 16px;
+  font-size: 17px;
+}
+
+/* Client size for every label and value: 17px in Arabic too (labels are bold). */
+:host-context(html[lang='ar']) :is(.info-label, .tl-label, label, .info-value, .tl-value, .val-main, .val-ar, .val-sub, .val-code) {
+  font-size: 17px;
 }

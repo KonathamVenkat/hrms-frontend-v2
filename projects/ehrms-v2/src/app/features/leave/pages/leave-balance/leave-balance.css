@@ -30,7 +30,7 @@
 .chip {
   padding: 2px var(--space-3);
   border-radius: 999px;
-  font-size: 14px;
+  font-size: 17px;
   font-weight: 700;
 }
 .chip-total {
@@ -140,18 +140,18 @@
   align-items: flex-end;
 }
 .type-code {
-  font-size: 14px;
+  font-size: 17px;
   font-weight: 800;
 }
 .type-name {
   font-weight: 600;
 }
 .type-emp-count {
-  font-size: 14px;
+  font-size: 17px;
   font-weight: 700;
 }
 .type-avg {
-  font-size: 14px;
+  font-size: 17px;
   color: var(--mat-sys-on-surface-variant);
 }
 
@@ -168,7 +168,7 @@
   inline-size: 88px;
   white-space: nowrap;
   flex-shrink: 0;
-  font-size: 14px;
+  font-size: 17px;
   font-weight: 600;
   color: var(--mat-sys-on-surface-variant);
 }
@@ -191,7 +191,7 @@
   transition: inline-size var(--motion-base);
 }
 .bal-text {
-  font-size: 14px;
+  font-size: 17px;
   color: var(--mat-sys-on-surface-variant);
   white-space: nowrap;
   font-variant-numeric: tabular-nums;
@@ -199,7 +199,7 @@
 .more-rows {
   margin: 0;
   padding: var(--space-1) var(--space-4);
-  font-size: 14px;
+  font-size: 17px;
   font-style: italic;
   color: var(--mat-sys-on-surface-variant);
 }
@@ -219,7 +219,7 @@
   padding: var(--space-3) var(--space-5);
   background: var(--table-header-bg);
   border-block-end: 1px solid var(--mat-sys-outline-variant);
-  font-size: 16px;
+  font-size: 17px;
   font-weight: 700;
 }
 .form-card-header .material-icons {
@@ -288,7 +288,7 @@
   font-weight: 700;
 }
 .adj-desc {
-  font-size: 14px;
+  font-size: 17px;
   color: var(--mat-sys-on-surface-variant);
 }
 
@@ -306,7 +306,7 @@
   align-items: center;
   gap: var(--space-2);
   margin-block-end: var(--space-4);
-  font-size: 16px;
+  font-size: 17px;
 }
 .result-header .material-icons {
   font-size: 22px;
@@ -333,7 +333,7 @@
   font-variant-numeric: tabular-nums;
 }
 .stat-lbl {
-  font-size: 14px;
+  font-size: 17px;
   font-weight: 600;
   text-transform: uppercase;
   color: var(--mat-sys-on-surface-variant);
@@ -358,7 +358,7 @@
 }
 .error-item {
   margin: 2px 0;
-  font-size: 13px;
+  font-size: 17px;
   font-family: monospace;
   color: var(--status-pending-fg);
 }

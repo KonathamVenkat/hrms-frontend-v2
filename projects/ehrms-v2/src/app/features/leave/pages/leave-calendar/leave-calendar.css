@@ -95,7 +95,7 @@
   font-variant-numeric: tabular-nums;
 }
 .stat-lbl {
-  font-size: 14px;
+  font-size: 17px;
   font-weight: 600;
   color: var(--mat-sys-on-surface-variant);
 }
@@ -202,7 +202,7 @@
   border-radius: 999px;
   background-image: var(--grad-primary);
   color: #fff;
-  font-size: 14px;
+  font-size: 17px;
   font-weight: 700;
 }
 
@@ -232,7 +232,7 @@
 }
 .emp-type,
 .popup-emp-code {
-  font-size: 14px;
+  font-size: 17px;
   color: var(--mat-sys-on-surface-variant);
 }
 
@@ -266,12 +266,12 @@
 
 .popup-date {
   display: block;
-  font-size: 16px;
+  font-size: 17px;
   font-weight: 800;
 }
 .popup-dow {
   display: block;
-  font-size: 14px;
+  font-size: 17px;
   color: var(--mat-sys-on-surface-variant);
 }
 .popup-tags {
@@ -325,7 +325,7 @@
   font-weight: 600;
 }
 .holiday-name-ar {
-  font-size: 14px;
+  font-size: 17px;
   color: var(--mat-sys-on-surface-variant);
   direction: rtl;
 }
@@ -348,7 +348,7 @@
   gap: 2px;
 }
 .popup-leave-type {
-  font-size: 13px;
+  font-size: 17px;
   font-weight: 700;
 }
 
@@ -379,7 +379,7 @@
   }
   .month-label {
     min-inline-size: 120px;
-    font-size: 16px;
+    font-size: 17px;
   }
 }
 @media (max-width: 480px) {
@@ -388,7 +388,7 @@
     padding: var(--space-1);
   }
   .day-number {
-    font-size: 14px;
+    font-size: 17px;
   }
 }
 @media (prefers-reduced-motion: reduce) {

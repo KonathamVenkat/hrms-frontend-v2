@@ -79,7 +79,7 @@
   background: var(--mat-sys-primary-container);
   color: var(--mat-sys-on-primary-container);
   font-family: 'IBM Plex Mono', monospace;
-  font-size: 14px;
+  font-size: 17px;
   font-weight: 600;
 }
 .sep {
@@ -93,7 +93,7 @@
   border-radius: 999px;
   background: var(--status-approved-bg);
   color: var(--status-approved-fg);
-  font-size: 14px;
+  font-size: 17px;
   font-weight: 700;
 }
 .profile-dept {
@@ -130,7 +130,7 @@
   box-shadow: 0 0 0 0.5px var(--mat-sys-outline-variant);
 }
 .facts dt {
-  font-size: 13px;
+  font-size: 17px;
   font-weight: 600;
   color: var(--mat-sys-on-surface-variant);
 }
@@ -200,7 +200,7 @@
   gap: var(--space-2);
   padding: var(--space-4) var(--space-5) var(--space-1);
   color: var(--mat-sys-on-surface);
-  font-size: 16px;
+  font-size: 17px;
   font-weight: 800;
 }
 .card-header .material-icons {
@@ -220,28 +220,32 @@
   border-block-end: 0;
 }
 .info-label {
-  inline-size: 140px;
+  inline-size: 180px;
   flex-shrink: 0;
   color: var(--mat-sys-on-surface-variant);
-  font-size: 14px;
-  font-weight: 600;
+  font-size: 17px;
+  font-weight: 700;
 }
 .info-value {
   flex: 1;
   min-inline-size: 0;
   overflow-wrap: anywhere;
+  font-size: 17px;
 }
 /* Arabic letters look smaller than Latin at the same size: 16px on the Profile tab (decided per screen). */
 :host-context(html[lang='ar']) .cards-grid .info-label,
 :host-context(html[lang='ar']) .cards-grid .info-value {
-  font-size: 16px;
+  font-size: 17px;
   line-height: 1.6;
+}
+:host-context(html[lang='ar']) .cards-grid :is(.info-label, .info-value) {
+  font-size: 17px;
 }
 :host-context(html[lang='ar']) .detail-tab,
 :host-context(html[lang='ar']) .card-header,
 :host-context(html[lang='ar']) button,
 :host-context(html[lang='ar']) .status-badge {
-  font-size: 16px;
+  font-size: 17px;
 }
 /* The Arabic name always reads right-to-left, whatever the UI language. */
 /* HR notes keep their line breaks. */
@@ -266,7 +270,7 @@
 }
 .sub-text {
   margin-inline-start: var(--space-1);
-  font-size: 14px;
+  font-size: 17px;
   color: var(--mat-sys-on-surface-variant);
 }
 .grade-inline {
@@ -275,7 +279,7 @@
   border-radius: 999px;
   background: var(--status-approved-bg);
   color: var(--status-approved-fg);
-  font-size: 14px;
+  font-size: 17px;
   font-weight: 700;
 }
 
@@ -295,7 +299,7 @@
     flex: 1 1 140px;
   }
   .info-label {
-    inline-size: 110px;
+    inline-size: 140px;
   }
 }
 

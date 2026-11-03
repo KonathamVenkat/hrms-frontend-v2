@@ -145,14 +145,34 @@ html {
     )
   );
 
-  // Material's own small text (form hints and errors, chip labels, paginator) is 12px / 11px. The app's floor is
-  // 14px because many readers are over 70, so the three small sizes are raised, with roomier lines.
-  --mat-sys-body-small-size: 0.875rem;
-  --mat-sys-body-small-line-height: 1.25rem;
-  --mat-sys-label-medium-size: 0.875rem;
-  --mat-sys-label-medium-line-height: 1.25rem;
-  --mat-sys-label-small-size: 0.875rem;
-  --mat-sys-label-small-line-height: 1.25rem;
+  // Client requirement: no text below 17px. Every Material text size (body, label, title-small and title-medium)
+  // is 17px, so tables, chips, buttons, form fields, menus, the paginator and snackbars all follow; larger sizes
+  // (headlines, title-large, figures) are left alone. Line heights stay roomy.
+  --mat-sys-body-large-size: 1.0625rem;
+  --mat-sys-body-large-line-height: 1.5rem;
+  --mat-sys-body-medium-size: 1.0625rem;
+  --mat-sys-body-medium-line-height: 1.5rem;
+  --mat-sys-body-small-size: 1.0625rem;
+  --mat-sys-body-small-line-height: 1.5rem;
+  --mat-sys-label-large-size: 1.0625rem;
+  --mat-sys-label-large-line-height: 1.5rem;
+  --mat-sys-label-medium-size: 1.0625rem;
+  --mat-sys-label-medium-line-height: 1.5rem;
+  --mat-sys-label-small-size: 1.0625rem;
+  --mat-sys-label-small-line-height: 1.5rem;
+  --mat-sys-title-small-size: 1.0625rem;
+  --mat-sys-title-small-line-height: 1.5rem;
+  --mat-sys-title-medium-size: 1.0625rem;
+  --mat-sys-title-medium-line-height: 1.5rem;
+  // The shorthand tokens (font: var(--mat-sys-label-large)) have the old sizes baked in, so they are rebuilt from the parts above.
+  --mat-sys-body-large: var(--mat-sys-body-large-weight) var(--mat-sys-body-large-size) / var(--mat-sys-body-large-line-height) var(--mat-sys-body-large-font);
+  --mat-sys-body-medium: var(--mat-sys-body-medium-weight) var(--mat-sys-body-medium-size) / var(--mat-sys-body-medium-line-height) var(--mat-sys-body-medium-font);
+  --mat-sys-body-small: var(--mat-sys-body-small-weight) var(--mat-sys-body-small-size) / var(--mat-sys-body-small-line-height) var(--mat-sys-body-small-font);
+  --mat-sys-label-large: var(--mat-sys-label-large-weight) var(--mat-sys-label-large-size) / var(--mat-sys-label-large-line-height) var(--mat-sys-label-large-font);
+  --mat-sys-label-medium: var(--mat-sys-label-medium-weight) var(--mat-sys-label-medium-size) / var(--mat-sys-label-medium-line-height) var(--mat-sys-label-medium-font);
+  --mat-sys-label-small: var(--mat-sys-label-small-weight) var(--mat-sys-label-small-size) / var(--mat-sys-label-small-line-height) var(--mat-sys-label-small-font);
+  --mat-sys-title-small: var(--mat-sys-title-small-weight) var(--mat-sys-title-small-size) / var(--mat-sys-title-small-line-height) var(--mat-sys-title-small-font);
+  --mat-sys-title-medium: var(--mat-sys-title-medium-weight) var(--mat-sys-title-medium-size) / var(--mat-sys-title-medium-line-height) var(--mat-sys-title-medium-font);
 
   // Global component restyle, done once here (44px = minimum touch target).
   @include mat.button-overrides(
@@ -175,6 +195,8 @@ html {
       outlined-container-shape: 12px,
       outlined-outline-width: 1px,
       outlined-focus-outline-width: 2px,
+      outlined-label-text-weight: 700,
+      filled-label-text-weight: 700,
     )
   );
   @include mat.table-overrides(

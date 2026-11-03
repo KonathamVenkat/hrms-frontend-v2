@@ -73,7 +73,7 @@
   padding: var(--space-3) var(--space-5);
   background: var(--table-header-bg);
   border-block-end: 1px solid var(--mat-sys-outline-variant);
-  font-size: 16px;
+  font-size: 17px;
   font-weight: 700;
 }
 .form-card-header .material-icons,
@@ -162,7 +162,7 @@
   font-weight: 700;
 }
 .type-avail {
-  font-size: 14px;
+  font-size: 17px;
   color: var(--mat-sys-on-surface-variant);
 }
 .type-mini-bar,
@@ -208,12 +208,12 @@
   font-weight: 800;
 }
 .days-remaining {
-  font-size: 13px;
+  font-size: 17px;
   font-weight: 600;
 }
 
 .char-count {
-  font-size: 14px;
+  font-size: 17px;
   color: var(--mat-sys-on-surface-variant);
   text-align: end;
 }
@@ -272,7 +272,7 @@
   inset-block-start: var(--space-5);
 }
 .sidebar-header {
-  font-size: 13px;
+  font-size: 17px;
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
@@ -307,7 +307,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-2);
-  font-size: 14px;
+  font-size: 17px;
   color: var(--mat-sys-on-surface-variant);
 }
 .pending-text {

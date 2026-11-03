@@ -60,7 +60,7 @@
   background: var(--table-surface);
   color: var(--mat-sys-on-surface);
   font: inherit;
-  font-size: 13px;
+  font-size: 17px;
   font-weight: 600;
   cursor: pointer;
   transition: var(--motion-fast);
@@ -92,11 +92,11 @@
 
 .confirm-text,
 .hint {
-  font-size: 13px;
+  font-size: 17px;
   color: var(--mat-sys-on-surface-variant);
 }
 .error {
   margin: 0;
-  font-size: 13px;
+  font-size: 17px;
   color: var(--status-rejected-fg);
 }

@@ -93,7 +93,7 @@
 }
 .stat-lbl,
 .pct-label {
-  font-size: 14px;
+  font-size: 17px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -176,7 +176,7 @@
   border-radius: 999px;
   background: var(--status-active-bg);
   color: var(--status-active-fg);
-  font-size: 14px;
+  font-size: 17px;
   font-weight: 700;
 }
 .att-bar {
@@ -213,7 +213,7 @@
 }
 .trend-month-label,
 .trend-pct {
-  font-size: 14px;
+  font-size: 17px;
   color: var(--mat-sys-on-surface-variant);
   font-variant-numeric: tabular-nums;
 }

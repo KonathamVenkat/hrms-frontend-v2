@@ -8,6 +8,20 @@
   outline-offset: 2px;
 }
 
+/* Client requirement: no text below 17px. Text that only inherits its size (tabs, plain buttons, cards) takes it from
+   here; native form controls ignore inheritance unless told to, so they are told to. Class rules still win. */
+body {
+  font-size: 17px;
+}
+button,
+input,
+select,
+textarea,
+optgroup {
+  font-family: inherit;
+  font-size: inherit;
+}
+
 /* Arabic / RTL typography. Arabic joins letters, so no tracking anywhere (Material sets its own per-token
    tracking, hence the * selector), and taller line heights because Arabic ascenders and diacritics are taller.
    Arabic glyphs fall through the font stack to Noto Sans Arabic. Scope rules to html: :lang() matches every
@@ -142,7 +156,7 @@ html[dir='rtl'] * {
 }
 .status-badge.small {
   padding-block: 1px;
-  font-size: 14px;
+  font-size: 17px;
 }
 
 /* Sticky header for data tables: add class "sticky-table" to the scroll wrapper. */
@@ -419,7 +433,7 @@ html[dir='rtl'] * {
 }
 .confirm-error {
   margin: 0 0 var(--space-4);
-  font-size: 13px;
+  font-size: 17px;
   color: var(--status-rejected-fg);
 }
 .confirm-actions {
@@ -454,6 +468,7 @@ html[dir='rtl'] * {
   background: var(--table-surface);
   color: var(--mat-sys-on-surface);
   font: inherit;
+  font-size: 17px;
 }
 .reset-input:focus-visible {
   outline: 2px solid var(--mat-sys-primary);
@@ -464,7 +479,7 @@ html[dir='rtl'] * {
 }
 .reset-hint {
   margin: 0;
-  font-size: 14px;
+  font-size: 17px;
   color: var(--mat-sys-on-surface-variant);
 }
 
@@ -600,7 +615,7 @@ html[dir='rtl'] * {
 }
 .empty-state p {
   margin: 0;
-  font-size: 16px;
+  font-size: 17px;
   font-weight: 600;
 }
 .empty-state small {
@@ -674,7 +689,7 @@ html[dir='rtl'] * {
   flex: 0 0 auto;
 }
 .field > label {
-  font-size: 15px;
+  font-size: 17px;
   font-weight: 700;
   line-height: 1.5;
 }
@@ -691,10 +706,11 @@ html[dir='rtl'] * {
   background: var(--table-surface);
   color: var(--mat-sys-on-surface);
   font: inherit;
+  font-size: 17px;
 }
-/* Arabic is typed and read by older users; its letters look smaller than Latin at the same size. */
+/* Values are 17px in both languages (client requirement); Arabic keeps its taller line height. */
 .field :is(input, textarea)[dir='rtl']:not([type='checkbox']):not([type='radio']) {
-  font-size: 1.25rem;
+  font-size: 17px;
   line-height: 1.6;
 }
 .field textarea {
@@ -723,11 +739,11 @@ html[dir='rtl'] * {
   cursor: not-allowed;
 }
 .field-error {
-  font-size: 14px;
+  font-size: 17px;
   color: var(--status-rejected-fg);
 }
 .field-hint {
-  font-size: 14px;
+  font-size: 17px;
   color: var(--mat-sys-on-surface-variant);
 }
 
@@ -754,7 +770,7 @@ html[dir='rtl'] * {
   font-weight: 600;
 }
 .toggle-hint {
-  font-size: 14px;
+  font-size: 17px;
   color: var(--mat-sys-on-surface-variant);
 }
 .toggle-wrap {
@@ -1048,7 +1064,7 @@ html[dir='rtl'] * {
   font-size: 22px;
 }
 .app-page .stat-lbl {
-  font-size: 14px;
+  font-size: 17px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -1076,7 +1092,7 @@ html[dir='rtl'] * {
   background: transparent;
 }
 .app-page :is(.approval-table, .ot-table) th {
-  font-size: 14px;
+  font-size: 17px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -1128,7 +1144,7 @@ html[dir='rtl'] * {
   font-weight: 700;
 }
 .app-page .emp-code {
-  font-size: 14px;
+  font-size: 17px;
   color: var(--mat-sys-on-surface-variant);
 }
 .app-page :is(.reg-id, .ref-id) {
@@ -1137,14 +1153,14 @@ html[dir='rtl'] * {
   background: var(--mat-sys-surface-container-high);
   color: var(--mat-sys-on-surface-variant);
   font-family: monospace;
-  font-size: 14px;
+  font-size: 17px;
   white-space: nowrap;
 }
 .app-page :is(.date-text, .datetime-text) {
   white-space: nowrap;
 }
 .app-page :is(.datetime-text, .acted-at) {
-  font-size: 14px;
+  font-size: 17px;
   color: var(--mat-sys-on-surface-variant);
 }
 .app-page .muted {
@@ -1156,7 +1172,7 @@ html[dir='rtl'] * {
   gap: var(--space-1);
   padding: 3px var(--space-3);
   border-radius: 999px;
-  font-size: 14px;
+  font-size: 17px;
   font-weight: 700;
   white-space: nowrap;
   font-variant-numeric: tabular-nums;
@@ -1185,7 +1201,7 @@ html[dir='rtl'] * {
   display: flex;
   align-items: center;
   gap: var(--space-1);
-  font-size: 14px;
+  font-size: 17px;
   color: var(--mat-sys-on-surface-variant);
 }
 .app-page .rejection-note {
@@ -1231,7 +1247,7 @@ html[dir='rtl'] * {
 }
 .app-page .empty-state p {
   margin: 0;
-  font-size: 16px;
+  font-size: 17px;
   font-weight: 600;
   color: var(--mat-sys-on-surface);
 }
@@ -1310,9 +1326,9 @@ html[dir='rtl'] * {
 .dialog-label,
 .info-label {
   flex-shrink: 0;
-  min-inline-size: 88px;
+  min-inline-size: 130px;
   padding-block-start: 2px;
-  font-size: 14px;
+  font-size: 17px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -1320,6 +1336,7 @@ html[dir='rtl'] * {
 }
 .dialog-value,
 .info-value {
+  font-size: 17px;
   font-weight: 500;
 }
 .reason-value,
@@ -1332,7 +1349,7 @@ html[dir='rtl'] * {
   display: flex;
   align-items: center;
   gap: var(--space-1);
-  font-size: 13px;
+  font-size: 17px;
   color: var(--status-rejected-fg);
 }
 .rejection-error mat-icon,
@@ -1423,7 +1440,7 @@ html[dir='rtl'] * {
   background: transparent;
 }
 .app-page :is(.comp-table, .salary-table) th {
-  font-size: 14px;
+  font-size: 17px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -1448,7 +1465,7 @@ html[dir='rtl'] * {
   background: var(--mat-sys-surface-container-high);
   color: var(--mat-sys-on-surface-variant);
   font-family: monospace;
-  font-size: 14px;
+  font-size: 17px;
   font-weight: 700;
   white-space: nowrap;
 }
@@ -1456,7 +1473,7 @@ html[dir='rtl'] * {
   display: inline-block;
   padding: 3px var(--space-3);
   border-radius: 999px;
-  font-size: 14px;
+  font-size: 17px;
   font-weight: 700;
   white-space: nowrap;
 }
@@ -1481,7 +1498,7 @@ html[dir='rtl'] * {
 }
 .app-page .empty-content p {
   margin: 0;
-  font-size: 16px;
+  font-size: 17px;
   font-weight: 600;
   color: var(--mat-sys-on-surface);
 }
@@ -1585,7 +1602,7 @@ html[dir='rtl'] * {
 .admin-page .chip {
   padding: 3px var(--space-3);
   border-radius: 999px;
-  font-size: 14px;
+  font-size: 17px;
   font-weight: 700;
   background: var(--mat-sys-primary-container);
   color: var(--mat-sys-on-primary-container);
@@ -1738,7 +1755,7 @@ html[dir='rtl'] * {
   background: transparent;
   color: var(--mat-sys-on-surface-variant);
   font: inherit;
-  font-size: 13px;
+  font-size: 17px;
   font-weight: 600;
   cursor: pointer;
   transition: var(--motion-fast);
@@ -1760,7 +1777,7 @@ html[dir='rtl'] * {
   justify-content: center;
   gap: var(--space-3);
   margin-block-start: var(--space-4);
-  font-size: 14px;
+  font-size: 17px;
 }
 .admin-page .master-pager .tab-btn {
   min-inline-size: 44px;
@@ -1798,7 +1815,7 @@ html[dir='rtl'] * {
   padding: var(--space-3) var(--space-4);
   background: var(--table-header-bg);
   color: var(--mat-sys-on-surface-variant);
-  font-size: 14px;
+  font-size: 17px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -1843,7 +1860,7 @@ html[dir='rtl'] * {
 }
 .admin-page .empty-card p {
   margin: 0;
-  font-size: 16px;
+  font-size: 17px;
   font-weight: 600;
 }
 .admin-page .empty-card small {
@@ -1903,7 +1920,7 @@ html[dir='rtl'] * {
   background: var(--mat-sys-surface-container-high);
   color: var(--mat-sys-on-surface-variant);
   font-family: monospace;
-  font-size: 14px;
+  font-size: 17px;
   font-weight: 700;
   white-space: nowrap;
 }
@@ -1962,7 +1979,7 @@ html[dir='rtl'] * {
   gap: var(--space-1);
   padding: 2px var(--space-3);
   border-radius: 999px;
-  font-size: 14px;
+  font-size: 17px;
   font-weight: 700;
   white-space: nowrap;
   background: var(--mat-sys-surface-container-high);
@@ -2046,7 +2063,7 @@ html[dir='rtl'] * {
   gap: 2px;
 }
 .admin-page :is(.expiry-days, .carry-days) {
-  font-size: 14px;
+  font-size: 17px;
   color: var(--mat-sys-on-surface-variant);
 }
 .admin-page :is(.size-badge, .days-badge) {
@@ -2170,7 +2187,7 @@ html[dir='rtl'] * {
 .weekday-header {
   padding-block: var(--space-3);
   text-align: center;
-  font-size: 14px;
+  font-size: 17px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -2190,7 +2207,7 @@ html[dir='rtl'] * {
 }
 .day-number {
   align-self: flex-start;
-  font-size: 14px;
+  font-size: 17px;
   font-weight: 700;
   line-height: 1;
   font-variant-numeric: tabular-nums;
@@ -2205,7 +2222,7 @@ html[dir='rtl'] * {
   border-radius: 999px;
   background: var(--mat-sys-surface-container-high);
   color: var(--mat-sys-on-surface-variant);
-  font-size: 14px;
+  font-size: 17px;
   font-weight: 700;
   line-height: 16px;
 }
@@ -2221,7 +2238,7 @@ html[dir='rtl'] * {
   border-radius: 50%;
   background: #b45309;
   color: #fff;
-  font-size: 14px;
+  font-size: 17px;
   font-weight: 700;
 }
 .panel-card-header {
@@ -2231,7 +2248,7 @@ html[dir='rtl'] * {
   padding: var(--space-3) var(--space-4);
   background: var(--table-header-bg);
   border-block-end: 1px solid var(--mat-sys-outline-variant);
-  font-size: 14px;
+  font-size: 17px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -2255,14 +2272,14 @@ html[dir='rtl'] * {
   justify-content: center;
   border-radius: 50%;
   color: #fff;
-  font-size: 14px;
+  font-size: 17px;
   font-weight: 700;
 }
 .legend-item {
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  font-size: 13px;
+  font-size: 17px;
   color: var(--mat-sys-on-surface-variant);
 }
 .legend-swatch {
@@ -2287,7 +2304,7 @@ html[dir='rtl'] * {
 .holiday-type {
   padding: 2px var(--space-3);
   border-radius: 999px;
-  font-size: 14px;
+  font-size: 17px;
   font-weight: 700;
 }
 .tag-weekend,
@@ -2300,7 +2317,7 @@ html[dir='rtl'] * {
   align-items: center;
   gap: var(--space-2);
   margin: 0 0 var(--space-3);
-  font-size: 14px;
+  font-size: 17px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -2317,7 +2334,7 @@ html[dir='rtl'] * {
 .popup-status {
   padding: 1px var(--space-2);
   border-radius: 999px;
-  font-size: 14px;
+  font-size: 17px;
   font-weight: 700;
   text-transform: uppercase;
 }
@@ -2349,7 +2366,7 @@ html[dir='rtl'] * {
   background-image: var(--grad-cta);
   color: #fff;
   font: inherit;
-  font-size: 14px;
+  font-size: 17px;
   font-weight: 700;
   box-shadow: var(--cta-shadow);
   cursor: pointer;
@@ -2403,7 +2420,7 @@ html[dir='rtl'] * {
   padding: var(--space-3) var(--space-4);
   background: var(--table-header-bg);
   color: var(--mat-sys-on-surface-variant);
-  font-size: 14px;
+  font-size: 17px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -2417,7 +2434,7 @@ html[dir='rtl'] * {
   font-variant-numeric: tabular-nums;
 }
 .emp-email {
-  font-size: 14px;
+  font-size: 17px;
   color: var(--mat-sys-on-surface-variant);
   /* Emails are always left-to-right data. */
   unicode-bidi: plaintext;
@@ -2485,7 +2502,7 @@ html[dir='rtl'] * {
   background: var(--table-surface);
   color: var(--mat-sys-on-surface-variant);
   font: inherit;
-  font-size: 13px;
+  font-size: 17px;
   font-weight: 600;
   cursor: pointer;
   transition: var(--motion-fast);
@@ -2574,11 +2591,11 @@ html[dir='rtl'] * {
   gap: var(--space-3);
 }
 .summary-label {
-  inline-size: 88px;
+  inline-size: 130px;
   flex-shrink: 0;
   padding-block-start: 2px;
   color: var(--mat-sys-on-surface-variant);
-  font-size: 14px;
+  font-size: 17px;
   font-weight: 700;
   text-transform: uppercase;
 }
@@ -2646,7 +2663,7 @@ html[dir='rtl'] * {
   border-radius: 999px;
   background: var(--mat-sys-surface-container-high);
   color: var(--mat-sys-on-surface-variant);
-  font-size: 14px;
+  font-size: 17px;
   font-weight: 700;
 }
 .btn-cancel-req {
@@ -2774,7 +2791,7 @@ body
   display: inline-block;
   padding: 2px var(--space-2);
   border-radius: 999px;
-  font-size: 14px;
+  font-size: 17px;
   font-weight: 600;
 }
 .admin-page .sr-only {
@@ -2834,14 +2851,14 @@ body
   border-block-start: 1px solid var(--mat-sys-outline-variant);
 }
 
-/* Arabic, employee create/edit form: 16px labels and values (Arabic reads smaller than Latin at the same size).
+/* Arabic, employee create/edit form: 17px labels (the client size for every label) and 16px values.
    The Arabic name inputs keep their larger size from the rule above. */
 html:lang(ar) app-employee-form .field > label {
-  font-size: 16px;
+  font-size: 17px;
   line-height: 1.6;
 }
 html:lang(ar) app-employee-form .field :is(input, select, textarea):not([type='checkbox']):not([type='radio']):not([dir='rtl']) {
-  font-size: 16px;
+  font-size: 17px;
   line-height: 1.6;
 }
 

@@ -10,7 +10,7 @@
   border-radius: 999px;
   background: var(--mat-sys-primary-container);
   color: var(--mat-sys-on-primary-container);
-  font-size: 14px;
+  font-size: 17px;
   font-weight: 700;
 }
 
@@ -71,7 +71,7 @@
 .addr-type-badge {
   padding: 2px var(--space-3);
   border-radius: 999px;
-  font-size: 14px;
+  font-size: 17px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -100,7 +100,7 @@
   border-radius: 999px;
   background: var(--status-pending-bg);
   color: var(--status-pending-fg);
-  font-size: 14px;
+  font-size: 17px;
   font-weight: 700;
 }
 .primary-badge .material-icons {
@@ -202,7 +202,7 @@
   border-radius: 999px;
   background: var(--mat-sys-surface-container-high);
   color: var(--mat-sys-on-surface-variant);
-  font-size: 14px;
+  font-size: 17px;
 }
 
 @media (prefers-reduced-transparency: reduce) {
@@ -215,7 +215,7 @@
 
 /* Arabic: 16px everywhere on this tab (Arabic letters look smaller than Latin at the same size). */
 :host-context(html[lang='ar']) {
-  font-size: 16px;
+  font-size: 17px;
 }
 :host-context(html[lang='ar']) .addr-count,
 :host-context(html[lang='ar']) .addr-type-badge,
@@ -227,8 +227,11 @@
 :host-context(html[lang='ar']) .field-hint,
 :host-context(html[lang='ar']) .toggle-label,
 :host-context(html[lang='ar']) .toggle-hint {
-  font-size: 16px;
+  font-size: 17px;
 }
 :host-context(html[lang='ar']) :is(small, label, .req, .drop-hint) {
-  font-size: 16px;
+  font-size: 17px;
+}
+:host-context(html[lang='ar']) :is(label) {
+  font-size: 17px;
 }

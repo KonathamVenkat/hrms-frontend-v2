@@ -22,7 +22,7 @@
 }
 .items-header h3 {
   margin: 0;
-  font-size: 16px;
+  font-size: 17px;
   font-weight: 700;
 }
 
@@ -41,7 +41,7 @@
   background: var(--table-header-bg);
   border-block-end: 1px solid var(--mat-sys-outline-variant);
   color: var(--mat-sys-on-surface-variant);
-  font-size: 14px;
+  font-size: 17px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -151,7 +151,7 @@ mat-panel-description {
   align-items: center;
   gap: var(--space-2);
   margin: 0 0 var(--space-2);
-  font-size: 14px;
+  font-size: 17px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -194,7 +194,7 @@ mat-panel-description {
 .comp-ar,
 .comp-basis {
   min-inline-size: 110px;
-  font-size: 13px;
+  font-size: 17px;
   color: var(--mat-sys-on-surface-variant);
 }
 .comp-ar {

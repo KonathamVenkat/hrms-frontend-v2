@@ -30,7 +30,7 @@
 }
 .time-label,
 .stat-lbl {
-  font-size: 14px;
+  font-size: 17px;
   font-weight: 600;
   text-transform: uppercase;
   color: var(--mat-sys-on-surface-variant);
@@ -85,7 +85,7 @@
 .day-chip {
   padding: 3px var(--space-2);
   border-radius: var(--radius-sm);
-  font-size: 14px;
+  font-size: 17px;
   font-weight: 700;
 }
 .day-active {
@@ -98,7 +98,7 @@
 }
 .shift-desc {
   margin: 0;
-  font-size: 13px;
+  font-size: 17px;
   font-style: italic;
   line-height: 1.5;
   color: var(--mat-sys-on-surface-variant);
@@ -119,7 +119,7 @@
   background: var(--table-surface);
   color: var(--mat-sys-on-surface-variant);
   font: inherit;
-  font-size: 13px;
+  font-size: 17px;
   font-weight: 700;
   cursor: pointer;
   transition: var(--motion-fast);
