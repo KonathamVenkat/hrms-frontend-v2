@@ -3066,3 +3066,13 @@ html:lang(ar) app-employee-form .field :is(input, select, textarea):not([type='c
     0 2px 6px rgb(15 23 42 / 22%),
     inset 0 1px 0 rgb(255 255 255 / 45%);
 }
+
+/* Contact lines on a master card (bank branches): one per detail, long values wrap. */
+.master-contact {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  margin: 0;
+  color: var(--mat-sys-on-surface-variant);
+  overflow-wrap: anywhere;
+}

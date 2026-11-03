@@ -2493,7 +2493,10 @@
         "deleteTitle": "حذف التخصص؟",
         "deactivateTitle": "إيقاف التخصص؟",
         "activateTitle": "تفعيل التخصص؟"
-      }
+      },
+      "address": "العنوان",
+      "phone": "الهاتف",
+      "email": "البريد الإلكتروني"
     }
   },
   "recruitment": {

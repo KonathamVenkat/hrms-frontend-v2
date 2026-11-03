@@ -158,6 +158,19 @@
           </div>
           <h2 class="loc-name">{{ r.name }}</h2>
           <p class="loc-name-ar">{{ r.nameAr }}</p>
+          @if (cfg.contact && (r.address || r.phone || r.email)) {
+            <p class="master-contact">
+              @if (r.address) {
+                <span>{{ r.address }}</span>
+              }
+              @if (r.phone) {
+                <bdi>{{ r.phone }}</bdi>
+              }
+              @if (r.email) {
+                <bdi>{{ r.email }}</bdi>
+              }
+            </p>
+          }
           <div class="card-footer">
             <span
               class="status-badge"
@@ -322,6 +335,31 @@
               @if (isInvalid('sortOrder')) {
                 <span class="field-error">{{ getError('sortOrder') }}</span>
               }
+            </div>
+          }
+          @if (cfg.contact) {
+            <div class="field">
+              <label for="ms-address">{{ 'admin.masters.address' | translate }}</label>
+              <input id="ms-address" formControlName="address" maxlength="300" />
+              @if (isInvalid('address')) {
+                <span class="field-error">{{ getError('address') }}</span>
+              }
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label for="ms-phone">{{ 'admin.masters.phone' | translate }}</label>
+                <input id="ms-phone" type="tel" inputmode="tel" formControlName="phone" maxlength="30" />
+                @if (isInvalid('phone')) {
+                  <span class="field-error">{{ getError('phone') }}</span>
+                }
+              </div>
+              <div class="field">
+                <label for="ms-email">{{ 'admin.masters.email' | translate }}</label>
+                <input id="ms-email" type="email" formControlName="email" maxlength="200" />
+                @if (isInvalid('email')) {
+                  <span class="field-error">{{ getError('email') }}</span>
+                }
+              </div>
             </div>
           }
           @if (cfg.salaryRange) {

@@ -2493,7 +2493,10 @@
         "deleteTitle": "Delete Specialization?",
         "deactivateTitle": "Deactivate Specialization?",
         "activateTitle": "Activate Specialization?"
-      }
+      },
+      "address": "Address",
+      "phone": "Phone",
+      "email": "Email"
     }
   },
   "recruitment": {

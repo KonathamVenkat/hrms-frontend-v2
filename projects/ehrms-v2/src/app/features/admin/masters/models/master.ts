@@ -20,6 +20,10 @@ export interface MasterRecord {
   /** Grades only: the pay range, both optional. */
   minSalary?: number;
   maxSalary?: number;
+  /** Bank and company branches only: contact details, all optional. */
+  address?: string;
+  phone?: string;
+  email?: string;
   isActive: boolean;
   createdAt?: string;
   updatedAt?: string;
@@ -45,6 +49,10 @@ export interface MasterRequest {
   /** Grades only; null clears the pay range. */
   minSalary?: number | null;
   maxSalary?: number | null;
+  /** Bank and company branches only; an empty string clears the value. */
+  address?: string;
+  phone?: string;
+  email?: string;
   isActive?: boolean;
   /** Version the screen was loaded with; the server answers 409 if the row changed since. */
   version?: number;

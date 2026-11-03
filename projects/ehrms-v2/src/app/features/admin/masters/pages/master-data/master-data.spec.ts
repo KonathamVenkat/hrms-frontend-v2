@@ -7,7 +7,12 @@ import { of, throwError } from 'rxjs';
 import { MasterData } from './master-data';
 import { MasterDataService } from '../../services/master-data';
 import { MasterRecord } from '../../models/master';
-import { MasterConfig, REFERENCE_MASTER_ROUTES } from '../../masters.config';
+import {
+  BANK_BRANCHES,
+  COMPANY_BRANCHES,
+  MasterConfig,
+  REFERENCE_MASTER_ROUTES,
+} from '../../masters.config';
 
 const config = (path: string): MasterConfig => {
   const found = REFERENCE_MASTER_ROUTES.find((r) => r.path === path);
@@ -324,5 +329,114 @@ describe('MasterData (reference masters)', () => {
       expect(comp.filterParent()).toBeNull();
       expect(el.querySelector('.btn-clear-filters')).toBeNull();
     });
+  });
+});
+
+describe('MasterData branch contact', () => {
+  const branch: MasterRecord = {
+    id: 4,
+    bankId: 1,
+    code: 'BR1',
+    name: 'Main',
+    nameAr: 'x',
+    isActive: true,
+    version: 2,
+    address: 'Block 3, Khartoum',
+    phone: '+249 123',
+    email: 'br1@bank.test',
+  };
+
+  it('offers address, phone and email for bank branches only', () => {
+    const branches = setup(BANK_BRANCHES);
+    branches.comp.openCreate();
+    branches.fixture.detectChanges();
+    expect(branches.el.querySelector('#ms-address')).not.toBeNull();
+    expect(branches.el.querySelector('#ms-phone')).not.toBeNull();
+    expect(branches.el.querySelector('#ms-email')).not.toBeNull();
+  });
+
+  it('offers the same three fields for company branches, and sends them', () => {
+    const { comp, svc, fixture, el } = setup(COMPANY_BRANCHES);
+    comp.openCreate();
+    fixture.detectChanges();
+    expect(el.querySelector('#ms-address')).not.toBeNull();
+    expect(el.querySelector('#ms-phone')).not.toBeNull();
+    expect(el.querySelector('#ms-email')).not.toBeNull();
+
+    comp.form.patchValue({ parentId: 1, code: 'CB1', name: 'Head office', nameAr: 'x', address: ' Juba ', phone: '+211 1', email: ' hq@co.test ' });
+    comp.onSubmit();
+    expect(svc.create).toHaveBeenCalledWith(
+      'company-branches',
+      expect.objectContaining({ companyId: 1, address: 'Juba', phone: '+211 1', email: 'hq@co.test' }),
+    );
+  });
+
+  it('does not show or send contact fields for another master', () => {
+    const { comp, svc, fixture, el } = setup(config('regions'));
+    comp.openCreate();
+    fixture.detectChanges();
+    expect(el.querySelector('#ms-address')).toBeNull();
+
+    comp.form.patchValue({ code: 'EQU', name: 'Equatoria', nameAr: 'x' });
+    comp.onSubmit();
+    const [, payload] = svc.create.mock.calls[0] as unknown[];
+    expect(payload).not.toHaveProperty('address');
+    expect(payload).not.toHaveProperty('email');
+  });
+
+  it('sends the contact trimmed, and an emptied one as an empty string so the server clears it', () => {
+    const { comp, svc } = setup(BANK_BRANCHES);
+    comp.openCreate();
+    comp.form.patchValue({
+      parentId: 1,
+      code: 'BR2',
+      name: 'Second',
+      nameAr: 'x',
+      address: '  Block 9  ',
+      phone: ' +249 9 ',
+      email: ' a@b.test ',
+    });
+    comp.onSubmit();
+    expect(svc.create).toHaveBeenCalledWith(
+      'bank-branches',
+      expect.objectContaining({ address: 'Block 9', phone: '+249 9', email: 'a@b.test' }),
+    );
+
+    comp.openEdit(branch);
+    expect(comp.form.controls.address.value).toBe('Block 3, Khartoum');
+    comp.form.patchValue({ address: '', phone: '', email: '' });
+    svc.update.mockReturnValue(reply({ ...branch, address: undefined }));
+    comp.onSubmit();
+    expect(svc.update).toHaveBeenCalledWith(
+      'bank-branches',
+      4,
+      expect.objectContaining({ address: '', phone: '', email: '', version: 2 }),
+    );
+  });
+
+  it('refuses a phone with letters and a malformed email, with a message for each, and sends nothing', () => {
+    const { comp, svc } = setup(BANK_BRANCHES);
+    comp.openCreate();
+    comp.form.patchValue({ parentId: 1, code: 'BR3', name: 'Third', nameAr: 'x', phone: '12ab', email: 'nope' });
+    comp.onSubmit();
+
+    expect(svc.create).not.toHaveBeenCalled();
+    expect(comp.isInvalid('phone')).toBe(true);
+    expect(comp.isInvalid('email')).toBe(true);
+    expect(comp.getError('phone')).toBe('employee.info.errors.phone');
+    expect(comp.getError('email')).toBe('common.validation.email');
+  });
+
+  it('shows a branch card with its contact lines', () => {
+    const { fixture, el } = setup(BANK_BRANCHES);
+    // the screen lists whatever the service returns for the endpoint
+    expect(el.querySelector('.master-contact')).toBeNull();
+    fixture.componentInstance.records.set([branch]);
+    fixture.detectChanges();
+
+    const contact = el.querySelector('.master-contact');
+    expect(contact?.textContent).toContain('Block 3, Khartoum');
+    expect(contact?.textContent).toContain('+249 123');
+    expect(contact?.textContent).toContain('br1@bank.test');
   });
 });

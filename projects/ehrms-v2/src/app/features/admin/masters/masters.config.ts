@@ -43,6 +43,8 @@ export interface MasterConfig {
   sortOrder?: boolean;
   /** The master has an optional pay range (grades), shown and edited on the screen. */
   salaryRange?: boolean;
+  /** The master has an optional address, phone and email (bank and company branches), shown and edited on the screen. */
+  contact?: boolean;
   /** The list is long: the server pages, searches and filters it (GET <endpoint>/search). */
   paged?: boolean;
 }
@@ -53,6 +55,7 @@ export const BANK_BRANCHES: MasterConfig = {
   endpoint: 'bank-branches',
   icon: 'store',
   parent: { endpoint: 'banks', field: 'bankId' },
+  contact: true,
 };
 export const COMPANIES: MasterConfig = { key: 'companies', endpoint: 'companies', icon: 'domain' };
 export const COMPANY_BRANCHES: MasterConfig = {
@@ -60,6 +63,7 @@ export const COMPANY_BRANCHES: MasterConfig = {
   endpoint: 'company-branches',
   icon: 'corporate_fare',
   parent: { endpoint: 'companies', field: 'companyId' },
+  contact: true,
 };
 
 /** The reference masters: geography (region > wilaya > province > city), employee lists, directorates and grades. */

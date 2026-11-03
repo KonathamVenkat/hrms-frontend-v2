@@ -12,6 +12,7 @@ import { ActivatedRoute } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import {
   AbstractControl,
+  FormControl,
   NonNullableFormBuilder,
   ReactiveFormsModule,
   ValidationErrors,
@@ -36,9 +37,18 @@ type FormKey =
   | 'minSalary'
   | 'maxSalary'
   | 'countryName'
-  | 'countryNameAr';
+  | 'countryNameAr'
+  | 'address'
+  | 'phone'
+  | 'email';
 type ConfirmAction = 'toggle' | 'delete';
 type StatusFilter = 'all' | 'active' | 'inactive';
+
+/** An email is saved trimmed, so a stray space around a pasted address is not an error; empty is allowed. */
+function trimmedEmail(control: AbstractControl): ValidationErrors | null {
+  const value = String(control.value ?? '').trim();
+  return value ? Validators.email(new FormControl(value)) : null;
+}
 
 /** A pay range whose maximum is below its minimum; an empty side is not an error. */
 function salaryRange(group: AbstractControl): ValidationErrors | null {
@@ -159,6 +169,9 @@ export class MasterData implements OnInit {
       maxSalary: this.fb.control<number | null>(null, Validators.min(0)),
       countryName: ['', Validators.maxLength(200)],
       countryNameAr: ['', Validators.maxLength(200)],
+      address: ['', Validators.maxLength(300)],
+      phone: ['', [Validators.maxLength(30), Validators.pattern(/^[0-9+() -]*$/)]],
+      email: ['', [Validators.maxLength(200), trimmedEmail]],
       isActive: [true],
     },
     { validators: salaryRange },
@@ -334,6 +347,9 @@ export class MasterData implements OnInit {
       maxSalary: r.maxSalary ?? null,
       countryName: r.countryName ?? '',
       countryNameAr: r.countryNameAr ?? '',
+      address: r.address ?? '',
+      phone: r.phone ?? '',
+      email: r.email ?? '',
       isActive: r.isActive,
     });
     this.form.controls.code.disable();
@@ -365,6 +381,11 @@ export class MasterData implements OnInit {
     if (this.cfg.salaryRange) {
       payload.minSalary = v.minSalary;
       payload.maxSalary = v.maxSalary;
+    }
+    if (this.cfg.contact) {
+      payload.address = v.address.trim();
+      payload.phone = v.phone.trim();
+      payload.email = v.email.trim();
     }
     if (this.cfg.country) {
       payload.countryName = v.countryName.trim();
@@ -462,6 +483,8 @@ export class MasterData implements OnInit {
     if (!c.errors || !c.touched) return '';
     if (name === 'sortOrder' || name === 'minSalary' || name === 'maxSalary')
       return this.translate.instant('common.validation.invalid');
+    if (name === 'phone' && c.errors['pattern']) return this.translate.instant('employee.info.errors.phone');
+    if (c.errors['email']) return this.translate.instant('common.validation.email');
     if (c.errors['required'] || c.errors['min']) {
       return this.translate.instant('common.validation.required');
     }
