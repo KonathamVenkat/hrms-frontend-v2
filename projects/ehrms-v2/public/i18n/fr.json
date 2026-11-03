@@ -935,7 +935,12 @@
       },
       "showPassword": "Afficher le mot de passe",
       "hidePassword": "Masquer le mot de passe",
-      "forgotPasswordNote": "Mot de passe oublié ? Contactez les RH pour le réinitialiser."
+      "forgotPasswordNote": "Mot de passe oublié ? Contactez les RH pour le réinitialiser.",
+      "partners": {
+        "label": "Logos des entreprises",
+        "nilepet": "Nile Petroleum",
+        "afroGenius": "Afro Genius Information Technology"
+      }
     },
     "changePassword": {
       "title": "Changer le mot de passe",

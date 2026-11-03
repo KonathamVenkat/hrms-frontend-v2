@@ -935,7 +935,12 @@
       },
       "showPassword": "Show password",
       "hidePassword": "Hide password",
-      "forgotPasswordNote": "Forgot your password? Contact HR to have it reset."
+      "forgotPasswordNote": "Forgot your password? Contact HR to have it reset.",
+      "partners": {
+        "label": "Company logos",
+        "nilepet": "Nile Petroleum",
+        "afroGenius": "Afro Genius Information Technology"
+      }
     },
     "changePassword": {
       "title": "Change password",

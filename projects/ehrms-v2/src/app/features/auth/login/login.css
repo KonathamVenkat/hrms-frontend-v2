@@ -398,6 +398,29 @@
   translate: calc(4px * var(--flip));
 }
 
+/* Company logos under the sign-in form: a white plate, so they look the same on the light and the dark theme. */
+.partners {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-5);
+  margin-block-start: var(--space-5);
+  padding: var(--space-2) var(--space-5);
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: 14px;
+  background: #fff;
+}
+.partners img {
+  display: block;
+  max-inline-size: 100%;
+  block-size: auto;
+}
+.partner-divider {
+  inline-size: 1px;
+  block-size: 48px;
+  background: var(--mat-sys-outline-variant);
+}
+
 .footer-text {
   text-align: center;
   font-size: 17px;

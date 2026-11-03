@@ -182,7 +182,7 @@ describe('EmployeeDetail guided flow (Continue to the next tab)', () => {
     expect(el.querySelector('.btn-continue')).toBeNull();
   });
 
-  it('marks only the open tab as active, for the red bar and for screen readers', () => {
+  it('marks only the open tab as active, for the tab bar and for screen readers', () => {
     const { component, fixture, el } = setup({ self: false, role: 'HR_ADMIN', routeId: '7' });
 
     component.goToNextTab();

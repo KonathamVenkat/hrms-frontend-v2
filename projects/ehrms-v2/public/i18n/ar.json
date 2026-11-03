@@ -935,7 +935,12 @@
       },
       "showPassword": "إظهار كلمة المرور",
       "hidePassword": "إخفاء كلمة المرور",
-      "forgotPasswordNote": "هل نسيت كلمة المرور؟ تواصل مع الموارد البشرية لإعادة تعيينها."
+      "forgotPasswordNote": "هل نسيت كلمة المرور؟ تواصل مع الموارد البشرية لإعادة تعيينها.",
+      "partners": {
+        "label": "شعارات الشركات",
+        "nilepet": "Nile Petroleum",
+        "afroGenius": "Afro Genius Information Technology"
+      }
     },
     "changePassword": {
       "title": "تغيير كلمة المرور",

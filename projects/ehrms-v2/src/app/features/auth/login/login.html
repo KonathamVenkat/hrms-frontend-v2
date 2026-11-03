@@ -211,6 +211,23 @@
         </button>
       </form>
 
+      <!-- The two company logos. They sit on a white plate so the red and blue stay readable on the dark theme too. -->
+      <div class="partners" role="group" [attr.aria-label]="'auth.login.partners.label' | translate">
+        <img
+          ngSrc="images/partner-nilepet.jpg"
+          width="54"
+          height="72"
+          [alt]="'auth.login.partners.nilepet' | translate"
+        />
+        <span class="partner-divider" aria-hidden="true"></span>
+        <img
+          ngSrc="images/partner-afro-genius.png"
+          width="105"
+          height="56"
+          [alt]="'auth.login.partners.afroGenius' | translate"
+        />
+      </div>
+
       <p class="footer-text">
         &copy; {{ currentYear }} EHRMS &middot; {{ 'auth.login.allRightsReserved' | translate }}
       </p>
