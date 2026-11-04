@@ -171,6 +171,10 @@
 .detail-tab .material-icons {
   font-size: 18px;
 }
+.detail-tab[aria-disabled='true'] {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
 .detail-tab:hover {
   color: var(--mat-sys-primary);
   background: color-mix(in srgb, var(--mat-sys-primary) 8%, transparent);

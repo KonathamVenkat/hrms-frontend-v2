@@ -207,8 +207,11 @@ describe('EmployeeDetail guided flow (Continue to the next tab)', () => {
     // Job Details is still loading (the request is never answered here): Continue is off and says why.
     expect(component.activeDetailTab()).toBe('job');
     expect(component.canContinue()).toBe(false);
-    expect(el.querySelector<HTMLButtonElement>('.btn-continue')?.disabled).toBe(true);
-    expect(el.querySelector('#continue-blocked')).not.toBeNull();
+    // Not natively disabled: it stays focusable so a keyboard or screen-reader user can read why it waits.
+    expect(el.querySelector<HTMLButtonElement>('.btn-continue')?.getAttribute('aria-disabled')).toBe('true');
+    expect(el.querySelector<HTMLButtonElement>('.btn-continue')?.disabled).toBe(false);
+    expect(el.querySelector('#continue-blocked')?.getAttribute('role')).toBe('status');
+    expect(el.querySelector('#continue-blocked')?.textContent).toContain('employee.detail.continueBlocked');
     expect(el.querySelector('.btn-continue')?.getAttribute('aria-describedby')).toBe('continue-blocked');
 
     component.goToNextTab();
@@ -222,8 +225,51 @@ describe('EmployeeDetail guided flow (Continue to the next tab)', () => {
     expect([...component.lockedTabs()]).toEqual([
       'addresses', 'identity', 'bank', 'documents', 'family', 'qualifications', 'experience',
     ]);
-    expect(el.querySelector<HTMLButtonElement>('#detail-tab-job')?.disabled).toBe(false);
-    expect(el.querySelector<HTMLButtonElement>('#detail-tab-bank')?.disabled).toBe(true);
+    expect(el.querySelector('#detail-tab-job')?.getAttribute('aria-disabled')).toBeNull();
+    expect(el.querySelector('#detail-tab-bank')?.getAttribute('aria-disabled')).toBe('true');
+  });
+
+  it('keeps a locked tab focusable and explained, but a click or an arrow key never opens it', () => {
+    const { component, fixture, el } = setup({ self: false, role: 'HR_ADMIN', routeId: '7' });
+    const bank = el.querySelector<HTMLButtonElement>('#detail-tab-bank');
+
+    expect(bank?.disabled).toBe(false); // still reachable with the arrow keys
+    expect(bank?.getAttribute('aria-describedby')).toBe('tab-locked-reason');
+    expect(el.querySelector('#tab-locked-reason')?.textContent).toContain('employee.detail.tabLocked');
+
+    bank?.click();
+    fixture.detectChanges();
+    expect(component.activeDetailTab()).toBe('profile');
+
+    component.openTab('job'); // the first required tab is open to everyone
+    expect(component.activeDetailTab()).toBe('job');
+  });
+
+  it('keeps the last answer when a later check fails, instead of unlocking every tab', () => {
+    const { component, fixture, employees } = setup({
+      self: false,
+      role: 'HR_ADMIN',
+      routeId: '7',
+      completeness: { ...NOTHING_SAVED, job: true, addresses: true },
+    });
+    const before = [...component.lockedTabs()];
+    expect(before).toContain('bank');
+
+    employees.getCompleteness.mockImplementation(() => throwError(() => new Error('down')));
+    component.activeDetailTab.set('addresses');
+    fixture.detectChanges();
+
+    expect([...component.lockedTabs()]).toEqual(before);
+  });
+
+  it('does not flash every tab as locked before the first answer arrives', () => {
+    TestBed.resetTestingModule();
+    const { component } = setup({ self: false, role: 'HR_ADMIN', routeId: '7' });
+
+    expect(component.lockedTabs().size).toBeGreaterThan(0); // answered synchronously here
+    // Before any answer there is nothing to lock on: a fresh component starts with no locks.
+    const fresh = TestBed.createComponent(EmployeeDetail).componentInstance;
+    expect(fresh.lockedTabs().size).toBe(0);
   });
 
   it('opens the tabs up to the first one the server says is empty, and locks the rest', () => {
@@ -259,10 +305,10 @@ describe('EmployeeDetail guided flow (Continue to the next tab)', () => {
   it('never holds an employee up on a tab they cannot add to (HR_MANAGER on another employee)', () => {
     const { component } = setup({ self: false, role: 'HR_MANAGER', routeId: '9' });
 
-    // Bank, documents, addresses, identity, family, qualifications and experience are all view-only for them;
-    // only the job record (not exempt) is still waiting, so just the tabs after it would lock if it were empty.
-    expect(component.lockedTabs().has('bank')).toBe(true); // job is still unmet, locks everything after it
+    // Every tab is view-only for them (only an HR_ADMIN adds a job, bank account or document, and only the
+    // owner edits the rest), so nothing the server reports as empty may hold them up.
     expect(component.canEditRecords()).toBe(false);
+    expect(component.lockedTabs().size).toBe(0);
   });
 
   it('does not block a tab that has no required data, and offers nothing after the last', () => {

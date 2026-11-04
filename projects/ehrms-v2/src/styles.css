@@ -555,7 +555,8 @@ html[dir='rtl'] * {
 .btn-add-sm:disabled,
 .btn-upload:disabled,
 .btn-assign:disabled,
-.btn-save:disabled {
+.btn-save:disabled,
+.btn-continue[aria-disabled='true'] {
   opacity: 0.6;
   cursor: not-allowed;
   box-shadow: none;
@@ -3131,6 +3132,14 @@ html:lang(ar) app-employee-form .field :is(input, select, textarea):not([type='c
   align-items: center;
   gap: var(--space-4);
   margin-block-start: var(--space-5);
+}
+.sr-only {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
 .continue-hint {
   margin: 0;

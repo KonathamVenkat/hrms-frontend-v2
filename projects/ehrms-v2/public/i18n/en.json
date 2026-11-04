@@ -311,6 +311,7 @@
       "tabsLabel": "Employee sections",
       "continueTo": "Continue to {{tab}}",
       "continueBlocked": "Save the required details on this tab to continue.",
+      "continueReady": "Required details saved. You can continue.",
       "tabLocked": "Save the required details on the earlier tabs first."
     },
     "addresses": {

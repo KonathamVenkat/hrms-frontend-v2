@@ -129,9 +129,10 @@
             [attr.aria-selected]="activeDetailTab() === tab.id"
             [attr.aria-controls]="'detail-panel-' + tab.id"
             [attr.tabindex]="activeDetailTab() === tab.id ? 0 : -1"
-            [disabled]="lockedTabs().has(tab.id)"
+            [attr.aria-disabled]="lockedTabs().has(tab.id) ? 'true' : null"
+            [attr.aria-describedby]="lockedTabs().has(tab.id) ? 'tab-locked-reason' : null"
             [attr.title]="lockedTabs().has(tab.id) ? ('employee.detail.tabLocked' | translate) : null"
-            (click)="activeDetailTab.set(tab.id)"
+            (click)="openTab(tab.id)"
           >
             <span class="material-icons" aria-hidden="true">{{ tab.icon }}</span>
             {{ tab.labelKey | translate }}
@@ -139,6 +140,7 @@
         }
       </div>
       <!-- end tab bar -->
+      <span id="tab-locked-reason" class="sr-only">{{ 'employee.detail.tabLocked' | translate }}</span>
 
       <!-- ── Profile tab ─────────────────────────────────── -->
       @if (activeDetailTab() === 'profile') {
@@ -398,13 +400,18 @@
       <!-- ── Continue: the guided flow to the next tab ───── -->
       @if (nextTab(); as next) {
         <div class="continue-bar">
-          @if (!canContinue()) {
-            <p id="continue-blocked" class="continue-hint">{{ 'employee.detail.continueBlocked' | translate }}</p>
-          }
+          <!-- Announced when it appears: why Continue waits, and that it no longer does -->
+          <p id="continue-blocked" class="continue-hint" role="status">
+            @if (canContinue()) {
+              <span class="sr-only">{{ 'employee.detail.continueReady' | translate }}</span>
+            } @else {
+              {{ 'employee.detail.continueBlocked' | translate }}
+            }
+          </p>
           <button
             type="button"
             class="btn-save btn-continue"
-            [disabled]="!canContinue()"
+            [attr.aria-disabled]="canContinue() ? null : 'true'"
             [attr.aria-describedby]="canContinue() ? null : 'continue-blocked'"
             (click)="goToNextTab()"
           >

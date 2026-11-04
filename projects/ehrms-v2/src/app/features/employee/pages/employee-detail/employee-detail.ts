@@ -48,6 +48,18 @@ import { LanguageService } from '../../../../core/services/language.service';
 import { HasUnsavedChanges } from '../../../../core/guards/unsaved-changes.guard';
 import { UnsavedChangesTracker } from '../../../../core/forms/discard-prompt';
 
+/** What the lock assumes when the completeness check could not be read: nothing is held back. */
+const ALL_MET: EmployeeCompleteness = {
+  job: true,
+  addresses: true,
+  identity: true,
+  bank: true,
+  documents: true,
+  family: true,
+  qualifications: true,
+  experience: true,
+};
+
 type DetailTab =
   | 'profile'
   | 'job'
@@ -152,15 +164,17 @@ export class EmployeeDetail implements OnInit, HasUnsavedChanges {
   private readonly qualifications = viewChild(EmployeeQualifications);
   private readonly experience = viewChild(EmployeeExperience);
   /** What the server says each tab holds, read when the page opens and each time another tab opens. */
+  private readonly employeeId = computed(() => this.employee()?.employeeId);
   private readonly completeness = signal<EmployeeCompleteness | null>(null);
   private readonly refreshCompleteness = new Subject<number>();
 
   /** A viewer who cannot add records to a tab is never held up by it. */
   private isExempt(tab: DetailTab): boolean {
     switch (tab) {
+      case 'job':
       case 'bank':
       case 'documents':
-        return !this.isHrAdmin();
+        return !this.isHrAdmin(); // only an HR_ADMIN can add these, so nobody else is held up by them
       case 'addresses':
       case 'identity':
       case 'family':
@@ -172,21 +186,41 @@ export class EmployeeDetail implements OnInit, HasUnsavedChanges {
     }
   }
 
-  /** The open tab answers live (so Continue opens the moment a record is saved); the others use the server's answer. */
+  /** What the open tab itself says (undefined for every tab that is not open, which has no component). */
+  private live(tab: DetailTab): boolean | undefined {
+    switch (tab) {
+      case 'job':
+        return this.job()?.requirementMet();
+      case 'addresses':
+        return this.addresses()?.requirementMet();
+      case 'identity':
+        return this.identity()?.requirementMet();
+      case 'bank':
+        return this.bank()?.requirementMet();
+      case 'documents':
+        return this.documents()?.requirementMet();
+      case 'family':
+        return this.family()?.requirementMet();
+      case 'qualifications':
+        return this.qualifications()?.requirementMet();
+      case 'experience':
+        return this.experience()?.requirementMet();
+      default:
+        return undefined;
+    }
+  }
+
+  /** Remembers that a tab has its records now, so leaving it does not fall back to an older server answer. */
+  private markSaved(tab: DetailTab): void {
+    if (tab === 'profile') return;
+    this.completeness.update((c) => (c && !c[tab] ? { ...c, [tab]: true } : c));
+  }
+
+  /** The open tab answers live (so Continue opens the moment a record is saved); the others use the server answer. */
   private readonly requirementMet = computed<Record<DetailTab, boolean>>(() => {
     const server = this.completeness();
-    const live: Partial<Record<DetailTab, boolean | undefined>> = {
-      job: this.job()?.requirementMet(),
-      addresses: this.addresses()?.requirementMet(),
-      identity: this.identity()?.requirementMet(),
-      bank: this.bank()?.requirementMet(),
-      documents: this.documents()?.requirementMet(),
-      family: this.family()?.requirementMet(),
-      qualifications: this.qualifications()?.requirementMet(),
-      experience: this.experience()?.requirementMet(),
-    };
     const met = (tab: Exclude<DetailTab, 'profile'>): boolean =>
-      this.isExempt(tab) || live[tab] === true || (server?.[tab] ?? false);
+      this.isExempt(tab) || this.live(tab) === true || (server?.[tab] ?? false);
     return {
       profile: true,
       job: met('job'),
@@ -203,6 +237,7 @@ export class EmployeeDetail implements OnInit, HasUnsavedChanges {
   readonly lockedTabs = computed(() => {
     const met = this.requirementMet();
     const locked = new Set<DetailTab>();
+    if (this.completeness() === null) return locked; // not known yet: do not flash every tab as locked
     let blocked = false;
     for (const tab of this.visibleTabs()) {
       if (blocked) locked.add(tab.id);
@@ -251,23 +286,20 @@ export class EmployeeDetail implements OnInit, HasUnsavedChanges {
         takeUntilDestroyed(),
       )
       .subscribe((res) => {
-        this.completeness.set(
-          res?.success && res.data
-            ? res.data
-            : {
-                job: true,
-                addresses: true,
-                identity: true,
-                bank: true,
-                documents: true,
-                family: true,
-                qualifications: true,
-                experience: true,
-              },
-        );
+        if (res?.success && res.data) {
+          this.completeness.set(res.data);
+        } else if (this.completeness() === null) {
+          // Never read: do not lock anyone out. A later failure keeps the last good answer.
+          this.completeness.set(ALL_MET);
+        }
       });
+    // The open tab's own answer is remembered, so leaving it never falls back to an older server answer.
     effect(() => {
-      const id = this.employee()?.employeeId;
+      const tab = this.activeDetailTab();
+      if (this.live(tab) === true) untracked(() => this.markSaved(tab));
+    });
+    effect(() => {
+      const id = this.employeeId();
       this.activeDetailTab(); // read again each time another tab opens, so saved records unlock the next tabs
       if (id) untracked(() => this.refreshCompleteness.next(id));
     });
@@ -489,6 +521,7 @@ export class EmployeeDetail implements OnInit, HasUnsavedChanges {
   goToNextTab(): void {
     const next = this.nextTab();
     if (!next || !this.canContinue()) return;
+    this.markSaved(this.activeDetailTab()); // Continue was allowed, so the tab being left is done
     this.activeDetailTab.set(next.id);
     afterNextRender(
       () => {
@@ -500,6 +533,11 @@ export class EmployeeDetail implements OnInit, HasUnsavedChanges {
     );
   }
 
+  /** A tab click: a locked tab stays closed (it stays focusable so its reason can be read). */
+  openTab(id: DetailTab): void {
+    if (!this.lockedTabs().has(id)) this.activeDetailTab.set(id);
+  }
+
   /** Arrow keys, Home and End move between tabs (the arrows follow the reading direction). */
   onTabKeydown(event: KeyboardEvent): void {
     const rtl = this.language.direction() === 'rtl';
@@ -507,8 +545,7 @@ export class EmployeeDetail implements OnInit, HasUnsavedChanges {
       ArrowRight: rtl ? -1 : 1,
       ArrowLeft: rtl ? 1 : -1,
     };
-    const locked = this.lockedTabs();
-    const tabs = this.visibleTabs().filter((tab) => !locked.has(tab.id));
+    const tabs = this.visibleTabs();
     const current = tabs.findIndex((tab) => tab.id === this.activeDetailTab());
     let next: number;
     if (event.key in step) {
@@ -522,7 +559,7 @@ export class EmployeeDetail implements OnInit, HasUnsavedChanges {
     }
     event.preventDefault();
     const tab = tabs[next];
-    this.activeDetailTab.set(tab.id);
+    this.openTab(tab.id); // a locked tab only takes focus
     (event.currentTarget as HTMLElement).querySelector<HTMLElement>('#detail-tab-' + tab.id)?.focus();
   }
 
