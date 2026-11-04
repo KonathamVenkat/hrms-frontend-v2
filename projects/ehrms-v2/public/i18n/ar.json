@@ -706,6 +706,9 @@
         "bankPlaceholder": "اختر بنكاً",
         "branch": "الفرع",
         "branchPlaceholder": "بدون فرع",
+        "branchAddress": "عنوان الفرع",
+        "branchPhone": "هاتف الفرع",
+        "branchEmail": "بريد الفرع الإلكتروني",
         "accountNumber": "رقم الحساب",
         "iban": "رقم الآيبان (IBAN)",
         "accountHolderName": "اسم صاحب الحساب"

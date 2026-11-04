@@ -706,6 +706,9 @@
         "bankPlaceholder": "Sélectionner une banque",
         "branch": "Agence",
         "branchPlaceholder": "Aucune agence",
+        "branchAddress": "Adresse de l’agence",
+        "branchPhone": "Téléphone de l’agence",
+        "branchEmail": "E-mail de l’agence",
         "accountNumber": "Numéro de compte",
         "iban": "IBAN",
         "accountHolderName": "Titulaire du compte"

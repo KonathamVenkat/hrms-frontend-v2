@@ -113,6 +113,24 @@
                 <dd>{{ a.bankBranchName }}</dd>
               </div>
             }
+            @if (a.bankBranchAddress) {
+              <div class="ba-row">
+                <dt>{{ 'employee.bankAccounts.fields.branchAddress' | translate }}</dt>
+                <dd>{{ a.bankBranchAddress }}</dd>
+              </div>
+            }
+            @if (a.bankBranchPhone) {
+              <div class="ba-row">
+                <dt>{{ 'employee.bankAccounts.fields.branchPhone' | translate }}</dt>
+                <dd dir="ltr"><a [href]="'tel:' + a.bankBranchPhone">{{ a.bankBranchPhone }}</a></dd>
+              </div>
+            }
+            @if (a.bankBranchEmail) {
+              <div class="ba-row">
+                <dt>{{ 'employee.bankAccounts.fields.branchEmail' | translate }}</dt>
+                <dd dir="ltr"><a [href]="'mailto:' + a.bankBranchEmail">{{ a.bankBranchEmail }}</a></dd>
+              </div>
+            }
             <div class="ba-row">
               <dt>{{ 'employee.bankAccounts.fields.accountNumber' | translate }}</dt>
               <dd class="ba-number" dir="ltr">{{ a.accountNumber }}</dd>

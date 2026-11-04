@@ -8,6 +8,10 @@ export interface EmployeeBankAccount {
   bankBranchId?: number;
   bankBranchName?: string;
   bankBranchNameAr?: string;
+  /** Contact details of the branch, when the bank master has them. */
+  bankBranchAddress?: string;
+  bankBranchPhone?: string;
+  bankBranchEmail?: string;
   /** Last 4 characters only when `masked` is true. */
   accountNumber: string;
   iban?: string;

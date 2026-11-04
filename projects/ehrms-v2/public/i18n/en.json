@@ -706,6 +706,9 @@
         "bankPlaceholder": "Select a bank",
         "branch": "Branch",
         "branchPlaceholder": "No branch",
+        "branchAddress": "Branch address",
+        "branchPhone": "Branch phone",
+        "branchEmail": "Branch e-mail",
         "accountNumber": "Account Number",
         "iban": "IBAN",
         "accountHolderName": "Account Holder Name"

@@ -10,11 +10,12 @@ import { LanguageService } from '../../services/language.service';
     <select
       class="lang-select"
       [attr.aria-label]="'layout.toolbar.language' | translate"
-      [value]="languageService.getCurrentLanguage()"
       (change)="languageService.setLanguage($any($event.target).value)"
     >
       @for (lang of languageService.languages; track lang.code) {
-        <option [value]="lang.code">{{ lang.label }}</option>
+        <option [value]="lang.code" [selected]="lang.code === languageService.currentLang()">
+          {{ lang.label }}
+        </option>
       }
     </select>
   `,
