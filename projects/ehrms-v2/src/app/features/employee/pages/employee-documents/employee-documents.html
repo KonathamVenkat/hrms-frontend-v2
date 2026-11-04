@@ -123,7 +123,7 @@
               <button type="button" class="act-btn btn-edit" [title]="'common.edit' | translate" [attr.aria-label]="('common.edit' | translate) + ': ' + doc.documentName" (click)="openEdit(doc)">
                 <span class="material-icons" aria-hidden="true">edit</span>
               </button>
-              @if (!doc.isVerified) {
+              @if (!doc.isVerified && canVerify()) {
                 <button type="button" class="act-btn btn-verify" [title]="'employee.documents.verify' | translate" [attr.aria-label]="('employee.documents.verify' | translate) + ': ' + doc.documentName" (click)="openVerify(doc)">
                   <span class="material-icons" aria-hidden="true">verified_user</span>
                 </button>

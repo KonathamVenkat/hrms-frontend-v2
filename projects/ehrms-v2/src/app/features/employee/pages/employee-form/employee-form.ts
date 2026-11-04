@@ -1,4 +1,5 @@
 // src/app/features/employee/pages/employee-form/employee-form.ts
+import { HasUnsavedChanges } from '../../../../core/guards/unsaved-changes.guard';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -71,8 +72,9 @@ type CommonFormValue = {
   templateUrl: './employee-form.html',
   styleUrl: './employee-form.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: { '(window:beforeunload)': 'onBeforeUnload($event)' },
 })
-export class EmployeeForm implements OnInit {
+export class EmployeeForm implements OnInit, HasUnsavedChanges {
   private fb = inject(FormBuilder);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
@@ -495,6 +497,16 @@ export class EmployeeForm implements OnInit {
         404: this.translate.instant('employee.form.errors.notFound'),
       }),
     );
+  }
+
+  /** Typed-in edits that were not saved yet (the route guard asks before leaving; a saved form is left alone). */
+  hasUnsavedChanges(): boolean {
+    return this.form.dirty && !this.success();
+  }
+
+  /** Closing the browser tab or reloading: the browser shows its own warning. */
+  onBeforeUnload(event: BeforeUnloadEvent): void {
+    if (this.hasUnsavedChanges()) event.preventDefault();
   }
 
   cancel(): void {

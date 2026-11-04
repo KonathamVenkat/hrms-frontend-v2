@@ -15,6 +15,7 @@ import {
   CreateEmployeePayload,
   UpdateEmployeePayload,
   EmployeeDetailData,
+  EmployeeCompleteness,
 } from '../models/employee';
 import { InfoLookup } from '../models/employee-info.model';
 
@@ -53,6 +54,11 @@ export class EmployeeService {
   // ── GET single employee ───────────────────────────────────
   getEmployee(id: number): Observable<ApiResponse<EmployeeDetailData>> {
     return this.http.get<ApiResponse<EmployeeDetailData>>(`${this.baseUrl}/${id}`);
+  }
+
+  // ── Which profile tabs already have their required records ──
+  getCompleteness(id: number): Observable<ApiResponse<EmployeeCompleteness>> {
+    return this.http.get<ApiResponse<EmployeeCompleteness>>(`${this.baseUrl}/${id}/completeness`);
   }
 
   // ── Create employee + auth user ───────────────────────────

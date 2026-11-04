@@ -80,6 +80,18 @@ export interface UpdateEmployeePayload
   version?: number;
 }
 
+/** GET /employees/{id}/completeness: which profile tabs already hold the records the guided flow requires. */
+export interface EmployeeCompleteness {
+  job: boolean;
+  addresses: boolean;
+  identity: boolean;
+  bank: boolean;
+  documents: boolean;
+  family: boolean;
+  qualifications: boolean;
+  experience: boolean;
+}
+
 /**
  * What GET /employees/{id} returns (EmployeeDetailResponse). The backend omits null fields,
  * so anything that can be empty is optional here.

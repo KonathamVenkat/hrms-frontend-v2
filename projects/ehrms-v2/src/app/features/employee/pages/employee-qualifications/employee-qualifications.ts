@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, viewChildren } from '@angular/core';
 import { EmployeeInfoSection } from '../../components/employee-info-section/employee-info-section';
 import {
   EDUCATION,
@@ -35,4 +35,9 @@ export class EmployeeQualifications {
   protected readonly education = EDUCATION;
   protected readonly training = TRAINING;
   protected readonly languages = LANGUAGES;
+  private readonly sections = viewChildren(EmployeeInfoSection);
+  /** True once every section here has its required first record. */
+  readonly requirementMet = computed(
+    () => this.sections().length > 0 && this.sections().every((s) => s.requirementMet()),
+  );
 }

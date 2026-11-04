@@ -309,7 +309,9 @@
         "success": "Mot de passe temporaire défini. Communiquez-le à l'employé de façon sécurisée."
       },
       "tabsLabel": "Sections de l'employé",
-      "continueTo": "Continuer vers {{tab}}"
+      "continueTo": "Continuer vers {{tab}}",
+      "continueBlocked": "Enregistrez les informations obligatoires de cet onglet pour continuer.",
+      "tabLocked": "Enregistrez d’abord les informations obligatoires des onglets précédents."
     },
     "addresses": {
       "title": "Adresses",

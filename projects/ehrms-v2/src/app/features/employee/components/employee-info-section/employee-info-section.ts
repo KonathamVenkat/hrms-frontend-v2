@@ -147,6 +147,14 @@ export class EmployeeInfoSection<R extends InfoRecord> implements OnInit {
   private readonly showSuccess = timedMessage(this.successMsg, this.destroyRef);
   showModal = signal(false);
   /** The "unsaved changes" question: asked when this form is closed after something was typed. */
+  /** True once the section has its required first record, or when it needs none or the viewer cannot add one. */
+  readonly requirementMet = computed(
+    () =>
+      this.loaded() &&
+      (this.readOnly() || this.config().required !== true || this.records().length > 0),
+  );
+  /** False until the records have been read once; the page's tab lock reads this before the inputs exist. */
+  private readonly loaded = signal(false);
   readonly discard = new DiscardPrompt(() => this.showModal() && (this.form().dirty), () => !this.isEditMode() && !this.loading() && this.config().required === true && this.records().length === 0);
   isEditMode = signal(false);
   private editing = signal<R | null>(null);
@@ -239,7 +247,10 @@ export class EmployeeInfoSection<R extends InfoRecord> implements OnInit {
       )
       .subscribe({
         next: (res) => {
-          if (res.success) this.records.set(res.data);
+          if (res.success) {
+            this.records.set(res.data);
+            this.loaded.set(true);
+          }
         },
         error: () => this.loadFailed.set(true),
       });

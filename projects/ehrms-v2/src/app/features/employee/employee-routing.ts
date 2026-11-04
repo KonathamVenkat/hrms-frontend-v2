@@ -13,11 +13,15 @@ export const EMPLOYEE_ROUTES: Routes = [
   {
     path: 'create',
     loadComponent: () => import('./pages/employee-form/employee-form').then((m) => m.EmployeeForm),
+    // Typed-in edits that were not saved are asked about before leaving.
+    canDeactivate: [unsavedChangesGuard],
     title: 'employee.routes.create',
   },
   {
     path: 'edit/:id',
     loadComponent: () => import('./pages/employee-form/employee-form').then((m) => m.EmployeeForm),
+    // Typed-in edits that were not saved are asked about before leaving.
+    canDeactivate: [unsavedChangesGuard],
     title: 'employee.routes.edit',
   },
   {

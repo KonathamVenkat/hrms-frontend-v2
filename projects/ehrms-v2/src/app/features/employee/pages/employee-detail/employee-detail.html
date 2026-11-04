@@ -129,6 +129,8 @@
             [attr.aria-selected]="activeDetailTab() === tab.id"
             [attr.aria-controls]="'detail-panel-' + tab.id"
             [attr.tabindex]="activeDetailTab() === tab.id ? 0 : -1"
+            [disabled]="lockedTabs().has(tab.id)"
+            [attr.title]="lockedTabs().has(tab.id) ? ('employee.detail.tabLocked' | translate) : null"
             (click)="activeDetailTab.set(tab.id)"
           >
             <span class="material-icons" aria-hidden="true">{{ tab.icon }}</span>
@@ -319,7 +321,7 @@
         <!-- end cards-grid -->
       }
 
-      <!-- ── Job Details tab ─────────────────────────────── -->
+      <!-- ── Tab panels: only the open tab is created, so only its data is requested ── -->
       @if (activeDetailTab() === 'job') {
         <app-job-details
           role="tabpanel"
@@ -330,7 +332,6 @@
           (jobSaved)="refreshEmployee()"
         />
       }
-      <!-- Tab panel — add after job tab -->
       @if (activeDetailTab() === 'addresses') {
         <app-employee-addresses
           role="tabpanel"
@@ -357,13 +358,22 @@
           [readOnly]="!isHrAdmin()"
         />
       }
+      @if (activeDetailTab() === 'documents') {
+        <app-employee-documents
+          role="tabpanel"
+          id="detail-panel-documents"
+          aria-labelledby="detail-tab-documents"
+          [employeeId]="employee()!.employeeId"
+          [canVerify]="isHrAdmin()"
+        />
+      }
       @if (activeDetailTab() === 'family') {
         <app-employee-family
           role="tabpanel"
           id="detail-panel-family"
           aria-labelledby="detail-tab-family"
           [employeeId]="employee()!.employeeId"
-          [readOnly]="!isHrAdmin()"
+          [readOnly]="!canEditRecords()"
         />
       }
       @if (activeDetailTab() === 'qualifications') {
@@ -372,7 +382,7 @@
           id="detail-panel-qualifications"
           aria-labelledby="detail-tab-qualifications"
           [employeeId]="employee()!.employeeId"
-          [readOnly]="!isHrAdmin()"
+          [readOnly]="!canEditRecords()"
         />
       }
       @if (activeDetailTab() === 'experience') {
@@ -381,22 +391,23 @@
           id="detail-panel-experience"
           aria-labelledby="detail-tab-experience"
           [employeeId]="employee()!.employeeId"
-          [readOnly]="!isHrAdmin()"
-        />
-      }
-      @if (activeDetailTab() === 'documents') {
-        <app-employee-documents
-          role="tabpanel"
-          id="detail-panel-documents"
-          aria-labelledby="detail-tab-documents"
-          [employeeId]="employee()!.employeeId"
+          [readOnly]="!canEditRecords()"
         />
       }
 
       <!-- ── Continue: the guided flow to the next tab ───── -->
       @if (nextTab(); as next) {
         <div class="continue-bar">
-          <button type="button" class="btn-save btn-continue" (click)="goToNextTab()">
+          @if (!canContinue()) {
+            <p id="continue-blocked" class="continue-hint">{{ 'employee.detail.continueBlocked' | translate }}</p>
+          }
+          <button
+            type="button"
+            class="btn-save btn-continue"
+            [disabled]="!canContinue()"
+            [attr.aria-describedby]="canContinue() ? null : 'continue-blocked'"
+            (click)="goToNextTab()"
+          >
             <span>{{ 'employee.detail.continueTo' | translate: { tab: (next.labelKey | translate) } }}</span>
             <span class="material-icons mirror-rtl" aria-hidden="true">arrow_forward</span>
           </button>

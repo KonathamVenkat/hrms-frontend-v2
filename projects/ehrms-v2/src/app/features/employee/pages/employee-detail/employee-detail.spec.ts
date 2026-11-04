@@ -4,11 +4,11 @@ import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute, Router, convertToParamMap, provideRouter } from '@angular/router';
 import { provideTranslateService } from '@ngx-translate/core';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 
 import { EmployeeDetail } from './employee-detail';
 import { EmployeeService } from '../../services/employee';
-import { EmployeeDetailData } from '../../models/employee';
+import { EmployeeCompleteness, EmployeeDetailData } from '../../models/employee';
 import { Auth } from '../../../../core/auth/auth';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { LanguageService } from '../../../../core/services/language.service';
@@ -35,10 +35,32 @@ const employee = {
   isActive: true,
 } as EmployeeDetailData;
 
-function setup(opts: { self: boolean; role: string; routeId?: string }) {
+const NOTHING_SAVED: EmployeeCompleteness = {
+  job: false,
+  addresses: false,
+  identity: false,
+  bank: false,
+  documents: false,
+  family: false,
+  qualifications: false,
+  experience: false,
+};
+
+function setup(opts: {
+  self: boolean;
+  role: string;
+  routeId?: string;
+  completeness?: EmployeeCompleteness;
+  completenessFails?: boolean;
+}) {
   const none = () => of({ success: true, message: '', statusCode: 200, data: [] });
   const employees = {
     getEmployee: vi.fn(() => of({ success: true, message: '', statusCode: 200, data: employee })),
+    getCompleteness: vi.fn(() =>
+      opts.completenessFails
+        ? throwError(() => new Error('down'))
+        : of({ success: true, message: '', statusCode: 200, data: opts.completeness ?? NOTHING_SAVED }),
+    ),
     // The Job Details tab, once opened, asks the same service for its dropdown lists.
     getDepartments: none,
     getDesignations: none,
@@ -101,13 +123,15 @@ describe('EmployeeDetail as "My profile"', () => {
     expect(el.querySelector('.btn-deactivate')).toBeNull();
     expect(tabIds()).toEqual([
       'detail-tab-profile',
+      'detail-tab-addresses',
       'detail-tab-identity',
-      'detail-tab-bank',
       'detail-tab-family',
       'detail-tab-qualifications',
       'detail-tab-experience',
     ]);
-    expect(component.identityReadOnly()).toBe(true);
+    // An employee fills in and edits their own details, so nothing on their profile is read-only.
+    expect(component.identityReadOnly()).toBe(false);
+    expect(component.canEditRecords()).toBe(true);
   });
 
   it('shows every tab to an HR user viewing their own profile, but still no HR actions', () => {
@@ -121,6 +145,12 @@ describe('EmployeeDetail as "My profile"', () => {
     const { component } = setup({ self: true, role: 'HR_ADMIN' });
 
     expect(component.identityReadOnly()).toBe(false);
+  });
+
+  it('lets an HR_MANAGER edit only their own record, not that of another employee', () => {
+    expect(setup({ self: true, role: 'HR_MANAGER' }).component.canEditRecords()).toBe(true);
+    TestBed.resetTestingModule();
+    expect(setup({ self: false, role: 'HR_MANAGER', routeId: '9' }).component.canEditRecords()).toBe(false);
   });
 
   it('leaves through the dashboard, because the employee list is HR-only', () => {
@@ -167,17 +197,79 @@ describe('EmployeeDetail guided flow (Continue to the next tab)', () => {
     expect(button?.getAttribute('type')).toBe('button');
   });
 
-  it('walks through every tab in order, one click each, and offers nothing after the last', () => {
+  it('opens the first tab from Profile (nothing is required there), then waits for the tab\'s required data', () => {
     const { component, fixture, el } = setup({ self: false, role: 'HR_ADMIN', routeId: '7' });
-    const seen: string[] = [component.activeDetailTab()];
+    expect(component.canContinue()).toBe(true);
 
-    for (let i = 0; i < 8; i++) {
-      el.querySelector<HTMLButtonElement>('.btn-continue')?.click();
-      fixture.detectChanges();
-      seen.push(component.activeDetailTab());
-    }
+    el.querySelector<HTMLButtonElement>('.btn-continue')?.click();
+    fixture.detectChanges();
 
-    expect(seen).toEqual(['profile', 'job', 'addresses', 'identity', 'bank', 'documents', 'family', 'qualifications', 'experience']);
+    // Job Details is still loading (the request is never answered here): Continue is off and says why.
+    expect(component.activeDetailTab()).toBe('job');
+    expect(component.canContinue()).toBe(false);
+    expect(el.querySelector<HTMLButtonElement>('.btn-continue')?.disabled).toBe(true);
+    expect(el.querySelector('#continue-blocked')).not.toBeNull();
+    expect(el.querySelector('.btn-continue')?.getAttribute('aria-describedby')).toBe('continue-blocked');
+
+    component.goToNextTab();
+    expect(component.activeDetailTab()).toBe('job');
+  });
+
+  it('locks every tab after the first one whose required data is not saved, and disables it in the tab bar', () => {
+    const { component, el } = setup({ self: false, role: 'HR_ADMIN', routeId: '7' });
+
+    // Nothing has loaded: Profile is open, Job Details (the first required tab) is reachable, the rest are locked.
+    expect([...component.lockedTabs()]).toEqual([
+      'addresses', 'identity', 'bank', 'documents', 'family', 'qualifications', 'experience',
+    ]);
+    expect(el.querySelector<HTMLButtonElement>('#detail-tab-job')?.disabled).toBe(false);
+    expect(el.querySelector<HTMLButtonElement>('#detail-tab-bank')?.disabled).toBe(true);
+  });
+
+  it('opens the tabs up to the first one the server says is empty, and locks the rest', () => {
+    const { component } = setup({
+      self: false,
+      role: 'HR_ADMIN',
+      routeId: '7',
+      completeness: { ...NOTHING_SAVED, job: true, addresses: true },
+    });
+
+    expect([...component.lockedTabs()]).toEqual([
+      'bank', 'documents', 'family', 'qualifications', 'experience',
+    ]);
+  });
+
+  it('asks the server once when the page opens and again when another tab opens, not once per tab', () => {
+    const { component, fixture, employees } = setup({ self: false, role: 'HR_ADMIN', routeId: '7' });
+    expect(employees.getCompleteness).toHaveBeenCalledTimes(1);
+    expect(employees.getCompleteness).toHaveBeenCalledWith(7);
+
+    component.activeDetailTab.set('job');
+    fixture.detectChanges();
+
+    expect(employees.getCompleteness).toHaveBeenCalledTimes(2);
+  });
+
+  it('locks nobody out when the completeness check fails', () => {
+    const { component } = setup({ self: false, role: 'HR_ADMIN', routeId: '7', completenessFails: true });
+
+    expect(component.lockedTabs().size).toBe(0);
+  });
+
+  it('never holds an employee up on a tab they cannot add to (HR_MANAGER on another employee)', () => {
+    const { component } = setup({ self: false, role: 'HR_MANAGER', routeId: '9' });
+
+    // Bank, documents, addresses, identity, family, qualifications and experience are all view-only for them;
+    // only the job record (not exempt) is still waiting, so just the tabs after it would lock if it were empty.
+    expect(component.lockedTabs().has('bank')).toBe(true); // job is still unmet, locks everything after it
+    expect(component.canEditRecords()).toBe(false);
+  });
+
+  it('does not block a tab that has no required data, and offers nothing after the last', () => {
+    const { component, fixture, el } = setup({ self: false, role: 'HR_ADMIN', routeId: '7' });
+    component.activeDetailTab.set('experience');
+    fixture.detectChanges();
+
     expect(component.nextTab()).toBeNull();
     expect(el.querySelector('.btn-continue')).toBeNull();
   });
@@ -196,15 +288,11 @@ describe('EmployeeDetail guided flow (Continue to the next tab)', () => {
 
   it('skips the tabs an employee may not read when they continue through their own profile', () => {
     const { component, fixture, el } = setup({ self: true, role: 'EMPLOYEE' });
-    const seen: string[] = [component.activeDetailTab()];
 
-    while (component.nextTab()) {
-      el.querySelector<HTMLButtonElement>('.btn-continue')?.click();
-      fixture.detectChanges();
-      seen.push(component.activeDetailTab());
-    }
+    el.querySelector<HTMLButtonElement>('.btn-continue')?.click();
+    fixture.detectChanges();
 
-    expect(seen).toEqual(['profile', 'identity', 'bank', 'family', 'qualifications', 'experience']);
+    expect(component.activeDetailTab()).toBe('addresses');
   });
 
   it('does nothing on the last tab', () => {

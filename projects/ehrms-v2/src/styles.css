@@ -3128,7 +3128,13 @@ html:lang(ar) app-employee-form .field :is(input, select, textarea):not([type='c
 .continue-bar {
   display: flex;
   justify-content: flex-end;
+  align-items: center;
+  gap: var(--space-4);
   margin-block-start: var(--space-5);
+}
+.continue-hint {
+  margin: 0;
+  color: var(--text-muted, inherit);
 }
 
 /* A modal with a wide form (identity details). */

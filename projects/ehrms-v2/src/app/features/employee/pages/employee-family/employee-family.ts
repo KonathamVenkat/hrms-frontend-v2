@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, viewChildren } from '@angular/core';
 import { EmployeeInfoSection } from '../../components/employee-info-section/employee-info-section';
 import { DEPENDANTS } from '../../components/employee-info-section/employee-info.config';
 
@@ -19,4 +19,9 @@ export class EmployeeFamily {
   readonly employeeId = input.required<number>();
   readonly readOnly = input(false);
   protected readonly dependants = DEPENDANTS;
+  private readonly sections = viewChildren(EmployeeInfoSection);
+  /** True once every section here has its required first record. */
+  readonly requirementMet = computed(
+    () => this.sections().length > 0 && this.sections().every((s) => s.requirementMet()),
+  );
 }

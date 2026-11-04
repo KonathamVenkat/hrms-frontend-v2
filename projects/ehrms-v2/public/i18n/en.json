@@ -309,7 +309,9 @@
         "success": "Temporary password set. Give it to the employee securely."
       },
       "tabsLabel": "Employee sections",
-      "continueTo": "Continue to {{tab}}"
+      "continueTo": "Continue to {{tab}}",
+      "continueBlocked": "Save the required details on this tab to continue.",
+      "tabLocked": "Save the required details on the earlier tabs first."
     },
     "addresses": {
       "title": "Addresses",

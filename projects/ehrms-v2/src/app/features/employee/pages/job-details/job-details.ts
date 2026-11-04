@@ -85,6 +85,8 @@ export class JobDetailsComponent implements OnInit {
   activeTab = signal<'current' | 'history'>('current');
   showModal = signal(false);
   /** The "unsaved changes" question: asked when this form is closed after something was typed. */
+  /** True once the employee has a current job record: the page's Continue button waits for it. */
+  readonly requirementMet = computed(() => !this.loading() && !!this.currentJob());
   readonly discard = new DiscardPrompt(() => this.showModal() && (this.form.dirty), () => this.isNewAssignment() && !this.loading() && !this.currentJob());
   isNewAssignment = signal(true); // true = new SCD record, false = minor update
 

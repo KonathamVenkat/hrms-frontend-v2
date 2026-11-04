@@ -68,6 +68,10 @@ export class EmployeeBankAccountsComponent implements OnInit {
   private readonly showSuccess = timedMessage(this.successMsg, this.destroyRef);
   showModal = signal(false);
   /** The "unsaved changes" question: asked when this form is closed after something was typed. */
+  /** True once the tab's required first account is saved (always for a viewer who cannot add one). */
+  readonly requirementMet = computed(
+    () => !this.loading() && (this.readOnly() || this.accounts().length > 0),
+  );
   readonly discard = new DiscardPrompt(() => this.showModal() && (this.form.dirty), () => !this.isEditMode() && !this.loading() && this.accounts().length === 0);
   isEditMode = signal(false);
   private editing = signal<EmployeeBankAccount | null>(null);

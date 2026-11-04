@@ -45,6 +45,8 @@ import { DateInput } from '../../../../shared/date-input/date-input';
 })
 export class EmployeeDocumentsComponent implements OnInit {
   readonly employeeId = input.required<number>();
+  /** Only an HR_ADMIN verifies a document; the employee who uploaded it never does. */
+  readonly canVerify = input(false);
 
   private fb = inject(FormBuilder);
   private docSvc = inject(EmployeeDocumentService);
@@ -63,6 +65,8 @@ export class EmployeeDocumentsComponent implements OnInit {
   // ── Modal state ───────────────────────────────────────────
   showModal = signal(false);
   /** The "unsaved changes" question: asked when this form is closed after something was typed. */
+  /** True once the tab's required first document is saved: the page's Continue button waits for it. */
+  readonly requirementMet = computed(() => !this.loading() && this.documents().length > 0);
   readonly discard = new DiscardPrompt(() => this.showModal() && (this.form.dirty || this.selectedFile() !== null), () => !this.isEditMode() && !this.loading() && this.documents().length === 0);
   isEditMode = signal(false);
   editingId = signal<number | null>(null);

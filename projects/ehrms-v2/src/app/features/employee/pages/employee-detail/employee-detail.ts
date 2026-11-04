@@ -9,14 +9,17 @@ import {
   OnInit,
   signal,
   computed,
+  effect,
   inject,
+  untracked,
+  viewChild,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { finalize, Observable } from 'rxjs';
+import { catchError, finalize, Observable, of, Subject, switchMap } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { EmployeeService } from '../../services/employee';
-import { EmployeeDetailData } from '../../models/employee';
+import { EmployeeCompleteness, EmployeeDetailData } from '../../models/employee';
 import { JobDetailsComponent } from '../job-details/job-details';
 import { EmployeeAddressesComponent } from '../employee-addresses/employee-addresses';
 import { EmployeeIdentityComponent } from '../employee-identity/employee-identity';
@@ -116,14 +119,15 @@ export class EmployeeDetail implements OnInit, HasUnsavedChanges {
   /** True on "My profile": the viewer's own record, without the HR actions on it. */
   selfMode = signal(false);
   /**
-   * Job details, addresses and documents are HR-only in the backend, so an employee sees only the rest: their own
-   * identity, bank, family, qualifications and experience (read-only, the backend lets them read their own).
+   * Job details, bank accounts and documents stay with HR, so an employee sees only the rest: their own addresses,
+   * identity, family, qualifications and experience, which they fill in and edit themself (the backend allows it for
+   * their own record only).
    */
   private readonly isHr = this.auth.hasAnyRole(...HR_ROLES);
   private readonly selfTabs: readonly DetailTab[] = [
     'profile',
+    'addresses',
     'identity',
-    'bank',
     'family',
     'qualifications',
     'experience',
@@ -139,8 +143,78 @@ export class EmployeeDetail implements OnInit, HasUnsavedChanges {
     const index = tabs.findIndex((tab) => tab.id === this.activeDetailTab());
     return index >= 0 && index < tabs.length - 1 ? tabs[index + 1] : null;
   });
-  /** The identity details are read-only for everyone but an HR_ADMIN. */
-  readonly identityReadOnly = computed(() => this.selfMode() && !this.isHrAdmin());
+  private readonly job = viewChild(JobDetailsComponent);
+  private readonly addresses = viewChild(EmployeeAddressesComponent);
+  private readonly identity = viewChild(EmployeeIdentityComponent);
+  private readonly bank = viewChild(EmployeeBankAccountsComponent);
+  private readonly documents = viewChild(EmployeeDocumentsComponent);
+  private readonly family = viewChild(EmployeeFamily);
+  private readonly qualifications = viewChild(EmployeeQualifications);
+  private readonly experience = viewChild(EmployeeExperience);
+  /** What the server says each tab holds, read when the page opens and each time another tab opens. */
+  private readonly completeness = signal<EmployeeCompleteness | null>(null);
+  private readonly refreshCompleteness = new Subject<number>();
+
+  /** A viewer who cannot add records to a tab is never held up by it. */
+  private isExempt(tab: DetailTab): boolean {
+    switch (tab) {
+      case 'bank':
+      case 'documents':
+        return !this.isHrAdmin();
+      case 'addresses':
+      case 'identity':
+      case 'family':
+      case 'qualifications':
+      case 'experience':
+        return !this.canEditRecords();
+      default:
+        return false;
+    }
+  }
+
+  /** The open tab answers live (so Continue opens the moment a record is saved); the others use the server's answer. */
+  private readonly requirementMet = computed<Record<DetailTab, boolean>>(() => {
+    const server = this.completeness();
+    const live: Partial<Record<DetailTab, boolean | undefined>> = {
+      job: this.job()?.requirementMet(),
+      addresses: this.addresses()?.requirementMet(),
+      identity: this.identity()?.requirementMet(),
+      bank: this.bank()?.requirementMet(),
+      documents: this.documents()?.requirementMet(),
+      family: this.family()?.requirementMet(),
+      qualifications: this.qualifications()?.requirementMet(),
+      experience: this.experience()?.requirementMet(),
+    };
+    const met = (tab: Exclude<DetailTab, 'profile'>): boolean =>
+      this.isExempt(tab) || live[tab] === true || (server?.[tab] ?? false);
+    return {
+      profile: true,
+      job: met('job'),
+      addresses: met('addresses'),
+      identity: met('identity'),
+      bank: met('bank'),
+      documents: met('documents'),
+      family: met('family'),
+      qualifications: met('qualifications'),
+      experience: met('experience'),
+    };
+  });
+  /** The tabs after the first one whose required data is not saved yet: they open one after the other, in order. */
+  readonly lockedTabs = computed(() => {
+    const met = this.requirementMet();
+    const locked = new Set<DetailTab>();
+    let blocked = false;
+    for (const tab of this.visibleTabs()) {
+      if (blocked) locked.add(tab.id);
+      else if (!met[tab.id]) blocked = true;
+    }
+    return locked;
+  });
+  /** Continue opens the next tab once the open one has its required data saved. */
+  readonly canContinue = computed(() => this.requirementMet()[this.activeDetailTab()]);
+  /** An HR_ADMIN edits anyone's records; everyone else edits only their own (on "My profile"). */
+  readonly canEditRecords = computed(() => this.isHrAdmin() || this.selfMode());
+  readonly identityReadOnly = computed(() => !this.canEditRecords());
 
   // ── Deactivate / Reactivate (HR_ADMIN only) ────────────────
   isHrAdmin = signal(false);
@@ -163,6 +237,41 @@ export class EmployeeDetail implements OnInit, HasUnsavedChanges {
       validators: NEW_PASSWORD_VALIDATORS,
     }),
   });
+
+  constructor() {
+    // One call (not one per tab) tells which tabs already have their records; the newest answer wins.
+    this.refreshCompleteness
+      .pipe(
+        switchMap((id) =>
+          this.empService.getCompleteness(id).pipe(
+            // A failed check must not lock anyone out: the backend enforces what matters.
+            catchError(() => of(null)),
+          ),
+        ),
+        takeUntilDestroyed(),
+      )
+      .subscribe((res) => {
+        this.completeness.set(
+          res?.success && res.data
+            ? res.data
+            : {
+                job: true,
+                addresses: true,
+                identity: true,
+                bank: true,
+                documents: true,
+                family: true,
+                qualifications: true,
+                experience: true,
+              },
+        );
+      });
+    effect(() => {
+      const id = this.employee()?.employeeId;
+      this.activeDetailTab(); // read again each time another tab opens, so saved records unlock the next tabs
+      if (id) untracked(() => this.refreshCompleteness.next(id));
+    });
+  }
 
   ngOnInit(): void {
     this.isHrAdmin.set(this.auth.getRole() === 'HR_ADMIN');
@@ -379,7 +488,7 @@ export class EmployeeDetail implements OnInit, HasUnsavedChanges {
    */
   goToNextTab(): void {
     const next = this.nextTab();
-    if (!next) return;
+    if (!next || !this.canContinue()) return;
     this.activeDetailTab.set(next.id);
     afterNextRender(
       () => {
@@ -398,7 +507,8 @@ export class EmployeeDetail implements OnInit, HasUnsavedChanges {
       ArrowRight: rtl ? -1 : 1,
       ArrowLeft: rtl ? 1 : -1,
     };
-    const tabs = this.visibleTabs();
+    const locked = this.lockedTabs();
+    const tabs = this.visibleTabs().filter((tab) => !locked.has(tab.id));
     const current = tabs.findIndex((tab) => tab.id === this.activeDetailTab());
     let next: number;
     if (event.key in step) {
