@@ -116,6 +116,20 @@ describe('EmployeeInfoSection', () => {
     expect(reader.el.querySelector('.empty-state small')).toBeNull();
   });
 
+  it('counts only an active record as the section having its required data (like the server)', () => {
+    expect(setup(DEPENDANTS, []).comp.requirementMet()).toBe(false);
+    TestBed.resetTestingModule();
+
+    expect(setup(DEPENDANTS, [switchedOff]).comp.requirementMet()).toBe(false); // only a switched-off record
+    TestBed.resetTestingModule();
+
+    expect(setup(DEPENDANTS, [switchedOff, rose]).comp.requirementMet()).toBe(true);
+    TestBed.resetTestingModule();
+
+    // A viewer who cannot add records is never held up by an empty section.
+    expect(setup(DEPENDANTS, [], { readOnly: true }).comp.requirementMet()).toBe(true);
+  });
+
   it('shows an error with a retry that loads again', () => {
     const getAll = vi
       .fn()

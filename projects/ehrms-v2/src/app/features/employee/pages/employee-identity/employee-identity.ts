@@ -100,9 +100,9 @@ export class EmployeeIdentityComponent implements OnInit {
   successMsg = signal<string | null>(null);
   private readonly showSuccess = timedMessage(this.successMsg, this.destroyRef);
   editMode = signal(false);
-  /** The "unsaved changes" question: asked when the form is closed after something was typed. */
   /** True once the identity record is saved (always for a viewer who cannot add one). */
   readonly requirementMet = computed(() => !this.loading() && (this.hasData() || !this.canEdit()));
+  /** The "unsaved changes" question: asked when the form is closed after something was typed. */
   readonly discard = new DiscardPrompt(
     () => this.editMode() && this.form.dirty,
     () => !this.hasData() && !this.loading(),

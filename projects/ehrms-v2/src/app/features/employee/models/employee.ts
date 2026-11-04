@@ -85,8 +85,9 @@ export interface EmployeeCompleteness {
   job: boolean;
   addresses: boolean;
   identity: boolean;
-  bank: boolean;
-  documents: boolean;
+  /** Only sent to an HR_ADMIN (the one role that adds them); left out for everyone else. */
+  bank?: boolean;
+  documents?: boolean;
   family: boolean;
   qualifications: boolean;
   experience: boolean;

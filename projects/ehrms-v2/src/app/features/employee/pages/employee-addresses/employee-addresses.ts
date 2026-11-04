@@ -56,9 +56,9 @@ export class EmployeeAddressesComponent implements OnInit {
   successMsg = signal<string | null>(null);
   private readonly showSuccess = timedMessage(this.successMsg, this.destroyRef);
   showModal = signal(false);
+  /** True once the tab has an active address (the server counts the same way): the page's Continue button waits for it. */
+  readonly requirementMet = computed(() => !this.loading() && this.addresses().some((a) => a.isActive));
   /** The "unsaved changes" question: asked when this form is closed after something was typed. */
-  /** True once the tab's required first address is saved: the page's Continue button waits for it. */
-  readonly requirementMet = computed(() => !this.loading() && this.addresses().length > 0);
   readonly discard = new DiscardPrompt(() => this.showModal() && (this.form.dirty), () => !this.isEditMode() && !this.loading() && this.addresses().length === 0);
   isEditMode = signal(false);
   editingId = signal<number | null>(null);

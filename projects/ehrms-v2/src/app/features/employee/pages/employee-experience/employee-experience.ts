@@ -1,5 +1,6 @@
-import { ChangeDetectionStrategy, Component, computed, input, viewChildren } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { EmployeeInfoSection } from '../../components/employee-info-section/employee-info-section';
+import { InfoSectionsTab } from '../../components/employee-info-section/info-sections-tab';
 import {
   EXPERIENCE,
   REFERENCES,
@@ -23,14 +24,7 @@ import {
     />
   `,
 })
-export class EmployeeExperience {
-  readonly employeeId = input.required<number>();
-  readonly readOnly = input(false);
+export class EmployeeExperience extends InfoSectionsTab {
   protected readonly experience = EXPERIENCE;
   protected readonly references = REFERENCES;
-  private readonly sections = viewChildren(EmployeeInfoSection);
-  /** True once every section here has its required first record. */
-  readonly requirementMet = computed(
-    () => this.sections().length > 0 && this.sections().every((s) => s.requirementMet()),
-  );
 }

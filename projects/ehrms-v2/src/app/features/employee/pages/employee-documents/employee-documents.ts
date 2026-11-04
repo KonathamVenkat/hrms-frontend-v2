@@ -64,9 +64,9 @@ export class EmployeeDocumentsComponent implements OnInit {
 
   // ── Modal state ───────────────────────────────────────────
   showModal = signal(false);
-  /** The "unsaved changes" question: asked when this form is closed after something was typed. */
   /** True once the tab's required first document is saved: the page's Continue button waits for it. */
   readonly requirementMet = computed(() => !this.loading() && this.documents().length > 0);
+  /** The "unsaved changes" question: asked when this form is closed after something was typed. */
   readonly discard = new DiscardPrompt(() => this.showModal() && (this.form.dirty || this.selectedFile() !== null), () => !this.isEditMode() && !this.loading() && this.documents().length === 0);
   isEditMode = signal(false);
   editingId = signal<number | null>(null);

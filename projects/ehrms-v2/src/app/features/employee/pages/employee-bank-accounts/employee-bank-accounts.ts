@@ -67,11 +67,11 @@ export class EmployeeBankAccountsComponent implements OnInit {
   successMsg = signal<string | null>(null);
   private readonly showSuccess = timedMessage(this.successMsg, this.destroyRef);
   showModal = signal(false);
-  /** The "unsaved changes" question: asked when this form is closed after something was typed. */
-  /** True once the tab's required first account is saved (always for a viewer who cannot add one). */
+  /** True once the tab has an active account (always for a viewer who cannot add one). */
   readonly requirementMet = computed(
-    () => !this.loading() && (this.readOnly() || this.accounts().length > 0),
+    () => !this.loading() && (this.readOnly() || this.accounts().some((a) => a.isActive)),
   );
+  /** The "unsaved changes" question: asked when this form is closed after something was typed. */
   readonly discard = new DiscardPrompt(() => this.showModal() && (this.form.dirty), () => !this.isEditMode() && !this.loading() && this.accounts().length === 0);
   isEditMode = signal(false);
   private editing = signal<EmployeeBankAccount | null>(null);
