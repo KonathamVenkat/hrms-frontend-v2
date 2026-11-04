@@ -2,9 +2,10 @@ import { signal } from '@angular/core';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router, convertToParamMap, provideRouter } from '@angular/router';
 import { provideTranslateService } from '@ngx-translate/core';
-import { of, throwError } from 'rxjs';
+import { Subject, of, throwError } from 'rxjs';
 
 import { EmployeeDetail } from './employee-detail';
 import { EmployeeService } from '../../services/employee';
@@ -52,12 +53,16 @@ function setup(opts: {
   routeId?: string;
   completeness?: EmployeeCompleteness;
   completenessFails?: boolean;
+  /** The completeness answer is held back until the test sends it. */
+  pendingCompleteness?: Subject<{ success: boolean; message: string; statusCode: number; data: EmployeeCompleteness }>;
 }) {
   const none = () => of({ success: true, message: '', statusCode: 200, data: [] });
   const employees = {
     getEmployee: vi.fn(() => of({ success: true, message: '', statusCode: 200, data: employee })),
     getCompleteness: vi.fn(() =>
-      opts.completenessFails
+      opts.pendingCompleteness
+        ? opts.pendingCompleteness
+        : opts.completenessFails
         ? throwError(() => new Error('down'))
         : of({ success: true, message: '', statusCode: 200, data: opts.completeness ?? NOTHING_SAVED }),
     ),
@@ -311,8 +316,66 @@ describe('EmployeeDetail guided flow (Continue to the next tab)', () => {
     expect(component.lockedTabs().size).toBe(0);
   });
 
+  it('sends the user back to where data is missing when the tab they opened early turns out to be locked', () => {
+    const pending = new Subject<{ success: boolean; message: string; statusCode: number; data: EmployeeCompleteness }>();
+    const { component, fixture } = setup({ self: false, role: 'HR_ADMIN', routeId: '7', pendingCompleteness: pending });
+    component.activeDetailTab.set('bank'); // nothing is locked yet: no answer has arrived
+    fixture.detectChanges();
+    expect(component.activeDetailTab()).toBe('bank');
+
+    pending.next({ success: true, message: '', statusCode: 200, data: NOTHING_SAVED });
+    fixture.detectChanges();
+
+    expect(component.lockedTabs().has('bank')).toBe(true);
+    expect(component.activeDetailTab()).toBe('job'); // the first tab whose data is missing
+  });
+
+  it('moves the arrow keys from the tab that has the focus, and a locked tab only takes focus', () => {
+    const { component, fixture, el } = setup({
+      self: false,
+      role: 'HR_ADMIN',
+      routeId: '7',
+      completeness: { ...NOTHING_SAVED, job: true },
+    });
+    document.body.appendChild(el);
+    component.activeDetailTab.set('addresses'); // the first tab with missing data: open; identity onwards locked
+    fixture.detectChanges();
+    const key = (id: string, name: string) =>
+      el.querySelector('#detail-tab-' + id)?.dispatchEvent(new KeyboardEvent('keydown', { key: name, bubbles: true }));
+
+    key('addresses', 'ArrowRight');
+    expect(document.activeElement?.id).toBe('detail-tab-identity'); // locked: focused, not opened
+    expect(component.activeDetailTab()).toBe('addresses');
+
+    key('identity', 'ArrowLeft'); // from the focused tab, not from the open one
+    expect(document.activeElement?.id).toBe('detail-tab-addresses');
+
+    key('addresses', 'ArrowLeft');
+    expect(component.activeDetailTab()).toBe('job'); // an unlocked tab is opened
+    el.remove();
+  });
+
+  it('says why when a locked tab or a waiting Continue is pressed', () => {
+    const { component, fixture } = setup({ self: false, role: 'HR_ADMIN', routeId: '7' });
+    const open = vi.spyOn(fixture.debugElement.injector.get(MatSnackBar), 'open');
+
+    component.openTab('bank');
+    expect(open).toHaveBeenLastCalledWith('employee.detail.tabLocked', 'common.close', { duration: 5000 });
+
+    component.activeDetailTab.set('job');
+    fixture.detectChanges();
+    component.goToNextTab(); // job has no records yet
+    expect(open).toHaveBeenLastCalledWith('employee.detail.continueBlocked', 'common.close', { duration: 5000 });
+  });
+
   it('does not block a tab that has no required data, and offers nothing after the last', () => {
-    const { component, fixture, el } = setup({ self: false, role: 'HR_ADMIN', routeId: '7' });
+    const everythingSaved: EmployeeCompleteness = {
+      job: true, addresses: true, identity: true, bank: true, documents: true,
+      family: true, qualifications: true, experience: true,
+    };
+    const { component, fixture, el } = setup({
+      self: false, role: 'HR_ADMIN', routeId: '7', completeness: everythingSaved,
+    });
     component.activeDetailTab.set('experience');
     fixture.detectChanges();
 

@@ -59,7 +59,7 @@ export class EmployeeAddressesComponent implements OnInit {
   /** True once the tab has an active address (the server counts the same way): the page's Continue button waits for it. */
   readonly requirementMet = computed(() => !this.loading() && this.addresses().some((a) => a.isActive));
   /** The "unsaved changes" question: asked when this form is closed after something was typed. */
-  readonly discard = new DiscardPrompt(() => this.showModal() && (this.form.dirty), () => !this.isEditMode() && !this.loading() && this.addresses().length === 0);
+  readonly discard = new DiscardPrompt(() => this.showModal() && (this.form.dirty), () => !this.isEditMode() && !this.loading() && !this.addresses().some((a) => a.isActive));
   isEditMode = signal(false);
   editingId = signal<number | null>(null);
   private editingVersion = signal<number | undefined>(undefined);

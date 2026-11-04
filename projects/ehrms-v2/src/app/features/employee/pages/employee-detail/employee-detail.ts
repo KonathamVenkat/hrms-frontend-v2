@@ -210,10 +210,21 @@ export class EmployeeDetail implements OnInit, HasUnsavedChanges {
     }
   }
 
+  /** Tabs this page saw with their records: a late or older server answer must not lock them again. */
+  private readonly remembered = new Set<DetailTab>();
+
   /** Remembers that a tab has its records now, so leaving it does not fall back to an older server answer. */
   private markSaved(tab: DetailTab): void {
     if (tab === 'profile') return;
+    this.remembered.add(tab);
     this.completeness.update((c) => (c && !c[tab] ? { ...c, [tab]: true } : c));
+  }
+
+  /** The open tab lost its last record (removed or deactivated), so it no longer counts as filled. */
+  private markUnsaved(tab: DetailTab): void {
+    if (tab === 'profile') return;
+    this.remembered.delete(tab);
+    this.completeness.update((c) => (c && c[tab] ? { ...c, [tab]: false } : c));
   }
 
   /** The open tab answers live (so Continue opens the moment a record is saved); the others use the server answer. */
@@ -245,6 +256,10 @@ export class EmployeeDetail implements OnInit, HasUnsavedChanges {
     }
     return locked;
   });
+  /** The first tab whose required data is missing: never locked, and where a locked open tab is sent back to. */
+  private readonly firstUnmet = computed<DetailTab>(
+    () => this.visibleTabs().find((tab) => !this.requirementMet()[tab.id])?.id ?? 'profile',
+  );
   /** Continue opens the next tab once the open one has its required data saved. */
   readonly canContinue = computed(() => this.requirementMet()[this.activeDetailTab()]);
   /** An HR_ADMIN edits anyone's records; everyone else edits only their own (on "My profile"). */
@@ -287,16 +302,41 @@ export class EmployeeDetail implements OnInit, HasUnsavedChanges {
       )
       .subscribe((res) => {
         if (res?.success && res.data) {
-          this.completeness.set(res.data);
+          const merged = { ...res.data };
+          for (const tab of this.remembered) {
+            if (tab !== 'profile') merged[tab] = true;
+          }
+          this.completeness.set(merged);
         } else if (this.completeness() === null) {
           // Never read: do not lock anyone out. A later failure keeps the last good answer.
           this.completeness.set(ALL_MET);
         }
       });
-    // The open tab's own answer is remembered, so leaving it never falls back to an older server answer.
+    // The open tab's own answer is remembered when it has its records, and forgotten if it loses its last one.
+    let watching: DetailTab | null = null;
+    let wasFilled = false;
     effect(() => {
       const tab = this.activeDetailTab();
-      if (this.live(tab) === true) untracked(() => this.markSaved(tab));
+      const live = this.live(tab);
+      untracked(() => {
+        if (tab !== watching) {
+          watching = tab;
+          wasFilled = false;
+        }
+        if (live === true) {
+          wasFilled = true;
+          this.markSaved(tab);
+        } else if (live === false && wasFilled) {
+          wasFilled = false;
+          this.markUnsaved(tab);
+        }
+      });
+    });
+    // A tab opened before the first answer arrived may turn out to be locked: go back to where the data is missing.
+    effect(() => {
+      if (this.lockedTabs().has(this.activeDetailTab())) {
+        untracked(() => this.activeDetailTab.set(this.firstUnmet()));
+      }
     });
     effect(() => {
       const id = this.employeeId();
@@ -520,7 +560,11 @@ export class EmployeeDetail implements OnInit, HasUnsavedChanges {
    */
   goToNextTab(): void {
     const next = this.nextTab();
-    if (!next || !this.canContinue()) return;
+    if (!next) return;
+    if (!this.canContinue()) {
+      this.tell('employee.detail.continueBlocked');
+      return;
+    }
     this.markSaved(this.activeDetailTab()); // Continue was allowed, so the tab being left is done
     this.activeDetailTab.set(next.id);
     afterNextRender(
@@ -535,7 +579,18 @@ export class EmployeeDetail implements OnInit, HasUnsavedChanges {
 
   /** A tab click: a locked tab stays closed (it stays focusable so its reason can be read). */
   openTab(id: DetailTab): void {
-    if (!this.lockedTabs().has(id)) this.activeDetailTab.set(id);
+    if (this.lockedTabs().has(id)) {
+      this.tell('employee.detail.tabLocked');
+    } else {
+      this.activeDetailTab.set(id);
+    }
+  }
+
+  /** Says why something is not available; the snackbar is announced to screen readers and shown on touch screens. */
+  private tell(messageKey: string): void {
+    this.snackBar.open(this.translate.instant(messageKey), this.translate.instant('common.close'), {
+      duration: 5000,
+    });
   }
 
   /** Arrow keys, Home and End move between tabs (the arrows follow the reading direction). */
@@ -546,7 +601,10 @@ export class EmployeeDetail implements OnInit, HasUnsavedChanges {
       ArrowLeft: rtl ? 1 : -1,
     };
     const tabs = this.visibleTabs();
-    const current = tabs.findIndex((tab) => tab.id === this.activeDetailTab());
+    // Move from the tab that has the focus (a locked tab can hold it without being the open one).
+    const focusedId = (event.target as HTMLElement | null)?.closest('[role="tab"]')?.id.replace('detail-tab-', '');
+    const focused = tabs.findIndex((tab) => tab.id === focusedId);
+    const current = focused >= 0 ? focused : tabs.findIndex((tab) => tab.id === this.activeDetailTab());
     let next: number;
     if (event.key in step) {
       next = (current + step[event.key] + tabs.length) % tabs.length;
@@ -559,7 +617,7 @@ export class EmployeeDetail implements OnInit, HasUnsavedChanges {
     }
     event.preventDefault();
     const tab = tabs[next];
-    this.openTab(tab.id); // a locked tab only takes focus
+    if (!this.lockedTabs().has(tab.id)) this.activeDetailTab.set(tab.id); // a locked tab only takes focus
     (event.currentTarget as HTMLElement).querySelector<HTMLElement>('#detail-tab-' + tab.id)?.focus();
   }
 

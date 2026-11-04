@@ -72,7 +72,7 @@ export class EmployeeBankAccountsComponent implements OnInit {
     () => !this.loading() && (this.readOnly() || this.accounts().some((a) => a.isActive)),
   );
   /** The "unsaved changes" question: asked when this form is closed after something was typed. */
-  readonly discard = new DiscardPrompt(() => this.showModal() && (this.form.dirty), () => !this.isEditMode() && !this.loading() && this.accounts().length === 0);
+  readonly discard = new DiscardPrompt(() => this.showModal() && (this.form.dirty), () => !this.isEditMode() && !this.loading() && !this.accounts().some((a) => a.isActive));
   isEditMode = signal(false);
   private editing = signal<EmployeeBankAccount | null>(null);
   confirmItem = signal<EmployeeBankAccount | null>(null);

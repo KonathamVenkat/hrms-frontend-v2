@@ -175,7 +175,7 @@
   opacity: 0.6;
   cursor: not-allowed;
 }
-.detail-tab:hover {
+.detail-tab:hover:not([aria-disabled='true']) {
   color: var(--mat-sys-primary);
   background: color-mix(in srgb, var(--mat-sys-primary) 8%, transparent);
 }

@@ -155,7 +155,7 @@ export class EmployeeInfoSection<R extends InfoRecord> implements OnInit {
   /** False until the records have been read once; the page's tab lock reads this before the inputs exist. */
   private readonly loaded = signal(false);
   /** The "unsaved changes" question: asked when this form is closed after something was typed. */
-  readonly discard = new DiscardPrompt(() => this.showModal() && (this.form().dirty), () => !this.isEditMode() && !this.loading() && this.config().required === true && this.records().length === 0);
+  readonly discard = new DiscardPrompt(() => this.showModal() && (this.form().dirty), () => !this.isEditMode() && !this.loading() && this.config().required === true && !this.records().some((r) => r.isActive));
   isEditMode = signal(false);
   private editing = signal<R | null>(null);
   confirmItem = signal<Row<R> | null>(null);

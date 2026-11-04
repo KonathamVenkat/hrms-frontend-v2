@@ -548,7 +548,7 @@ html[dir='rtl'] * {
 .btn-upload-sm:hover:not(:disabled),
 .btn-assign:hover:not(:disabled),
 .btn-assign-sm:hover:not(:disabled),
-.btn-save:hover:not(:disabled) {
+.btn-save:hover:not(:disabled):not([aria-disabled='true']) {
   transform: translateY(-1px);
 }
 .btn-add:disabled,
@@ -2799,6 +2799,9 @@ body
   position: absolute;
   inline-size: 1px;
   block-size: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
   overflow: hidden;
   clip-path: inset(50%);
   white-space: nowrap;
