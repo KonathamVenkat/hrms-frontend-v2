@@ -41,7 +41,7 @@ import {
   NEW_PASSWORD_VALIDATORS,
   PASSWORD_MIN_LENGTH,
 } from '../../../../core/validators/password.validators';
-import { getHttpErrorMessage } from '../../../../core/utils/http-error-message';
+import { getHttpErrorMessage, ruleMessage } from '../../../../core/utils/http-error-message';
 import { formatDisplayDate } from '../../../../core/utils/display-date';
 import { LanguageService } from '../../../../core/services/language.service';
 import { HasUnsavedChanges } from '../../../../core/guards/unsaved-changes.guard';
@@ -516,7 +516,11 @@ export class EmployeeDetail implements OnInit, HasUnsavedChanges {
             { duration: 8000 },
           );
         },
-        error: (err) => this.resetError.set(getHttpErrorMessage(this.translate, err)),
+        error: (err) =>
+          this.resetError.set(
+            ruleMessage(this.translate, err, 'employee.detail.resetPassword.rules') ||
+              getHttpErrorMessage(this.translate, err),
+          ),
       });
   }
 

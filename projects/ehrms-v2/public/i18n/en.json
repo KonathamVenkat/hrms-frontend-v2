@@ -308,7 +308,12 @@
         "label": "Temporary password",
         "submit": "Set temporary password",
         "submitting": "Saving...",
-        "success": "Temporary password set. Give it to the employee securely."
+        "success": "Temporary password set. Give it to the employee securely.",
+        "rules": {
+          "RESET_NOT_ALLOWED": "Only an employee account can be reset here. Ask the system administrator to reset any other role.",
+          "PASSWORD_POLICY": "The temporary password does not meet the password rules.",
+          "ACCOUNT_INACTIVE": "This account is deactivated; its password cannot be reset."
+        }
       },
       "tabsLabel": "Employee sections",
       "continueTo": "Continue to {{tab}}",

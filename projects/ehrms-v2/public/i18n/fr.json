@@ -308,7 +308,12 @@
         "label": "Mot de passe temporaire",
         "submit": "Définir le mot de passe temporaire",
         "submitting": "Enregistrement...",
-        "success": "Mot de passe temporaire défini. Communiquez-le à l'employé de façon sécurisée."
+        "success": "Mot de passe temporaire défini. Communiquez-le à l'employé de façon sécurisée.",
+        "rules": {
+          "RESET_NOT_ALLOWED": "Seul un compte d'employé peut être réinitialisé ici. Demandez à l'administrateur système de réinitialiser tout autre rôle.",
+          "PASSWORD_POLICY": "Le mot de passe temporaire ne respecte pas les règles de mot de passe.",
+          "ACCOUNT_INACTIVE": "Ce compte est désactivé ; son mot de passe ne peut pas être réinitialisé."
+        }
       },
       "tabsLabel": "Sections de l'employé",
       "continueTo": "Continuer vers {{tab}}",
