@@ -39,7 +39,6 @@ import { OwnPhoto } from '../../../../core/services/own-photo.service';
 import { AccessibleDialogDirective } from '../../../../core/directives/accessible-dialog.directive';
 import {
   NEW_PASSWORD_VALIDATORS,
-  PASSWORD_MAX_LENGTH,
   PASSWORD_MIN_LENGTH,
 } from '../../../../core/validators/password.validators';
 import { getHttpErrorMessage } from '../../../../core/utils/http-error-message';
@@ -487,7 +486,7 @@ export class EmployeeDetail implements OnInit, HasUnsavedChanges {
     if (c.hasError('minlength'))
       return this.translate.instant('common.validation.minLength', { count: PASSWORD_MIN_LENGTH });
     if (c.hasError('maxlength'))
-      return this.translate.instant('common.validation.maxLength', { count: PASSWORD_MAX_LENGTH });
+      return this.translate.instant('common.validation.passwordBytes');
     return this.translate.instant('auth.changePassword.errors.policy');
   }
 

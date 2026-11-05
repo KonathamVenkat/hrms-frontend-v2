@@ -24,7 +24,8 @@
       "invalid": "Invalid value",
       "min": "Minimum {{count}}",
       "max": "Maximum {{count}}",
-      "controlChars": "Contains hidden or control characters that are not allowed."
+      "controlChars": "Contains hidden or control characters that are not allowed.",
+      "passwordBytes": "Too long: at most 72 bytes (72 English letters, fewer in Arabic)."
     },
     "httpErrors": {
       "unauthorized": "Session expired. Please login again.",

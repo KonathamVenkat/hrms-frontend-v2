@@ -24,7 +24,8 @@
       "invalid": "Valeur invalide",
       "min": "Minimum {{count}}",
       "max": "Maximum {{count}}",
-      "controlChars": "Contient des caractères cachés ou de contrôle non autorisés."
+      "controlChars": "Contient des caractères cachés ou de contrôle non autorisés.",
+      "passwordBytes": "Trop long : 72 octets au maximum (72 lettres latines, moins en arabe)."
     },
     "httpErrors": {
       "unauthorized": "Session expirée. Veuillez vous reconnecter.",

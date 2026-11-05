@@ -21,7 +21,6 @@ import { Auth } from '../../../core/auth/auth';
 import { AuthService } from '../../../core/auth/auth.service';
 import {
   NEW_PASSWORD_VALIDATORS,
-  PASSWORD_MAX_LENGTH,
   PASSWORD_MIN_LENGTH,
 } from '../../../core/validators/password.validators';
 
@@ -93,7 +92,7 @@ export class ChangePassword implements OnInit {
     if (c.hasError('minlength'))
       return this.translate.instant('common.validation.minLength', { count: PASSWORD_MIN_LENGTH });
     if (c.hasError('maxlength'))
-      return this.translate.instant('common.validation.maxLength', { count: PASSWORD_MAX_LENGTH });
+      return this.translate.instant('common.validation.passwordBytes');
     return this.translate.instant('auth.changePassword.errors.policy');
   }
 
