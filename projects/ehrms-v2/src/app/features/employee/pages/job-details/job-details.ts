@@ -40,6 +40,8 @@ import { OfficeLocation } from '../../../admin/office-locations/models/office-lo
 import { fieldErrorMessage, isFieldInvalid } from '../../../../core/forms/field-errors';
 import { BranchSelect } from '../../../organisation/components/branch-select/branch-select';
 import { DateInput } from '../../../../shared/date-input/date-input';
+import { noControlChars, noControlCharsMultiline } from '../../../../shared/validators/no-control-chars';
+import { ruleMessage } from '../../../../core/utils/http-error-message';
 import { DepartmentHeadCard } from '../../components/department-head/department-head';
 import { DepartmentSecretaryCard } from '../../components/department-secretary/department-secretary';
 
@@ -143,16 +145,16 @@ export class JobDetailsComponent implements OnInit {
     designationId: this.fb.control<number | null>(null, Validators.required),
     sectionId: this.fb.control<number | null>(null),
     professionId: this.fb.control<number | null>(null, (c) => this.professionMismatch(c)),
-    jobPositionId: this.fb.nonNullable.control('', Validators.maxLength(20)),
+    jobPositionId: this.fb.nonNullable.control('', [Validators.maxLength(20), noControlChars]),
     specializationId: this.fb.control<number | null>(null),
     contractTypeId: this.fb.control<number | null>(null),
     contractStartDate: this.fb.nonNullable.control(''),
     contractEndDate: this.fb.nonNullable.control('', (c) => this.contractEndBeforeStart(c)),
-    formRequestNo: this.fb.nonNullable.control('', Validators.maxLength(30)),
-    appointmentRequestNo: this.fb.nonNullable.control('', Validators.maxLength(30)),
-    afe: this.fb.nonNullable.control('', Validators.maxLength(30)),
-    companyIdCardNo: this.fb.nonNullable.control('', Validators.maxLength(30)),
-    currentWorkAddress: this.fb.nonNullable.control('', Validators.maxLength(300)),
+    formRequestNo: this.fb.nonNullable.control('', [Validators.maxLength(30), noControlChars]),
+    appointmentRequestNo: this.fb.nonNullable.control('', [Validators.maxLength(30), noControlChars]),
+    afe: this.fb.nonNullable.control('', [Validators.maxLength(30), noControlChars]),
+    companyIdCardNo: this.fb.nonNullable.control('', [Validators.maxLength(30), noControlChars]),
+    currentWorkAddress: this.fb.nonNullable.control('', [Validators.maxLength(300), noControlChars]),
     currentWorkPhone: this.fb.nonNullable.control('', [Validators.maxLength(30), Validators.pattern(/^[0-9+() -]*$/)]),
     reportingManagerId: this.fb.control<number | null>(null),
     functionalManagerId: this.fb.control<number | null>(null),
@@ -161,7 +163,7 @@ export class JobDetailsComponent implements OnInit {
     shiftId: this.fb.control<number | null>(null),
     workMode: this.fb.nonNullable.control('ON_SITE', Validators.required),
     effectiveFrom: this.fb.nonNullable.control('', Validators.required),
-    remarks: this.fb.nonNullable.control('', Validators.maxLength(500)),
+    remarks: this.fb.nonNullable.control('', [Validators.maxLength(500), noControlCharsMultiline]),
   });
 
   ngOnInit(): void {
@@ -524,7 +526,7 @@ export class JobDetailsComponent implements OnInit {
       designationId: Number(v.designationId),
       sectionId: v.sectionId ? +v.sectionId : null,
       professionId: v.professionId ?? undefined,
-      jobPositionId: v.jobPositionId || undefined,
+      jobPositionId: v.jobPositionId.trim() || undefined,
       specializationId: v.specializationId ?? null,
       contractTypeId: v.contractTypeId ?? null,
       contractStartDate: v.contractStartDate || null,
@@ -542,7 +544,9 @@ export class JobDetailsComponent implements OnInit {
       shiftId: v.shiftId ? +v.shiftId : undefined,
       workMode: v.workMode,
       effectiveFrom: v.effectiveFrom,
-      remarks: v.remarks || undefined,
+      remarks: v.remarks.trim() || undefined,
+      // Only the update of the current job is checked against the version the screen was opened with.
+      version: this.isNewAssignment() ? undefined : this.currentJob()?.version,
     };
 
     const call = this.isNewAssignment()
@@ -572,9 +576,10 @@ export class JobDetailsComponent implements OnInit {
           this.error.set(res.message);
         }
       },
-      error: (err: { error?: { message?: string } }) =>
+      error: (err: unknown) =>
         this.error.set(
-          err?.error?.message || this.translate.instant('employee.jobDetails.errors.saveFailed'),
+          ruleMessage(this.translate, err, 'employee.jobDetails.errors.rules') ||
+            this.translate.instant('employee.jobDetails.errors.saveFailed'),
         ),
     });
   }

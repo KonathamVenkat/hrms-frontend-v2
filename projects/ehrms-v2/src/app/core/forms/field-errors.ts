@@ -27,6 +27,7 @@ export function fieldErrorMessage(
   if (errors['maxlength']) {
     return translate.instant('common.validation.maxLength', { count: errors['maxlength'].requiredLength });
   }
+  if (errors['controlChars']) return translate.instant('common.validation.controlChars');
   if (errors['pattern']) return translate.instant('common.validation.pattern');
   for (const [code, key] of Object.entries(custom)) {
     if (errors[code]) return translate.instant(key);

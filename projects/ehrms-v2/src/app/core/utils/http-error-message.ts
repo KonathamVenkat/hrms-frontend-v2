@@ -34,6 +34,21 @@ export function getHttpErrorMessage(
   }
 }
 
+/**
+ * The screen's own text for a refusal: by the business rule the backend named (`<prefix>.<RULE_CODE>`), else for a 409 by
+ * `<prefix>.conflict`. Undefined when the screen has no text for it, so the caller falls back to the HTTP status message.
+ */
+export function ruleMessage(translate: TranslateService, err: unknown, prefix: string): string | undefined {
+  const rule: unknown = (err as { error?: { errors?: { ruleCode?: unknown } } } | null)?.error?.errors?.ruleCode;
+  const keys = [typeof rule === 'string' ? `${prefix}.${rule}` : '', (err as { status?: number } | null)?.status === 409 ? `${prefix}.conflict` : ''];
+  for (const key of keys) {
+    if (!key) continue;
+    const text = translate.instant(key);
+    if (text !== key) return text;
+  }
+  return undefined;
+}
+
 /** The `message` the backend put in an error response, if there is one. */
 export function serverMessage(err: unknown): string | undefined {
   const message = (err as { error?: { message?: unknown } } | null)?.error?.message;

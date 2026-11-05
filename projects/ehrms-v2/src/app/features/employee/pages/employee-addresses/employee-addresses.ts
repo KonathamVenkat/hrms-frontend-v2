@@ -27,10 +27,11 @@ import { EmployeeAddress } from '../../models/address.model';
 import { InfoLookup } from '../../models/employee-info.model';
 import { lookupOptions } from '../../utils/lookup-options';
 import { LanguageService } from '../../../../core/services/language.service';
-import { serverMessage } from '../../../../core/utils/http-error-message';
+import { ruleMessage, serverMessage } from '../../../../core/utils/http-error-message';
 import { timedMessage } from '../../../../core/utils/timed-message';
 import { FieldA11yDirective } from '../../../../core/directives/field-a11y.directive';
 import { fieldErrorMessage, isFieldInvalid } from '../../../../core/forms/field-errors';
+import { noControlChars } from '../../../../shared/validators/no-control-chars';
 
 @Component({
   selector: 'app-employee-addresses',
@@ -79,12 +80,12 @@ export class EmployeeAddressesComponent implements OnInit {
 
   readonly form = this.fb.nonNullable.group({
     addressType: ['', Validators.required],
-    addressLine1: ['', [Validators.required, Validators.maxLength(300)]],
-    addressLine2: ['', Validators.maxLength(300)],
-    city: ['', [Validators.required, Validators.maxLength(100)]],
-    stateProvince: ['', Validators.maxLength(100)],
-    country: ['South Sudan', [Validators.required, Validators.maxLength(100)]],
-    postalCode: ['', Validators.maxLength(20)],
+    addressLine1: ['', [Validators.required, Validators.maxLength(300), noControlChars]],
+    addressLine2: ['', [Validators.maxLength(300), noControlChars]],
+    city: ['', [Validators.required, Validators.maxLength(100), noControlChars]],
+    stateProvince: ['', [Validators.maxLength(100), noControlChars]],
+    country: ['South Sudan', [Validators.required, Validators.maxLength(100), noControlChars]],
+    postalCode: ['', [Validators.maxLength(20), noControlChars]],
     isPrimary: [false],
   });
 
@@ -256,9 +257,17 @@ export class EmployeeAddressesComponent implements OnInit {
         } else this.error.set(res.message);
       },
 
-      error: (err: unknown) =>
-        this.error.set(serverMessage(err) || this.translate.instant('common.httpErrors.actionFailed')),
+      error: (err: unknown) => this.error.set(this.actionError(err)),
     });
+  }
+
+  /** The refusal in the user's language: by business rule, else by status; the server's English text is the last resort. */
+  private actionError(err: unknown): string {
+    return (
+      ruleMessage(this.translate, err, 'employee.addresses.errors.rules') ||
+      serverMessage(err) ||
+      this.translate.instant('common.httpErrors.actionFailed')
+    );
   }
 
   // ── Set primary ───────────────────────────────────────────
@@ -303,7 +312,7 @@ export class EmployeeAddressesComponent implements OnInit {
         this.loadAddresses();
       },
       error: (err: unknown) => {
-        this.error.set(serverMessage(err) || this.translate.instant('common.httpErrors.actionFailed'));
+        this.error.set(this.actionError(err));
         this.cancelConfirm();
       },
     });

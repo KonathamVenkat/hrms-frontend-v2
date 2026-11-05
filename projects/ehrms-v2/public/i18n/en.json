@@ -23,7 +23,8 @@
       "pattern": "Invalid format — letters, numbers, dots, hyphens, underscores only",
       "invalid": "Invalid value",
       "min": "Minimum {{count}}",
-      "max": "Maximum {{count}}"
+      "max": "Maximum {{count}}",
+      "controlChars": "Contains hidden or control characters that are not allowed."
     },
     "httpErrors": {
       "unauthorized": "Session expired. Please login again.",
@@ -366,7 +367,14 @@
       },
       "errors": {
         "loadFailed": "Failed to load addresses.",
-        "lookups": "Could not load the city or province list."
+        "lookups": "Could not load the city or province list.",
+        "rules": {
+          "VERSION_REQUIRED": "The address changed or was not loaded completely. Reload and try again.",
+          "DUPLICATE_ADDRESS_TYPE": "An active address of this type already exists. Remove it first or edit it.",
+          "ADDRESS_INACTIVE": "A removed address cannot be changed.",
+          "CANNOT_DELETE_LAST": "The only active address cannot be removed.",
+          "conflict": "Someone else changed this address. Reload and try again."
+        }
       },
       "success": {
         "updated": "Address updated successfully",
@@ -518,7 +526,16 @@
         "saveFailed": "Failed to save identity info.",
         "visaDates": "The visa expiry date cannot be before its issue date.",
         "residenceDates": "The residence valid-until date cannot be before the residence date.",
-        "futureIssue": "The national ID issue date cannot be in the future."
+        "futureIssue": "The national ID issue date cannot be in the future.",
+        "rules": {
+          "IDENTITY_NOT_ACCEPTED": "These identity details could not be saved. Check the numbers or contact HR.",
+          "DUPLICATE_NATIONAL_ID": "This national ID is already recorded for another employee.",
+          "DUPLICATE_PASSPORT": "This passport number is already recorded for another employee.",
+          "DUPLICATE_VISA": "This visa number is already recorded for another employee.",
+          "DUPLICATE_WORK_PERMIT": "This work permit number is already recorded for another employee.",
+          "VERSION_REQUIRED": "The identity details changed or were not loaded completely. Reload and try again.",
+          "conflict": "Someone else changed these identity details. Reload and try again."
+        }
       },
       "success": {
         "saved": "Identity information saved successfully"
@@ -666,7 +683,33 @@
         "loadFailed": "Failed to load job details.",
         "saveFailed": "Operation failed. Please try again.",
         "professionMismatch": "The profession must be the one of the selected designation",
-        "contractEndBeforeStart": "The contract end cannot be before its start."
+        "contractEndBeforeStart": "The contract end cannot be before its start.",
+        "rules": {
+          "VERSION_REQUIRED": "The job details changed or were not loaded completely. Reload and try again.",
+          "STRUCTURAL_CHANGE_NOT_ALLOWED": "Department, section, designation, position, location, branch and managers can only be changed with a new assignment.",
+          "EMP_INACTIVE": "This employee is deactivated. Reactivate the employee before changing job details.",
+          "INVALID_DATE": "The effective date cannot be more than 1 year in the past.",
+          "FUTURE_EFFECTIVE_FROM": "The effective date cannot be in the future.",
+          "INVALID_EFFECTIVE_FROM": "The effective date must be after the effective date of the current assignment.",
+          "DEPARTMENT_INACTIVE": "The selected department is inactive.",
+          "DESIGNATION_INACTIVE": "The selected designation is inactive.",
+          "DESIGNATION_DEPARTMENT_MISMATCH": "The selected designation does not belong to the selected department.",
+          "LOCATION_INACTIVE": "The selected office location is inactive.",
+          "SHIFT_INACTIVE": "The selected work shift is inactive.",
+          "MANAGER_IS_SELF": "A manager cannot be the employee themselves.",
+          "MANAGER_INVALID": "The manager must be an existing, active employee.",
+          "MANAGER_CYCLE": "The selected manager already reports to this employee, directly or through others.",
+          "PROFESSION_INACTIVE": "The selected profession is inactive.",
+          "PROFESSION_DESIGNATION_MISMATCH": "The profession must be the one of the selected designation.",
+          "SPECIALIZATION_INACTIVE": "The selected specialization is inactive.",
+          "CONTRACT_TYPE_INACTIVE": "The selected contract type is inactive.",
+          "INVALID_CONTRACT_DATES": "The contract end cannot be before its start.",
+          "SECTION_INACTIVE": "The selected section is inactive.",
+          "SECTION_DEPARTMENT_MISMATCH": "The selected section does not belong to the selected department.",
+          "BRANCH_INACTIVE": "The selected branch is inactive.",
+          "BRANCH_LOCATION_MISMATCH": "The selected branch is not in the selected office location.",
+          "conflict": "Someone else changed these job details. Reload and try again."
+        }
       },
       "success": {
         "assigned": "New job assignment saved successfully",

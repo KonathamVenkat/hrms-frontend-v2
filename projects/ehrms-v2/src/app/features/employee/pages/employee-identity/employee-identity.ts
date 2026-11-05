@@ -25,7 +25,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { IdentityService } from '../../services/identity.service';
 import { IdentityInfo } from '../../models/identity.model';
 import { formatDisplayDate } from '../../../../core/utils/display-date';
-import { serverMessage } from '../../../../core/utils/http-error-message';
+import { ruleMessage, serverMessage } from '../../../../core/utils/http-error-message';
 import { fieldErrorMessage } from '../../../../core/forms/field-errors';
 import { timedMessage } from '../../../../core/utils/timed-message';
 import { LanguageService } from '../../../../core/services/language.service';
@@ -279,7 +279,9 @@ export class EmployeeIdentityComponent implements OnInit {
         },
         error: (err: unknown) =>
           this.error.set(
-            serverMessage(err) || this.translate.instant('employee.identity.errors.saveFailed'),
+            ruleMessage(this.translate, err, 'employee.identity.errors.rules') ||
+              serverMessage(err) ||
+              this.translate.instant('employee.identity.errors.saveFailed'),
           ),
       });
   }

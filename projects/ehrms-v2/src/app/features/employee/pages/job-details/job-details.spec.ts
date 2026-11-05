@@ -332,3 +332,45 @@ describe('JobDetailsComponent section', () => {
     );
   });
 });
+
+describe('JobDetailsComponent version and text checks', () => {
+  const current = {
+    jobDetailsId: 1,
+    employeeId: 5,
+    departmentId: 10,
+    designationId: 20,
+    locationId: 30,
+    workMode: 'ON_SITE',
+    effectiveFrom: '2026-01-01',
+    isCurrent: true,
+    version: 4,
+  } as JobDetails;
+
+  it('sends the version the screen was opened with when editing the current job', () => {
+    const { comp, jobSvc } = setup();
+    comp.currentJob.set(current);
+    comp.openEditCurrent();
+    comp.onSubmit();
+    expect(jobSvc.updateCurrentJob).toHaveBeenCalledWith(5, expect.objectContaining({ version: 4 }));
+  });
+
+  it('sends no version with a new assignment', () => {
+    const { comp, jobSvc } = setup();
+    comp.currentJob.set(current);
+    fill(comp, 20);
+    comp.onSubmit();
+    expect(jobSvc.assignJob).toHaveBeenCalledWith(5, expect.not.objectContaining({ version: 4 }));
+  });
+
+  it('refuses hidden characters in remarks and the position id, but allows line breaks in remarks', () => {
+    const { comp } = setup();
+    comp.currentJob.set(current);
+    comp.openEditCurrent();
+    comp.form.controls.remarks.setValue('first line\nsecond line');
+    expect(comp.form.controls.remarks.valid).toBe(true);
+    comp.form.controls.remarks.setValue('hidden\u200Btext');
+    expect(comp.form.controls.remarks.hasError('controlChars')).toBe(true);
+    comp.form.controls.jobPositionId.setValue('P-1\u200B');
+    expect(comp.form.controls.jobPositionId.hasError('controlChars')).toBe(true);
+  });
+});

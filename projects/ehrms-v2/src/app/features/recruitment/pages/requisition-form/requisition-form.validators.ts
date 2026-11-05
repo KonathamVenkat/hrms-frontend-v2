@@ -1,12 +1,6 @@
-import { AbstractControl, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 
-/** Same rule as the API: no control or invisible characters (a name pasted with a zero-width space is refused). */
-export const noControlChars = Validators.pattern(/^[^\p{Cc}\p{Cf}]*$/u);
-
-/** Free text: line breaks and tabs are fine, other control and invisible characters are not (same as the API). */
-export const noControlCharsMultiline = Validators.pattern(
-  /^[^\p{Cf}\x00-\x08\x0B\x0C\x0E-\x1F\x7F-\x9F]*$/u,
-);
+export { noControlChars, noControlCharsMultiline } from '../../../../shared/validators/no-control-chars';
 
 /** Error `errorKey` on the group when both numbers are present and the maximum is below the minimum. */
 export function maxNotBelowMin(minKey: string, maxKey: string, errorKey: string): ValidatorFn {

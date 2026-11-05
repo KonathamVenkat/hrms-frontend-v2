@@ -1,3 +1,4 @@
+import { noControlChars } from '../../shared/validators/no-control-chars';
 import { FormControl, ValidatorFn, Validators } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { fieldErrorMessage, isFieldInvalid } from './field-errors';
@@ -34,6 +35,7 @@ describe('fieldErrorMessage', () => {
     expect(fieldErrorMessage(touched('ab', Validators.minLength(5)), translate)).toBe('common.validation.minLength:5');
     expect(fieldErrorMessage(touched('abcdef', Validators.maxLength(3)), translate)).toBe('common.validation.maxLength:3');
     expect(fieldErrorMessage(touched('a', Validators.pattern(/^\d+$/)), translate)).toBe('common.validation.pattern');
+    expect(fieldErrorMessage(touched('a​b', noControlChars), translate)).toBe('common.validation.controlChars');
   });
 
   it('uses a custom error code before falling back to the generic message', () => {

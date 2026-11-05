@@ -80,6 +80,8 @@ export interface JobDetails {
   effectiveTo?: string;
   isCurrent: boolean;
   remarks?: string;
+  /** Optimistic-lock version: send it back unchanged when updating the current job. */
+  version?: number;
 
   // Audit
   createdBy?: string;
@@ -115,6 +117,8 @@ export interface JobDetailsRequest {
   workMode: string;
   effectiveFrom: string;
   remarks?: string;
+  /** Required when updating the current job; leave out when assigning a new one. */
+  version?: number;
 }
 
 export interface ApiResponse<T> {

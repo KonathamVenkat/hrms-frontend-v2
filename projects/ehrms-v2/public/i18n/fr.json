@@ -23,7 +23,8 @@
       "pattern": "Format invalide — lettres, chiffres, points, tirets, underscores uniquement",
       "invalid": "Valeur invalide",
       "min": "Minimum {{count}}",
-      "max": "Maximum {{count}}"
+      "max": "Maximum {{count}}",
+      "controlChars": "Contient des caractères cachés ou de contrôle non autorisés."
     },
     "httpErrors": {
       "unauthorized": "Session expirée. Veuillez vous reconnecter.",
@@ -366,7 +367,14 @@
       },
       "errors": {
         "loadFailed": "Échec du chargement des adresses.",
-        "lookups": "Impossible de charger la liste des villes ou des provinces."
+        "lookups": "Impossible de charger la liste des villes ou des provinces.",
+        "rules": {
+          "VERSION_REQUIRED": "L'adresse a changé ou n'a pas été chargée complètement. Rechargez puis réessayez.",
+          "DUPLICATE_ADDRESS_TYPE": "Une adresse active de ce type existe déjà. Supprimez-la ou modifiez-la.",
+          "ADDRESS_INACTIVE": "Une adresse supprimée ne peut pas être modifiée.",
+          "CANNOT_DELETE_LAST": "La seule adresse active ne peut pas être supprimée.",
+          "conflict": "Quelqu'un d'autre a modifié cette adresse. Rechargez puis réessayez."
+        }
       },
       "success": {
         "updated": "Adresse mise à jour avec succès",
@@ -518,7 +526,16 @@
         "saveFailed": "Échec de l'enregistrement des informations d'identité.",
         "visaDates": "La date d'expiration du visa ne peut pas précéder sa date de délivrance.",
         "residenceDates": "La date de fin de validité de la résidence ne peut pas précéder la date de résidence.",
-        "futureIssue": "La date de délivrance de la pièce d'identité ne peut pas être dans le futur."
+        "futureIssue": "La date de délivrance de la pièce d'identité ne peut pas être dans le futur.",
+        "rules": {
+          "IDENTITY_NOT_ACCEPTED": "Ces informations d'identité n'ont pas pu être enregistrées. Vérifiez les numéros ou contactez les RH.",
+          "DUPLICATE_NATIONAL_ID": "Cette pièce d’identité est déjà enregistrée pour un autre employé.",
+          "DUPLICATE_PASSPORT": "Ce numéro de passeport est déjà enregistré pour un autre employé.",
+          "DUPLICATE_VISA": "Ce numéro de visa est déjà enregistré pour un autre employé.",
+          "DUPLICATE_WORK_PERMIT": "Ce numéro de permis de travail est déjà enregistré pour un autre employé.",
+          "VERSION_REQUIRED": "Les informations d'identité ont changé ou n'ont pas été chargées complètement. Rechargez puis réessayez.",
+          "conflict": "Quelqu'un d'autre a modifié ces informations d'identité. Rechargez puis réessayez."
+        }
       },
       "success": {
         "saved": "Informations d'identité enregistrées avec succès"
@@ -666,7 +683,33 @@
         "loadFailed": "Échec du chargement des détails du poste.",
         "saveFailed": "L'opération a échoué. Veuillez réessayer.",
         "professionMismatch": "La profession doit être celle de la fonction choisie",
-        "contractEndBeforeStart": "La fin du contrat ne peut pas précéder son début."
+        "contractEndBeforeStart": "La fin du contrat ne peut pas précéder son début.",
+        "rules": {
+          "VERSION_REQUIRED": "Les détails du poste ont changé ou n'ont pas été chargés complètement. Rechargez puis réessayez.",
+          "STRUCTURAL_CHANGE_NOT_ALLOWED": "Le département, la section, la fonction, le poste, le lieu, l'agence et les responsables ne peuvent être modifiés que par une nouvelle affectation.",
+          "EMP_INACTIVE": "Cet employé est désactivé. Réactivez-le avant de modifier les détails du poste.",
+          "INVALID_DATE": "La date d'effet ne peut pas remonter à plus d'un an.",
+          "FUTURE_EFFECTIVE_FROM": "La date d'effet ne peut pas être dans le futur.",
+          "INVALID_EFFECTIVE_FROM": "La date d'effet doit être postérieure à celle de l'affectation actuelle.",
+          "DEPARTMENT_INACTIVE": "Le département choisi est inactif.",
+          "DESIGNATION_INACTIVE": "La fonction choisie est inactive.",
+          "DESIGNATION_DEPARTMENT_MISMATCH": "La fonction choisie n'appartient pas au département choisi.",
+          "LOCATION_INACTIVE": "Le lieu de travail choisi est inactif.",
+          "SHIFT_INACTIVE": "L'horaire de travail choisi est inactif.",
+          "MANAGER_IS_SELF": "Un responsable ne peut pas être l'employé lui-même.",
+          "MANAGER_INVALID": "Le responsable doit être un employé existant et actif.",
+          "MANAGER_CYCLE": "Le responsable choisi dépend déjà de cet employé, directement ou indirectement.",
+          "PROFESSION_INACTIVE": "La profession choisie est inactive.",
+          "PROFESSION_DESIGNATION_MISMATCH": "La profession doit être celle de la fonction choisie.",
+          "SPECIALIZATION_INACTIVE": "La spécialisation choisie est inactive.",
+          "CONTRACT_TYPE_INACTIVE": "Le type de contrat choisi est inactif.",
+          "INVALID_CONTRACT_DATES": "La fin du contrat ne peut pas précéder son début.",
+          "SECTION_INACTIVE": "La section choisie est inactive.",
+          "SECTION_DEPARTMENT_MISMATCH": "La section choisie n'appartient pas au département choisi.",
+          "BRANCH_INACTIVE": "L'agence choisie est inactive.",
+          "BRANCH_LOCATION_MISMATCH": "L'agence choisie n'est pas dans le lieu de travail choisi.",
+          "conflict": "Quelqu'un d'autre a modifié ces détails du poste. Rechargez puis réessayez."
+        }
       },
       "success": {
         "assigned": "Nouvelle affectation enregistrée avec succès",
