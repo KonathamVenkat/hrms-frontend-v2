@@ -18,7 +18,7 @@ const ICONS: Record<HistoryAction, string> = {
 /** Steps of the default flow that have a translated name; a custom step shows no label rather than a raw key. */
 const KNOWN_STEPS = ['BRANCH', 'SECRETARY', 'HEAD', 'GM', 'HR'];
 /** Roles with a translated name (common.enums.role); any other role is shown as sent. */
-const KNOWN_ROLES = ['HR_ADMIN', 'HR_MANAGER', 'GENERAL_MANAGER', 'EMPLOYEE', 'SYSTEM_ADMIN'];
+const KNOWN_ROLES = ['HR_ADMIN', 'HR_MANAGER', 'GENERAL_MANAGER', 'CEO', 'EMPLOYEE', 'SYSTEM_ADMIN'];
 
 /** One timeline row, worked out once so the template calls no methods. */
 interface HistoryRow extends RequestHistory {

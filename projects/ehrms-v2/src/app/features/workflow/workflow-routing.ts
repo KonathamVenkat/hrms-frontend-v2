@@ -6,7 +6,7 @@ import { roleGuard } from '../../core/guards/role.guard';
  * signed-in staff role may open the inbox; the API decides what it holds and who may act. SYSTEM_ADMIN
  * has no requests, so is kept out.
  */
-const WORKFLOW_ROLES = ['HR_ADMIN', 'HR_MANAGER', 'GENERAL_MANAGER', 'EMPLOYEE'];
+const WORKFLOW_ROLES = ['HR_ADMIN', 'HR_MANAGER', 'GENERAL_MANAGER', 'CEO', 'EMPLOYEE'];
 
 export const WORKFLOW_ROUTES: Routes = [
   {

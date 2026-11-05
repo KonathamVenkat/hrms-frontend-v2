@@ -93,7 +93,8 @@
         "HR_MANAGER": "HR Manager",
         "EMPLOYEE": "Employee",
         "GENERAL_MANAGER": "General Manager",
-        "SYSTEM_ADMIN": "System Admin"
+        "SYSTEM_ADMIN": "System Admin",
+        "CEO": "CEO"
       }
     },
     "unsavedChanges": "You have unsaved changes. Leave this page and lose them?",

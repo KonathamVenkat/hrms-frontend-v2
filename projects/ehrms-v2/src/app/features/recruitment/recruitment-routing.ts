@@ -7,7 +7,7 @@ import { unsavedChangesGuard } from '../../core/guards/unsaved-changes.guard';
  * SYSTEM_ADMIN has no access to them. The stage and rejection-reason set-up is SYSTEM_ADMIN only.
  * These guards only keep people out of screens whose API calls would answer 403.
  */
-const REQUISITION_ROLES = ['HR_ADMIN', 'HR_MANAGER', 'GENERAL_MANAGER', 'EMPLOYEE'];
+const REQUISITION_ROLES = ['HR_ADMIN', 'HR_MANAGER', 'GENERAL_MANAGER', 'CEO', 'EMPLOYEE'];
 
 export const RECRUITMENT_ROUTES: Routes = [
   {

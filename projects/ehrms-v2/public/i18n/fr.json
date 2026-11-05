@@ -93,7 +93,8 @@
         "HR_MANAGER": "Responsable RH",
         "EMPLOYEE": "Employé",
         "GENERAL_MANAGER": "Directeur général",
-        "SYSTEM_ADMIN": "Administrateur système"
+        "SYSTEM_ADMIN": "Administrateur système",
+        "CEO": "PDG"
       }
     },
     "unsavedChanges": "Vous avez des modifications non enregistrées. Quitter cette page et les perdre ?",

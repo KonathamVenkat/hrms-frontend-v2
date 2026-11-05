@@ -136,7 +136,7 @@ export class EmployeeForm implements OnInit, HasUnsavedChanges {
   readonly employedStatuses = ['ACTIVE', 'PROBATION', 'NOTICE_PERIOD', 'ON_HOLD'];
   // A brand-new employee can only start as PROBATION or ACTIVE.
   readonly creatableStatuses = ['PROBATION', 'ACTIVE'];
-  readonly roles = ['HR_ADMIN', 'HR_MANAGER', 'EMPLOYEE'];
+  readonly roles = ['HR_ADMIN', 'HR_MANAGER', 'EMPLOYEE', 'CEO'];
 
   get statusOptions(): string[] {
     if (!this.isEdit()) return this.creatableStatuses;
