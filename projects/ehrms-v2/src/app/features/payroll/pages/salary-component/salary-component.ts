@@ -23,6 +23,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatChipsModule } from '@angular/material/chips';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { ruleMessage } from '../../../../core/utils/http-error-message';
 
 import { PayrollService } from '../../services/payroll.service';
 import {
@@ -69,6 +70,7 @@ export class SalaryComponentComponent implements OnInit {
   readonly saving = signal(false);
   readonly showForm = signal(false);
   readonly editingId = signal<number | null>(null);
+  private editingVersion: number | undefined;
   readonly typeConfig = COMPONENT_TYPE_CONFIG;
   readonly calcLabels = CALC_TYPE_LABELS;
 
@@ -133,12 +135,14 @@ export class SalaryComponentComponent implements OnInit {
 
   openCreate(): void {
     this.editingId.set(null);
+    this.editingVersion = undefined;
     this.form.reset({ componentType: 'EARNING', calcType: 'FIXED', defaultValue: 0, sortOrder: 0 });
     this.showForm.set(true);
   }
 
   openEdit(comp: SalaryComponentResponse): void {
     this.editingId.set(comp.componentId);
+    this.editingVersion = comp.version;
     this.form.patchValue({
       componentCode: comp.componentCode,
       componentName: comp.componentName,
@@ -171,6 +175,7 @@ export class SalaryComponentComponent implements OnInit {
       isNssfApplicable: this.form.value.isNssfApplicable ?? false,
       description: this.form.value.description ?? '',
       sortOrder: this.form.value.sortOrder ?? 0,
+      version: this.editingVersion,
     };
 
     const obs = this.editingId()
@@ -192,7 +197,9 @@ export class SalaryComponentComponent implements OnInit {
       },
       error: (err) => {
         this.snack.open(
-          '❌ ' + (err.error?.message || this.translate.instant('payroll.salaryComponent.errors.saveFailed')),
+          '❌ ' +
+            (ruleMessage(this.translate, err, 'payroll.salaryComponent.errors.rules') ??
+              (err.error?.message || this.translate.instant('payroll.salaryComponent.errors.saveFailed'))),
           this.translate.instant('payroll.salaryComponent.close'),
           { duration: 4000 },
         );
@@ -206,7 +213,9 @@ export class SalaryComponentComponent implements OnInit {
       next: () => this.load(),
       error: (err) =>
         this.snack.open(
-          '❌ ' + (err.error?.message || this.translate.instant('payroll.salaryComponent.errors.toggleFailed')),
+          '❌ ' +
+            (ruleMessage(this.translate, err, 'payroll.salaryComponent.errors.rules') ??
+              (err.error?.message || this.translate.instant('payroll.salaryComponent.errors.toggleFailed'))),
           this.translate.instant('payroll.salaryComponent.close'),
           { duration: 3000 },
         ),

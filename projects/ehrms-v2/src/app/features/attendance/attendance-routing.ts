@@ -3,6 +3,9 @@
 import { Routes } from '@angular/router';
 import { HR_ROLES, roleGuard } from '../../core/guards/role.guard';
 
+/** HR decides employees' requests; the General Manager and CEO decide the ones routed to them (the server scopes the list). */
+const APPROVER_ROLES = [...HR_ROLES, 'GENERAL_MANAGER', 'CEO'];
+
 export const ATTENDANCE_ROUTES: Routes = [
   {
     path: 'log',
@@ -24,7 +27,7 @@ export const ATTENDANCE_ROUTES: Routes = [
   },
   {
     path: 'request-approval',
-    canActivate: [roleGuard(...HR_ROLES)],
+    canActivate: [roleGuard(...APPROVER_ROLES)],
     loadComponent: () =>
       import('./pages/attendance-request-approval/attendance-request-approval').then(
         (m) => m.AttendanceRequestApproval,
@@ -39,7 +42,7 @@ export const ATTENDANCE_ROUTES: Routes = [
   },
   {
     path: 'overtime-approval',
-    canActivate: [roleGuard(...HR_ROLES)],
+    canActivate: [roleGuard(...APPROVER_ROLES)],
     loadComponent: () =>
       import('./pages/overtime-approval/overtime-approval').then((m) => m.OvertimeApproval),
     title: 'attendance.overtimeApproval.title',

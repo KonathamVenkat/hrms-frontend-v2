@@ -9,6 +9,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { CdkTrapFocus } from '@angular/cdk/a11y';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { ruleMessage } from '../../../../../core/utils/http-error-message';
 import { finalize } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
@@ -40,6 +41,7 @@ export class WorkShifts implements OnInit {
   showModal = signal(false);
   isEditMode = signal(false);
   editingId = signal<number | null>(null);
+  private editingVersion: number | undefined;
   showConfirm = signal(false);
   confirmTarget = signal<WorkShift | null>(null);
 
@@ -163,6 +165,7 @@ export class WorkShifts implements OnInit {
   openCreate(): void {
     this.isEditMode.set(false);
     this.editingId.set(null);
+    this.editingVersion = undefined;
     this.selectedDays.set(['SUN', 'MON', 'TUE', 'WED', 'THU']);
     this.form.reset({
       shiftCode: '',
@@ -187,6 +190,7 @@ export class WorkShifts implements OnInit {
   openEdit(s: WorkShift): void {
     this.isEditMode.set(true);
     this.editingId.set(s.shiftId);
+    this.editingVersion = s.version;
     this.selectedDays.set(s.workingDays.split(',').map((d) => d.trim()));
     this.form.patchValue({
       shiftCode: s.shiftCode,
@@ -230,6 +234,7 @@ export class WorkShifts implements OnInit {
 
     const v = this.form.getRawValue();
     const payload = {
+      version: this.editingVersion,
       shiftCode: v.shiftCode,
       shiftName: v.shiftName,
       shiftNameAr: v.shiftNameAr,
@@ -268,9 +273,10 @@ export class WorkShifts implements OnInit {
       },
       error: (err) =>
         this.error.set(
-          err.status === 409
+          ruleMessage(this.translate, err, 'admin.workShifts.errors.rules') ??
+            (err.status === 409
             ? err?.error?.message || this.translate.instant('admin.workShifts.errors.duplicate')
-            : err?.error?.message || this.translate.instant('common.httpErrors.actionFailed'),
+            : err?.error?.message || this.translate.instant('common.httpErrors.actionFailed')),
         ),
     });
   }

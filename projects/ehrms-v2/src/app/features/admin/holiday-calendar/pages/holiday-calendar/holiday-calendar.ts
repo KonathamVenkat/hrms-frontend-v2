@@ -9,6 +9,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { CdkTrapFocus } from '@angular/cdk/a11y';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { ruleMessage } from '../../../../../core/utils/http-error-message';
 import { finalize } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
@@ -48,6 +49,7 @@ export class HolidayCalendar implements OnInit {
   showModal = signal(false);
   isEditMode = signal(false);
   editingId = signal<number | null>(null);
+  private editingVersion: number | undefined;
   showConfirm = signal(false);
   confirmTarget = signal<Holiday | null>(null);
 
@@ -150,6 +152,7 @@ export class HolidayCalendar implements OnInit {
   openCreate(): void {
     this.isEditMode.set(false);
     this.editingId.set(null);
+    this.editingVersion = undefined;
     this.form.reset({
       holidayName: '',
       holidayNameAr: '',
@@ -165,6 +168,7 @@ export class HolidayCalendar implements OnInit {
   openEdit(h: Holiday): void {
     this.isEditMode.set(true);
     this.editingId.set(h.holidayId);
+    this.editingVersion = h.version;
     this.form.patchValue({
       holidayName: h.holidayName,
       holidayNameAr: h.holidayNameAr,
@@ -194,6 +198,7 @@ export class HolidayCalendar implements OnInit {
 
     const v = this.form.value;
     const payload = {
+      version: this.editingVersion,
       holidayName: v.holidayName.trim(),
       holidayNameAr: v.holidayNameAr.trim(),
       holidayDate: v.holidayDate,
@@ -226,9 +231,10 @@ export class HolidayCalendar implements OnInit {
       },
       error: (err) =>
         this.error.set(
-          err.status === 409
+          ruleMessage(this.translate, err, 'admin.holidayCalendar.errors.rules') ??
+            (err.status === 409
             ? this.translate.instant('admin.holidayCalendar.errors.duplicate')
-            : err?.error?.message || this.translate.instant('common.httpErrors.actionFailed'),
+            : err?.error?.message || this.translate.instant('common.httpErrors.actionFailed')),
         ),
     });
   }

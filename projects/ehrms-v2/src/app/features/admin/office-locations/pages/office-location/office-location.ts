@@ -9,6 +9,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { CdkTrapFocus } from '@angular/cdk/a11y';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { ruleMessage } from '../../../../../core/utils/http-error-message';
 import { finalize } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { OfficeLocationService } from '../../services/office-location';
@@ -36,6 +37,7 @@ export class OfficeLocations implements OnInit {
   showModal = signal(false);
   isEditMode = signal(false);
   editingId = signal<number | null>(null);
+  private editingVersion: number | undefined;
   showConfirm = signal(false);
   confirmItem = signal<OfficeLocation | null>(null);
   filterText = signal('');
@@ -83,7 +85,7 @@ export class OfficeLocations implements OnInit {
       stateProvince: ['', Validators.maxLength(100)],
       country: ['South Sudan', [Validators.required, Validators.maxLength(100)]],
       postalCode: ['', Validators.maxLength(20)],
-      phone: ['', Validators.maxLength(30)],
+      phone: ['', [Validators.maxLength(30), Validators.pattern(/^[0-9+() -]{3,30}$|^$/)]],
       email: ['', [Validators.email, Validators.maxLength(200)]],
       timezone: ['Africa/Juba', Validators.maxLength(50)],
       latitude: [null],
@@ -123,6 +125,7 @@ export class OfficeLocations implements OnInit {
   openCreate(): void {
     this.isEditMode.set(false);
     this.editingId.set(null);
+    this.editingVersion = undefined;
     this.form.reset({
       locationCode: '',
       locationName: '',
@@ -149,6 +152,7 @@ export class OfficeLocations implements OnInit {
   openEdit(loc: OfficeLocation): void {
     this.isEditMode.set(true);
     this.editingId.set(loc.locationId);
+    this.editingVersion = loc.version;
     this.form.patchValue({ ...loc });
     this.form.get('locationCode')?.disable();
     this.showModal.set(true);
@@ -169,6 +173,7 @@ export class OfficeLocations implements OnInit {
     this.error.set(null);
     const v = this.form.getRawValue();
     const payload = {
+      version: this.editingVersion,
       ...v,
       sortOrder: +v.sortOrder,
       latitude: v.latitude ? +v.latitude : undefined,
@@ -177,6 +182,7 @@ export class OfficeLocations implements OnInit {
       stateProvince: v.stateProvince || undefined,
       postalCode: v.postalCode || undefined,
       phone: v.phone || undefined,
+      timezone: v.timezone || undefined,
       email: v.email || undefined,
     };
 
@@ -199,9 +205,10 @@ export class OfficeLocations implements OnInit {
       },
       error: (err) =>
         this.error.set(
-          err.status === 409
+          ruleMessage(this.translate, err, 'admin.officeLocations.errors.rules') ??
+            (err.status === 409
             ? err?.error?.message || this.translate.instant('admin.officeLocations.errors.duplicate')
-            : err?.error?.message || this.translate.instant('common.httpErrors.actionFailed'),
+            : err?.error?.message || this.translate.instant('common.httpErrors.actionFailed')),
         ),
     });
   }
@@ -256,7 +263,11 @@ export class OfficeLocations implements OnInit {
         count: c.errors['maxlength'].requiredLength,
       });
     }
-    if (c.errors['pattern']) return this.translate.instant('admin.workShifts.errors.patternCode');
+    if (c.errors['pattern']) {
+      return this.translate.instant(
+        name === 'phone' ? 'admin.officeLocations.errors.patternPhone' : 'admin.workShifts.errors.patternCode',
+      );
+    }
     return this.translate.instant('common.validation.invalid');
   }
   private showSuccess(msg: string): void {

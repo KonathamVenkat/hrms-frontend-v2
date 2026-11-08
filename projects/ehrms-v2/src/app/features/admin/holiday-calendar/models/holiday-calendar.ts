@@ -8,9 +8,9 @@ export interface Holiday {
   isRecurring: boolean;
   year: number;
   isActive: boolean;
-  createdBy?: string;
   createdAt?: string;
   updatedAt?: string;
+  version?: number;
 }
 
 export interface HolidayRequest {
@@ -21,6 +21,8 @@ export interface HolidayRequest {
   description?: string;
   isRecurring?: boolean;
   isActive?: boolean;
+  /** The version the screen was opened with; the server refuses an edit made from an older one. */
+  version?: number;
 }
 
 export interface ApiResponse<T> {

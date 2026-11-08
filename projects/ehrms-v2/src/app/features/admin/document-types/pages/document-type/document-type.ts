@@ -9,6 +9,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { CdkTrapFocus } from '@angular/cdk/a11y';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { ruleMessage } from '../../../../../core/utils/http-error-message';
 import { finalize } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DocumentTypeService } from '../../services/document-type';
@@ -36,6 +37,7 @@ export class DocumentTypes implements OnInit {
   showModal = signal(false);
   isEditMode = signal(false);
   editingId = signal<number | null>(null);
+  private editingVersion: number | undefined;
   showConfirm = signal(false);
   confirmItem = signal<DocumentType | null>(null);
   filterText = signal('');
@@ -128,6 +130,7 @@ export class DocumentTypes implements OnInit {
   openCreate(): void {
     this.isEditMode.set(false);
     this.editingId.set(null);
+    this.editingVersion = undefined;
     this.form.reset({
       docTypeCode: '',
       docTypeName: '',
@@ -149,6 +152,7 @@ export class DocumentTypes implements OnInit {
   openEdit(dt: DocumentType): void {
     this.isEditMode.set(true);
     this.editingId.set(dt.docTypeId);
+    this.editingVersion = dt.version;
     this.form.patchValue({ ...dt });
     this.form.get('docTypeCode')?.disable();
     this.showModal.set(true);
@@ -169,6 +173,7 @@ export class DocumentTypes implements OnInit {
     this.error.set(null);
     const v = this.form.getRawValue();
     const payload = {
+      version: this.editingVersion,
       ...v,
       sortOrder: +v.sortOrder,
       maxFileSizeMb: +v.maxFileSizeMb,
@@ -195,9 +200,10 @@ export class DocumentTypes implements OnInit {
       },
       error: (err) =>
         this.error.set(
-          err.status === 409
+          ruleMessage(this.translate, err, 'admin.documentTypes.errors.rules') ??
+            (err.status === 409
             ? err?.error?.message || this.translate.instant('admin.documentTypes.errors.duplicate')
-            : err?.error?.message || this.translate.instant('common.httpErrors.actionFailed'),
+            : err?.error?.message || this.translate.instant('common.httpErrors.actionFailed')),
         ),
     });
   }

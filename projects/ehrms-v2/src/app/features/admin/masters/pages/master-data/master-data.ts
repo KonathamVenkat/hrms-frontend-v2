@@ -160,7 +160,7 @@ export class MasterData implements OnInit {
       parentId: [0],
       code: [
         '',
-        [Validators.required, Validators.maxLength(30), Validators.pattern('^[A-Z0-9_]+$')],
+        [Validators.required, Validators.maxLength(30), Validators.pattern(this.codePattern())],
       ],
       name: ['', [Validators.required, Validators.maxLength(200)]],
       nameAr: ['', [Validators.required, Validators.maxLength(200)]],
@@ -176,6 +176,15 @@ export class MasterData implements OnInit {
     },
     { validators: salaryRange },
   );
+
+  /** Directorate codes already stored are DIR-001 style, so that one master also accepts a hyphen. */
+  private allowsHyphenInCode(): boolean {
+    return this.cfg.key === 'directorates';
+  }
+
+  private codePattern(): string {
+    return this.allowsHyphenInCode() ? '^[A-Z0-9_-]+$' : '^[A-Z0-9_]+$';
+  }
 
   ngOnInit(): void {
     if (this.cfg.parent) {
@@ -493,7 +502,11 @@ export class MasterData implements OnInit {
         count: c.errors['maxlength'].requiredLength,
       });
     }
-    if (c.errors['pattern']) return this.translate.instant('admin.workShifts.errors.patternCode');
+    if (c.errors['pattern']) {
+      return this.translate.instant(
+        this.allowsHyphenInCode() ? 'admin.sections.errors.patternCode' : 'admin.workShifts.errors.patternCode',
+      );
+    }
     return this.translate.instant('common.validation.invalid');
   }
 

@@ -20,6 +20,7 @@ export interface SalaryComponentResponse {
   isActive:           boolean;
   createdAt:          string;
   updatedAt:          string;
+  version:            number;
 }
 
 export interface SalaryStructureItemResponse {
@@ -45,6 +46,7 @@ export interface SalaryStructureResponse {
   employeeCount:  number;
   createdAt:      string;
   updatedAt:      string;
+  version:        number;
 }
 
 export interface SalaryBreakdownItem {
@@ -90,6 +92,8 @@ export interface SalaryComponentRequest {
   isNssfApplicable?: boolean;
   description?:      string;
   sortOrder?:        number;
+  /** The version the screen was opened with; the server refuses an edit made from an older one. */
+  version?:          number;
 }
 
 export interface SalaryStructureItemRequest {
@@ -105,6 +109,8 @@ export interface SalaryStructureRequest {
   structureName: string;
   description?:  string;
   items:         SalaryStructureItemRequest[];
+  /** The version the screen was opened with; the server refuses an edit made from an older one. */
+  version?:      number;
 }
 
 export interface EmployeeSalaryRequest {

@@ -9,6 +9,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { CdkTrapFocus } from '@angular/cdk/a11y';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { ruleMessage } from '../../../../../core/utils/http-error-message';
 import { finalize } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
@@ -40,6 +41,7 @@ export class LeaveTypes implements OnInit {
   showModal = signal(false);
   isEditMode = signal(false);
   editingId = signal<number | null>(null);
+  private editingVersion: number | undefined;
   showConfirm = signal(false);
   confirmTarget = signal<LeaveType | null>(null);
 
@@ -140,6 +142,7 @@ export class LeaveTypes implements OnInit {
   openCreate(): void {
     this.isEditMode.set(false);
     this.editingId.set(null);
+    this.editingVersion = undefined;
     this.form.reset({
       code: '',
       nameEn: '',
@@ -164,6 +167,7 @@ export class LeaveTypes implements OnInit {
   openEdit(lt: LeaveType): void {
     this.isEditMode.set(true);
     this.editingId.set(lt.leaveTypeId);
+    this.editingVersion = lt.version;
     this.form.patchValue({
       code: lt.code,
       nameEn: lt.nameEn,
@@ -205,6 +209,7 @@ export class LeaveTypes implements OnInit {
 
     const v = this.form.getRawValue();
     const payload = {
+      version: this.editingVersion,
       code: v.code,
       nameEn: v.nameEn,
       nameAr: v.nameAr,
@@ -244,9 +249,10 @@ export class LeaveTypes implements OnInit {
       },
       error: (err) =>
         this.error.set(
-          err.status === 409
+          ruleMessage(this.translate, err, 'admin.leaveTypes.errors.rules') ??
+            (err.status === 409
             ? err?.error?.message || this.translate.instant('admin.leaveTypes.errors.duplicate')
-            : err?.error?.message || this.translate.instant('common.httpErrors.actionFailed'),
+            : err?.error?.message || this.translate.instant('common.httpErrors.actionFailed')),
         ),
     });
   }

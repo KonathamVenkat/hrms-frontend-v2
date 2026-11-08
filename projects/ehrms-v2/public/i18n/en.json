@@ -1647,7 +1647,11 @@
       },
       "errors": {
         "saveFailed": "Save failed",
-        "toggleFailed": "Failed"
+        "toggleFailed": "Failed",
+        "rules": {
+          "COMPONENT_IN_USE": "This component is part of the pay of employees, so how it is calculated cannot change and it cannot be switched off. Only its names, description and order can change; create a new component instead.",
+          "conflict": "This was changed by someone else, or its code or name already exists. Reload the list and try again."
+        }
       }
     },
     "employeeSalary": {
@@ -1757,7 +1761,11 @@
       "errors": {
         "saveFailed": "Save failed",
         "toggleFailed": "Failed",
-        "cannotDeactivate": "Cannot deactivate — {{count}} employee(s) are assigned to this structure"
+        "cannotDeactivate": "Cannot deactivate — {{count}} employee(s) are assigned to this structure",
+        "rules": {
+          "STRUCTURE_IN_USE": "This structure is assigned to employees, so it cannot be edited or deactivated. Create a new structure instead.",
+          "conflict": "This was changed by someone else, or its code or name already exists. Reload the list and try again."
+        }
       }
     }
   },
@@ -1797,7 +1805,10 @@
       "includedMsg": "will be included in leave calculations.",
       "errors": {
         "loadFailed": "Failed to load holidays.",
-        "duplicate": "A holiday with this name on this date already exists."
+        "duplicate": "A holiday with this name on this date already exists.",
+        "rules": {
+          "conflict": "This was changed by someone else, or its code or name already exists. Reload the list and try again."
+        }
       },
       "success": {
         "updated": "\"{{name}}\" updated",
@@ -1864,7 +1875,10 @@
         "noDaySelected": "Please select at least one working day.",
         "duplicate": "Shift code or name already exists.",
         "patternCode": "Uppercase letters, numbers and underscores only",
-        "patternTime": "Format must be HH:MM (24hr)"
+        "patternTime": "Format must be HH:MM (24hr)",
+        "rules": {
+          "conflict": "This was changed by someone else, or its code or name already exists. Reload the list and try again."
+        }
       },
       "success": {
         "updated": "\"{{name}}\" updated",
@@ -1935,7 +1949,11 @@
       "activateMsg": "will be activated and available for leave requests.",
       "errors": {
         "loadFailed": "Failed to load leave types.",
-        "duplicate": "Code or name already exists."
+        "duplicate": "Code or name already exists.",
+        "rules": {
+          "LEAVE_TYPE_CODE_IN_USE": "This leave type is used by leave requests or balances, so its code cannot change. Edit its other details, or create a new leave type.",
+          "conflict": "This was changed by someone else, or its code or name already exists. Reload the list and try again."
+        }
       },
       "success": {
         "updated": "\"{{name}}\" updated successfully",
@@ -2017,7 +2035,10 @@
       "activate": "Activate",
       "errors": {
         "loadFailed": "Failed to load document types.",
-        "duplicate": "Code or name already exists."
+        "duplicate": "Code or name already exists.",
+        "rules": {
+          "conflict": "This was changed by someone else, or its code or name already exists. Reload the list and try again."
+        }
       },
       "success": {
         "updated": "\"{{name}}\" updated",
@@ -2062,7 +2083,11 @@
       "activate": "Activate",
       "errors": {
         "loadFailed": "Failed to load locations.",
-        "duplicate": "Code or name already exists."
+        "duplicate": "Code or name already exists.",
+        "rules": {
+          "conflict": "This was changed by someone else, or its code or name already exists. Reload the list and try again."
+        },
+        "patternPhone": "Use digits, spaces, + ( ) and - only (3 to 30 characters)."
       },
       "success": {
         "updated": "\"{{name}}\" updated",

@@ -24,6 +24,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatChipsModule } from '@angular/material/chips';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { ruleMessage } from '../../../../core/utils/http-error-message';
 
 import { PayrollService } from '../../services/payroll.service';
 import {
@@ -81,6 +82,7 @@ export class SalaryStructureComponent implements OnInit {
   readonly saving = signal(false);
   readonly showForm = signal(false);
   readonly editingId = signal<number | null>(null);
+  private editingVersion: number | undefined;
   readonly typeConfig = COMPONENT_TYPE_CONFIG;
   readonly calcLabels = CALC_TYPE_LABELS;
 
@@ -142,6 +144,7 @@ export class SalaryStructureComponent implements OnInit {
   // ── Open create form ───────────────────────────────────
   openCreate(): void {
     this.editingId.set(null);
+    this.editingVersion = undefined;
     this.form.reset();
     this.itemsArray.clear();
     // Pre-populate with all active components
@@ -154,6 +157,7 @@ export class SalaryStructureComponent implements OnInit {
   // ── Open edit form ─────────────────────────────────────
   openEdit(structure: SalaryStructureResponse): void {
     this.editingId.set(structure.structureId);
+    this.editingVersion = structure.version;
     this.form.patchValue({
       structureCode: structure.structureCode,
       structureName: structure.structureName,
@@ -222,6 +226,7 @@ export class SalaryStructureComponent implements OnInit {
       structureCode: (this.form.value.structureCode ?? '').toUpperCase().trim(),
       structureName: (this.form.value.structureName ?? '').trim(),
       description: this.form.value.description ?? '',
+      version: this.editingVersion,
       items: (this.itemsArray.value as ItemValue[]).map((item) => ({
         componentId: item.componentId,
         calcTypeOverride: item.calcTypeOverride || undefined,
@@ -250,7 +255,9 @@ export class SalaryStructureComponent implements OnInit {
       },
       error: (err) => {
         this.snack.open(
-          '❌ ' + (err.error?.message || this.translate.instant('payroll.salaryStructure.errors.saveFailed')),
+          '❌ ' +
+            (ruleMessage(this.translate, err, 'payroll.salaryStructure.errors.rules') ??
+              (err.error?.message || this.translate.instant('payroll.salaryStructure.errors.saveFailed'))),
           this.translate.instant('payroll.salaryStructure.close'),
           { duration: 4000 },
         );
@@ -272,7 +279,9 @@ export class SalaryStructureComponent implements OnInit {
       next: () => this.loadStructures(),
       error: (err) =>
         this.snack.open(
-          '❌ ' + (err.error?.message || this.translate.instant('payroll.salaryStructure.errors.toggleFailed')),
+          '❌ ' +
+            (ruleMessage(this.translate, err, 'payroll.salaryStructure.errors.rules') ??
+              (err.error?.message || this.translate.instant('payroll.salaryStructure.errors.toggleFailed'))),
           this.translate.instant('payroll.salaryStructure.close'),
           { duration: 3000 },
         ),

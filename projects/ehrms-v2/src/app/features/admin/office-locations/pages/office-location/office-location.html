@@ -308,7 +308,16 @@
           <div class="field-row">
             <div class="field">
               <label for="ol-phone">{{ 'admin.officeLocations.phone' | translate }}</label
-              ><input id="ol-phone" formControlName="phone" placeholder="+968 2xxx xxxx" />
+              ><input
+                id="ol-phone"
+                formControlName="phone"
+                placeholder="+211 9xx xxx xxx"
+                [attr.aria-invalid]="isInvalid('phone') ? 'true' : null"
+                [attr.aria-describedby]="isInvalid('phone') ? 'ol-phone-error' : null"
+              />
+              @if (isInvalid('phone')) {
+                <span class="field-error" id="ol-phone-error">{{ getError('phone') }}</span>
+              }
             </div>
             <div class="field">
               <label for="ol-email">{{ 'admin.officeLocations.email' | translate }}</label>

@@ -16,10 +16,9 @@ export interface LeaveType {
   applicableGender: string;
   isActive: boolean;
   sortOrder: number;
-  createdBy?: string;
   createdAt?: string;
-  updatedBy?: string;
   updatedAt?: string;
+  version?: number;
 }
 
 export interface LeaveTypeRequest {
@@ -39,4 +38,6 @@ export interface LeaveTypeRequest {
   applicableGender: string;
   sortOrder: number;
   isActive?: boolean;
+  /** The version the screen was opened with; the server refuses an edit made from an older one. */
+  version?: number;
 }

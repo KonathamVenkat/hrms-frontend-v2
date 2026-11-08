@@ -90,7 +90,7 @@ export class Departments implements OnInit {
   });
 
   readonly form = this.fb.group({
-    code: ['', [Validators.required, Validators.maxLength(20), Validators.pattern('^[A-Z0-9_]+$')]],
+    code: ['', [Validators.required, Validators.maxLength(20), Validators.pattern('^[A-Z0-9_-]+$')]],
     name: ['', [Validators.required, Validators.maxLength(200)]],
     nameAr: ['', [Validators.required, Validators.maxLength(200)]],
     description: ['', Validators.maxLength(500)],
@@ -282,7 +282,7 @@ export class Departments implements OnInit {
         count: c.errors['maxlength'].requiredLength,
       });
     }
-    if (c.errors['pattern']) return this.translate.instant('admin.workShifts.errors.patternCode');
+    if (c.errors['pattern']) return this.translate.instant('admin.sections.errors.patternCode');
     return this.translate.instant('common.validation.invalid');
   }
 

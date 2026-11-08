@@ -58,6 +58,21 @@ function setup(cfg: MasterConfig) {
 }
 
 describe('MasterData (reference masters)', () => {
+  it('accepts the stored DIR-001 style code on directorates only', () => {
+    const directorates = setup(config('directorates'));
+    directorates.comp.form.controls.code.setValue('DIR-001');
+    expect(directorates.comp.form.controls.code.valid).toBe(true);
+    directorates.comp.form.controls.code.setValue('DIR 001');
+    expect(directorates.comp.form.controls.code.valid).toBe(false);
+    TestBed.resetTestingModule();
+
+    const regions = setup(config('regions'));
+    regions.comp.form.controls.code.setValue('REG-001');
+    expect(regions.comp.form.controls.code.valid).toBe(false);
+    regions.comp.form.controls.code.setValue('REG_001');
+    expect(regions.comp.form.controls.code.valid).toBe(true);
+  });
+
   it('loads the parents of a master that has one and sends the chosen parent id on create', () => {
     const { comp, svc, fixture } = setup(config('wilayas'));
     expect(svc.getAll).toHaveBeenCalledWith('wilayas');
