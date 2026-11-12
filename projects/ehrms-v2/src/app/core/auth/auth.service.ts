@@ -13,6 +13,9 @@ interface ApiResponse<T> {
   data: T;
 }
 
+const SIGN_OUT_CHANNEL = 'hrms-auth';
+const SIGNED_OUT = 'signed-out';
+
 /** All calls to the backend's auth endpoints. Session state itself lives in {@link Auth}. */
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -25,6 +28,9 @@ export class AuthService {
   // The refresh token is an HttpOnly cookie set and read by these auth endpoints only, so every
   // call that sets, uses or clears it must opt in to sending and accepting cookies.
   private readonly withCookie = { withCredentials: true };
+
+  // Tells the other open tabs of this app to drop their in-memory session when one tab signs out.
+  private readonly signOutChannel = this.openSignOutChannel();
 
   login(username: string, password: string): Observable<LoginResponse> {
     return this.http
@@ -91,10 +97,23 @@ export class AuthService {
    */
   signOut(): void {
     this.auth.clearSession();
+    this.signOutChannel?.postMessage(SIGNED_OUT);
     this.http
       .post(`${this.base}/auth/logout`, null, this.withCookie)
       .subscribe({ error: () => undefined });
     this.router.navigateByUrl('/auth/login');
+  }
+
+  /** A tab that hears the message only forgets its local session: the server call is made once, by the tab that signed out. */
+  private openSignOutChannel(): BroadcastChannel | null {
+    if (!isPlatformBrowser(this.platformId) || typeof BroadcastChannel === 'undefined') return null;
+    const channel = new BroadcastChannel(SIGN_OUT_CHANNEL);
+    channel.onmessage = (event: MessageEvent<unknown>) => {
+      if (event.data !== SIGNED_OUT) return;
+      this.auth.clearSession();
+      this.router.navigateByUrl('/auth/login');
+    };
+    return channel;
   }
 
   /** Signed-in user replaces their own password; all their sessions end afterwards. */

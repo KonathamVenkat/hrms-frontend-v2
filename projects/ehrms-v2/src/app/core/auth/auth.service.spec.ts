@@ -100,3 +100,65 @@ describe('AuthService / Auth session', () => {
     logout.flush({});
   });
 });
+
+describe('AuthService sign-out across tabs', () => {
+  /** Minimal in-process stand-in: a message posted on one instance reaches the others of the same name. */
+  class FakeChannel {
+    static all: FakeChannel[] = [];
+    onmessage: ((e: MessageEvent<unknown>) => void) | null = null;
+    constructor(readonly name: string) {
+      FakeChannel.all.push(this);
+    }
+    postMessage(data: unknown): void {
+      FakeChannel.all
+        .filter((c) => c !== this && c.name === this.name)
+        .forEach((c) => c.onmessage?.({ data } as MessageEvent<unknown>));
+    }
+  }
+
+  beforeEach(() => {
+    FakeChannel.all = [];
+    vi.stubGlobal('BroadcastChannel', FakeChannel);
+    TestBed.configureTestingModule({
+      providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([{ path: 'auth/login', children: [] }])],
+    });
+  });
+
+  afterEach(() => vi.unstubAllGlobals());
+
+  it('signing out in one tab clears the session held by another, without a second server call', () => {
+    TestBed.inject(AuthService); // registers this tab's listener on the channel
+    const auth = TestBed.inject(Auth);
+    const http = TestBed.inject(HttpTestingController);
+    auth.saveSession(loginResponse());
+
+    // Another tab signs out and posts on the channel.
+    new FakeChannel('hrms-auth').postMessage('signed-out');
+
+    expect(auth.hasValidSession()).toBe(false);
+    http.expectNone(`${environment.serviceUrl}/api/v1/auth/logout`);
+  });
+
+  it('signOut posts the message so other tabs hear it', () => {
+    const service = TestBed.inject(AuthService);
+    const http = TestBed.inject(HttpTestingController);
+    const heard: unknown[] = [];
+    const otherTab = new FakeChannel('hrms-auth');
+    otherTab.onmessage = (e) => heard.push(e.data);
+
+    service.signOut();
+    http.expectOne(`${environment.serviceUrl}/api/v1/auth/logout`).flush({});
+
+    expect(heard).toEqual(['signed-out']);
+  });
+
+  it('ignores any other message on the channel', () => {
+    TestBed.inject(AuthService);
+    const auth = TestBed.inject(Auth);
+    auth.saveSession(loginResponse());
+
+    new FakeChannel('hrms-auth').postMessage('something-else');
+
+    expect(auth.hasValidSession()).toBe(true);
+  });
+});

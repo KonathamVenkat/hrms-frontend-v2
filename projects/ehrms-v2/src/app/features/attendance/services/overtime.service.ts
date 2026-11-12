@@ -38,7 +38,7 @@ export class OvertimeService {
   cancel(otId: string, employeeId: number): Observable<OvertimeResponse> {
     const params = new HttpParams().set('employeeId', employeeId.toString());
     return this.http
-      .patch<ApiResponse<OvertimeResponse>>(`${this.base}/${otId}/cancel`, null, { params })
+      .patch<ApiResponse<OvertimeResponse>>(`${this.base}/${encodeURIComponent(otId)}/cancel`, null, { params })
       .pipe(map((r) => r.data));
   }
 
@@ -58,20 +58,20 @@ export class OvertimeService {
 
   getById(otId: string): Observable<OvertimeResponse> {
     return this.http
-      .get<ApiResponse<OvertimeResponse>>(`${this.base}/${otId}`)
+      .get<ApiResponse<OvertimeResponse>>(`${this.base}/${encodeURIComponent(otId)}`)
       .pipe(map((r) => r.data));
   }
 
   // ── HR / Manager operations ──────────────────────────────
   approve(otId: string, request: OvertimeActionRequest): Observable<OvertimeResponse> {
     return this.http
-      .patch<ApiResponse<OvertimeResponse>>(`${this.base}/${otId}/approve`, request)
+      .patch<ApiResponse<OvertimeResponse>>(`${this.base}/${encodeURIComponent(otId)}/approve`, request)
       .pipe(map((r) => r.data));
   }
 
   reject(otId: string, request: OvertimeActionRequest): Observable<OvertimeResponse> {
     return this.http
-      .patch<ApiResponse<OvertimeResponse>>(`${this.base}/${otId}/reject`, request)
+      .patch<ApiResponse<OvertimeResponse>>(`${this.base}/${encodeURIComponent(otId)}/reject`, request)
       .pipe(map((r) => r.data));
   }
 

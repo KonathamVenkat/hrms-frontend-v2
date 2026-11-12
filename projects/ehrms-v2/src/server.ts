@@ -25,6 +25,20 @@ const angularApp = new AngularNodeAppEngine();
  */
 
 /**
+ * Response headers that harden every page and file. Deliberately not a script-src CSP: that needs
+ * testing against the deployed build (inline styles and the Material theme) before it can be enforced.
+ */
+app.disable('x-powered-by');
+app.use((_req, res, next) => {
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  res.setHeader('X-Frame-Options', 'DENY');
+  res.setHeader('Content-Security-Policy', "frame-ancestors 'none'");
+  res.setHeader('Strict-Transport-Security', 'max-age=31536000');
+  next();
+});
+
+/**
  * Serve static files from /browser
  */
 app.use(

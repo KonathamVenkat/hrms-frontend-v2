@@ -186,7 +186,6 @@ export class EmployeeForm implements OnInit, HasUnsavedChanges {
     maritalStatus: [''],
     nationality: [''],
     religion: [''],
-    profilePhotoUrl: ['', Validators.maxLength(500)],
 
     // Contact
     personalEmail: ['', [Validators.required, Validators.email, Validators.maxLength(200)]],
@@ -210,8 +209,13 @@ export class EmployeeForm implements OnInit, HasUnsavedChanges {
   ngOnInit(): void {
     const idParam = this.route.snapshot.paramMap.get('id');
     if (idParam) {
+      const id = Number(idParam);
+      if (!Number.isInteger(id) || id <= 0) {
+        this.router.navigateByUrl('/app/employee/list');
+        return;
+      }
       this.isEdit.set(true);
-      this.empId.set(+idParam);
+      this.empId.set(id);
     }
 
     this.isHrAdmin.set(this.auth.getRole() === 'HR_ADMIN');
@@ -317,7 +321,6 @@ export class EmployeeForm implements OnInit, HasUnsavedChanges {
               maritalStatus: e.maritalStatus ?? '',
               nationality: e.nationality ?? '',
               religion: e.religion ?? '',
-              profilePhotoUrl: e.profilePhotoUrl ?? '',
               personalEmail: e.personalEmail ?? '',
               personalPhone: e.personalPhone ?? '',
               workPhone: e.workPhone ?? '',
@@ -463,7 +466,6 @@ export class EmployeeForm implements OnInit, HasUnsavedChanges {
     const v = this.form.getRawValue();
     const payload: UpdateEmployeePayload = {
       ...this.buildCommonPayload(v),
-      profilePhotoUrl: v.profilePhotoUrl || undefined,
       employmentStatus: v.employmentStatus,
       // Only an HR_ADMIN editing an employee who has a login sends a role at all.
       role: this.isHrAdmin() && this.hasLogin() ? v.role : undefined,

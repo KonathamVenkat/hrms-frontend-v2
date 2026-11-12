@@ -152,8 +152,7 @@ export class OvertimeApproval implements OnInit {
           this.totalElements.set(paged.totalElements);
           this.loading.set(false);
         },
-        error: (err) => {
-          console.error('Failed to load OT requests', err);
+        error: () => {
           this.snack.open(
             this.translate.instant('attendance.overtimeApproval.errors.loadFailed'),
             this.translate.instant('attendance.overtimeApproval.close'),
@@ -167,7 +166,7 @@ export class OvertimeApproval implements OnInit {
   loadPendingCount(): void {
     this.svc.getPendingCount().subscribe({
       next: (c) => this.pendingCount.set(c),
-      error: (err) => console.error('Failed to load pending count', err),
+      error: () => undefined, // the badge only; the list reports its own load errors
     });
   }
 

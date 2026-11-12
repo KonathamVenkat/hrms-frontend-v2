@@ -360,12 +360,12 @@ export class EmployeeDetail implements OnInit, HasUnsavedChanges {
       return;
     }
 
-    const id = this.route.snapshot.paramMap.get('id');
-    if (!id) {
+    const id = Number(this.route.snapshot.paramMap.get('id'));
+    if (!Number.isInteger(id) || id <= 0) {
       this.router.navigateByUrl('/app/employee/list');
       return;
     }
-    this.loadEmployee(+id);
+    this.loadEmployee(id);
   }
 
   loadEmployee(id: number): void {

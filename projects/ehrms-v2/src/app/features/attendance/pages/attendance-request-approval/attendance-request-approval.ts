@@ -163,8 +163,7 @@ export class AttendanceRequestApproval implements OnInit {
           this.totalElements.set(paged.totalElements);
           this.loading.set(false);
         },
-        error: (err) => {
-          console.error('Failed to load regularization requests', err);
+        error: () => {
           this.snack.open(
             this.translate.instant('attendance.requestApproval.errors.loadFailed'),
             this.translate.instant('attendance.requestApproval.close'),
@@ -178,7 +177,7 @@ export class AttendanceRequestApproval implements OnInit {
   loadPendingCount(): void {
     this.svc.getPendingCount().subscribe({
       next: (count) => this.pendingCount.set(count),
-      error: (err) => console.error('Failed to load pending count', err),
+      error: () => undefined, // the badge only; the list reports its own load errors
     });
   }
 
