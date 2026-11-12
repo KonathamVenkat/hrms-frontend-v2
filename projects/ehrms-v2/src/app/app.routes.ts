@@ -134,7 +134,9 @@ export const routes: Routes = [
             title: `${title} · EHRMS`,
           })),
           {
+            // The API answers 403 to anyone but SYSTEM_ADMIN for the five maintained masters below, so keep the HR roles out too.
             path: 'leave-types',
+            canActivate: [roleGuard('SYSTEM_ADMIN')],
             loadComponent: () =>
               import('./features/admin/leave-types/pages/leave-types/leave-types').then(
                 (m) => m.LeaveTypes,
@@ -143,6 +145,7 @@ export const routes: Routes = [
           },
           {
             path: 'holiday-calendar',
+            canActivate: [roleGuard('SYSTEM_ADMIN')],
             loadComponent: () =>
               import('./features/admin/holiday-calendar/pages/holiday-calendar/holiday-calendar').then(
                 (m) => m.HolidayCalendar,
@@ -151,6 +154,7 @@ export const routes: Routes = [
           },
           {
             path: 'work-shifts',
+            canActivate: [roleGuard('SYSTEM_ADMIN')],
             loadComponent: () =>
               import('./features/admin/work-shifts/pages/work-shifts/work-shifts').then(
                 (m) => m.WorkShifts,
@@ -159,6 +163,7 @@ export const routes: Routes = [
           },
           {
             path: 'office-locations',
+            canActivate: [roleGuard('SYSTEM_ADMIN')],
             loadComponent: () =>
               import('./features/admin/office-locations/pages/office-location/office-location').then(
                 (m) => m.OfficeLocations,
@@ -167,6 +172,7 @@ export const routes: Routes = [
           },
           {
             path: 'document-types',
+            canActivate: [roleGuard('SYSTEM_ADMIN')],
             loadComponent: () =>
               import('./features/admin/document-types/pages/document-type/document-type').then(
                 (m) => m.DocumentTypes,

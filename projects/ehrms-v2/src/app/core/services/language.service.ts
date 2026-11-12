@@ -45,6 +45,7 @@ export class LanguageService {
   }
 
   setLanguage(code: string): void {
+    if (!this.isSupported(code)) return;
     this.translate.use(code);
     this.applyLanguage(code);
     if (isPlatformBrowser(this.platformId)) {
@@ -64,10 +65,16 @@ export class LanguageService {
     }
   }
 
+  /** The code becomes a translation file path and the page lang attribute, so only the offered languages are used. */
+  private isSupported(code: string): boolean {
+    return this.languages.some((l) => l.code === code);
+  }
+
   private readStoredLanguage(): string | null {
     if (!isPlatformBrowser(this.platformId)) return null;
     try {
-      return localStorage.getItem(STORAGE_KEY);
+      const stored = localStorage.getItem(STORAGE_KEY);
+      return stored !== null && this.isSupported(stored) ? stored : null;
     } catch {
       return null;
     }
