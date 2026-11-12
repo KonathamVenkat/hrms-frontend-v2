@@ -1762,8 +1762,10 @@
         "saveFailed": "Échec de l'enregistrement",
         "toggleFailed": "Échec de l'opération",
         "cannotDeactivate": "Impossible de désactiver — {{count}} employé(s) sont rattachés à cette structure",
+        "patternCode": "Utilisez uniquement des lettres, des chiffres, des traits d'union et des tirets bas.",
         "rules": {
           "STRUCTURE_IN_USE": "Cette structure est affectée à des employés : elle ne peut pas être modifiée ni désactivée. Créez plutôt une nouvelle structure.",
+          "COMPONENT_INACTIVE": "Un composant de cette structure n'est plus actif. Retirez-le de la structure puis enregistrez à nouveau.",
           "conflict": "Cet élément a été modifié par quelqu'un d'autre, ou son code ou son nom existe déjà. Rechargez la liste et réessayez."
         }
       }

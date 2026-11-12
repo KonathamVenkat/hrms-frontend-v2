@@ -104,9 +104,13 @@ export class SalaryStructureComponent implements OnInit {
 
   // ── Main form ──────────────────────────────────────────
   readonly form = new FormGroup({
-    structureCode: new FormControl('', [Validators.required, Validators.maxLength(30)]),
+    structureCode: new FormControl('', [
+      Validators.required,
+      Validators.maxLength(30),
+      Validators.pattern(/^[A-Za-z0-9_-]+$/),
+    ]),
     structureName: new FormControl('', [Validators.required, Validators.maxLength(100)]),
-    description: new FormControl(''),
+    description: new FormControl('', [Validators.maxLength(500)]),
     items: new FormArray([]),
   });
 

@@ -361,8 +361,12 @@
                 type="number"
                 formControlName="maxConsecutiveDays"
                 min="0"
+                max="365"
               />
               <span class="field-hint">{{ 'admin.leaveTypes.noLimitHint' | translate }}</span>
+              @if (isInvalid('maxConsecutiveDays')) {
+                <span class="field-error">{{ getError('maxConsecutiveDays') }}</span>
+              }
             </div>
             <div class="field">
               <label for="lt-min-notice-days">{{
@@ -373,8 +377,12 @@
                 type="number"
                 formControlName="minNoticeDays"
                 min="0"
+                max="365"
               />
               <span class="field-hint">{{ 'admin.leaveTypes.minNoticeHint' | translate }}</span>
+              @if (isInvalid('minNoticeDays')) {
+                <span class="field-error">{{ getError('minNoticeDays') }}</span>
+              }
             </div>
           </div>
 
@@ -475,8 +483,17 @@
               <label for="lt-max-carry-days">{{
                 'admin.leaveTypes.maxCarryDays' | translate
               }}</label>
-              <input id="lt-max-carry-days" type="number" formControlName="maxCarryDays" min="0" />
+              <input
+                id="lt-max-carry-days"
+                type="number"
+                formControlName="maxCarryDays"
+                min="0"
+                max="365"
+              />
               <span class="field-hint">{{ 'admin.leaveTypes.maxCarryDaysHint' | translate }}</span>
+              @if (isInvalid('maxCarryDays')) {
+                <span class="field-error">{{ getError('maxCarryDays') }}</span>
+              }
             </div>
             <div class="field">
               <label for="lt-applicable-gender"

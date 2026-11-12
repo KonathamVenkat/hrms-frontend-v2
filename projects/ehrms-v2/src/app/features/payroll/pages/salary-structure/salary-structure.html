@@ -45,6 +45,8 @@
               />
               @if (form.get('structureCode')?.hasError('required')) {
                 <mat-error>{{ 'common.validation.required' | translate }}</mat-error>
+              } @else if (form.get('structureCode')?.hasError('pattern')) {
+                <mat-error>{{ 'payroll.salaryStructure.errors.patternCode' | translate }}</mat-error>
               }
             </mat-form-field>
             <mat-form-field appearance="outline">
@@ -65,6 +67,11 @@
             <mat-form-field appearance="outline" class="full-col">
               <mat-label>{{ 'payroll.salaryStructure.fields.description' | translate }}</mat-label>
               <input matInput formControlName="description" />
+              @if (form.get('description')?.hasError('maxlength')) {
+                <mat-error>{{
+                  'common.validation.maxLength' | translate: { count: 500 }
+                }}</mat-error>
+              }
             </mat-form-field>
           </div>
           <mat-divider class="form-divider"></mat-divider>

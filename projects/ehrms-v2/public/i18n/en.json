@@ -1762,8 +1762,10 @@
         "saveFailed": "Save failed",
         "toggleFailed": "Failed",
         "cannotDeactivate": "Cannot deactivate — {{count}} employee(s) are assigned to this structure",
+        "patternCode": "Use letters, numbers, hyphens and underscores only.",
         "rules": {
           "STRUCTURE_IN_USE": "This structure is assigned to employees, so it cannot be edited or deactivated. Create a new structure instead.",
+          "COMPONENT_INACTIVE": "A component in this structure is no longer active. Remove it from the structure and save again.",
           "conflict": "This was changed by someone else, or its code or name already exists. Reload the list and try again."
         }
       }
