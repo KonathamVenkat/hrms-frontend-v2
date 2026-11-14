@@ -24,6 +24,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatChipsModule } from '@angular/material/chips';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { ruleMessage } from '../../../../core/utils/http-error-message';
+import { ConfirmAction } from '../../../../shared/confirm-action/confirm-action';
 
 import { PayrollService } from '../../services/payroll.service';
 import {
@@ -54,6 +55,7 @@ import {
     MatTooltipModule,
     MatDividerModule,
     MatChipsModule,
+    ConfirmAction,
     TranslatePipe,
   ],
   templateUrl: './salary-component.html',
@@ -186,7 +188,9 @@ export class SalaryComponentComponent implements OnInit {
       next: () => {
         this.snack.open(
           `✅ ${this.translate.instant(
-            this.editingId() ? 'payroll.salaryComponent.success.updated' : 'payroll.salaryComponent.success.created',
+            this.editingId()
+              ? 'payroll.salaryComponent.success.updated'
+              : 'payroll.salaryComponent.success.created',
           )}`,
           this.translate.instant('payroll.salaryComponent.close'),
           { duration: 3000, panelClass: 'snack-success' },
@@ -199,7 +203,8 @@ export class SalaryComponentComponent implements OnInit {
         this.snack.open(
           '❌ ' +
             (ruleMessage(this.translate, err, 'payroll.salaryComponent.errors.rules') ??
-              (err.error?.message || this.translate.instant('payroll.salaryComponent.errors.saveFailed'))),
+              (err.error?.message ||
+                this.translate.instant('payroll.salaryComponent.errors.saveFailed'))),
           this.translate.instant('payroll.salaryComponent.close'),
           { duration: 4000 },
         );
@@ -208,14 +213,29 @@ export class SalaryComponentComponent implements OnInit {
     });
   }
 
+  /** Switching a component on or off changes what structures can use it, so it is confirmed first. */
+  readonly toggleTarget = signal<SalaryComponentResponse | null>(null);
+
   toggleActive(comp: SalaryComponentResponse): void {
+    this.toggleTarget.set(comp);
+  }
+
+  cancelToggle(): void {
+    this.toggleTarget.set(null);
+  }
+
+  confirmToggle(): void {
+    const comp = this.toggleTarget();
+    if (!comp) return;
+    this.toggleTarget.set(null);
     this.svc.toggleComponent(comp.componentId, !comp.isActive).subscribe({
       next: () => this.load(),
       error: (err) =>
         this.snack.open(
           '❌ ' +
             (ruleMessage(this.translate, err, 'payroll.salaryComponent.errors.rules') ??
-              (err.error?.message || this.translate.instant('payroll.salaryComponent.errors.toggleFailed'))),
+              (err.error?.message ||
+                this.translate.instant('payroll.salaryComponent.errors.toggleFailed'))),
           this.translate.instant('payroll.salaryComponent.close'),
           { duration: 3000 },
         ),

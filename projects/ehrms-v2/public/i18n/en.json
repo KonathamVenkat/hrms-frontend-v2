@@ -1202,6 +1202,19 @@
         "loadFailed": "Failed to load balances.",
         "initFailed": "Initialization failed.",
         "adjustFailed": "Adjustment failed."
+      },
+      "confirm": {
+        "initializeTitle": "Create {{year}} leave balances?",
+        "initializeMessage": "Leave balances for {{year}} will be created for every active employee and every active leave type.",
+        "skipExistingOn": "Employees who already have {{year}} balances are skipped.",
+        "skipExistingOff": "Employees who already have {{year}} balances are not skipped.",
+        "carryOn": "Unused leave from the previous year is carried forward, up to each leave type's limit.",
+        "carryOff": "No leave is carried forward from the previous year.",
+        "adjustTitle": "Adjust this leave balance?",
+        "adjustGrant": "Add {{days}} day(s) to the {{year}} {{type}} total of employee #{{employee}}.",
+        "adjustDeduct": "Remove {{days}} day(s) from the {{year}} {{type}} total of employee #{{employee}}.",
+        "adjustReset": "Set the {{year}} {{type}} total of employee #{{employee}} to exactly {{days}} day(s).",
+        "adjustReason": "Reason: {{reason}}"
       }
     },
     "apply": {
@@ -1654,6 +1667,12 @@
           "COMPONENT_IN_USE": "This component is part of the pay of employees, so how it is calculated cannot change and it cannot be switched off. Only its names, description and order can change; create a new component instead.",
           "conflict": "This was changed by someone else, or its code or name already exists. Reload the list and try again."
         }
+      },
+      "toggleConfirm": {
+        "deactivateTitle": "Deactivate this component?",
+        "deactivateMessage": "{{name}} ({{code}}) can no longer be added to salary structures. No employee's pay uses it now.",
+        "activateTitle": "Activate this component?",
+        "activateMessage": "{{name}} ({{code}}) can be added to salary structures again."
       }
     },
     "employeeSalary": {
@@ -1770,6 +1789,12 @@
           "COMPONENT_INACTIVE": "A component in this structure is no longer active. Remove it from the structure and save again.",
           "conflict": "This was changed by someone else, or its code or name already exists. Reload the list and try again."
         }
+      },
+      "toggleConfirm": {
+        "deactivateTitle": "Deactivate this salary structure?",
+        "deactivateMessage": "{{name}} ({{code}}) will no longer be offered when salaries are assigned. No employee has it assigned now.",
+        "activateTitle": "Activate this salary structure?",
+        "activateMessage": "{{name}} ({{code}}) will be offered again when salaries are assigned."
       }
     }
   },

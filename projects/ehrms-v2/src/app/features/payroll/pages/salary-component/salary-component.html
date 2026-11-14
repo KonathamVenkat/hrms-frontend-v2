@@ -267,4 +267,29 @@
       </div>
     </mat-card-content>
   </mat-card>
+
+  @if (toggleTarget(); as t) {
+    <app-confirm-action
+      [title]="
+        (t.isActive
+          ? 'payroll.salaryComponent.toggleConfirm.deactivateTitle'
+          : 'payroll.salaryComponent.toggleConfirm.activateTitle'
+        ) | translate
+      "
+      [message]="
+        (t.isActive
+          ? 'payroll.salaryComponent.toggleConfirm.deactivateMessage'
+          : 'payroll.salaryComponent.toggleConfirm.activateMessage'
+        ) | translate: { name: t.componentName, code: t.componentCode }
+      "
+      [confirmLabel]="
+        (t.isActive ? 'payroll.salaryComponent.deactivate' : 'payroll.salaryComponent.activate') | translate
+      "
+      [cancelLabel]="'common.cancel' | translate"
+      [tone]="t.isActive ? 'danger' : 'success'"
+      [icon]="t.isActive ? 'toggle_off' : 'toggle_on'"
+      (confirm)="confirmToggle()"
+      (cancel)="cancelToggle()"
+    />
+  }
 </div>

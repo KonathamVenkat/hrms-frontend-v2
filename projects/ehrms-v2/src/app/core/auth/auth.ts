@@ -1,6 +1,7 @@
 // src/app/core/auth/auth.ts
 
 import { Injectable } from '@angular/core';
+import { Observable, Subject } from 'rxjs';
 
 /**
  * localStorage keys that older versions used to hold the whole session, tokens included. They are
@@ -89,6 +90,10 @@ export class Auth {
   private accessToken: string | null = null;
   private user: StoredUser | null = null;
   private expiresAt = 0;
+
+  private readonly cleared = new Subject<void>();
+  /** Emits each time the session is cleared, so a service holding per-user data can drop it. */
+  readonly sessionCleared$: Observable<void> = this.cleared.asObservable();
 
   // ── Token ─────────────────────────────────────────────────
 
@@ -258,6 +263,7 @@ export class Auth {
     } catch {
       // storage unavailable (SSR / private mode) — nothing to clear
     }
+    this.cleared.next();
   }
 
   logout(): void {

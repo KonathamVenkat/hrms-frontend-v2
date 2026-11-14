@@ -1202,6 +1202,19 @@
         "loadFailed": "Échec du chargement des soldes.",
         "initFailed": "Échec de l'initialisation.",
         "adjustFailed": "Échec de l'ajustement."
+      },
+      "confirm": {
+        "initializeTitle": "Créer les soldes de congés {{year}} ?",
+        "initializeMessage": "Les soldes de congés {{year}} seront créés pour chaque employé actif et chaque type de congé actif.",
+        "skipExistingOn": "Les employés qui ont déjà des soldes {{year}} sont ignorés.",
+        "skipExistingOff": "Les employés qui ont déjà des soldes {{year}} ne sont pas ignorés.",
+        "carryOn": "Les congés non pris de l'année précédente sont reportés, dans la limite de chaque type de congé.",
+        "carryOff": "Aucun congé n'est reporté de l'année précédente.",
+        "adjustTitle": "Ajuster ce solde de congés ?",
+        "adjustGrant": "Ajouter {{days}} jour(s) au total {{type}} {{year}} de l'employé n° {{employee}}.",
+        "adjustDeduct": "Retirer {{days}} jour(s) du total {{type}} {{year}} de l'employé n° {{employee}}.",
+        "adjustReset": "Fixer le total {{type}} {{year}} de l'employé n° {{employee}} à exactement {{days}} jour(s).",
+        "adjustReason": "Motif : {{reason}}"
       }
     },
     "apply": {
@@ -1654,6 +1667,12 @@
           "COMPONENT_IN_USE": "Ce composant fait partie de la paie d'employés : son mode de calcul ne peut pas changer et il ne peut pas être désactivé. Seuls ses noms, sa description et son ordre peuvent changer ; créez plutôt un nouveau composant.",
           "conflict": "Cet élément a été modifié par quelqu'un d'autre, ou son code ou son nom existe déjà. Rechargez la liste et réessayez."
         }
+      },
+      "toggleConfirm": {
+        "deactivateTitle": "Désactiver ce composant ?",
+        "deactivateMessage": "{{name}} ({{code}}) ne pourra plus être ajouté aux structures salariales. Aucun employé ne l'utilise actuellement dans sa paie.",
+        "activateTitle": "Activer ce composant ?",
+        "activateMessage": "{{name}} ({{code}}) pourra de nouveau être ajouté aux structures salariales."
       }
     },
     "employeeSalary": {
@@ -1770,6 +1789,12 @@
           "COMPONENT_INACTIVE": "Un composant de cette structure n'est plus actif. Retirez-le de la structure puis enregistrez à nouveau.",
           "conflict": "Cet élément a été modifié par quelqu'un d'autre, ou son code ou son nom existe déjà. Rechargez la liste et réessayez."
         }
+      },
+      "toggleConfirm": {
+        "deactivateTitle": "Désactiver cette structure salariale ?",
+        "deactivateMessage": "{{name}} ({{code}}) ne sera plus proposée lors de l'affectation des salaires. Aucun employé ne l'a actuellement.",
+        "activateTitle": "Activer cette structure salariale ?",
+        "activateMessage": "{{name}} ({{code}}) sera de nouveau proposée lors de l'affectation des salaires."
       }
     }
   },

@@ -1,4 +1,12 @@
-import { Component, OnInit, signal, inject, computed, DestroyRef, ChangeDetectionStrategy } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  signal,
+  inject,
+  computed,
+  DestroyRef,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -14,11 +22,12 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { LeaveBalanceService } from '../../services/leave-balance.service';
 import { LeaveBalance, InitializationResult } from '../../models/leave-balance.model';
 import { serverMessage } from '../../../../core/utils/http-error-message';
+import { ConfirmAction } from '../../../../shared/confirm-action/confirm-action';
 
 @Component({
   selector: 'app-leave-balance',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ReactiveFormsModule, TranslatePipe],
+  imports: [ReactiveFormsModule, TranslatePipe, ConfirmAction],
   templateUrl: './leave-balance.html',
   styleUrl: './leave-balance.css',
 })
@@ -36,6 +45,14 @@ export class LeaveBalancePage implements OnInit {
   error = signal<string | null>(null);
   successMsg = signal<string | null>(null);
   initResult = signal<InitializationResult | null>(null);
+
+  /** Creating balances for everyone and changing one employee's total both change leave entitlements, so they are confirmed first. */
+  readonly confirming = signal<{
+    kind: 'initialize' | 'adjust';
+    title: string;
+    message: string;
+    confirmLabel: string;
+  } | null>(null);
 
   // ── View mode ─────────────────────────────────────────────
   activeTab = signal<'overview' | 'initialize' | 'adjust'>('overview');
@@ -150,6 +167,23 @@ export class LeaveBalancePage implements OnInit {
       this.initForm.markAllAsTouched();
       return;
     }
+    const v = this.initForm.value;
+    const year = +v.year;
+    const t = (key: string) => this.translate.instant(`leave.balance.confirm.${key}`, { year });
+    this.confirming.set({
+      kind: 'initialize',
+      title: t('initializeTitle'),
+      message: [
+        t('initializeMessage'),
+        t(v.skipExisting ? 'skipExistingOn' : 'skipExistingOff'),
+        t(v.applyCarryForward ? 'carryOn' : 'carryOff'),
+      ].join(' '),
+      confirmLabel: this.translate.instant('leave.balance.initializeAllButton'),
+    });
+  }
+
+  private runInitialize(): void {
+    if (this.initializing()) return;
     this.initializing.set(true);
     this.error.set(null);
     this.initResult.set(null);
@@ -191,6 +225,29 @@ export class LeaveBalancePage implements OnInit {
       this.adjustForm.markAllAsTouched();
       return;
     }
+    const v = this.adjustForm.value;
+    const params = {
+      employee: +v.employeeId,
+      type: v.leaveTypeCode,
+      year: +v.year,
+      days: +v.days,
+      reason: String(v.reason).trim(),
+    };
+    const what =
+      String(v.adjustmentType).charAt(0) + String(v.adjustmentType).slice(1).toLowerCase();
+    this.confirming.set({
+      kind: 'adjust',
+      title: this.translate.instant('leave.balance.confirm.adjustTitle'),
+      message: [
+        this.translate.instant(`leave.balance.confirm.adjust${what}`, params),
+        this.translate.instant('leave.balance.confirm.adjustReason', params),
+      ].join(' '),
+      confirmLabel: this.translate.instant('leave.balance.applyAdjustmentButton'),
+    });
+  }
+
+  private runAdjust(): void {
+    if (this.adjusting()) return;
     this.adjusting.set(true);
     this.error.set(null);
 
@@ -235,6 +292,19 @@ export class LeaveBalancePage implements OnInit {
             serverMessage(err) || this.translate.instant('leave.balance.errors.adjustFailed'),
           ),
       });
+  }
+
+  /** The user confirmed the question: close it and run what it asked about. */
+  confirmPending(): void {
+    const pending = this.confirming();
+    if (!pending) return;
+    this.confirming.set(null);
+    if (pending.kind === 'initialize') this.runInitialize();
+    else this.runAdjust();
+  }
+
+  cancelPending(): void {
+    this.confirming.set(null);
   }
 
   // ── Helpers ───────────────────────────────────────────────

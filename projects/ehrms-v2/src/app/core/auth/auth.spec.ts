@@ -53,3 +53,18 @@ describe('Auth.renewToken', () => {
     expect(sessionStorage.getItem(SIDEBAR_MENU_CACHE_KEY)).toBeNull();
   });
 });
+
+describe('Auth.sessionCleared$', () => {
+  it('tells listeners each time the session is cleared, including by a new sign-in', () => {
+    const auth = TestBed.inject(Auth);
+    let cleared = 0;
+    const sub = auth.sessionCleared$.subscribe(() => cleared++);
+
+    auth.clearSession();
+    expect(cleared).toBe(1);
+
+    auth.saveSession(login('EMPLOYEE')); // a new sign-in starts from a cleared session
+    expect(cleared).toBe(2);
+    sub.unsubscribe();
+  });
+});

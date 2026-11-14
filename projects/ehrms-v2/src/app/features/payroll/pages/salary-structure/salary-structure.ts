@@ -1,6 +1,13 @@
 // src/app/features/payroll/pages/salary-structure/salary-structure.component.ts
 
-import { Component, OnInit, inject, signal, computed, ChangeDetectionStrategy } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  inject,
+  signal,
+  computed,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   FormsModule,
@@ -25,6 +32,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatChipsModule } from '@angular/material/chips';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { ruleMessage } from '../../../../core/utils/http-error-message';
+import { ConfirmAction } from '../../../../shared/confirm-action/confirm-action';
 
 import { PayrollService } from '../../services/payroll.service';
 import {
@@ -65,6 +73,7 @@ interface ItemValue {
     MatDividerModule,
     MatExpansionModule,
     MatChipsModule,
+    ConfirmAction,
     TranslatePipe,
   ],
   templateUrl: './salary-structure.html',
@@ -80,6 +89,8 @@ export class SalaryStructureComponent implements OnInit {
   readonly allComponents = signal<SalaryComponentResponse[]>([]);
   readonly loading = signal(false);
   readonly saving = signal(false);
+  /** Switching a structure on or off changes what salaries can be assigned, so it is confirmed first. */
+  readonly toggleTarget = signal<SalaryStructureResponse | null>(null);
   readonly showForm = signal(false);
   readonly editingId = signal<number | null>(null);
   private editingVersion: number | undefined;
@@ -248,7 +259,9 @@ export class SalaryStructureComponent implements OnInit {
       next: () => {
         this.snack.open(
           `✅ ${this.translate.instant(
-            this.editingId() ? 'payroll.salaryStructure.success.updated' : 'payroll.salaryStructure.success.created',
+            this.editingId()
+              ? 'payroll.salaryStructure.success.updated'
+              : 'payroll.salaryStructure.success.created',
           )}`,
           this.translate.instant('payroll.salaryStructure.close'),
           { duration: 3000, panelClass: 'snack-success' },
@@ -261,7 +274,8 @@ export class SalaryStructureComponent implements OnInit {
         this.snack.open(
           '❌ ' +
             (ruleMessage(this.translate, err, 'payroll.salaryStructure.errors.rules') ??
-              (err.error?.message || this.translate.instant('payroll.salaryStructure.errors.saveFailed'))),
+              (err.error?.message ||
+                this.translate.instant('payroll.salaryStructure.errors.saveFailed'))),
           this.translate.instant('payroll.salaryStructure.close'),
           { duration: 4000 },
         );
@@ -279,13 +293,25 @@ export class SalaryStructureComponent implements OnInit {
       );
       return;
     }
+    this.toggleTarget.set(s);
+  }
+
+  cancelToggle(): void {
+    this.toggleTarget.set(null);
+  }
+
+  confirmToggle(): void {
+    const s = this.toggleTarget();
+    if (!s) return;
+    this.toggleTarget.set(null);
     this.svc.toggleStructure(s.structureId, !s.isActive).subscribe({
       next: () => this.loadStructures(),
       error: (err) =>
         this.snack.open(
           '❌ ' +
             (ruleMessage(this.translate, err, 'payroll.salaryStructure.errors.rules') ??
-              (err.error?.message || this.translate.instant('payroll.salaryStructure.errors.toggleFailed'))),
+              (err.error?.message ||
+                this.translate.instant('payroll.salaryStructure.errors.toggleFailed'))),
           this.translate.instant('payroll.salaryStructure.close'),
           { duration: 3000 },
         ),

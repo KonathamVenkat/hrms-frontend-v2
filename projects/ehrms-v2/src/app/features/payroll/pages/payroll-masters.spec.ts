@@ -76,9 +76,16 @@ function setup<T>(token: Type<T>, svc: Record<string, unknown>) {
   });
   const fixture = TestBed.createComponent(token);
   // the screens import MatSnackBarModule, so they use their own instance: spy on that one
-  const snack = vi.spyOn(fixture.componentRef.injector.get(MatSnackBar), 'open').mockImplementation(() => ({}) as never);
+  const snack = vi
+    .spyOn(fixture.componentRef.injector.get(MatSnackBar), 'open')
+    .mockImplementation(() => ({}) as never);
   fixture.detectChanges();
-  return { comp: fixture.componentInstance, snack, translate: TestBed.inject(TranslateService) };
+  return {
+    comp: fixture.componentInstance,
+    snack,
+    translate: TestBed.inject(TranslateService),
+    fixture,
+  };
 }
 
 describe('salary component screen', () => {
@@ -96,7 +103,9 @@ describe('salary component screen', () => {
     const updateComponent = vi.fn(() => refusal(422, 'COMPONENT_IN_USE'));
     const { comp, snack, translate } = setup(SalaryComponentComponent, { updateComponent });
     translate.setTranslation('en', {
-      payroll: { salaryComponent: { errors: { rules: { COMPONENT_IN_USE: 'PART OF EMPLOYEE PAY' } } } },
+      payroll: {
+        salaryComponent: { errors: { rules: { COMPONENT_IN_USE: 'PART OF EMPLOYEE PAY' } } },
+      },
     });
     translate.use('en');
 
@@ -110,13 +119,124 @@ describe('salary component screen', () => {
     const toggleComponent = vi.fn(() => refusal(422, 'COMPONENT_IN_USE'));
     const { comp, snack, translate } = setup(SalaryComponentComponent, { toggleComponent });
     translate.setTranslation('en', {
-      payroll: { salaryComponent: { errors: { rules: { COMPONENT_IN_USE: 'PART OF EMPLOYEE PAY' } } } },
+      payroll: {
+        salaryComponent: { errors: { rules: { COMPONENT_IN_USE: 'PART OF EMPLOYEE PAY' } } },
+      },
     });
     translate.use('en');
 
     comp.toggleActive(component);
+    comp.confirmToggle();
 
     expect(snack.mock.calls[0][0]).toContain('PART OF EMPLOYEE PAY');
+  });
+});
+
+describe('switching a salary component or structure on or off', () => {
+  it('asks first for a component and only acts when confirmed, once', () => {
+    const toggleComponent = vi.fn(() => of(undefined));
+    const { comp } = setup(SalaryComponentComponent, { toggleComponent });
+
+    comp.toggleActive(component);
+    expect(toggleComponent).not.toHaveBeenCalled();
+    expect(comp.toggleTarget()).toBe(component);
+
+    comp.confirmToggle();
+    comp.confirmToggle();
+    expect(toggleComponent).toHaveBeenCalledTimes(1);
+    expect(toggleComponent).toHaveBeenCalledWith(5, false);
+    expect(comp.toggleTarget()).toBeNull();
+  });
+
+  it('does nothing when the component question is cancelled', () => {
+    const toggleComponent = vi.fn(() => of(undefined));
+    const { comp } = setup(SalaryComponentComponent, { toggleComponent });
+
+    comp.toggleActive(component);
+    comp.cancelToggle();
+    comp.confirmToggle();
+
+    expect(toggleComponent).not.toHaveBeenCalled();
+  });
+
+  it('asks first for a structure and only acts when confirmed, once', () => {
+    const toggleStructure = vi.fn(() => of(undefined));
+    const { comp } = setup(SalaryStructureComponent, { toggleStructure });
+
+    comp.toggleActive(structure);
+    expect(toggleStructure).not.toHaveBeenCalled();
+
+    comp.confirmToggle();
+    comp.confirmToggle();
+    expect(toggleStructure).toHaveBeenCalledTimes(1);
+    expect(toggleStructure).toHaveBeenCalledWith(9, false);
+  });
+
+  it('shows the question on the component page, saying which component and what changes', () => {
+    const toggleComponent = vi.fn(() => of(undefined));
+    const { comp, translate, fixture } = setup(SalaryComponentComponent, { toggleComponent });
+    translate.setTranslation('en', {
+      common: { cancel: 'Cancel' },
+      payroll: {
+        salaryComponent: {
+          deactivate: 'Deactivate',
+          toggleConfirm: {
+            deactivateTitle: 'Deactivate this component?',
+            deactivateMessage: '{{name}} ({{code}}) can no longer be added to structures.',
+          },
+        },
+      },
+    });
+    translate.use('en');
+
+    comp.toggleActive(component);
+    fixture.detectChanges();
+    const dialog = (fixture.nativeElement as HTMLElement).querySelector('app-confirm-action');
+
+    expect(dialog?.textContent).toContain('Deactivate this component?');
+    expect(dialog?.textContent).toContain(
+      'Basic salary (BASIC) can no longer be added to structures.',
+    );
+    (dialog?.querySelector('button.btn-confirm') as HTMLButtonElement).click();
+    expect(toggleComponent).toHaveBeenCalledTimes(1);
+  });
+
+  it('shows the question on the structure page, saying which structure and what changes', () => {
+    const toggleStructure = vi.fn(() => of(undefined));
+    const { comp, translate, fixture } = setup(SalaryStructureComponent, { toggleStructure });
+    translate.setTranslation('en', {
+      common: { cancel: 'Cancel' },
+      payroll: {
+        salaryStructure: {
+          deactivate: 'Deactivate',
+          toggleConfirm: {
+            deactivateTitle: 'Deactivate this salary structure?',
+            deactivateMessage: '{{name}} ({{code}}) will no longer be offered.',
+          },
+        },
+      },
+    });
+    translate.use('en');
+
+    comp.toggleActive(structure);
+    fixture.detectChanges();
+    const dialog = (fixture.nativeElement as HTMLElement).querySelector('app-confirm-action');
+
+    expect(dialog?.textContent).toContain('Deactivate this salary structure?');
+    expect(dialog?.textContent).toContain('Standard (STD) will no longer be offered.');
+    (dialog?.querySelector('button.btn-confirm') as HTMLButtonElement).click();
+    expect(toggleStructure).toHaveBeenCalledTimes(1);
+  });
+
+  it('refuses to switch off a structure that employees use, without asking', () => {
+    const toggleStructure = vi.fn(() => of(undefined));
+    const { comp, snack } = setup(SalaryStructureComponent, { toggleStructure });
+
+    comp.toggleActive({ ...structure, employeeCount: 3 });
+
+    expect(snack).toHaveBeenCalled();
+    expect(comp.toggleTarget()).toBeNull();
+    expect(toggleStructure).not.toHaveBeenCalled();
   });
 });
 

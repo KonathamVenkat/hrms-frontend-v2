@@ -386,4 +386,29 @@
       }
     </div>
   }
+
+  @if (toggleTarget(); as t) {
+    <app-confirm-action
+      [title]="
+        (t.isActive
+          ? 'payroll.salaryStructure.toggleConfirm.deactivateTitle'
+          : 'payroll.salaryStructure.toggleConfirm.activateTitle'
+        ) | translate
+      "
+      [message]="
+        (t.isActive
+          ? 'payroll.salaryStructure.toggleConfirm.deactivateMessage'
+          : 'payroll.salaryStructure.toggleConfirm.activateMessage'
+        ) | translate: { name: t.structureName, code: t.structureCode }
+      "
+      [confirmLabel]="
+        (t.isActive ? 'payroll.salaryStructure.deactivate' : 'payroll.salaryStructure.activate') | translate
+      "
+      [cancelLabel]="'common.cancel' | translate"
+      [tone]="t.isActive ? 'danger' : 'success'"
+      [icon]="t.isActive ? 'toggle_off' : 'toggle_on'"
+      (confirm)="confirmToggle()"
+      (cancel)="cancelToggle()"
+    />
+  }
 </div>

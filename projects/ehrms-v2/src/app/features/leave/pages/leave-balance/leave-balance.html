@@ -424,4 +424,16 @@
       </div>
     </div>
   }
+
+  @if (confirming(); as c) {
+    <app-confirm-action
+      [title]="c.title"
+      [message]="c.message"
+      [confirmLabel]="c.confirmLabel"
+      [cancelLabel]="'common.cancel' | translate"
+      icon="event_available"
+      (confirm)="confirmPending()"
+      (cancel)="cancelPending()"
+    />
+  }
 </div>
