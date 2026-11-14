@@ -26,7 +26,11 @@ describe('AuthService / Auth session', () => {
   beforeEach(() => {
     localStorage.clear();
     TestBed.configureTestingModule({
-      providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([{ path: 'auth/login', children: [] }])],
+      providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        provideRouter([{ path: 'auth/login', children: [] }]),
+      ],
     });
     service = TestBed.inject(AuthService);
     auth = TestBed.inject(Auth);
@@ -81,7 +85,9 @@ describe('AuthService / Auth session', () => {
     let done = false;
     service.restoreSession().subscribe(() => (done = true));
 
-    http.expectOne(refreshUrl).flush({ message: 'expired' }, { status: 401, statusText: 'Unauthorized' });
+    http
+      .expectOne(refreshUrl)
+      .flush({ message: 'expired' }, { status: 401, statusText: 'Unauthorized' });
 
     expect(done).toBe(true);
     expect(auth.hasValidSession()).toBe(false);
@@ -90,7 +96,9 @@ describe('AuthService / Auth session', () => {
 
   it('signing out clears the session at once and asks the server to drop the cookie', () => {
     service.login('sara', 'secret123').subscribe();
-    http.expectOne(`${environment.serviceUrl}/api/v1/auth/login`).flush({ success: true, message: 'ok', data: loginResponse() });
+    http
+      .expectOne(`${environment.serviceUrl}/api/v1/auth/login`)
+      .flush({ success: true, message: 'ok', data: loginResponse() });
 
     service.signOut();
 
@@ -98,6 +106,52 @@ describe('AuthService / Auth session', () => {
     const logout = http.expectOne(`${environment.serviceUrl}/api/v1/auth/logout`);
     expect(logout.request.withCredentials).toBe(true);
     logout.flush({});
+  });
+
+  describe('refreshAccessToken', () => {
+    const body = (id: number) => ({
+      success: true,
+      message: 'ok',
+      data: {
+        ...loginResponse(),
+        accessToken: 'renewed-jwt',
+        user: { ...loginResponse().user, id },
+      },
+    });
+
+    it('renews the session and hands back the new token', () => {
+      auth.saveSession(loginResponse());
+      let token = '';
+      service.refreshAccessToken().subscribe((t) => (token = t));
+      http.expectOne(refreshUrl).flush(body(1));
+      expect(token).toBe('renewed-jwt');
+      expect(auth.getToken()).toBe('renewed-jwt');
+    });
+
+    it('fails with a 401, and leaves the user signed out, when the refresh lands after sign-out', () => {
+      auth.saveSession(loginResponse());
+      let status = 0;
+      service
+        .refreshAccessToken()
+        .subscribe({ error: (e: { status: number }) => (status = e.status) });
+      service.signOut();
+      http.expectOne(`${environment.serviceUrl}/api/v1/auth/logout`).flush({});
+      http.expectOne(refreshUrl).flush(body(1));
+      expect(status).toBe(401);
+      expect(auth.getToken()).toBeNull();
+      expect(auth.hasValidSession()).toBe(false);
+    });
+
+    it('fails with a 401 and ends the session when the refresh belongs to another user', () => {
+      auth.saveSession(loginResponse());
+      let status = 0;
+      service
+        .refreshAccessToken()
+        .subscribe({ error: (e: { status: number }) => (status = e.status) });
+      http.expectOne(refreshUrl).flush(body(2));
+      expect(status).toBe(401);
+      expect(auth.getToken()).toBeNull();
+    });
   });
 });
 
@@ -120,7 +174,11 @@ describe('AuthService sign-out across tabs', () => {
     FakeChannel.all = [];
     vi.stubGlobal('BroadcastChannel', FakeChannel);
     TestBed.configureTestingModule({
-      providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([{ path: 'auth/login', children: [] }])],
+      providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        provideRouter([{ path: 'auth/login', children: [] }]),
+      ],
     });
   });
 

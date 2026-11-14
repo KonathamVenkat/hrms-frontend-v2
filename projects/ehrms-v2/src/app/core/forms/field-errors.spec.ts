@@ -30,20 +30,43 @@ describe('fieldErrorMessage', () => {
       control.markAsTouched();
       return control;
     };
-    expect(fieldErrorMessage(touched('', Validators.required), translate)).toBe('common.validation.required');
-    expect(fieldErrorMessage(touched('x', Validators.email), translate)).toBe('common.validation.email');
-    expect(fieldErrorMessage(touched('ab', Validators.minLength(5)), translate)).toBe('common.validation.minLength:5');
-    expect(fieldErrorMessage(touched('abcdef', Validators.maxLength(3)), translate)).toBe('common.validation.maxLength:3');
-    expect(fieldErrorMessage(touched('a', Validators.pattern(/^\d+$/)), translate)).toBe('common.validation.pattern');
-    expect(fieldErrorMessage(touched('a​b', noControlChars), translate)).toBe('common.validation.controlChars');
+    expect(fieldErrorMessage(touched('', Validators.required), translate)).toBe(
+      'common.validation.required',
+    );
+    expect(fieldErrorMessage(touched('x', Validators.email), translate)).toBe(
+      'common.validation.email',
+    );
+    expect(fieldErrorMessage(touched('ab', Validators.minLength(5)), translate)).toBe(
+      'common.validation.minLength:5',
+    );
+    expect(fieldErrorMessage(touched('abcdef', Validators.maxLength(3)), translate)).toBe(
+      'common.validation.maxLength:3',
+    );
+    expect(fieldErrorMessage(touched('a', Validators.pattern(/^\d+$/)), translate)).toBe(
+      'common.validation.pattern',
+    );
+    expect(fieldErrorMessage(touched('a​b', noControlChars), translate)).toBe(
+      'common.validation.controlChars',
+    );
+  });
+
+  it('names the two date problems the date control reports', () => {
+    const parse = new FormControl('', () => ({ matDatepickerParse: true }));
+    parse.markAsTouched();
+    expect(fieldErrorMessage(parse, translate)).toBe('common.validation.dateInvalid');
+    const early = new FormControl('2020-01-01', () => ({ matDatepickerMin: true }));
+    early.markAsTouched();
+    expect(fieldErrorMessage(early, translate)).toBe('common.validation.dateTooEarly');
   });
 
   it('uses a custom error code before falling back to the generic message', () => {
     const control = new FormControl('x', () => ({ hireBeforeBirth: true }));
     control.markAsTouched();
-    expect(fieldErrorMessage(control, translate, { hireBeforeBirth: 'employee.form.errors.hireBeforeBirth' })).toBe(
-      'employee.form.errors.hireBeforeBirth',
-    );
+    expect(
+      fieldErrorMessage(control, translate, {
+        hireBeforeBirth: 'employee.form.errors.hireBeforeBirth',
+      }),
+    ).toBe('employee.form.errors.hireBeforeBirth');
     expect(fieldErrorMessage(control, translate)).toBe('common.validation.invalid');
   });
 });

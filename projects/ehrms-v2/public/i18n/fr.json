@@ -22,6 +22,8 @@
       "maxLength": "Maximum {{count}} caractères",
       "pattern": "Format invalide — lettres, chiffres, points, tirets, underscores uniquement",
       "invalid": "Valeur invalide",
+      "dateInvalid": "Saisissez une date valide",
+      "dateTooEarly": "Cette date est antérieure à la première date autorisée",
       "min": "Minimum {{count}}",
       "max": "Maximum {{count}}",
       "controlChars": "Contient des caractères cachés ou de contrôle non autorisés.",

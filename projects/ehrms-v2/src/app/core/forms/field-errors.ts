@@ -22,13 +22,19 @@ export function fieldErrorMessage(
   if (errors['required']) return translate.instant('common.validation.required');
   if (errors['email']) return translate.instant('common.validation.email');
   if (errors['minlength']) {
-    return translate.instant('common.validation.minLength', { count: errors['minlength'].requiredLength });
+    return translate.instant('common.validation.minLength', {
+      count: errors['minlength'].requiredLength,
+    });
   }
   if (errors['maxlength']) {
-    return translate.instant('common.validation.maxLength', { count: errors['maxlength'].requiredLength });
+    return translate.instant('common.validation.maxLength', {
+      count: errors['maxlength'].requiredLength,
+    });
   }
   if (errors['controlChars']) return translate.instant('common.validation.controlChars');
   if (errors['pattern']) return translate.instant('common.validation.pattern');
+  if (errors['matDatepickerParse']) return translate.instant('common.validation.dateInvalid');
+  if (errors['matDatepickerMin']) return translate.instant('common.validation.dateTooEarly');
   for (const [code, key] of Object.entries(custom)) {
     if (errors[code]) return translate.instant(key);
   }

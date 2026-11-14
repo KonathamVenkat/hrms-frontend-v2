@@ -1,9 +1,9 @@
 import { Injectable, PLATFORM_ID, inject } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { Observable, of } from 'rxjs';
-import { catchError, finalize, map, shareReplay, tap, timeout } from 'rxjs/operators';
+import { Observable, of, throwError } from 'rxjs';
+import { catchError, finalize, map, shareReplay, switchMap, tap, timeout } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { Auth, LoginResponse } from './auth';
 
@@ -34,11 +34,9 @@ export class AuthService {
 
   login(username: string, password: string): Observable<LoginResponse> {
     return this.http
-      .post<ApiResponse<LoginResponse>>(
-        `${this.base}/auth/login`,
-        { username, password },
-        this.withCookie,
-      )
+      .post<
+        ApiResponse<LoginResponse>
+      >(`${this.base}/auth/login`, { username, password }, this.withCookie)
       .pipe(
         map((res) => res.data),
         tap((login) => this.auth.saveSession(login)),
@@ -82,8 +80,15 @@ export class AuthService {
     this.refreshing$ ??= this.http
       .post<ApiResponse<LoginResponse>>(`${this.base}/auth/refresh`, null, this.withCookie)
       .pipe(
-        tap((res) => this.auth.renewToken(res.data)),
-        map((res) => res.data.accessToken),
+        switchMap((res) =>
+          this.auth.renewToken(res.data)
+            ? of(res.data.accessToken)
+            : // The session that asked for this refresh is gone (signed out meanwhile) or now belongs
+              // to another user; the interceptor ends the session on a 401.
+              throwError(
+                () => new HttpErrorResponse({ status: 401, statusText: 'Session changed' }),
+              ),
+        ),
         finalize(() => (this.refreshing$ = null)),
         shareReplay({ bufferSize: 1, refCount: false }),
       );
@@ -119,11 +124,9 @@ export class AuthService {
   /** Signed-in user replaces their own password; all their sessions end afterwards. */
   changePassword(currentPassword: string, newPassword: string): Observable<void> {
     return this.http
-      .post<ApiResponse<null>>(
-        `${this.base}/auth/change-password`,
-        { currentPassword, newPassword },
-        this.withCookie,
-      )
+      .post<
+        ApiResponse<null>
+      >(`${this.base}/auth/change-password`, { currentPassword, newPassword }, this.withCookie)
       .pipe(map(() => undefined));
   }
 

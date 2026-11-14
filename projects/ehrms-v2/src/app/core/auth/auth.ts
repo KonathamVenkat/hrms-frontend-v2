@@ -203,9 +203,20 @@ export class Auth {
    * Swaps in a renewed access token and takes the user object from the same response, so the
    * name and role shown stay current. If the role changed, the cached sidebar menu is dropped so
    * the next menu load asks the server instead of showing the old role's entries.
+   *
+   * Only renews the session that asked for it. A late refresh that lands after sign-out must not
+   * bring the session back, and a refresh that now belongs to a different user (someone signed in
+   * as another user in a second tab, which replaced the shared refresh cookie) must not be adopted
+   * under the screens of the first. Returns false in both cases; the second also ends this tab's
+   * session.
    */
-  renewToken(login: LoginResponse): void {
-    const roleChanged = this.user !== null && this.user.role !== login.user.role;
+  renewToken(login: LoginResponse): boolean {
+    if (this.user === null) return false;
+    if (this.user.id !== login.user.id) {
+      this.clearSession();
+      return false;
+    }
+    const roleChanged = this.user.role !== login.user.role;
     this.accessToken = login.accessToken;
     this.user = login.user;
     this.expiresAt = Date.now() + login.expiresIn * 1000;
@@ -216,6 +227,7 @@ export class Auth {
         // storage unavailable (SSR / private mode) — nothing cached to drop
       }
     }
+    return true;
   }
 
   /** True when there is an access token that hasn't passed its expiry time. */

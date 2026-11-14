@@ -2,8 +2,8 @@ import { TestBed } from '@angular/core/testing';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { Auth, LoginResponse, SIDEBAR_MENU_CACHE_KEY, StoredUser } from './auth';
 
-function login(role: string, fullName = 'Akol Mayen'): LoginResponse {
-  const user: StoredUser = { id: 1, username: 'akol', email: 'a@example.test', fullName, role };
+function login(role: string, fullName = 'Akol Mayen', id = 1): LoginResponse {
+  const user: StoredUser = { id, username: 'akol', email: 'a@example.test', fullName, role };
   return { accessToken: 'token-' + role, tokenType: 'Bearer', expiresIn: 1800, user };
 }
 
@@ -32,6 +32,24 @@ describe('Auth.renewToken', () => {
   it('drops the cached menu when the role changed', () => {
     auth.renewToken(login('HR_MANAGER'));
     expect(auth.getStoredUser()?.role).toBe('HR_MANAGER');
+    expect(sessionStorage.getItem(SIDEBAR_MENU_CACHE_KEY)).toBeNull();
+  });
+
+  it('says it renewed the session', () => {
+    expect(auth.renewToken(login('EMPLOYEE'))).toBe(true);
+  });
+
+  it('does not bring a signed-out session back when a late refresh arrives', () => {
+    auth.clearSession();
+    expect(auth.renewToken(login('EMPLOYEE'))).toBe(false);
+    expect(auth.getToken()).toBeNull();
+    expect(auth.getStoredUser()).toBeNull();
+  });
+
+  it('does not adopt a refresh that belongs to another user, and ends this session instead', () => {
+    expect(auth.renewToken(login('EMPLOYEE', 'Someone Else', 2))).toBe(false);
+    expect(auth.getToken()).toBeNull();
+    expect(auth.getStoredUser()).toBeNull();
     expect(sessionStorage.getItem(SIDEBAR_MENU_CACHE_KEY)).toBeNull();
   });
 });
