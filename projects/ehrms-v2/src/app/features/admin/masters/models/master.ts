@@ -1,3 +1,27 @@
+/** Every path under /api/v1/admin/ that the shared master screens and their lookups call; a typo no longer compiles. */
+export type MasterEndpoint =
+  | 'banks'
+  | 'bank-branches'
+  | 'companies'
+  | 'company-branches'
+  | 'regions'
+  | 'wilayas'
+  | 'provinces'
+  | 'cities'
+  | 'religions'
+  | 'nationalities'
+  | 'contract-types'
+  | 'professions'
+  | 'specializations'
+  | 'education-levels'
+  | 'languages'
+  | 'language-levels'
+  | 'house-types'
+  | 'relation-types'
+  | 'relations'
+  | 'directorates'
+  | 'grades';
+
 /** Mirrors the Response and Request of GET|POST|PUT /api/v1/admin/<endpoint> of every master (one shape for all). */
 export interface MasterRecord {
   id: number;

@@ -1,3 +1,5 @@
+import { MasterEndpoint } from './models/master';
+
 export type MasterKey =
   | 'banks'
   | 'bankBranches'
@@ -34,9 +36,9 @@ export interface MasterConfig {
   /** Translation block: admin.masters.<key>.* */
   key: MasterKey;
   /** Path under /api/v1/admin/. */
-  endpoint: string;
+  endpoint: MasterEndpoint;
   icon: string;
-  parent?: { endpoint: string; field: ParentField };
+  parent?: { endpoint: MasterEndpoint; field: ParentField };
   /** The master carries the country behind it (nationalities), edited on the screen. */
   country?: boolean;
   /** The master has an optional sort order (grades), shown and edited on the screen. */

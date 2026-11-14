@@ -25,7 +25,7 @@ import { Subject, catchError, debounceTime, finalize, merge, of, switchMap, tap 
 import { getHttpErrorMessage } from '../../../../../core/utils/http-error-message';
 import { AccessibleDialogDirective } from '../../../../../core/directives/accessible-dialog.directive';
 import { MasterDataService } from '../../services/master-data';
-import { MasterRecord, MasterRequest } from '../../models/master';
+import { MasterEndpoint, MasterRecord, MasterRequest } from '../../models/master';
 import { MasterConfig } from '../../masters.config';
 
 type FormKey =
@@ -320,7 +320,7 @@ export class MasterData implements OnInit {
       });
   }
 
-  private loadParents(endpoint: string): void {
+  private loadParents(endpoint: MasterEndpoint): void {
     this.svc
       .getAll(endpoint)
       .pipe(takeUntilDestroyed(this.destroy))

@@ -199,10 +199,23 @@ export class Auth {
     this.storageSet(SESSION_HINT_KEY, '1');
   }
 
-  /** Swaps in a renewed access token for the same user (silent refresh); keeps the menu cache. */
+  /**
+   * Swaps in a renewed access token and takes the user object from the same response, so the
+   * name and role shown stay current. If the role changed, the cached sidebar menu is dropped so
+   * the next menu load asks the server instead of showing the old role's entries.
+   */
   renewToken(login: LoginResponse): void {
+    const roleChanged = this.user !== null && this.user.role !== login.user.role;
     this.accessToken = login.accessToken;
+    this.user = login.user;
     this.expiresAt = Date.now() + login.expiresIn * 1000;
+    if (roleChanged) {
+      try {
+        sessionStorage.removeItem(SIDEBAR_MENU_CACHE_KEY);
+      } catch {
+        // storage unavailable (SSR / private mode) — nothing cached to drop
+      }
+    }
   }
 
   /** True when there is an access token that hasn't passed its expiry time. */
