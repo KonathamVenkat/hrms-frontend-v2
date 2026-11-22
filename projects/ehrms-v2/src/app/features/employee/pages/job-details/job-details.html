@@ -159,7 +159,7 @@
             @if (currentJob()!.contractStartDate || currentJob()!.contractEndDate) {
               <div class="info-row">
                 <span class="info-label">{{ 'employee.jobDetails.fields.contractPeriod' | translate }}</span>
-                <span class="info-value val-main">{{ currentJob()!.contractStartDate ?? '—' }} → {{ currentJob()!.contractEndDate ?? '—' }}</span>
+                <span class="info-value val-main"><bdi dir="ltr">{{ currentJob()!.contractStartDate ?? '—' }} → {{ currentJob()!.contractEndDate ?? '—' }}</bdi></span>
               </div>
             }
             @if (currentJob()!.formRequestNo) {
@@ -283,7 +283,7 @@
                 @if (currentJob()!.shiftName) {
                   <span class="val-main">{{ currentJob()!.shiftName }}</span>
                   <span class="val-sub">
-                    {{ currentJob()!.shiftStartTime }} – {{ currentJob()!.shiftEndTime }}
+                    <bdi dir="ltr">{{ currentJob()!.shiftStartTime }} – {{ currentJob()!.shiftEndTime }}</bdi>
                   </span>
                 } @else {
                   <span class="val-empty">{{ 'employee.jobDetails.notAssigned' | translate }}</span>
@@ -293,7 +293,7 @@
             <div class="info-row">
               <span class="info-label">{{ 'employee.jobDetails.fields.effectiveDate' | translate }}</span>
               <span class="info-value val-main">
-                {{ formatDateRange(currentJob()!.effectiveFrom, currentJob()!.effectiveTo) }}
+                <bdi dir="ltr">{{ formatDateRange(currentJob()!.effectiveFrom, currentJob()!.effectiveTo) }}</bdi>
               </span>
             </div>
             @if (currentJob()!.remarks) {
@@ -341,7 +341,7 @@
             <!-- Timeline content -->
             <div class="timeline-card">
               <div class="timeline-card-header">
-                <div class="timeline-dates">
+                <div class="timeline-dates" dir="ltr">
                   <span class="date-from">{{ job.effectiveFrom }}</span>
                   <span class="date-arrow">→</span>
                   <span class="date-to">
@@ -614,7 +614,7 @@
               <option value="">{{ 'employee.jobDetails.formFields.noShiftAssigned' | translate }}</option>
               @for (s of shifts(); track s.shiftId) {
                 <option [value]="s.shiftId">
-                  {{ s.shiftName }} ({{ s.startTime }} – {{ s.endTime }})
+                  {{ s.shiftName }} (&#x2066;{{ s.startTime }} – {{ s.endTime }}&#x2069;)
                 </option>
               }
             </select>

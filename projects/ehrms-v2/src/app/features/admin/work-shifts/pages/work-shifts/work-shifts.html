@@ -539,7 +539,7 @@
       </h3>
       <p class="confirm-msg">
         <strong>{{ confirmTarget()?.shiftName }}</strong>
-        ({{ confirmTarget()?.startTime }} – {{ confirmTarget()?.endTime }})
+        (<bdi dir="ltr">{{ confirmTarget()?.startTime }} – {{ confirmTarget()?.endTime }}</bdi>)
         @if (confirmTarget()?.isActive) {
           {{ 'admin.workShifts.deactivateMsg' | translate }}
         } @else {

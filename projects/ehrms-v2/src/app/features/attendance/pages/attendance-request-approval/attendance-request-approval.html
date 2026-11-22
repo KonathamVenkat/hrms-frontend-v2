@@ -380,10 +380,12 @@
               'attendance.requestApproval.requested' | translate
             }}</span>
             <span class="dialog-value">
-              {{ formatTime(rejectingRequest()!.requestedInTime) }}
-              @if (rejectingRequest()!.requestedOutTime) {
-                <span> → {{ formatTime(rejectingRequest()!.requestedOutTime) }} </span>
-              }
+              <bdi dir="ltr">
+                {{ formatTime(rejectingRequest()!.requestedInTime) }}
+                @if (rejectingRequest()!.requestedOutTime) {
+                  <span> → {{ formatTime(rejectingRequest()!.requestedOutTime) }} </span>
+                }
+              </bdi>
             </span>
           </div>
           <div class="dialog-info-row">
