@@ -1701,7 +1701,9 @@
         "basicSalaryMin": "Doit être supérieur à 0",
         "effectiveFrom": "Date d'effet",
         "remarks": "Remarques",
-        "remarksPlaceholder": "ex. Augmentation annuelle 2026"
+        "remarksPlaceholder": "ex. Augmentation annuelle 2026",
+        "structureFromGrade": "La grille du grade de l'employé.",
+        "basicFromScale": "Selon la grille salariale : {{grade}}, échelon {{increment}}."
       },
       "preview": {
         "title": "Répartition estimée du salaire",
@@ -1742,8 +1744,18 @@
         "assigned": "Salaire attribué avec succès"
       },
       "errors": {
-        "saveFailed": "Échec de l'enregistrement"
-      }
+        "saveFailed": "Échec de l'enregistrement",
+        "rules": {
+          "BASIC_REQUIRED": "Saisissez le salaire de base : cet employé n'a pas de grade dans la grille salariale.",
+          "GRADE_STRUCTURE_MISSING": "Aucune structure salariale n'est encore liée au grade de cet employé. Demandez à l'administrateur système de la lier.",
+          "STRUCTURE_GRADE_MISMATCH": "Le grade de cet employé relève d’une autre structure salariale. Rechargez puis réessayez.",
+          "PAY_SCALE_MISSING": "La grille salariale n'a pas de montant pour le grade et l'échelon de cet employé à la date d'effet.",
+          "BASIC_NOT_FROM_SCALE": "Le salaire de base d'un employé gradé vient de la grille salariale et ne peut pas être saisi.",
+          "STRUCTURE_INACTIVE": "La structure salariale choisie n'est plus active.",
+          "INVALID_EFFECTIVE_DATE": "La date d'effet doit être postérieure à celle du salaire actuel."
+        }
+      },
+      "scaleDiffers": "Grille salariale actuelle {{amount}} : attribuez un nouveau salaire"
     },
     "salaryStructure": {
       "title": "Structures salariales",

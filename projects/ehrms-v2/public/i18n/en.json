@@ -1701,7 +1701,9 @@
         "basicSalaryMin": "Must be greater than 0",
         "effectiveFrom": "Effective From",
         "remarks": "Remarks",
-        "remarksPlaceholder": "e.g. Annual increment 2026"
+        "remarksPlaceholder": "e.g. Annual increment 2026",
+        "structureFromGrade": "The structure of the employee's grade.",
+        "basicFromScale": "From the pay scale: {{grade}}, increment {{increment}}."
       },
       "preview": {
         "title": "Estimated Salary Breakdown",
@@ -1742,8 +1744,18 @@
         "assigned": "Salary assigned successfully"
       },
       "errors": {
-        "saveFailed": "Save failed"
-      }
+        "saveFailed": "Save failed",
+        "rules": {
+          "BASIC_REQUIRED": "Enter the basic salary: this employee has no grade on the pay scale.",
+          "GRADE_STRUCTURE_MISSING": "No salary structure is linked to this employee's grade yet. Ask the system administrator to link it.",
+          "STRUCTURE_GRADE_MISMATCH": "This employee's grade is paid on another salary structure. Reload and try again.",
+          "PAY_SCALE_MISSING": "The pay scale has no amount for this employee's grade and increment on the effective date.",
+          "BASIC_NOT_FROM_SCALE": "The basic salary of a graded employee comes from the pay scale and cannot be typed.",
+          "STRUCTURE_INACTIVE": "The selected salary structure is no longer active.",
+          "INVALID_EFFECTIVE_DATE": "The effective date must be after the current salary's effective date."
+        }
+      },
+      "scaleDiffers": "Pay scale now {{amount}}: assign a new salary"
     },
     "salaryStructure": {
       "title": "Salary Structures",

@@ -209,3 +209,19 @@
     gap: var(--space-2);
   }
 }
+
+/* Basic differs from today's pay scale for the grade and increment: a new salary is due. */
+.scale-differs {
+  display: flex;
+  align-items: flex-start;
+  gap: 4px;
+  margin-block-start: 2px;
+  color: var(--status-pending-fg);
+}
+.scale-differs mat-icon {
+  flex-shrink: 0;
+  margin-block-start: 3px;
+  font-size: 16px;
+  inline-size: 16px;
+  block-size: 16px;
+}

@@ -51,6 +51,9 @@
                 </mat-option>
               }
             </mat-select>
+            @if (fromScale() && payBasis()?.structureId != null) {
+              <mat-hint>{{ 'payroll.employeeSalary.fields.structureFromGrade' | translate }}</mat-hint>
+            }
             @if (form.get('structureId')?.hasError('required')) {
               <mat-error>{{ 'common.validation.required' | translate }}</mat-error>
             }
@@ -66,6 +69,12 @@
               placeholder="0.00"
             />
             <span matTextSuffix>SSP</span>
+            @if (fromScale()) {
+              <mat-hint>{{
+                'payroll.employeeSalary.fields.basicFromScale'
+                  | translate: { grade: payBasis()?.gradeName, increment: payBasis()?.incrementNo }
+              }}</mat-hint>
+            }
             @if (form.get('basicSalary')?.hasError('required')) {
               <mat-error>{{ 'common.validation.required' | translate }}</mat-error>
             }
@@ -93,6 +102,11 @@
             />
           </mat-form-field>
         </form>
+        @if (scaleProblem(); as problem) {
+          <div class="alert alert-error" role="alert">
+            <mat-icon aria-hidden="true">error_outline</mat-icon>{{ problem | translate }}
+          </div>
+        }
         <!-- ── Live Salary Preview ──────────────────────────── -->
         @if (selectedStructure() && previewBasic() > 0) {
           <div class="preview-section">
@@ -166,7 +180,12 @@
         <button mat-stroked-button (click)="closeForm()" [disabled]="saving()">
           {{ 'common.cancel' | translate }}
         </button>
-        <button mat-flat-button color="primary" (click)="onSave()" [disabled]="saving()">
+        <button
+          mat-flat-button
+          color="primary"
+          (click)="onSave()"
+          [disabled]="saving() || scaleProblem() !== null"
+        >
           @if (saving()) {
             <mat-spinner diameter="18"></mat-spinner>
           }
@@ -296,6 +315,15 @@
                 </th>
                 <td mat-cell *matCellDef="let r">
                   <span class="salary-val">{{ formatCurrency(r.basicSalary) }}</span>
+                  @if (r.payScaleBasic != null && r.payScaleBasic !== r.basicSalary) {
+                    <span class="scale-differs" role="note">
+                      <mat-icon aria-hidden="true">warning_amber</mat-icon>
+                      {{
+                        'payroll.employeeSalary.scaleDiffers'
+                          | translate: { amount: formatCurrency(r.payScaleBasic) }
+                      }}
+                    </span>
+                  }
                 </td>
               </ng-container>
               <ng-container matColumnDef="grossSalary">

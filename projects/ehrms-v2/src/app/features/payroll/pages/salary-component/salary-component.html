@@ -183,7 +183,7 @@
                   {{
                     r.calcType === 'FIXED'
                       ? (r.defaultValue | number: '1.2-2') + ' SSP'
-                      : r.defaultValue + '%'
+                      : (r.defaultValue | number: '1.0-4') + '%'
                   }}
                 </span>
               </td>

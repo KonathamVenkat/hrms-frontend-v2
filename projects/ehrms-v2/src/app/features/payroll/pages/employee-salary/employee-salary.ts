@@ -1,6 +1,8 @@
 // src/app/features/payroll/pages/employee-salary/employee-salary.component.ts
 
-import { Component, OnInit, inject, signal, computed, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, inject, signal, computed, ChangeDetectionStrategy, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { catchError, combineLatest, debounceTime, distinctUntilChanged, of, startWith, switchMap } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import {
   FormsModule,
@@ -27,8 +29,10 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 import { PayrollService } from '../../services/payroll.service';
+import { ruleMessage } from '../../../../core/utils/http-error-message';
 import {
   EmployeeSalaryResponse,
+  PayScaleBasis,
   SalaryStructureResponse,
   COMPONENT_TYPE_CONFIG,
 } from '../../models/payroll.model';
@@ -64,6 +68,7 @@ export class EmployeeSalary implements OnInit {
   private readonly svc = inject(PayrollService);
   private readonly snack = inject(MatSnackBar);
   private readonly translate = inject(TranslateService);
+  private readonly destroyRef = inject(DestroyRef);
 
   // ── State ──────────────────────────────────────────────
   readonly salaries = signal<EmployeeSalaryResponse[]>([]);
@@ -75,6 +80,19 @@ export class EmployeeSalary implements OnInit {
   readonly showHistory = signal(false);
   readonly totalElements = signal(0);
   readonly typeConfig = COMPONENT_TYPE_CONFIG;
+
+  /** What the pay scale decides for the employee and date in the form; null until both are filled in. */
+  readonly payBasis = signal<PayScaleBasis | null>(null);
+  /** A graded employee's structure and basic come from the pay scale: the two fields are locked. */
+  readonly fromScale = computed(() => this.payBasis()?.graded === true);
+  /** Graded, but the grade has no linked structure or the scale no amount on the date: the server would refuse. */
+  readonly scaleProblem = computed<string | null>(() => {
+    const b = this.payBasis();
+    if (!b?.graded) return null;
+    if (b.structureId == null) return 'payroll.employeeSalary.errors.rules.GRADE_STRUCTURE_MISSING';
+    if (b.basicSalary == null) return 'payroll.employeeSalary.errors.rules.PAY_SCALE_MISSING';
+    return null;
+  });
 
   // Computed preview from form values
   readonly previewBasic = signal<number>(0);
@@ -120,6 +138,41 @@ export class EmployeeSalary implements OnInit {
       const found = this.structures().find((s) => s.structureId === id);
       this.selectedStructure.set(found ?? null);
     });
+    this.watchPayScale();
+  }
+
+  /** Employee and date decide the pay-scale basis; only the latest answer is applied. */
+  private watchPayScale(): void {
+    const { employeeId, effectiveFrom } = this.form.controls;
+    combineLatest([
+      employeeId.valueChanges.pipe(startWith(employeeId.value)),
+      effectiveFrom.valueChanges.pipe(startWith(effectiveFrom.value)),
+    ])
+      .pipe(
+        debounceTime(300),
+        distinctUntilChanged(([a, d], [b, e]) => a === b && toIsoDate(d) === toIsoDate(e)),
+        switchMap(([id, date]) =>
+          id && id > 0 && date
+            ? this.svc.getPayScaleBasis(id, toIsoDate(date)).pipe(catchError(() => of(null)))
+            : of(null),
+        ),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((basis) => this.applyBasis(basis));
+  }
+
+  private applyBasis(basis: PayScaleBasis | null): void {
+    this.payBasis.set(basis);
+    const { structureId, basicSalary } = this.form.controls;
+    if (basis?.graded) {
+      structureId.setValue(basis.structureId ?? null);
+      basicSalary.setValue(basis.basicSalary ?? 0);
+      structureId.disable();
+      basicSalary.disable();
+    } else {
+      structureId.enable();
+      basicSalary.enable();
+    }
   }
 
   loadSalaries(): void {
@@ -141,6 +194,7 @@ export class EmployeeSalary implements OnInit {
   }
 
   openAssign(): void {
+    this.applyBasis(null);
     this.form.reset({ effectiveFrom: new Date() });
     this.selectedStructure.set(null);
     this.previewBasic.set(0);
@@ -149,6 +203,7 @@ export class EmployeeSalary implements OnInit {
   }
 
   openRevise(salary: EmployeeSalaryResponse): void {
+    this.applyBasis(null);
     this.form.patchValue({
       employeeId: salary.employeeId,
       structureId: salary.structureId,
@@ -172,24 +227,26 @@ export class EmployeeSalary implements OnInit {
   }
 
   onSave(): void {
-    if (this.form.invalid) {
+    if (this.saving()) return;
+    if (this.form.invalid || this.scaleProblem()) {
       this.form.markAllAsTouched();
       return;
     }
-    this.saving.set(true);
 
-    const { employeeId, structureId, basicSalary, effectiveFrom: date } = this.form.value;
+    // Raw value: a graded employee's structure is locked (disabled) but still sent.
+    const { employeeId, structureId, basicSalary, effectiveFrom: date } = this.form.getRawValue();
     if (employeeId == null || structureId == null || basicSalary == null || !date) {
-      this.saving.set(false);
       return;
     }
-    const dateStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+    this.saving.set(true);
+    const dateStr = toIsoDate(date);
 
     this.svc
       .assignSalary({
         employeeId,
         structureId,
-        basicSalary,
+        // A graded employee's basic is set by the server from the pay scale.
+        basicSalary: this.fromScale() ? undefined : basicSalary,
         effectiveFrom: dateStr,
         remarks: this.form.value.remarks ?? '',
       })
@@ -206,7 +263,10 @@ export class EmployeeSalary implements OnInit {
         },
         error: (err) => {
           this.snack.open(
-            '❌ ' + (err.error?.message || this.translate.instant('payroll.employeeSalary.errors.saveFailed')),
+            '❌ ' +
+              (ruleMessage(this.translate, err, 'payroll.employeeSalary.errors.rules') ||
+                err.error?.message ||
+                this.translate.instant('payroll.employeeSalary.errors.saveFailed')),
             this.translate.instant('payroll.employeeSalary.close'),
             { duration: 4000 },
           );
@@ -246,4 +306,10 @@ export class EmployeeSalary implements OnInit {
   closeHistory(): void {
     this.showHistory.set(false);
   }
+}
+
+/** A date-only value as yyyy-MM-dd in local time (never through UTC). */
+function toIsoDate(date: Date | null): string {
+  if (!date) return '';
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
 }

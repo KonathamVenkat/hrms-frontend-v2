@@ -12,6 +12,7 @@ import {
   SalaryStructureRequest,
   EmployeeSalaryResponse,
   EmployeeSalaryRequest,
+  PayScaleBasis,
   ComponentType,
 } from '../models/payroll.model';
 
@@ -103,6 +104,14 @@ export class PayrollService {
   assignSalary(req: EmployeeSalaryRequest): Observable<EmployeeSalaryResponse> {
     return this.http
       .post<ApiResponse<EmployeeSalaryResponse>>(`${this.base}/employee-salary/assign`, req)
+      .pipe(map((r) => r.data));
+  }
+
+  /** The structure and basic the pay scale gives the employee on a date (yyyy-MM-dd). */
+  getPayScaleBasis(employeeId: number, onDate: string): Observable<PayScaleBasis> {
+    const params = new HttpParams().set('on', onDate);
+    return this.http
+      .get<ApiResponse<PayScaleBasis>>(`${this.base}/employee-salary/${employeeId}/pay-scale`, { params })
       .pipe(map((r) => r.data));
   }
 

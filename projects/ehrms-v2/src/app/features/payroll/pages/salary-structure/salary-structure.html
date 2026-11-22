@@ -293,7 +293,7 @@
                           {{
                             item.effectiveCalcType === 'FIXED'
                               ? (item.amount | number: '1.2-2') + ' SSP'
-                              : item.percentage + '%'
+                              : (item.percentage | number: '1.0-4') + '%'
                           }}
                         </span>
                       </div>
@@ -319,7 +319,7 @@
                             {{
                               item.effectiveCalcType === 'FIXED'
                                 ? (item.amount | number: '1.2-2') + ' SSP'
-                                : item.percentage + '%'
+                                : (item.percentage | number: '1.0-4') + '%'
                             }}
                           </span>
                         </div>
@@ -342,7 +342,7 @@
                           <span class="comp-basis">{{
                             calcLabels[item.effectiveCalcType] | translate
                           }}</span>
-                          <span class="comp-value statutory-val">{{ item.percentage }}%</span>
+                          <span class="comp-value statutory-val">{{ item.percentage | number: '1.0-4' }}%</span>
                         </div>
                       }
                     </div>

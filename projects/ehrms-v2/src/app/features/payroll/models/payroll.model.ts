@@ -78,6 +78,23 @@ export interface EmployeeSalaryResponse {
   breakdown:        SalaryBreakdownItem[];
   createdAt:        string;
   updatedAt:        string;
+  /** Current record only: today's pay-scale amount for the employee's grade and increment (absent without a grade). */
+  payScaleBasic?:   number;
+}
+
+/** What the pay scale gives an employee's salary on a date (GET employee-salary/{id}/pay-scale, HR_ADMIN). */
+export interface PayScaleBasis {
+  graded:         boolean;
+  onDate:         string;   // yyyy-MM-dd
+  gradeId?:       number;
+  gradeName?:     string;
+  gradeNameAr?:   string;
+  incrementNo?:   number;
+  /** Absent when no structure is linked to the grade yet. */
+  structureId?:   number;
+  structureName?: string;
+  /** Absent when the pay scale has no amount for the grade and increment on that date. */
+  basicSalary?:   number;
 }
 
 // ── Request types ──────────────────────────────────────────
@@ -116,7 +133,8 @@ export interface SalaryStructureRequest {
 export interface EmployeeSalaryRequest {
   employeeId:    number;
   structureId:   number;
-  basicSalary:   number;
+  /** Required without a grade; left out for a graded employee (the server takes it from the pay scale). */
+  basicSalary?:  number;
   effectiveFrom: string;   // yyyy-MM-dd
   remarks?:      string;
 }
