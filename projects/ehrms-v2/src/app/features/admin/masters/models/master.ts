@@ -20,7 +20,8 @@ export type MasterEndpoint =
   | 'relation-types'
   | 'relations'
   | 'directorates'
-  | 'grades';
+  | 'grades'
+  | 'qualification-levels';
 
 /** Mirrors the Response and Request of GET|POST|PUT /api/v1/admin/<endpoint> of every master (one shape for all). */
 export interface MasterRecord {
@@ -44,6 +45,8 @@ export interface MasterRecord {
   /** Grades only: the pay range, both optional. */
   minSalary?: number;
   maxSalary?: number;
+  /** Qualification levels only: the allowance paid each month (required, above 0). */
+  monthlyAmount?: number;
   /** Bank and company branches only: contact details, all optional. */
   address?: string;
   phone?: string;
@@ -73,6 +76,8 @@ export interface MasterRequest {
   /** Grades only; null clears the pay range. */
   minSalary?: number | null;
   maxSalary?: number | null;
+  /** Qualification levels only; required. */
+  monthlyAmount?: number | null;
   /** Bank and company branches only; an empty string clears the value. */
   address?: string;
   phone?: string;

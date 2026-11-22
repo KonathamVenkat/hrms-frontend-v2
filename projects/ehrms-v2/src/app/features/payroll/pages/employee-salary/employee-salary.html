@@ -93,6 +93,30 @@
               <mat-error>{{ 'common.validation.required' | translate }}</mat-error>
             }
           </mat-form-field>
+          <div class="allowance-field">
+            <mat-checkbox formControlName="socialAllowance">
+              {{
+                'payroll.employeeSalary.fields.socialAllowance'
+                  | translate: { amount: formatCurrency(socialComponent()?.defaultValue ?? 0) }
+              }}
+            </mat-checkbox>
+            @if (!socialAvailable()) {
+              <span class="allowance-hint">{{
+                'payroll.employeeSalary.fields.socialUnavailable' | translate
+              }}</span>
+            }
+          </div>
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'payroll.employeeSalary.fields.qualificationLevel' | translate }}</mat-label>
+            <mat-select formControlName="qualificationLevelId">
+              <mat-option [value]="null">{{
+                'payroll.employeeSalary.fields.qualificationNone' | translate
+              }}</mat-option>
+              @for (l of qualificationLevels(); track l.id) {
+                <mat-option [value]="l.id">{{ l.name }} — {{ formatCurrency(l.monthlyAmount) }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
           <mat-form-field appearance="outline" class="full-col">
             <mat-label>{{ 'payroll.employeeSalary.fields.remarks' | translate }}</mat-label>
             <input
@@ -107,73 +131,70 @@
             <mat-icon aria-hidden="true">error_outline</mat-icon>{{ problem | translate }}
           </div>
         }
-        <!-- ── Live Salary Preview ──────────────────────────── -->
-        @if (selectedStructure() && previewBasic() > 0) {
-          <div class="preview-section">
-            <mat-divider></mat-divider>
-            <h3 class="preview-title">
-              <mat-icon>calculate</mat-icon>
-              {{ 'payroll.employeeSalary.preview.title' | translate }}
-              <span class="preview-note">{{
-                'payroll.employeeSalary.preview.note' | translate
-              }}</span>
-            </h3>
-            <!-- Earnings -->
-            <div class="preview-group">
-              <div class="preview-group-label earning-label">
-                {{ 'payroll.employeeSalary.preview.earnings' | translate }}
-              </div>
-              @for (item of selectedStructure()!.items; track item) {
-                <div class="preview-row">
-                  @if (item.componentType === 'EARNING') {
-                    <span class="preview-comp-name">{{ item.componentName }}</span>
-                    <span class="preview-basis">
-                      {{
-                        (item.percentage > 0
-                          ? 'payroll.employeeSalary.preview.percentOfBasic'
-                          : 'payroll.employeeSalary.preview.fixed'
-                        ) | translate: { percent: item.percentage }
-                      }}
-                    </span>
-                    <span class="preview-amount earning-amount">
-                      {{
-                        item.effectiveCalcType === 'FIXED'
-                          ? formatCurrency(item.amount)
-                          : formatCurrency((previewBasic() * item.percentage) / 100)
-                      }}
-                    </span>
-                  }
+        <!-- ── Live Salary Preview: same calculation as the server ── -->
+        @if (preview(); as p) {
+          @if (previewBasic() > 0) {
+            <div class="preview-section">
+              <mat-divider></mat-divider>
+              <h3 class="preview-title">
+                <mat-icon aria-hidden="true">calculate</mat-icon>
+                {{ 'payroll.employeeSalary.preview.title' | translate }}
+                <span class="preview-note">{{ 'payroll.employeeSalary.preview.note' | translate }}</span>
+              </h3>
+              <div class="preview-group">
+                <div class="preview-group-label earning-label">
+                  {{ 'payroll.employeeSalary.preview.earnings' | translate }}
                 </div>
-              }
-            </div>
-            <!-- Statutory -->
-            <div class="preview-group">
-              <div class="preview-group-label statutory-label">
-                {{ 'payroll.employeeSalary.preview.statutory' | translate }}
-              </div>
-              @for (item of selectedStructure()!.items; track item) {
                 <div class="preview-row">
-                  @if (item.componentType === 'STATUTORY') {
-                    <span class="preview-comp-name">{{ item.componentName }}</span>
-                    <span class="preview-basis">{{
-                      'payroll.employeeSalary.preview.percentOfBasic'
-                        | translate: { percent: item.percentage }
-                    }}</span>
-                    <span class="preview-amount statutory-amount">
-                      - {{ formatCurrency((previewBasic() * item.percentage) / 100) }}
-                    </span>
-                  }
+                  <span class="preview-comp-name">{{
+                    'payroll.employeeSalary.preview.basicSalaryLabel' | translate
+                  }}</span>
+                  <span class="preview-basis"></span>
+                  <span class="preview-amount earning-amount">{{ formatCurrency(previewBasic()) }}</span>
                 </div>
-              }
-            </div>
-            <mat-divider></mat-divider>
-            <div class="preview-totals">
-              <div class="total-row">
-                <span>{{ 'payroll.employeeSalary.preview.basicSalaryLabel' | translate }}</span>
-                <span class="total-value">{{ formatCurrency(previewBasic()) }}</span>
+                @for (l of p.lines; track l.code) {
+                  @if (l.type === 'EARNING') {
+                    <div class="preview-row">
+                      <span class="preview-comp-name">{{ l.name }}</span>
+                      <span class="preview-basis">{{
+                        'payroll.employeeSalary.preview.basis.' + l.basis
+                          | translate: { percent: (l.percent | number: '1.0-4') }
+                      }}</span>
+                      <span class="preview-amount earning-amount">{{ formatCurrency(l.amount) }}</span>
+                    </div>
+                  }
+                }
+              </div>
+              <div class="preview-group">
+                <div class="preview-group-label statutory-label">
+                  {{ 'payroll.employeeSalary.preview.deductions' | translate }}
+                </div>
+                @for (l of p.lines; track l.code) {
+                  @if (l.type !== 'EARNING') {
+                    <div class="preview-row">
+                      <span class="preview-comp-name">{{ l.name }}</span>
+                      <span class="preview-basis">{{
+                        'payroll.employeeSalary.preview.basis.' + l.basis
+                          | translate: { percent: (l.percent | number: '1.0-4') }
+                      }}</span>
+                      <span class="preview-amount statutory-amount">- {{ formatCurrency(l.amount) }}</span>
+                    </div>
+                  }
+                }
+              </div>
+              <mat-divider></mat-divider>
+              <div class="preview-totals">
+                <div class="total-row">
+                  <span>{{ 'payroll.employeeSalary.preview.gross' | translate }}</span>
+                  <span class="total-value">{{ formatCurrency(p.gross) }}</span>
+                </div>
+                <div class="total-row">
+                  <span>{{ 'payroll.employeeSalary.preview.net' | translate }}</span>
+                  <span class="total-value">{{ formatCurrency(p.net) }}</span>
+                </div>
               </div>
             </div>
-          </div>
+          }
         }
       </mat-card-content>
       <mat-card-actions align="end">

@@ -1703,7 +1703,11 @@
         "remarks": "Remarks",
         "remarksPlaceholder": "e.g. Annual increment 2026",
         "structureFromGrade": "The structure of the employee's grade.",
-        "basicFromScale": "From the pay scale: {{grade}}, increment {{increment}}."
+        "basicFromScale": "From the pay scale: {{grade}}, increment {{increment}}.",
+        "socialAllowance": "Social Allowance ({{amount}})",
+        "socialUnavailable": "Social Allowance is not available: its component is inactive or has no amount.",
+        "qualificationLevel": "Qualification level",
+        "qualificationNone": "None"
       },
       "preview": {
         "title": "Estimated Salary Breakdown",
@@ -1712,7 +1716,16 @@
         "statutory": "Statutory Deductions (NSSF)",
         "percentOfBasic": "{{percent}}% of Basic",
         "fixed": "Fixed",
-        "basicSalaryLabel": "Basic Salary"
+        "basicSalaryLabel": "Basic Salary",
+        "basis": {
+          "fixed": "Fixed",
+          "basic": "{{percent}}% of Basic",
+          "gross": "{{percent}}% of Gross",
+          "payrollRun": "At payroll run"
+        },
+        "deductions": "Deductions",
+        "gross": "Gross salary",
+        "net": "Net salary (before tax)"
       },
       "history": {
         "title": "Salary History",
@@ -1752,7 +1765,9 @@
           "PAY_SCALE_MISSING": "The pay scale has no amount for this employee's grade and increment on the effective date.",
           "BASIC_NOT_FROM_SCALE": "The basic salary of a graded employee comes from the pay scale and cannot be typed.",
           "STRUCTURE_INACTIVE": "The selected salary structure is no longer active.",
-          "INVALID_EFFECTIVE_DATE": "The effective date must be after the current salary's effective date."
+          "INVALID_EFFECTIVE_DATE": "The effective date must be after the current salary's effective date.",
+          "SOCIAL_ALLOWANCE_UNAVAILABLE": "The Social Allowance component is inactive or has no amount. Ask the payroll administrator.",
+          "QUALIFICATION_LEVEL_INACTIVE": "The selected qualification level is inactive."
         }
       },
       "scaleDiffers": "Pay scale now {{amount}}: assign a new salary"
@@ -2650,7 +2665,23 @@
       },
       "address": "Address",
       "phone": "Phone",
-      "email": "Email"
+      "email": "Email",
+      "qualificationLevels": {
+        "title": "Qualification Levels",
+        "add": "Add Qualification Level",
+        "edit": "Edit Qualification Level",
+        "search": "Search qualification levels...",
+        "emptyTitle": "No qualification levels found",
+        "emptyHint": "Add a qualification level above",
+        "loadFailed": "Failed to load qualification levels.",
+        "activeHint": "Inactive levels cannot be chosen on a new salary",
+        "deleteTitle": "Delete Qualification Level?",
+        "deactivateTitle": "Deactivate Qualification Level?",
+        "activateTitle": "Activate Qualification Level?"
+      },
+      "monthlyAmount": "Monthly amount (SSP)",
+      "monthlyAmountHint": "A new amount applies to salaries assigned from now on; saved salaries keep theirs.",
+      "monthlyAmountMin": "Enter an amount greater than zero."
     }
   },
   "recruitment": {

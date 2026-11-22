@@ -1,7 +1,8 @@
 // src/app/features/payroll/pages/employee-salary/employee-salary.component.ts
 
 import { Component, OnInit, inject, signal, computed, ChangeDetectionStrategy, DestroyRef } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { catchError, combineLatest, debounceTime, distinctUntilChanged, of, startWith, switchMap } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import {
@@ -30,9 +31,12 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 import { PayrollService } from '../../services/payroll.service';
 import { ruleMessage } from '../../../../core/utils/http-error-message';
+import { PreviewExtra, salaryPreview } from './salary-preview';
 import {
   EmployeeSalaryResponse,
   PayScaleBasis,
+  QualificationLevel,
+  SalaryComponentResponse,
   SalaryStructureResponse,
   COMPONENT_TYPE_CONFIG,
 } from '../../models/payroll.model';
@@ -59,6 +63,7 @@ import {
     MatTooltipModule,
     MatDividerModule,
     MatTabsModule,
+    MatCheckboxModule,
     TranslatePipe,
   ],
   templateUrl: './employee-salary.html',
@@ -98,6 +103,15 @@ export class EmployeeSalary implements OnInit {
   readonly previewBasic = signal<number>(0);
   readonly selectedStructure = signal<SalaryStructureResponse | null>(null);
 
+  /** Per-employee allowances (step 4a): the Social component (its default is the amount) and the qualification levels. */
+  readonly socialComponent = signal<SalaryComponentResponse | null>(null);
+  readonly qualificationLevels = signal<QualificationLevel[]>([]);
+  /** Social can only be paid while its component is active with an amount (the server refuses it otherwise). */
+  readonly socialAvailable = computed(() => {
+    const c = this.socialComponent();
+    return !!c && c.isActive && c.defaultValue > 0;
+  });
+
   readonly displayedColumns = [
     'employeeCode',
     'employeeName',
@@ -121,6 +135,30 @@ export class EmployeeSalary implements OnInit {
     basicSalary: new FormControl<number>(0, [Validators.required, Validators.min(0.001)]),
     effectiveFrom: new FormControl<Date | null>(new Date(), [Validators.required]),
     remarks: new FormControl(''),
+    // Disabled until the Social component is known to be payable (see loadAllowances).
+    socialAllowance: new FormControl({ value: false, disabled: true }, { nonNullable: true }),
+    qualificationLevelId: new FormControl<number | null>(null),
+  });
+
+  private readonly socialOn = toSignal(this.form.controls.socialAllowance.valueChanges, { initialValue: false });
+  private readonly levelId = toSignal(this.form.controls.qualificationLevelId.valueChanges, { initialValue: null });
+
+  /** The allowances chosen in the form, as the preview counts them. */
+  private readonly extras = computed<PreviewExtra[]>(() => {
+    const list: PreviewExtra[] = [];
+    const social = this.socialComponent();
+    if (this.socialOn() && social) {
+      list.push({ code: social.componentCode, name: social.componentName, amount: social.defaultValue });
+    }
+    const level = this.qualificationLevels().find((l) => l.id === this.levelId());
+    if (level) list.push({ code: 'QUALIFICATION', name: level.name, amount: level.monthlyAmount });
+    return list;
+  });
+
+  /** What the server will save for these choices (same calculation), shown before saving. */
+  readonly preview = computed(() => {
+    const structure = this.selectedStructure();
+    return structure ? salaryPreview(this.previewBasic(), this.extras(), structure.items) : null;
   });
 
   page = 0;
@@ -129,6 +167,7 @@ export class EmployeeSalary implements OnInit {
   ngOnInit(): void {
     this.loadSalaries();
     this.loadStructures();
+    this.loadAllowances();
 
     // Watch basicSalary and structureId for preview
     this.form.get('basicSalary')!.valueChanges.subscribe((val) => {
@@ -193,9 +232,27 @@ export class EmployeeSalary implements OnInit {
     });
   }
 
+  private loadAllowances(): void {
+    this.svc.getComponents(true).subscribe({
+      next: (list) => {
+        this.socialComponent.set(list.find((c) => c.componentCode === 'SOCIAL_ALLOW') ?? null);
+        const social = this.form.controls.socialAllowance;
+        if (this.socialAvailable()) {
+          social.enable();
+        } else {
+          social.setValue(false);
+          social.disable();
+        }
+      },
+    });
+    this.svc.getQualificationLevels().subscribe({
+      next: (list) => this.qualificationLevels.set(list),
+    });
+  }
+
   openAssign(): void {
     this.applyBasis(null);
-    this.form.reset({ effectiveFrom: new Date() });
+    this.form.reset({ effectiveFrom: new Date(), socialAllowance: false, qualificationLevelId: null });
     this.selectedStructure.set(null);
     this.previewBasic.set(0);
     this.showForm.set(true);
@@ -210,6 +267,9 @@ export class EmployeeSalary implements OnInit {
       basicSalary: salary.basicSalary,
       effectiveFrom: new Date(),
       remarks: '',
+      // A revision starts from the allowances the current salary pays.
+      socialAllowance: salary.socialAmount != null,
+      qualificationLevelId: salary.qualificationLevelId ?? null,
     });
     const found = this.structures().find((s) => s.structureId === salary.structureId);
     this.selectedStructure.set(found ?? null);
@@ -249,6 +309,8 @@ export class EmployeeSalary implements OnInit {
         basicSalary: this.fromScale() ? undefined : basicSalary,
         effectiveFrom: dateStr,
         remarks: this.form.value.remarks ?? '',
+        socialAllowance: this.form.controls.socialAllowance.value,
+        qualificationLevelId: this.form.controls.qualificationLevelId.value,
       })
       .subscribe({
         next: () => {

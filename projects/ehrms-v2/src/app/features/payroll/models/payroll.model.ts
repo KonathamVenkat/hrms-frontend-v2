@@ -80,6 +80,23 @@ export interface EmployeeSalaryResponse {
   updatedAt:        string;
   /** Current record only: today's pay-scale amount for the employee's grade and increment (absent without a grade). */
   payScaleBasic?:   number;
+  /** The allowances of this salary with the amounts it was given (absent when not paid). */
+  socialAmount?:             number;
+  qualificationLevelId?:     number;
+  qualificationLevelName?:   string;
+  qualificationLevelNameAr?: string;
+  qualificationAmount?:      number;
+}
+
+/** A qualification level and its monthly allowance (GET payroll/qualification-levels/lookup, HR_ADMIN). */
+export interface QualificationLevel {
+  id:            number;
+  code:          string;
+  name:          string;
+  nameAr:        string;
+  monthlyAmount: number;
+  sortOrder?:    number;
+  isActive:      boolean;
 }
 
 /** What the pay scale gives an employee's salary on a date (GET employee-salary/{id}/pay-scale, HR_ADMIN). */
@@ -137,6 +154,10 @@ export interface EmployeeSalaryRequest {
   basicSalary?:  number;
   effectiveFrom: string;   // yyyy-MM-dd
   remarks?:      string;
+  /** Pays the Social Allowance component's default amount with this salary. */
+  socialAllowance?:      boolean;
+  /** An active qualification level, or null for none. */
+  qualificationLevelId?: number | null;
 }
 
 // ── Display configs ────────────────────────────────────────

@@ -1703,7 +1703,11 @@
         "remarks": "Remarques",
         "remarksPlaceholder": "ex. Augmentation annuelle 2026",
         "structureFromGrade": "La grille du grade de l'employé.",
-        "basicFromScale": "Selon la grille salariale : {{grade}}, échelon {{increment}}."
+        "basicFromScale": "Selon la grille salariale : {{grade}}, échelon {{increment}}.",
+        "socialAllowance": "Indemnité sociale ({{amount}})",
+        "socialUnavailable": "L'indemnité sociale n'est pas disponible : sa rubrique est inactive ou sans montant.",
+        "qualificationLevel": "Niveau de qualification",
+        "qualificationNone": "Aucun"
       },
       "preview": {
         "title": "Répartition estimée du salaire",
@@ -1712,7 +1716,16 @@
         "statutory": "Déductions statutaires (NSSF)",
         "percentOfBasic": "{{percent}}% du salaire de base",
         "fixed": "Fixe",
-        "basicSalaryLabel": "Salaire de base"
+        "basicSalaryLabel": "Salaire de base",
+        "basis": {
+          "fixed": "Fixe",
+          "basic": "{{percent}} % du salaire de base",
+          "gross": "{{percent}} % du brut",
+          "payrollRun": "Au calcul de la paie"
+        },
+        "deductions": "Retenues",
+        "gross": "Salaire brut",
+        "net": "Salaire net (avant impôt)"
       },
       "history": {
         "title": "Historique salarial",
@@ -1752,7 +1765,9 @@
           "PAY_SCALE_MISSING": "La grille salariale n'a pas de montant pour le grade et l'échelon de cet employé à la date d'effet.",
           "BASIC_NOT_FROM_SCALE": "Le salaire de base d'un employé gradé vient de la grille salariale et ne peut pas être saisi.",
           "STRUCTURE_INACTIVE": "La structure salariale choisie n'est plus active.",
-          "INVALID_EFFECTIVE_DATE": "La date d'effet doit être postérieure à celle du salaire actuel."
+          "INVALID_EFFECTIVE_DATE": "La date d'effet doit être postérieure à celle du salaire actuel.",
+          "SOCIAL_ALLOWANCE_UNAVAILABLE": "La rubrique Indemnité sociale est inactive ou sans montant. Contactez l'administrateur de la paie.",
+          "QUALIFICATION_LEVEL_INACTIVE": "Le niveau de qualification choisi est inactif."
         }
       },
       "scaleDiffers": "Grille salariale actuelle {{amount}} : attribuez un nouveau salaire"
@@ -2650,7 +2665,23 @@
       },
       "address": "Adresse",
       "phone": "Téléphone",
-      "email": "E-mail"
+      "email": "E-mail",
+      "qualificationLevels": {
+        "title": "Niveaux de qualification",
+        "add": "Ajouter un niveau de qualification",
+        "edit": "Modifier le niveau de qualification",
+        "search": "Rechercher des niveaux de qualification...",
+        "emptyTitle": "Aucun niveau de qualification trouvé",
+        "emptyHint": "Ajoutez un niveau de qualification ci-dessus",
+        "loadFailed": "Échec du chargement des niveaux de qualification.",
+        "activeHint": "Les niveaux inactifs ne peuvent pas être choisis pour un nouveau salaire",
+        "deleteTitle": "Supprimer le niveau de qualification ?",
+        "deactivateTitle": "Désactiver le niveau de qualification ?",
+        "activateTitle": "Activer le niveau de qualification ?"
+      },
+      "monthlyAmount": "Montant mensuel (SSP)",
+      "monthlyAmountHint": "Un nouveau montant s'applique aux salaires attribués à partir de maintenant ; les salaires enregistrés gardent le leur.",
+      "monthlyAmountMin": "Saisissez un montant supérieur à zéro."
     }
   },
   "recruitment": {

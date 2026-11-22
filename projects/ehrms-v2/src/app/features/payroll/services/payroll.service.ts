@@ -13,6 +13,7 @@ import {
   EmployeeSalaryResponse,
   EmployeeSalaryRequest,
   PayScaleBasis,
+  QualificationLevel,
   ComponentType,
 } from '../models/payroll.model';
 
@@ -112,6 +113,13 @@ export class PayrollService {
     const params = new HttpParams().set('on', onDate);
     return this.http
       .get<ApiResponse<PayScaleBasis>>(`${this.base}/employee-salary/${employeeId}/pay-scale`, { params })
+      .pipe(map((r) => r.data));
+  }
+
+  /** Active qualification levels with their monthly amounts, for the Assign Salary dropdown. */
+  getQualificationLevels(): Observable<QualificationLevel[]> {
+    return this.http
+      .get<ApiResponse<QualificationLevel[]>>(`${this.base}/qualification-levels/lookup`)
       .pipe(map((r) => r.data));
   }
 

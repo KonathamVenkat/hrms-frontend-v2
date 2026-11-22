@@ -225,3 +225,15 @@
   inline-size: 16px;
   block-size: 16px;
 }
+
+/* Social Allowance tick box, in the form grid next to the qualification level. */
+.allowance-field {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+  min-block-size: 56px;
+}
+.allowance-hint {
+  color: var(--mat-sys-on-surface-variant);
+}

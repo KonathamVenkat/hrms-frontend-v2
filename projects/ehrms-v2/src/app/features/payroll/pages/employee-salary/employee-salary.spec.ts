@@ -25,6 +25,28 @@ function setup() {
     getPayScaleBasis: vi.fn(() => of(graded)),
     assignSalary: vi.fn(() => new Subject()),
     getSalaryHistory: vi.fn(() => of([])),
+    getComponents: vi.fn(() =>
+      of([
+        {
+          componentCode: 'SOCIAL_ALLOW',
+          componentName: 'Social Allowance',
+          isActive: true,
+          defaultValue: 135000,
+        },
+      ]),
+    ),
+    getQualificationLevels: vi.fn(() =>
+      of([
+        {
+          id: 3,
+          code: 'QL_202500',
+          name: 'Qualification 202,500',
+          nameAr: 'x',
+          monthlyAmount: 202500,
+          isActive: true,
+        },
+      ]),
+    ),
   };
   TestBed.configureTestingModule({
     providers: [
@@ -131,5 +153,57 @@ describe('EmployeeSalary pay scale', () => {
 
     expect(comp.fromScale()).toBe(false);
     expect(comp.form.controls.basicSalary.enabled).toBe(true);
+  });
+
+  it('sends the chosen allowances with the salary', () => {
+    const { comp, svc } = setup();
+    choose(comp);
+    comp.form.patchValue({ socialAllowance: true, qualificationLevelId: 3 });
+    comp.onSave();
+    expect(svc.assignSalary).toHaveBeenCalledWith(
+      expect.objectContaining({ socialAllowance: true, qualificationLevelId: 3 }),
+    );
+  });
+
+  it('a revision starts from the allowances of the current salary', () => {
+    const { comp } = setup();
+    comp.openRevise({
+      employeeId: 7,
+      structureId: 3,
+      basicSalary: 460462,
+      socialAmount: 135000,
+      qualificationLevelId: 3,
+    } as unknown as Parameters<typeof comp.openRevise>[0]);
+    expect(comp.form.controls.socialAllowance.value).toBe(true);
+    expect(comp.form.controls.qualificationLevelId.value).toBe(3);
+  });
+
+  it('Social cannot be ticked while its component is inactive', () => {
+    const { comp, svc } = setup();
+    svc.getComponents.mockReturnValue(
+      of([
+        {
+          componentCode: 'SOCIAL_ALLOW',
+          componentName: 'Social Allowance',
+          isActive: false,
+          defaultValue: 135000,
+        },
+      ]),
+    );
+    const fixture = TestBed.createComponent(EmployeeSalary);
+    fixture.detectChanges();
+    expect(fixture.componentInstance.socialAvailable()).toBe(false);
+    expect(fixture.componentInstance.form.controls.socialAllowance.disabled).toBe(true);
+    expect(comp.socialAvailable()).toBe(true);
+  });
+
+  it('the preview counts the allowances in gross', () => {
+    const { comp } = setup();
+    comp.selectedStructure.set({ structureId: 3, items: [] } as unknown as ReturnType<
+      typeof comp.selectedStructure
+    >);
+    comp.previewBasic.set(700306);
+    comp.form.patchValue({ socialAllowance: true, qualificationLevelId: 3 });
+    expect(comp.preview()?.gross).toBe(700306 + 135000 + 202500);
   });
 });

@@ -36,6 +36,7 @@ type FormKey =
   | 'sortOrder'
   | 'minSalary'
   | 'maxSalary'
+  | 'monthlyAmount'
   | 'countryName'
   | 'countryNameAr'
   | 'address'
@@ -167,6 +168,7 @@ export class MasterData implements OnInit {
       sortOrder: this.fb.control<number | null>(null, [Validators.min(0), Validators.max(9999)]),
       minSalary: this.fb.control<number | null>(null, Validators.min(0)),
       maxSalary: this.fb.control<number | null>(null, Validators.min(0)),
+      monthlyAmount: this.fb.control<number | null>(null),
       countryName: ['', Validators.maxLength(200)],
       countryNameAr: ['', Validators.maxLength(200)],
       address: ['', Validators.maxLength(300)],
@@ -187,6 +189,9 @@ export class MasterData implements OnInit {
   }
 
   ngOnInit(): void {
+    if (this.cfg.monthlyAmount) {
+      this.form.controls.monthlyAmount.addValidators([Validators.required, Validators.min(0.01)]);
+    }
     if (this.cfg.parent) {
       this.form.controls.parentId.addValidators([Validators.required, Validators.min(1)]);
       this.loadParents(this.cfg.parent.endpoint);
@@ -354,6 +359,7 @@ export class MasterData implements OnInit {
       sortOrder: r.sortOrder ?? null,
       minSalary: r.minSalary ?? null,
       maxSalary: r.maxSalary ?? null,
+      monthlyAmount: r.monthlyAmount ?? null,
       countryName: r.countryName ?? '',
       countryNameAr: r.countryNameAr ?? '',
       address: r.address ?? '',
@@ -391,6 +397,7 @@ export class MasterData implements OnInit {
       payload.minSalary = v.minSalary;
       payload.maxSalary = v.maxSalary;
     }
+    if (this.cfg.monthlyAmount) payload.monthlyAmount = v.monthlyAmount;
     if (this.cfg.contact) {
       payload.address = v.address.trim();
       payload.phone = v.phone.trim();
@@ -490,6 +497,8 @@ export class MasterData implements OnInit {
   getError(name: FormKey): string {
     const c = this.form.controls[name];
     if (!c.errors || !c.touched) return '';
+    if (name === 'monthlyAmount')
+      return this.translate.instant(c.errors['required'] ? 'common.validation.required' : 'admin.masters.monthlyAmountMin');
     if (name === 'sortOrder' || name === 'minSalary' || name === 'maxSalary')
       return this.translate.instant('common.validation.invalid');
     if (name === 'phone' && c.errors['pattern']) return this.translate.instant('employee.info.errors.phone');

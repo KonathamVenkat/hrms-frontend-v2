@@ -1703,7 +1703,11 @@
         "remarks": "ملاحظات",
         "remarksPlaceholder": "مثال: العلاوة السنوية 2026",
         "structureFromGrade": "هيكل درجة الموظف.",
-        "basicFromScale": "من سلم الرواتب: {{grade}}، العلاوة {{increment}}."
+        "basicFromScale": "من سلم الرواتب: {{grade}}، العلاوة {{increment}}.",
+        "socialAllowance": "البدل الاجتماعي ({{amount}})",
+        "socialUnavailable": "البدل الاجتماعي غير متاح: بنده غير نشط أو بدون مبلغ.",
+        "qualificationLevel": "مستوى المؤهل",
+        "qualificationNone": "لا يوجد"
       },
       "preview": {
         "title": "تفصيل الراتب التقديري",
@@ -1712,7 +1716,16 @@
         "statutory": "الاستقطاعات القانونية (NSSF)",
         "percentOfBasic": "{{percent}}% من الأساسي",
         "fixed": "ثابت",
-        "basicSalaryLabel": "الراتب الأساسي"
+        "basicSalaryLabel": "الراتب الأساسي",
+        "basis": {
+          "fixed": "ثابت",
+          "basic": "{{percent}}% من الأساسي",
+          "gross": "{{percent}}% من الإجمالي",
+          "payrollRun": "عند احتساب الرواتب"
+        },
+        "deductions": "الاستقطاعات",
+        "gross": "إجمالي الراتب",
+        "net": "صافي الراتب (قبل الضريبة)"
       },
       "history": {
         "title": "سجل الرواتب",
@@ -1752,7 +1765,9 @@
           "PAY_SCALE_MISSING": "لا يتضمن سلم الرواتب مبلغاً لدرجة هذا الموظف وعلاوته في تاريخ السريان.",
           "BASIC_NOT_FROM_SCALE": "الراتب الأساسي للموظف ذي الدرجة يؤخذ من سلم الرواتب ولا يمكن إدخاله.",
           "STRUCTURE_INACTIVE": "هيكل الرواتب المختار لم يعد نشطاً.",
-          "INVALID_EFFECTIVE_DATE": "يجب أن يكون تاريخ السريان بعد تاريخ سريان الراتب الحالي."
+          "INVALID_EFFECTIVE_DATE": "يجب أن يكون تاريخ السريان بعد تاريخ سريان الراتب الحالي.",
+          "SOCIAL_ALLOWANCE_UNAVAILABLE": "بند البدل الاجتماعي غير نشط أو بدون مبلغ. راجع مسؤول الرواتب.",
+          "QUALIFICATION_LEVEL_INACTIVE": "مستوى المؤهل المختار غير نشط."
         }
       },
       "scaleDiffers": "سلم الرواتب الآن {{amount}}: عيّن راتباً جديداً"
@@ -2650,7 +2665,23 @@
       },
       "address": "العنوان",
       "phone": "الهاتف",
-      "email": "البريد الإلكتروني"
+      "email": "البريد الإلكتروني",
+      "qualificationLevels": {
+        "title": "مستويات المؤهل",
+        "add": "إضافة مستوى مؤهل",
+        "edit": "تعديل مستوى المؤهل",
+        "search": "ابحث في مستويات المؤهل...",
+        "emptyTitle": "لا توجد مستويات مؤهل",
+        "emptyHint": "أضف مستوى مؤهل أعلاه",
+        "loadFailed": "تعذر تحميل مستويات المؤهل.",
+        "activeHint": "لا يمكن اختيار المستويات غير النشطة لراتب جديد",
+        "deleteTitle": "حذف مستوى المؤهل؟",
+        "deactivateTitle": "إلغاء تفعيل مستوى المؤهل؟",
+        "activateTitle": "تفعيل مستوى المؤهل؟"
+      },
+      "monthlyAmount": "المبلغ الشهري (SSP)",
+      "monthlyAmountHint": "يُطبق المبلغ الجديد على الرواتب المعيّنة من الآن؛ وتحتفظ الرواتب المحفوظة بمبلغها.",
+      "monthlyAmountMin": "أدخل مبلغاً أكبر من صفر."
     }
   },
   "recruitment": {

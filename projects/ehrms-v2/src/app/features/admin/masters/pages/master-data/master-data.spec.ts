@@ -166,6 +166,37 @@ describe('MasterData (reference masters)', () => {
     expect(payload).not.toHaveProperty('minSalary');
   });
 
+  it('a qualification level needs a monthly amount above zero, and sends it', () => {
+    const { comp, svc, fixture, el } = setup(config('qualification-levels'));
+    comp.openCreate();
+    fixture.detectChanges();
+    expect(el.querySelector('#ms-monthly-amount')).not.toBeNull();
+
+    comp.form.patchValue({ code: 'QL_1', name: 'Bachelor', nameAr: 'x' });
+    comp.onSubmit();
+    expect(svc.create).not.toHaveBeenCalled();
+    expect(comp.getError('monthlyAmount')).toBe('common.validation.required');
+
+    comp.form.patchValue({ monthlyAmount: 0 });
+    expect(comp.getError('monthlyAmount')).toBe('admin.masters.monthlyAmountMin');
+
+    comp.form.patchValue({ monthlyAmount: 202500 });
+    comp.onSubmit();
+    expect(svc.create).toHaveBeenLastCalledWith(
+      'qualification-levels',
+      expect.objectContaining({ code: 'QL_1', monthlyAmount: 202500 }),
+    );
+  });
+
+  it('has no monthly amount on a master without one', () => {
+    const { comp, svc } = setup(config('grades'));
+    comp.openCreate();
+    comp.form.patchValue({ code: 'G27', name: 'Grade 27', nameAr: 'x' });
+    comp.onSubmit();
+    const payload = (svc.create as unknown as { mock: { calls: unknown[][] } }).mock.calls[0][1];
+    expect(payload).not.toHaveProperty('monthlyAmount');
+  });
+
   it('does not save a maximum below the minimum, or a negative amount, and shows why', () => {
     const { comp, svc, fixture, el } = setup(config('grades'));
     comp.openCreate();

@@ -21,7 +21,8 @@ export type MasterKey =
   | 'relationTypes'
   | 'relations'
   | 'directorates'
-  | 'grades';
+  | 'grades'
+  | 'qualificationLevels';
 export type ParentField =
   | 'bankId'
   | 'companyId'
@@ -45,6 +46,8 @@ export interface MasterConfig {
   sortOrder?: boolean;
   /** The master has an optional pay range (grades), shown and edited on the screen. */
   salaryRange?: boolean;
+  /** The master has a required monthly amount (qualification levels), shown and edited on the screen. */
+  monthlyAmount?: boolean;
   /** The master has an optional address, phone and email (bank and company branches), shown and edited on the screen. */
   contact?: boolean;
   /** The list is long: the server pages, searches and filters it (GET <endpoint>/search). */
@@ -145,6 +148,14 @@ const GRADES: MasterConfig = {
   salaryRange: true,
 };
 
+const QUALIFICATION_LEVELS: MasterConfig = {
+  key: 'qualificationLevels',
+  endpoint: 'qualification-levels',
+  icon: 'school',
+  sortOrder: true,
+  monthlyAmount: true,
+};
+
 /** Route path (under /app/admin), tab title and screen config of each reference master. */
 export const REFERENCE_MASTER_ROUTES: { path: string; title: string; master: MasterConfig }[] = [
   { path: 'regions', title: 'Regions', master: REGIONS },
@@ -164,4 +175,5 @@ export const REFERENCE_MASTER_ROUTES: { path: string; title: string; master: Mas
   { path: 'relations', title: 'Relations', master: RELATIONS },
   { path: 'directorates', title: 'Directorates', master: DIRECTORATES },
   { path: 'grades', title: 'Grades', master: GRADES },
+  { path: 'qualification-levels', title: 'Qualification Levels', master: QUALIFICATION_LEVELS },
 ];
