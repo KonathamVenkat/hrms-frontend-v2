@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../../environments/environment';
-import { JobDetails, JobDetailsRequest, ApiResponse } from '../models/job-details.model';
+import { JobDetails, JobDetailsRequest, ApiResponse, GradeScaleStep } from '../models/job-details.model';
 
 @Injectable({ providedIn: 'root' })
 export class JobDetailsService {
@@ -22,6 +22,11 @@ export class JobDetailsService {
 
   assignJob(employeeId: number, payload: JobDetailsRequest): Observable<ApiResponse<JobDetails>> {
     return this.http.post<ApiResponse<JobDetails>>(this.url(employeeId), payload);
+  }
+
+  /** The pay scale for the grade and increment choices; HR_ADMIN only (salary amounts). */
+  getGradeScale(): Observable<ApiResponse<GradeScaleStep[]>> {
+    return this.http.get<ApiResponse<GradeScaleStep[]>>(`${environment.serviceUrl}/api/v1/payroll/grade-scale`);
   }
 
   updateCurrentJob(

@@ -44,10 +44,11 @@ import { noControlChars, noControlCharsMultiline } from '../../../../shared/vali
 import { ruleMessage } from '../../../../core/utils/http-error-message';
 import { DepartmentHeadCard } from '../../components/department-head/department-head';
 import { DepartmentSecretaryCard } from '../../components/department-secretary/department-secretary';
+import { GradeIncrementFields, GradePlace } from '../../components/grade-increment/grade-increment';
 
 @Component({
   selector: 'app-job-details',
-  imports: [DiscardChanges, BranchSelect, DateInput, DepartmentHeadCard, DepartmentSecretaryCard,
+  imports: [DiscardChanges, BranchSelect, DateInput, DepartmentHeadCard, DepartmentSecretaryCard, GradeIncrementFields,
     ReactiveFormsModule,
     FieldA11yDirective,
     TranslatePipe,
@@ -136,6 +137,15 @@ export class JobDetailsComponent implements OnInit {
 
   readonly workModes = ['ON_SITE', 'REMOTE', 'HYBRID'];
 
+  /** A set grade and increment are locked while editing: they only change with a new assignment. */
+  readonly gradeLocked = signal(false);
+  readonly currentGradePlace = computed<GradePlace | null>(() => {
+    const job = this.currentJob();
+    return job?.gradeId != null && job.incrementNo != null
+      ? { gradeId: job.gradeId, gradeName: job.gradeName ?? job.gradeCode ?? '', incrementNo: job.incrementNo }
+      : null;
+  });
+
   // ── Computed history stats ────────────────────────────────
   readonly historyCount = computed(() => this.history().length);
 
@@ -145,6 +155,8 @@ export class JobDetailsComponent implements OnInit {
     designationId: this.fb.control<number | null>(null, Validators.required),
     sectionId: this.fb.control<number | null>(null),
     professionId: this.fb.control<number | null>(null, (c) => this.professionMismatch(c)),
+    gradeId: this.fb.control<number | null>(null),
+    incrementNo: this.fb.control<number | null>(null, (c) => this.incrementMissing(c)),
     jobPositionId: this.fb.nonNullable.control('', [Validators.maxLength(20), noControlChars]),
     specializationId: this.fb.control<number | null>(null),
     contractTypeId: this.fb.control<number | null>(null),
@@ -204,6 +216,32 @@ export class JobDetailsComponent implements OnInit {
     return expected && control.value && Number(control.value) !== expected
       ? { professionMismatch: true }
       : null;
+  }
+
+  /** Grade and increment go together: a chosen grade needs an increment. */
+  private incrementMissing(control: AbstractControl): ValidationErrors | null {
+    return control.parent?.get('gradeId')?.value != null && control.value == null ? { incrementRequired: true } : null;
+  }
+
+  /**
+   * A new assignment starts from the current grade and increment, and cannot drop a grade that is set (the backend
+   * keeps it when none is sent); edit locks a set pair and lets an empty one be filled in.
+   */
+  private prepareGrade(newAssignment: boolean): void {
+    const place = this.currentGradePlace();
+    const { gradeId, incrementNo } = this.form.controls;
+    gradeId.setValue(place?.gradeId ?? null);
+    incrementNo.setValue(place?.incrementNo ?? null);
+    gradeId.setValidators(newAssignment && place ? Validators.required : null);
+    const locked = !newAssignment && place !== null;
+    this.gradeLocked.set(locked);
+    for (const control of [gradeId, incrementNo]) {
+      if (locked) {
+        control.disable();
+      } else {
+        control.enable();
+      }
+    }
   }
 
   /** Cascades the designation list from the chosen department. */
@@ -425,6 +463,7 @@ export class JobDetailsComponent implements OnInit {
       effectiveFrom: '',
       remarks: '',
     });
+    this.prepareGrade(true);
     this.showModal.set(true);
   }
 
@@ -477,6 +516,7 @@ export class JobDetailsComponent implements OnInit {
     } else {
       this.form.controls.professionId.enable();
     }
+    this.prepareGrade(false);
 
     this.showModal.set(true);
   }
@@ -526,6 +566,8 @@ export class JobDetailsComponent implements OnInit {
       designationId: Number(v.designationId),
       sectionId: v.sectionId ? +v.sectionId : null,
       professionId: v.professionId ?? undefined,
+      gradeId: v.gradeId ?? null,
+      incrementNo: v.incrementNo ?? null,
       jobPositionId: v.jobPositionId.trim() || undefined,
       specializationId: v.specializationId ?? null,
       contractTypeId: v.contractTypeId ?? null,
@@ -597,6 +639,7 @@ export class JobDetailsComponent implements OnInit {
     return fieldErrorMessage(this.form.get(name), this.translate, {
       professionMismatch: 'employee.jobDetails.errors.professionMismatch',
       contractEndBeforeStart: 'employee.jobDetails.errors.contractEndBeforeStart',
+      incrementRequired: 'employee.jobDetails.errors.incrementRequired',
     });
   }
 

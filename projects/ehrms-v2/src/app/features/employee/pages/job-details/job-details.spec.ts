@@ -374,3 +374,89 @@ describe('JobDetailsComponent version and text checks', () => {
     expect(comp.form.controls.jobPositionId.hasError('controlChars')).toBe(true);
   });
 });
+
+describe('JobDetailsComponent grade and increment', () => {
+  const graded = {
+    jobDetailsId: 1,
+    employeeId: 5,
+    departmentId: 10,
+    designationId: 20,
+    locationId: 30,
+    workMode: 'ON_SITE',
+    effectiveFrom: '2026-01-01',
+    isCurrent: true,
+    version: 4,
+    gradeId: 8,
+    gradeCode: 'GRADE_08',
+    gradeName: 'Grade 8',
+    incrementNo: 1,
+  } as JobDetails;
+  const ungraded = { ...graded, gradeId: undefined, gradeCode: undefined, gradeName: undefined, incrementNo: undefined };
+
+  it('locks a set grade and increment while editing and sends them unchanged', () => {
+    const { comp, jobSvc } = setup();
+    comp.currentJob.set(graded);
+    comp.openEditCurrent();
+
+    expect(comp.gradeLocked()).toBe(true);
+    expect(comp.form.controls.gradeId.disabled).toBe(true);
+    expect(comp.form.controls.incrementNo.disabled).toBe(true);
+    comp.onSubmit();
+    expect(jobSvc.updateCurrentJob).toHaveBeenCalledWith(5, expect.objectContaining({ gradeId: 8, incrementNo: 1 }));
+  });
+
+  it('lets an empty grade be filled in by edit, and a grade needs its increment', () => {
+    const { comp, jobSvc } = setup();
+    comp.currentJob.set(ungraded);
+    comp.openEditCurrent();
+
+    expect(comp.gradeLocked()).toBe(false);
+    comp.form.controls.gradeId.setValue(8);
+    comp.form.controls.incrementNo.updateValueAndValidity();
+    comp.form.controls.incrementNo.markAsTouched();
+    expect(comp.form.controls.incrementNo.hasError('incrementRequired')).toBe(true);
+    expect(comp.isInvalid('incrementNo')).toBe(true);
+    comp.onSubmit();
+    expect(jobSvc.updateCurrentJob).not.toHaveBeenCalled();
+
+    comp.form.controls.incrementNo.setValue(2);
+    comp.onSubmit();
+    expect(jobSvc.updateCurrentJob).toHaveBeenCalledWith(5, expect.objectContaining({ gradeId: 8, incrementNo: 2 }));
+  });
+
+  it('sends null for no grade, which the backend reads as "keep"', () => {
+    const { comp, jobSvc } = setup();
+    comp.currentJob.set(ungraded);
+    comp.openEditCurrent();
+    comp.onSubmit();
+    expect(jobSvc.updateCurrentJob).toHaveBeenCalledWith(5, expect.objectContaining({ gradeId: null, incrementNo: null }));
+  });
+
+  it('starts a new assignment from the current grade, editable, and refuses dropping it', () => {
+    const { comp, jobSvc } = setup();
+    comp.currentJob.set(graded);
+    fill(comp, 20);
+
+    expect(comp.form.controls.gradeId.value).toBe(8);
+    expect(comp.form.controls.incrementNo.value).toBe(1);
+    expect(comp.form.controls.gradeId.enabled).toBe(true);
+    comp.form.controls.gradeId.setValue(null);
+    comp.form.controls.incrementNo.setValue(null);
+    expect(comp.form.controls.gradeId.hasError('required')).toBe(true);
+    comp.onSubmit();
+    expect(jobSvc.assignJob).not.toHaveBeenCalled();
+
+    comp.form.controls.gradeId.setValue(9);
+    comp.form.controls.incrementNo.setValue(3);
+    comp.onSubmit();
+    expect(jobSvc.assignJob).toHaveBeenCalledWith(5, expect.objectContaining({ gradeId: 9, incrementNo: 3 }));
+  });
+
+  it('a first assignment may have no grade at all', () => {
+    const { comp, jobSvc } = setup();
+    fill(comp, 20);
+    expect(comp.form.controls.gradeId.hasError('required')).toBe(false);
+    comp.onSubmit();
+    expect(jobSvc.assignJob).toHaveBeenCalledWith(5, expect.objectContaining({ gradeId: null, incrementNo: null }));
+  });
+});

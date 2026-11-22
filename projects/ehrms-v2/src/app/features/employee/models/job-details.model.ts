@@ -20,6 +20,13 @@ export interface JobDetails {
   sectionName?: string;
   sectionNameAr?: string;
 
+  // Grade and increment on the pay scale (absent when the record has none)
+  gradeId?: number;
+  gradeCode?: string;
+  gradeName?: string;
+  gradeNameAr?: string;
+  incrementNo?: number;
+
   // Profession (absent when the record has none)
   professionId?: number;
   professionName?: string;
@@ -95,6 +102,12 @@ export interface JobDetailsRequest {
   sectionId?: number | null;
   /** Defaults to the designation's profession; when both are set they must be the same. */
   professionId?: number;
+  /**
+   * Place on the pay scale: both or neither. Null keeps what the record has; a set pair only changes with a new
+   * assignment, and must exist on the pay scale.
+   */
+  gradeId?: number | null;
+  incrementNo?: number | null;
   jobPositionId?: string;
   /** Optional master choices; the backend refuses an inactive one. */
   specializationId?: number | null;
@@ -119,6 +132,18 @@ export interface JobDetailsRequest {
   remarks?: string;
   /** Required when updating the current job; leave out when assigning a new one. */
   version?: number;
+}
+
+/** One step of the pay scale in effect today (GET /api/v1/payroll/grade-scale, HR_ADMIN only). */
+export interface GradeScaleStep {
+  gradeId: number;
+  gradeCode: string;
+  gradeName: string;
+  gradeNameAr: string;
+  incrementNo: number;
+  /** Starting scale (basic salary), 3 decimals. */
+  startingScale: number;
+  effectiveFrom: string; // YYYY-MM-DD
 }
 
 export interface ApiResponse<T> {

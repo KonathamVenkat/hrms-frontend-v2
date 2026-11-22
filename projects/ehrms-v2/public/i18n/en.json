@@ -653,7 +653,9 @@
         "afe": "AFE",
         "companyIdCardNo": "Company ID card no.",
         "currentWorkAddress": "Current work address",
-        "currentWorkPhone": "Work telephone"
+        "currentWorkPhone": "Work telephone",
+        "grade": "Grade",
+        "increment": "Increment"
       },
       "notAssigned": "Not assigned",
       "present": "Present",
@@ -684,7 +686,14 @@
         "remarksPlaceholder": "e.g. Transfer due to department restructuring...",
         "branchLabel": "Branch",
         "selectSpecialization": "Select specialization",
-        "selectContractType": "Select contract type"
+        "selectContractType": "Select contract type",
+        "selectGrade": "No grade",
+        "selectIncrement": "Select increment",
+        "selectGradeFirst": "Select a grade first",
+        "incrementOption": "Increment {{no}} — {{amount}}",
+        "incrementOnly": "Increment {{no}}",
+        "gradeLockedHint": "The grade and increment change with a new assignment.",
+        "gradeScaleFailed": "The pay scale could not be loaded."
       },
       "saving": "Saving...",
       "update": "Update",
@@ -695,7 +704,7 @@
         "contractEndBeforeStart": "The contract end cannot be before its start.",
         "rules": {
           "VERSION_REQUIRED": "The job details changed or were not loaded completely. Reload and try again.",
-          "STRUCTURAL_CHANGE_NOT_ALLOWED": "Department, section, designation, position, location, branch and managers can only be changed with a new assignment.",
+          "STRUCTURAL_CHANGE_NOT_ALLOWED": "Department, section, designation, grade, increment, position, location, branch and managers can only be changed with a new assignment.",
           "EMP_INACTIVE": "This employee is deactivated. Reactivate the employee before changing job details.",
           "INVALID_DATE": "The effective date cannot be more than 1 year in the past.",
           "FUTURE_EFFECTIVE_FROM": "The effective date cannot be in the future.",
@@ -717,8 +726,11 @@
           "SECTION_DEPARTMENT_MISMATCH": "The selected section does not belong to the selected department.",
           "BRANCH_INACTIVE": "The selected branch is inactive.",
           "BRANCH_LOCATION_MISMATCH": "The selected branch is not in the selected office location.",
-          "conflict": "Someone else changed these job details. Reload and try again."
-        }
+          "conflict": "Someone else changed these job details. Reload and try again.",
+          "GRADE_INCREMENT_PAIR": "Choose both a grade and an increment, or neither.",
+          "GRADE_STEP_UNKNOWN": "The selected grade is inactive or has no such increment on the pay scale."
+        },
+        "incrementRequired": "Choose the increment of the selected grade."
       },
       "success": {
         "assigned": "New job assignment saved successfully",

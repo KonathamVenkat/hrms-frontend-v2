@@ -77,7 +77,7 @@
     @if (!loading() && currentJob()) {
       <div class="job-cards">
         <!-- ── Org card ──────────────────────────────────── -->
-        <div class="job-card">
+        <div class="job-card org-card">
           <div class="job-card-header">
             <span class="material-icons" aria-hidden="true">corporate_fare</span>
             {{ 'employee.jobDetails.sections.organisation' | translate }}
@@ -108,6 +108,18 @@
                   <span class="val-main">{{ currentJob()!.sectionName }}</span>
                   <span class="val-ar">{{ currentJob()!.sectionNameAr }}</span>
                   <span class="val-code">{{ currentJob()!.sectionCode }}</span>
+                </div>
+              </div>
+            }
+            @if (currentJob()!.gradeName) {
+              <div class="info-row">
+                <span class="info-label">{{ 'employee.jobDetails.fields.grade' | translate }}</span>
+                <div class="info-value">
+                  <span class="val-main">{{ currentJob()!.gradeName }}</span>
+                  <span class="val-ar">{{ currentJob()!.gradeNameAr }}</span>
+                  <span class="val-sub">
+                    {{ 'employee.jobDetails.formFields.incrementOnly' | translate: { no: currentJob()!.incrementNo } }}
+                  </span>
                 </div>
               </div>
             }
@@ -361,6 +373,14 @@
                     }
                   </div>
                 </div>
+                @if (job.gradeName) {
+                  <div class="tl-row">
+                    <span class="tl-label">{{ 'employee.jobDetails.fields.grade' | translate }}</span>
+                    <span class="tl-value">
+                      {{ job.gradeName }} · {{ 'employee.jobDetails.formFields.incrementOnly' | translate: { no: job.incrementNo } }}
+                    </span>
+                  </div>
+                }
                 <div class="tl-row">
                   <span class="tl-label">{{ 'employee.jobDetails.fields.location' | translate }}</span>
                   <span class="tl-value">{{ job.locationName }} ({{ job.locationCity }})</span>
@@ -501,6 +521,16 @@
               <span class="field-error" id="fe-professionId">{{ getError('professionId') }}</span>
             }
           </div>
+
+          <app-grade-increment-fields
+            [gradeControl]="form.controls.gradeId"
+            [incrementControl]="form.controls.incrementNo"
+            [locked]="gradeLocked()"
+            [current]="currentGradePlace()"
+            [gradeRequired]="isNewAssignment() && currentGradePlace() !== null"
+            [gradeError]="isInvalid('gradeId') ? getError('gradeId') : ''"
+            [incrementError]="isInvalid('incrementNo') ? getError('incrementNo') : ''"
+          />
 
           <div class="field">
             <label for="jd-job-position-id">{{ 'employee.jobDetails.fields.jobPosition' | translate }}</label>

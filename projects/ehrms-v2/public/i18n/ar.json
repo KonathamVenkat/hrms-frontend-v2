@@ -653,7 +653,9 @@
         "afe": "AFE",
         "companyIdCardNo": "رقم بطاقة الشركة",
         "currentWorkAddress": "عنوان العمل الحالي",
-        "currentWorkPhone": "هاتف العمل"
+        "currentWorkPhone": "هاتف العمل",
+        "grade": "الدرجة",
+        "increment": "العلاوة"
       },
       "notAssigned": "غير معيّن",
       "present": "حتى الآن",
@@ -684,7 +686,14 @@
         "remarksPlaceholder": "مثال: نقل بسبب إعادة هيكلة القسم...",
         "branchLabel": "الفرع",
         "selectSpecialization": "اختر التخصص",
-        "selectContractType": "اختر نوع العقد"
+        "selectContractType": "اختر نوع العقد",
+        "selectGrade": "بدون درجة",
+        "selectIncrement": "اختر العلاوة",
+        "selectGradeFirst": "اختر الدرجة أولاً",
+        "incrementOption": "العلاوة {{no}} — {{amount}}",
+        "incrementOnly": "العلاوة {{no}}",
+        "gradeLockedHint": "تتغير الدرجة والعلاوة بتعيين جديد.",
+        "gradeScaleFailed": "تعذر تحميل سلم الرواتب."
       },
       "saving": "جارٍ الحفظ...",
       "update": "تحديث",
@@ -695,7 +704,7 @@
         "contractEndBeforeStart": "لا يمكن أن تكون نهاية العقد قبل بدايته.",
         "rules": {
           "VERSION_REQUIRED": "تغيّرت بيانات الوظيفة أو لم يتم تحميلها بالكامل. أعد التحميل وحاول مرة أخرى.",
-          "STRUCTURAL_CHANGE_NOT_ALLOWED": "لا يمكن تغيير القسم أو الوحدة أو المسمى أو الموقع أو الفرع أو المديرين إلا بتعيين جديد.",
+          "STRUCTURAL_CHANGE_NOT_ALLOWED": "لا يمكن تغيير القسم أو الوحدة أو المسمى أو الدرجة أو العلاوة أو الموقع أو الفرع أو المديرين إلا بتعيين جديد.",
           "EMP_INACTIVE": "هذا الموظف معطّل. أعد تفعيله قبل تعديل بيانات الوظيفة.",
           "INVALID_DATE": "لا يمكن أن يكون تاريخ السريان قبل أكثر من سنة.",
           "FUTURE_EFFECTIVE_FROM": "لا يمكن أن يكون تاريخ السريان في المستقبل.",
@@ -717,8 +726,11 @@
           "SECTION_DEPARTMENT_MISMATCH": "الوحدة المحددة لا تتبع القسم المحدد.",
           "BRANCH_INACTIVE": "الفرع المحدد غير نشط.",
           "BRANCH_LOCATION_MISMATCH": "الفرع المحدد ليس في موقع العمل المحدد.",
-          "conflict": "قام شخص آخر بتغيير بيانات الوظيفة هذه. أعد التحميل وحاول مرة أخرى."
-        }
+          "conflict": "قام شخص آخر بتغيير بيانات الوظيفة هذه. أعد التحميل وحاول مرة أخرى.",
+          "GRADE_INCREMENT_PAIR": "اختر الدرجة والعلاوة معاً، أو لا تختر أياً منهما.",
+          "GRADE_STEP_UNKNOWN": "الدرجة المختارة غير نشطة أو ليس لها هذه العلاوة في سلم الرواتب."
+        },
+        "incrementRequired": "اختر علاوة الدرجة المختارة."
       },
       "success": {
         "assigned": "تم حفظ التعيين الوظيفي الجديد بنجاح",

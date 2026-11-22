@@ -653,7 +653,9 @@
         "afe": "AFE",
         "companyIdCardNo": "N° de carte d'identité de l'entreprise",
         "currentWorkAddress": "Adresse de travail actuelle",
-        "currentWorkPhone": "Téléphone professionnel"
+        "currentWorkPhone": "Téléphone professionnel",
+        "grade": "Grade",
+        "increment": "Échelon"
       },
       "notAssigned": "Non attribué",
       "present": "Présent",
@@ -684,7 +686,14 @@
         "remarksPlaceholder": "ex. Transfert dû à une restructuration du département...",
         "branchLabel": "Agence",
         "selectSpecialization": "Choisir une spécialisation",
-        "selectContractType": "Choisir un type de contrat"
+        "selectContractType": "Choisir un type de contrat",
+        "selectGrade": "Aucun grade",
+        "selectIncrement": "Choisir l'échelon",
+        "selectGradeFirst": "Choisissez d'abord un grade",
+        "incrementOption": "Échelon {{no}} — {{amount}}",
+        "incrementOnly": "Échelon {{no}}",
+        "gradeLockedHint": "Le grade et l'échelon changent par une nouvelle affectation.",
+        "gradeScaleFailed": "La grille salariale n'a pas pu être chargée."
       },
       "saving": "Enregistrement...",
       "update": "Mettre à jour",
@@ -695,7 +704,7 @@
         "contractEndBeforeStart": "La fin du contrat ne peut pas précéder son début.",
         "rules": {
           "VERSION_REQUIRED": "Les détails du poste ont changé ou n'ont pas été chargés complètement. Rechargez puis réessayez.",
-          "STRUCTURAL_CHANGE_NOT_ALLOWED": "Le département, la section, la fonction, le poste, le lieu, l'agence et les responsables ne peuvent être modifiés que par une nouvelle affectation.",
+          "STRUCTURAL_CHANGE_NOT_ALLOWED": "Le département, la section, la fonction, le grade, l'échelon, le poste, le lieu, l'agence et les responsables ne peuvent être modifiés que par une nouvelle affectation.",
           "EMP_INACTIVE": "Cet employé est désactivé. Réactivez-le avant de modifier les détails du poste.",
           "INVALID_DATE": "La date d'effet ne peut pas remonter à plus d'un an.",
           "FUTURE_EFFECTIVE_FROM": "La date d'effet ne peut pas être dans le futur.",
@@ -717,8 +726,11 @@
           "SECTION_DEPARTMENT_MISMATCH": "La section choisie n'appartient pas au département choisi.",
           "BRANCH_INACTIVE": "L'agence choisie est inactive.",
           "BRANCH_LOCATION_MISMATCH": "L'agence choisie n'est pas dans le lieu de travail choisi.",
-          "conflict": "Quelqu'un d'autre a modifié ces détails du poste. Rechargez puis réessayez."
-        }
+          "conflict": "Quelqu'un d'autre a modifié ces détails du poste. Rechargez puis réessayez.",
+          "GRADE_INCREMENT_PAIR": "Choisissez à la fois un grade et un échelon, ou aucun des deux.",
+          "GRADE_STEP_UNKNOWN": "Le grade choisi est inactif ou n'a pas cet échelon dans la grille salariale."
+        },
+        "incrementRequired": "Choisissez l'échelon du grade choisi."
       },
       "success": {
         "assigned": "Nouvelle affectation enregistrée avec succès",

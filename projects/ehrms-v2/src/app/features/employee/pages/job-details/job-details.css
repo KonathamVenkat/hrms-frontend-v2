@@ -109,9 +109,33 @@
 
 /* ── Current job cards ───────────────────────────────────── */
 .job-cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
   gap: var(--space-4);
+  /* Each card is as tall as its own content, not as tall as the longest one. */
+  align-items: flex-start;
+}
+/* The small cards share a row equally and wrap below 300px each. */
+.job-card {
+  flex: 1 1 300px;
+}
+/* Organisation holds most fields: full width, its fields as tiles (label above value) in as many columns as fit. */
+.org-card {
+  flex-basis: 100%;
+}
+.org-card .job-card-body {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  padding-block: 0;
+  /* Hides the divider under the last row of tiles behind the card edge. */
+  margin-block-end: -1px;
+}
+.org-card .info-row {
+  flex-direction: column;
+  gap: var(--space-1);
+}
+.org-card .info-label {
+  inline-size: auto;
 }
 .job-card {
   overflow: hidden;
@@ -152,7 +176,7 @@
   border-block-end: 0;
 }
 .info-label {
-  inline-size: 180px;
+  inline-size: 150px;
   flex-shrink: 0;
   color: var(--mat-sys-on-surface-variant);
   font-size: 17px;
@@ -356,9 +380,6 @@
 }
 
 @media (max-width: 600px) {
-  .job-cards {
-    grid-template-columns: 1fr;
-  }
   .info-label,
   .tl-label {
     inline-size: 130px;
@@ -378,23 +399,24 @@
 :host-context(html[lang='ar']) {
   font-size: 17px;
 }
+/* Client size for every label and value: 17px in Arabic too (labels are bold). */
 :host-context(html[lang='ar']) :is(
     .tab-count,
     .job-card-header,
     .info-label,
+    .info-value,
+    .val-main,
+    .val-ar,
     .val-sub,
     .val-code,
     .grade-badge-sm,
     .work-mode-badge,
     .current-badge,
     .tl-label,
+    .tl-value,
     .modal-sub,
+    label,
     button
   ) {
-  font-size: 17px;
-}
-
-/* Client size for every label and value: 17px in Arabic too (labels are bold). */
-:host-context(html[lang='ar']) :is(.info-label, .tl-label, label, .info-value, .tl-value, .val-main, .val-ar, .val-sub, .val-code) {
   font-size: 17px;
 }
