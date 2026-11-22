@@ -14,6 +14,10 @@ import {
   EmployeeSalaryRequest,
   PayScaleBasis,
   QualificationLevel,
+  EmployeeLoan,
+  EmployeeLoanRequest,
+  LoanSearch,
+  LoanType,
   ComponentType,
 } from '../models/payroll.model';
 
@@ -113,6 +117,32 @@ export class PayrollService {
     const params = new HttpParams().set('on', onDate);
     return this.http
       .get<ApiResponse<PayScaleBasis>>(`${this.base}/employee-salary/${employeeId}/pay-scale`, { params })
+      .pipe(map((r) => r.data));
+  }
+
+  // ── Loan register ──────────────────────────────────────
+  searchLoans(s: LoanSearch): Observable<PagedResponse<EmployeeLoan>> {
+    let params = new HttpParams().set('page', s.page).set('size', s.size);
+    if (s.q?.trim()) params = params.set('q', s.q.trim());
+    if (s.componentId) params = params.set('componentId', s.componentId);
+    if (s.status) params = params.set('status', s.status);
+    return this.http
+      .get<ApiResponse<PagedResponse<EmployeeLoan>>>(`${this.base}/loans`, { params })
+      .pipe(map((r) => r.data));
+  }
+
+  getLoanTypes(): Observable<LoanType[]> {
+    return this.http.get<ApiResponse<LoanType[]>>(`${this.base}/loans/types`).pipe(map((r) => r.data));
+  }
+
+  createLoan(req: EmployeeLoanRequest): Observable<EmployeeLoan> {
+    return this.http.post<ApiResponse<EmployeeLoan>>(`${this.base}/loans`, req).pipe(map((r) => r.data));
+  }
+
+  /** close = repaid early; cancel = entered by mistake. */
+  endLoan(loanId: number, action: 'close' | 'cancel', version: number, reason: string): Observable<EmployeeLoan> {
+    return this.http
+      .patch<ApiResponse<EmployeeLoan>>(`${this.base}/loans/${loanId}/${action}`, { version, reason })
       .pipe(map((r) => r.data));
   }
 

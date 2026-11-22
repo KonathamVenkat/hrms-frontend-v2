@@ -237,3 +237,9 @@
 .allowance-hint {
   color: var(--mat-sys-on-surface-variant);
 }
+
+/* Running loans' monthly instalments under net (deducted by the payroll run). */
+.loan-line {
+  display: block;
+  color: var(--mat-sys-on-surface-variant);
+}

@@ -1835,6 +1835,82 @@
         "activateTitle": "Activate this salary structure?",
         "activateMessage": "{{name}} ({{code}}) will be offered again when salaries are assigned."
       }
+    },
+    "loans": {
+      "title": "Employee Loans",
+      "subtitle": "Approved loans and advances, repaid by monthly instalments",
+      "add": "Record loan",
+      "empty": "No loans match these filters",
+      "salaryLine": "Loans: {{amount}} / month",
+      "filters": {
+        "search": "Search by employee name or code",
+        "type": "Loan type",
+        "allTypes": "All types",
+        "status": "Status",
+        "allStatuses": "All statuses"
+      },
+      "columns": {
+        "employee": "Employee",
+        "type": "Type",
+        "principal": "Principal",
+        "instalment": "Monthly",
+        "progress": "Paid",
+        "remaining": "Remaining",
+        "period": "Months",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "status": {
+        "ACTIVE": "Running",
+        "CLOSED": "Closed",
+        "CANCELLED": "Cancelled"
+      },
+      "fields": {
+        "employee": "Employee",
+        "type": "Loan type",
+        "principal": "Principal",
+        "months": "Number of months",
+        "startMonth": "First month",
+        "alreadyPaid": "Instalments already paid",
+        "alreadyPaidHint": "Only for a loan already running before it is entered here.",
+        "remarks": "Remarks"
+      },
+      "form": {
+        "title": "Record an approved loan",
+        "subtitle": "Repaid by monthly instalments in the payroll run.",
+        "save": "Record loan",
+        "figures": "{{instalment}} a month; the last instalment ({{month}}) is {{last}}. Still to repay: {{remaining}}."
+      },
+      "end": {
+        "closeTitle": "Close loan",
+        "cancelTitle": "Cancel loan",
+        "closeMessage": "Close the {{type}} of {{employee}} ({{code}}) as repaid? Nothing more will be deducted; {{remaining}} was still to repay.",
+        "cancelMessage": "Cancel the {{type}} of {{employee}} ({{code}}) as entered by mistake? It will not be deducted.",
+        "reason": "Reason",
+        "closeConfirm": "Close loan",
+        "cancelConfirm": "Cancel loan"
+      },
+      "success": {
+        "created": "Loan recorded",
+        "closed": "Loan closed",
+        "cancelled": "Loan cancelled"
+      },
+      "errors": {
+        "loadFailed": "Could not load the loans. Try again.",
+        "saveFailed": "Could not save. Try again.",
+        "principal": "Enter an amount greater than zero.",
+        "months": "Enter whole months from 1 to 360.",
+        "startMonth": "Choose the first month.",
+        "rules": {
+          "EMP_INACTIVE": "This employee is deactivated. A loan cannot be recorded.",
+          "LOAN_TYPE_INVALID": "Choose an active loan type.",
+          "LOAN_ALREADY_REPAID": "Instalments already paid must be fewer than the number of months.",
+          "LOAN_INSTALMENT_TOO_SMALL": "The principal is too small for that many months.",
+          "LOAN_TYPE_ALREADY_RUNNING": "This employee already has a running loan of this type. Close it first, or use the second type (e.g. 'Emergency Advance 2').",
+          "LOAN_NOT_ACTIVE": "This loan is no longer running.",
+          "conflict": "Someone else changed this loan. Reload and try again."
+        }
+      }
     }
   },
   "admin": {

@@ -361,6 +361,11 @@
                 </th>
                 <td mat-cell *matCellDef="let r">
                   <span class="salary-val net">{{ formatCurrency(r.netSalary) }}</span>
+                  @if (r.loanInstalments) {
+                    <span class="loan-line">{{
+                      'payroll.loans.salaryLine' | translate: { amount: formatCurrency(r.loanInstalments) }
+                    }}</span>
+                  }
                 </td>
               </ng-container>
               <ng-container matColumnDef="currency">

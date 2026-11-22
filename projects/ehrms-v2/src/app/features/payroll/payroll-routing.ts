@@ -1,6 +1,7 @@
 // src/app/features/payroll/payroll-routing.ts
 
 import { Routes } from '@angular/router';
+import { roleGuard } from '../../core/guards/role.guard';
 
 export const PAYROLL_ROUTES: Routes = [
   {
@@ -20,6 +21,14 @@ export const PAYROLL_ROUTES: Routes = [
     loadComponent: () =>
       import('./pages/employee-salary/employee-salary').then((m) => m.EmployeeSalary),
     title: 'Employee Salary · EHRMS',
+  },
+  {
+    path: 'loans',
+    // Loans carry pay amounts: HR_ADMIN only, like the backend (the screen is a convenience, the API enforces it).
+    canActivate: [roleGuard('HR_ADMIN')],
+    loadComponent: () =>
+      import('./pages/employee-loans/employee-loans').then((m) => m.EmployeeLoans),
+    title: 'Employee Loans · EHRMS',
   },
   {
     path: '',

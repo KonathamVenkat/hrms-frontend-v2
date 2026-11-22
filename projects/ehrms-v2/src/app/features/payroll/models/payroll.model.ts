@@ -86,6 +86,62 @@ export interface EmployeeSalaryResponse {
   qualificationLevelName?:   string;
   qualificationLevelNameAr?: string;
   qualificationAmount?:      number;
+  /** Current record only: what the employee's running loans take this month (absent when none). */
+  loanInstalments?:          number;
+}
+
+// ── Loan register (payroll step 4b-1, /api/v1/payroll/loans, HR_ADMIN) ──
+export type LoanStatus = 'ACTIVE' | 'CLOSED' | 'CANCELLED';
+
+/** A salary component flagged as a loan type. */
+export interface LoanType {
+  id:     number;
+  code:   string;
+  name:   string;
+  nameAr: string;
+}
+
+export interface EmployeeLoan {
+  loanId:            number;
+  employeeId:        number;
+  employeeCode:      string;
+  employeeName:      string;
+  componentId:       number;
+  componentCode:     string;
+  loanTypeName:      string;
+  loanTypeNameAr:    string;
+  principal:         number;
+  instalmentCount:   number;
+  monthlyInstalment: number;
+  /** The last instalment takes what is left after rounding the others down to the cent. */
+  finalInstalment:   number;
+  instalmentsPaid:   number;
+  remainingBalance:  number;
+  startMonth:        string;   // yyyy-MM-dd, first day of the month
+  lastMonth:         string;
+  status:            LoanStatus;
+  statusReason?:     string;
+  remarks?:          string;
+  version:           number;
+}
+
+export interface EmployeeLoanRequest {
+  employeeId:       number;
+  componentId:      number;
+  principal:        number;
+  instalmentCount:  number;
+  startMonth:       string;   // yyyy-MM
+  /** For a loan already running when it is entered. */
+  instalmentsPaid?: number;
+  remarks?:         string;
+}
+
+export interface LoanSearch {
+  q?:           string;
+  componentId?: number | null;
+  status?:      LoanStatus | null;
+  page:         number;
+  size:         number;
 }
 
 /** A qualification level and its monthly allowance (GET payroll/qualification-levels/lookup, HR_ADMIN). */

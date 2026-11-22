@@ -1,0 +1,131 @@
+<div class="modal-backdrop">
+  <div
+    class="modal"
+    [appAccessibleDialog]="'lf-title'"
+    (dialogClosed)="closed.emit()"
+    cdkTrapFocus
+    cdkTrapFocusAutoCapture
+  >
+    <div class="modal-header">
+      <div>
+        <h2 id="lf-title" class="modal-title">{{ 'payroll.loans.form.title' | translate }}</h2>
+        <p class="modal-sub">{{ 'payroll.loans.form.subtitle' | translate }}</p>
+      </div>
+    </div>
+
+    @if (error()) {
+      <div class="modal-alert" role="alert">{{ error() }}</div>
+    }
+
+    <form [formGroup]="form" (ngSubmit)="save()" novalidate>
+      <div class="modal-body">
+        <div class="field">
+          <label for="lf-employee"
+            >{{ 'payroll.loans.fields.employee' | translate }} <span class="req">*</span></label
+          >
+          <app-employee-search-select formControlName="employeeId" inputId="lf-employee" />
+          @if (invalid('employeeId')) {
+            <span class="field-error">{{ 'common.validation.required' | translate }}</span>
+          }
+        </div>
+
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'payroll.loans.fields.type' | translate }}</mat-label>
+          <mat-select formControlName="componentId" required>
+            @for (t of types(); track t.id) {
+              <mat-option [value]="t.id">{{ t.name }}</mat-option>
+            }
+          </mat-select>
+          @if (invalid('componentId')) {
+            <mat-error>{{ 'common.validation.required' | translate }}</mat-error>
+          }
+        </mat-form-field>
+
+        <div class="field-row">
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'payroll.loans.fields.principal' | translate }}</mat-label>
+            <input
+              matInput
+              type="number"
+              min="0.01"
+              step="0.01"
+              formControlName="principal"
+              required
+            />
+            <span matTextSuffix>SSP</span>
+            @if (invalid('principal')) {
+              <mat-error>{{ 'payroll.loans.errors.principal' | translate }}</mat-error>
+            }
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'payroll.loans.fields.months' | translate }}</mat-label>
+            <input
+              matInput
+              type="number"
+              min="1"
+              max="360"
+              step="1"
+              formControlName="instalmentCount"
+              required
+            />
+            @if (invalid('instalmentCount')) {
+              <mat-error>{{ 'payroll.loans.errors.months' | translate }}</mat-error>
+            }
+          </mat-form-field>
+        </div>
+
+        <div class="field-row">
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'payroll.loans.fields.startMonth' | translate }}</mat-label>
+            <input matInput type="month" formControlName="startMonth" required />
+            @if (invalid('startMonth')) {
+              <mat-error>{{ 'payroll.loans.errors.startMonth' | translate }}</mat-error>
+            }
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'payroll.loans.fields.alreadyPaid' | translate }}</mat-label>
+            <input matInput type="number" min="0" step="1" formControlName="instalmentsPaid" />
+          </mat-form-field>
+        </div>
+        <p class="field-hint">{{ 'payroll.loans.fields.alreadyPaidHint' | translate }}</p>
+        @if (paidTooMany()) {
+          <span class="field-error" role="alert">{{
+            'payroll.loans.errors.rules.LOAN_ALREADY_REPAID' | translate
+          }}</span>
+        }
+
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'payroll.loans.fields.remarks' | translate }}</mat-label>
+          <textarea matInput rows="2" maxlength="500" formControlName="remarks"></textarea>
+        </mat-form-field>
+
+        @if (figures(); as f) {
+          <p class="field-hint" aria-live="polite">
+            {{
+              'payroll.loans.form.figures'
+                | translate
+                  : {
+                      instalment: (f.instalment | number: '1.2-2'),
+                      last: (f.finalInstalment | number: '1.2-2'),
+                      month: f.lastMonth,
+                      remaining: (f.remaining | number: '1.2-2'),
+                    }
+            }}
+          </p>
+        }
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn-cancel" (click)="closed.emit()" [disabled]="saving()">
+          {{ 'common.cancel' | translate }}
+        </button>
+        <button type="submit" class="btn-save" [disabled]="saving()">
+          @if (saving()) {
+            <mat-spinner diameter="18" />
+          }
+          {{ 'payroll.loans.form.save' | translate }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

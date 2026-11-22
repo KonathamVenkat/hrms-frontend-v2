@@ -1,0 +1,47 @@
+.loan-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+.loan-filters .filter-search {
+  flex: 1 1 280px;
+}
+.table-wrap {
+  position: relative;
+  overflow-x: auto;
+}
+.loan-table {
+  inline-size: 100%;
+}
+.num {
+  text-align: end;
+  white-space: nowrap;
+}
+.emp-name {
+  display: block;
+  font-weight: 600;
+}
+.emp-code {
+  color: var(--mat-sys-on-surface-variant);
+}
+.status-chip {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-weight: 600;
+}
+.status-active {
+  background: var(--status-approved-bg);
+  color: var(--status-approved-fg);
+}
+.status-closed {
+  background: var(--mat-sys-surface-container-high);
+  color: var(--mat-sys-on-surface);
+}
+.status-cancelled {
+  background: var(--status-rejected-bg);
+  color: var(--status-rejected-fg);
+}
+.nowrap {
+  white-space: nowrap;
+}

@@ -1835,6 +1835,82 @@
         "activateTitle": "Activer cette structure salariale ?",
         "activateMessage": "{{name}} ({{code}}) sera de nouveau proposée lors de l'affectation des salaires."
       }
+    },
+    "loans": {
+      "title": "Prêts des employés",
+      "subtitle": "Prêts et avances approuvés, remboursés par mensualités",
+      "add": "Enregistrer un prêt",
+      "empty": "Aucun prêt ne correspond à ces filtres",
+      "salaryLine": "Prêts : {{amount}} / mois",
+      "filters": {
+        "search": "Rechercher par nom ou matricule de l'employé",
+        "type": "Type de prêt",
+        "allTypes": "Tous les types",
+        "status": "Statut",
+        "allStatuses": "Tous les statuts"
+      },
+      "columns": {
+        "employee": "Employé",
+        "type": "Type",
+        "principal": "Capital",
+        "instalment": "Mensualité",
+        "progress": "Payé",
+        "remaining": "Restant",
+        "period": "Mois",
+        "status": "Statut",
+        "actions": "Actions"
+      },
+      "status": {
+        "ACTIVE": "En cours",
+        "CLOSED": "Clôturé",
+        "CANCELLED": "Annulé"
+      },
+      "fields": {
+        "employee": "Employé",
+        "type": "Type de prêt",
+        "principal": "Capital",
+        "months": "Nombre de mois",
+        "startMonth": "Premier mois",
+        "alreadyPaid": "Mensualités déjà payées",
+        "alreadyPaidHint": "Seulement pour un prêt déjà en cours avant d'être saisi ici.",
+        "remarks": "Remarques"
+      },
+      "form": {
+        "title": "Enregistrer un prêt approuvé",
+        "subtitle": "Remboursé par mensualités lors du calcul de la paie.",
+        "save": "Enregistrer le prêt",
+        "figures": "{{instalment}} par mois ; la dernière mensualité ({{month}}) est de {{last}}. Reste à rembourser : {{remaining}}."
+      },
+      "end": {
+        "closeTitle": "Clôturer le prêt",
+        "cancelTitle": "Annuler le prêt",
+        "closeMessage": "Clôturer le prêt {{type}} de {{employee}} ({{code}}) comme remboursé ? Plus rien ne sera retenu ; il restait {{remaining}}.",
+        "cancelMessage": "Annuler le prêt {{type}} de {{employee}} ({{code}}) saisi par erreur ? Il ne sera pas retenu.",
+        "reason": "Motif",
+        "closeConfirm": "Clôturer le prêt",
+        "cancelConfirm": "Annuler le prêt"
+      },
+      "success": {
+        "created": "Prêt enregistré",
+        "closed": "Prêt clôturé",
+        "cancelled": "Prêt annulé"
+      },
+      "errors": {
+        "loadFailed": "Impossible de charger les prêts. Réessayez.",
+        "saveFailed": "Impossible d'enregistrer. Réessayez.",
+        "principal": "Saisissez un montant supérieur à zéro.",
+        "months": "Saisissez un nombre entier de mois de 1 à 360.",
+        "startMonth": "Choisissez le premier mois.",
+        "rules": {
+          "EMP_INACTIVE": "Cet employé est désactivé. Aucun prêt ne peut être enregistré.",
+          "LOAN_TYPE_INVALID": "Choisissez un type de prêt actif.",
+          "LOAN_ALREADY_REPAID": "Les mensualités déjà payées doivent être inférieures au nombre de mois.",
+          "LOAN_INSTALMENT_TOO_SMALL": "Le capital est trop faible pour autant de mois.",
+          "LOAN_TYPE_ALREADY_RUNNING": "Cet employé a déjà un prêt en cours de ce type. Clôturez-le d'abord ou utilisez le second type (ex. « Avance d'urgence 2 »).",
+          "LOAN_NOT_ACTIVE": "Ce prêt n'est plus en cours.",
+          "conflict": "Quelqu'un d'autre a modifié ce prêt. Rechargez puis réessayez."
+        }
+      }
     }
   },
   "admin": {
