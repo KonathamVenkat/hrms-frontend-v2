@@ -88,8 +88,12 @@
             {{ stageKey(s.stage) | translate }}
           }
         </p>
-        @if (s.summary) {
-          <p class="summary" dir="auto">{{ s.summary }}</p>
+        @if (summaryLine(); as line) {
+          @if (line.key; as key) {
+            <p class="summary" dir="auto">{{ key | translate: line.params }}</p>
+          } @else if (line.text) {
+            <p class="summary" dir="auto">{{ line.text }}</p>
+          }
         }
       </mat-card-content>
     </mat-card>
@@ -110,7 +114,7 @@
     <app-forward-dialog
       [kind]="kind"
       [requesterName]="status()?.requesterName ?? null"
-      [summary]="status()?.summary ?? null"
+      [summary]="summaryLine()"
       [pickDepartment]="pickDepartment()"
       [departments]="departments()"
       [departmentsError]="departmentsError()"

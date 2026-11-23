@@ -86,6 +86,26 @@ describe('ApprovalsInbox', () => {
     expect(link?.getAttribute('href')).toBe('/app/workflow/requests/LEAVE/1');
   });
 
+  it('words the request from its facts in the UI language, and keeps the server line without them', () => {
+    const worded: InboxItem = {
+      ...item(4),
+      summaryDetails: {
+        leaveTypeCode: 'ANNUAL',
+        leaveTypeNameEn: 'Annual Leave',
+        leaveTypeNameAr: 'إجازة سنوية',
+        startDate: '2026-12-07',
+        endDate: '2026-12-09',
+        totalDays: 3,
+      },
+    };
+    const { el } = setup(() => of(page([worded, item(5)])));
+    const rows = el.querySelectorAll('tbody tr');
+    // no translations are loaded in the test, so the pipe shows the key: the worded line is used, not the server's
+    expect(rows[0].textContent).toContain('workflow.summary.leave');
+    expect(rows[0].textContent).not.toContain('Annual 2026-11-01');
+    expect(rows[1].textContent).toContain('Annual 2026-11-01 to 2026-11-05 (5 days)');
+  });
+
   it('never leaves the link empty when the requester name is missing', () => {
     const bare: InboxItem = { ...item(3), requesterName: undefined, summary: undefined };
     const { el } = setup(() => of(page([bare])));

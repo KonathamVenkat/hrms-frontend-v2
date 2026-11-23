@@ -51,11 +51,19 @@ export interface WorkflowStatus {
   requesterEmployeeId: number;
   requesterName?: string;
   summary?: string;
+  /** The summary's facts, language-neutral, for the screen to word in the user's language. */
+  summaryDetails?: SummaryDetails;
   /** The caller (an HR_ADMIN, not the requester) may override the open step now. False once closed. */
   mayOverride: boolean;
   /** The open step picks the department, so an override that forwards must send one. */
   overridePicksTargetDepartment: boolean;
 }
+
+/**
+ * Facts behind a request's one-line summary, per request type. Leave: leaveTypeCode, leaveTypeNameEn,
+ * leaveTypeNameAr, startDate, endDate (yyyy-MM-dd), totalDays.
+ */
+export type SummaryDetails = Record<string, string | number | null>;
 
 /** RequestHistoryResponse. Actor fields are absent on system rows (AUTO_ROUTED); stepKey on the SUBMITTED row. */
 export interface RequestHistory {
@@ -78,6 +86,7 @@ export interface InboxItem {
   requesterEmployeeId: number;
   requesterName?: string;
   summary?: string;
+  summaryDetails?: SummaryDetails;
   submittedAt: string;
 }
 

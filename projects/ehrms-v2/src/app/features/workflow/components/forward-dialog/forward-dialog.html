@@ -28,8 +28,12 @@
         @if (requesterName()) {
           <strong dir="auto">{{ requesterName() }}</strong>
         }
-        @if (summary()) {
-          <span dir="auto">{{ summary() }}</span>
+        @if (summary(); as line) {
+          @if (line.key; as key) {
+            <span dir="auto">{{ key | translate: line.params }}</span>
+          } @else if (line.text) {
+            <span dir="auto">{{ line.text }}</span>
+          }
         }
       </p>
 

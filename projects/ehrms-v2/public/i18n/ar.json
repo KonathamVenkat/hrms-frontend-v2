@@ -3152,6 +3152,10 @@
       "OVERTIME": "طلب عمل إضافي",
       "RECRUITMENT_REQUISITION": "طلب توظيف"
     },
+    "summary": {
+      "leave": "{{type}}: {{start}} – {{end}} ({{days}} أيام)",
+      "leaveOneDay": "{{type}}: {{start}} – {{end}} (يوم واحد)"
+    },
     "inbox": {
       "title": "صندوق الموافقات",
       "subtitle": "طلبات تنتظر قرارك",

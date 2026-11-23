@@ -22,6 +22,7 @@ import { TypedCellDefDirective } from '../../../../core/directives/typed-cell-de
 import { LanguageService } from '../../../../core/services/language.service';
 import { formatDisplayDateTime } from '../../../../core/utils/display-date';
 import { InboxItem } from '../../models/workflow.model';
+import { SummaryLine, requestSummary } from '../../request-summary';
 import { WorkflowService } from '../../services/workflow.service';
 import { workflowErrorMessage } from '../../workflow-errors';
 
@@ -30,6 +31,7 @@ const PAGE_SIZES = [10, 20, 50];
 /** One table row, worked out once so the template calls no methods. */
 interface InboxRow extends InboxItem {
   stepLabel: string;
+  summaryLine: SummaryLine;
   submitted: string;
 }
 
@@ -73,6 +75,7 @@ export class ApprovalsInbox implements OnInit {
     return this.items().map((i) => ({
       ...i,
       stepLabel: lang === 'ar' ? i.stepLabelAr : i.stepLabelEn,
+      summaryLine: requestSummary(i.type, i.summaryDetails, i.summary, lang),
       submitted: formatDisplayDateTime(i.submittedAt, lang),
     }));
   });

@@ -3152,6 +3152,10 @@
       "OVERTIME": "Overtime request",
       "RECRUITMENT_REQUISITION": "Requisition"
     },
+    "summary": {
+      "leave": "{{type}}: {{start}} – {{end}} ({{days}} days)",
+      "leaveOneDay": "{{type}}: {{start}} – {{end}} (1 day)"
+    },
     "inbox": {
       "title": "Approvals inbox",
       "subtitle": "Requests waiting for your decision",

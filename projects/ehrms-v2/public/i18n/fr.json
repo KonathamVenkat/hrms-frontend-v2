@@ -3152,6 +3152,10 @@
       "OVERTIME": "Demande d'heures supplémentaires",
       "RECRUITMENT_REQUISITION": "Demande de recrutement"
     },
+    "summary": {
+      "leave": "{{type}} : {{start}} – {{end}} ({{days}} jours)",
+      "leaveOneDay": "{{type}} : {{start}} – {{end}} (1 jour)"
+    },
     "inbox": {
       "title": "Boîte d'approbations",
       "subtitle": "Demandes en attente de votre décision",

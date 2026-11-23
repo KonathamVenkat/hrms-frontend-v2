@@ -38,6 +38,7 @@ import {
   WorkflowStatus,
 } from '../../models/workflow.model';
 import { WorkflowService } from '../../services/workflow.service';
+import { requestSummary } from '../../request-summary';
 import { workflowErrorMessage } from '../../workflow-errors';
 
 interface RequestRef {
@@ -110,6 +111,12 @@ export class RequestDetail implements OnInit, OnDestroy {
   readonly stageKey = stageKey;
   readonly isArabic = computed(() => this.lang.currentLang() === 'ar');
   readonly isOpen = computed(() => !!this.status()?.stage.startsWith('PENDING'));
+  readonly summaryLine = computed(() => {
+    const s = this.status();
+    return s
+      ? requestSummary(s.type, s.summaryDetails, s.summary, this.lang.currentLang())
+      : { text: '' };
+  });
   readonly stepLabel = computed(() => {
     const s = this.status();
     return (this.isArabic() ? s?.stepLabelAr : s?.stepLabelEn) ?? '';

@@ -30,6 +30,7 @@ import { AccessibleDialogDirective } from '../../../../core/directives/accessibl
 import { LanguageService } from '../../../../core/services/language.service';
 import { DepartmentLookup } from '../../../employee/models/employee';
 import { StepOutcome } from '../../models/workflow.model';
+import { SummaryLine } from '../../request-summary';
 
 /** What the dialog confirms: a step outcome, cancelling the request, or an HR_ADMIN override. */
 export type DialogKind = StepOutcome | 'CANCEL' | 'OVERRIDE';
@@ -65,7 +66,8 @@ const MAX_TEXT = 500;
 export class ForwardDialog implements OnInit {
   readonly kind = input.required<DialogKind>();
   readonly requesterName = input<string | null>(null);
-  readonly summary = input<string | null>(null);
+  /** The request in one line (translation key + params, or a plain line). */
+  readonly summary = input<SummaryLine | null>(null);
   /** The step asks for a target department (only used when forwarding). */
   readonly pickDepartment = input(false);
   readonly departments = input<DepartmentLookup[]>([]);

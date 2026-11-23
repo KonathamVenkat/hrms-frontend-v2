@@ -22,7 +22,7 @@ function setup(
   const ref = fixture.componentRef;
   ref.setInput('kind', kind);
   ref.setInput('requesterName', 'Ayen Deng');
-  ref.setInput('summary', 'Annual 2026-11-01 to 2026-11-05 (5 days)');
+  ref.setInput('summary', { text: 'Annual 2026-11-01 to 2026-11-05 (5 days)' });
   ref.setInput('pickDepartment', opts.pickDepartment ?? false);
   ref.setInput('departments', DEPTS);
   ref.setInput('outcomes', opts.outcomes ?? []);

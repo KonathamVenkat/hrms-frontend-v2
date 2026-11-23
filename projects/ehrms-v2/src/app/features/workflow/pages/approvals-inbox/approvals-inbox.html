@@ -56,8 +56,10 @@
               </th>
               <td mat-cell *matCellDef="let r; dataSource: rows()" dir="auto">
                 <strong>{{ 'workflow.types.' + r.type | translate }}</strong>
-                @if (r.summary) {
-                  <br />{{ r.summary }}
+                @if (r.summaryLine.key) {
+                  <br />{{ r.summaryLine.key | translate: r.summaryLine.params }}
+                } @else if (r.summaryLine.text) {
+                  <br />{{ r.summaryLine.text }}
                 }
               </td>
             </ng-container>
