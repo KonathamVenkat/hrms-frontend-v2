@@ -90,6 +90,7 @@ export class RequestDetail implements OnInit, OnDestroy {
   private historySub?: Subscription;
   private departmentsSub?: Subscription;
   private actionSub?: Subscription;
+  private downloadSub?: Subscription;
 
   readonly status = signal<WorkflowStatus | null>(null);
   readonly history = signal<RequestHistory[]>([]);
@@ -98,6 +99,8 @@ export class RequestDetail implements OnInit, OnDestroy {
   readonly forbidden = signal(false);
   readonly historyError = signal<string | null>(null);
   readonly notice = signal<string | null>(null);
+  readonly downloading = signal(false);
+  readonly downloadError = signal<string | null>(null);
 
   readonly dialog = signal<DialogKind | null>(null);
   readonly dialogError = signal<string | null>(null);
@@ -111,6 +114,11 @@ export class RequestDetail implements OnInit, OnDestroy {
   readonly stageKey = stageKey;
   readonly isArabic = computed(() => this.lang.currentLang() === 'ar');
   readonly isOpen = computed(() => !!this.status()?.stage.startsWith('PENDING'));
+  /** The uploaded document's file name (e.g. a sick note), when the request has one. */
+  readonly attachmentName = computed(() => {
+    const name = this.status()?.summaryDetails?.['attachmentName'];
+    return typeof name === 'string' && name.trim() !== '' ? name : null;
+  });
   readonly summaryLine = computed(() => {
     const s = this.status();
     return s
@@ -167,6 +175,22 @@ export class RequestDetail implements OnInit, OnDestroy {
     this.historySub?.unsubscribe();
     this.departmentsSub?.unsubscribe();
     this.actionSub?.unsubscribe();
+    this.downloadSub?.unsubscribe();
+  }
+
+  /** Downloads the request's document; a second click while one is running is ignored. */
+  downloadAttachment(): void {
+    const ref = this.ref;
+    const name = this.attachmentName();
+    if (!ref || !name || !this.status()?.mayDownloadAttachment || this.downloading()) return;
+    this.downloading.set(true);
+    this.downloadError.set(null);
+    this.downloadSub = this.svc
+      .downloadAttachment(ref.type, ref.id, name)
+      .pipe(finalize(() => this.downloading.set(false)))
+      .subscribe({
+        error: (err: unknown) => this.downloadError.set(workflowErrorMessage(this.translate, err)),
+      });
   }
 
   open(kind: DialogKind): void {

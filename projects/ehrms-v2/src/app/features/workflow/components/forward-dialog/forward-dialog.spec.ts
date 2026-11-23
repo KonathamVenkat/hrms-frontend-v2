@@ -12,7 +12,7 @@ const DEPTS: DepartmentLookup[] = [
 
 function setup(
   kind: DialogKind,
-  opts: { pickDepartment?: boolean; outcomes?: StepOutcome[]; busy?: boolean } = {},
+  opts: { pickDepartment?: boolean; outcomes?: StepOutcome[]; busy?: boolean; suggested?: number | null } = {},
 ) {
   TestBed.configureTestingModule({
     imports: [ForwardDialog, NoopAnimationsModule],
@@ -25,6 +25,7 @@ function setup(
   ref.setInput('summary', { text: 'Annual 2026-11-01 to 2026-11-05 (5 days)' });
   ref.setInput('pickDepartment', opts.pickDepartment ?? false);
   ref.setInput('departments', DEPTS);
+  ref.setInput('suggestedDepartmentId', opts.suggested ?? null);
   ref.setInput('outcomes', opts.outcomes ?? []);
   ref.setInput('busy', opts.busy ?? false);
   const confirmed: DialogResult[] = [];
@@ -81,6 +82,22 @@ describe('ForwardDialog', () => {
     fixture.componentInstance.form.controls.targetDepartmentId.setValue(3);
     confirmBtn()?.click();
     expect(confirmed).toEqual([{ outcome: 'FORWARD', targetDepartmentId: 3, text: null }]);
+  });
+
+  it('starts the department choice on the suggested department, and the user can change it', () => {
+    const { fixture, confirmed, confirmBtn } = setup('FORWARD', { pickDepartment: true, suggested: 4 });
+    expect(fixture.componentInstance.form.controls.targetDepartmentId.value).toBe(4);
+    confirmBtn()?.click();
+    expect(confirmed).toEqual([{ outcome: 'FORWARD', targetDepartmentId: 4, text: null }]);
+
+    fixture.componentInstance.form.controls.targetDepartmentId.setValue(3);
+    fixture.detectChanges();
+    expect(fixture.componentInstance.form.controls.targetDepartmentId.value).toBe(3);
+  });
+
+  it('ignores a suggested department that is not in the list', () => {
+    const { fixture } = setup('FORWARD', { pickDepartment: true, suggested: 99 });
+    expect(fixture.componentInstance.form.controls.targetDepartmentId.value).toBeNull();
   });
 
   it('does not ask for a department when rejecting at a pick-department step', () => {

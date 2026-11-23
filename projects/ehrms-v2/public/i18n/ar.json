@@ -3177,7 +3177,10 @@
       "forbidden": "لا يمكنك عرض هذا الطلب",
       "forbiddenHint": "يمكن فتحه فقط للمعنيين بالطلب ولشؤون الموظفين.",
       "cancel": "إلغاء الطلب",
-      "override": "تجاوز (مسؤول الموارد البشرية)"
+      "override": "تجاوز (مسؤول الموارد البشرية)",
+      "attachment": "المرفق:",
+      "download": "تنزيل",
+      "downloadAttachment": "تنزيل {{name}}"
     },
     "outcomes": {
       "FORWARD": "إحالة",

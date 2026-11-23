@@ -3177,7 +3177,10 @@
       "forbidden": "Vous ne pouvez pas consulter cette demande",
       "forbiddenHint": "Seules les personnes concernées et les RH peuvent l'ouvrir.",
       "cancel": "Annuler la demande",
-      "override": "Forcer (admin RH)"
+      "override": "Forcer (admin RH)",
+      "attachment": "Pièce jointe :",
+      "download": "Télécharger",
+      "downloadAttachment": "Télécharger {{name}}"
     },
     "outcomes": {
       "FORWARD": "Transmettre",

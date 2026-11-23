@@ -29,3 +29,19 @@
   font-size: 17px;
   color: var(--status-rejected-fg);
 }
+.attachment {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  margin-block-start: var(--space-3);
+}
+.attachment-label {
+  font-weight: 600;
+}
+.attachment-name {
+  overflow-wrap: anywhere;
+}
+.attachment button {
+  min-block-size: 44px;
+}

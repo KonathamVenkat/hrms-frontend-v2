@@ -95,6 +95,30 @@
             <p class="summary" dir="auto">{{ line.text }}</p>
           }
         }
+        @if (attachmentName(); as fileName) {
+          <div class="attachment">
+            <mat-icon aria-hidden="true">attach_file</mat-icon>
+            <span class="attachment-label">{{ 'workflow.detail.attachment' | translate }}</span>
+            <bdi class="attachment-name">{{ fileName }}</bdi>
+            @if (status()?.mayDownloadAttachment) {
+              <button
+                mat-stroked-button
+                type="button"
+                [disabled]="downloading()"
+                [attr.aria-label]="
+                  'workflow.detail.downloadAttachment' | translate: { name: fileName }
+                "
+                (click)="downloadAttachment()"
+              >
+                <mat-icon aria-hidden="true">download</mat-icon>
+                {{ 'workflow.detail.download' | translate }}
+              </button>
+            }
+          </div>
+          @if (downloadError()) {
+            <p class="field-error" role="alert">{{ downloadError() }}</p>
+          }
+        }
       </mat-card-content>
     </mat-card>
 
@@ -117,6 +141,7 @@
       [summary]="summaryLine()"
       [pickDepartment]="pickDepartment()"
       [departments]="departments()"
+      [suggestedDepartmentId]="status()?.suggestedTargetDepartmentId ?? null"
       [departmentsError]="departmentsError()"
       [outcomes]="overrideOutcomes"
       [busy]="acting()"

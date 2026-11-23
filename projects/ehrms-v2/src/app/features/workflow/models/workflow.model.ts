@@ -57,6 +57,10 @@ export interface WorkflowStatus {
   mayOverride: boolean;
   /** The open step picks the department, so an override that forwards must send one. */
   overridePicksTargetDepartment: boolean;
+  /** When the caller picks the department: the requester's own, to start the choice from. */
+  suggestedTargetDepartmentId?: number;
+  /** The caller may open the attachment (those who decide; not the forwarding department secretary). */
+  mayDownloadAttachment: boolean;
 }
 
 /**

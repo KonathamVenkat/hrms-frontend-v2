@@ -41,6 +41,7 @@ function status(over: Partial<WorkflowStatus> = {}): WorkflowStatus {
     requesterEmployeeId: 99,
     mayOverride: false,
     overridePicksTargetDepartment: false,
+    mayDownloadAttachment: false,
     ...over,
   };
 }
@@ -65,6 +66,7 @@ function setup(opts: Opts = {}) {
     cancel: vi.fn(() => of(wrap(status({ stage: 'CANCELLED', allowedOutcomes: [] })))),
     override: vi.fn(() => of(wrap(status({ stage: 'PENDING_GM', stepKey: 'GM' })))),
     targetDepartments: vi.fn(() => of(wrap([{ id: 5, code: 'T', name: 'Target', nameAr: 'ه' }]))),
+    downloadAttachment: vi.fn(() => of(undefined)),
   };
   const depts = {
     getDepartments: vi.fn(() => of(wrap([{ id: 3, code: 'F', name: 'Finance', nameAr: 'م' }]))),
@@ -119,6 +121,45 @@ function dialogForm(fixture: ComponentFixture<RequestDetail>) {
 }
 
 describe('RequestDetail', () => {
+  it('offers the uploaded document for download to the approver, once per click', () => {
+    const { el, svc, fixture } = setup({
+      statusOver: {
+        summaryDetails: {
+          leaveTypeCode: 'SICK',
+          startDate: '2026-11-23',
+          attachmentName: 'sick-note.pdf',
+        },
+        mayDownloadAttachment: true,
+      },
+    });
+    expect(el.textContent).toContain('sick-note.pdf');
+    const button = el.querySelector<HTMLButtonElement>('.attachment button');
+    button?.click();
+    fixture.detectChanges();
+    expect(svc.downloadAttachment).toHaveBeenCalledWith('LEAVE', 7, 'sick-note.pdf');
+  });
+
+  it('shows the forwarding secretary only the document name, with no download', () => {
+    const { el, svc } = setup({
+      statusOver: {
+        summaryDetails: {
+          leaveTypeCode: 'SICK',
+          startDate: '2026-11-23',
+          attachmentName: 'sick-note.pdf',
+        },
+        mayDownloadAttachment: false,
+      },
+    });
+    expect(el.textContent).toContain('sick-note.pdf');
+    expect(el.querySelector('.attachment button')).toBeNull();
+    expect(svc.downloadAttachment).not.toHaveBeenCalled();
+  });
+
+  it('shows no attachment row when the request has no document', () => {
+    const { el } = setup();
+    expect(el.querySelector('.attachment')).toBeNull();
+  });
+
   it('offers only the actions in allowedOutcomes', () => {
     const { labels } = setup({ status: of(wrap(status({ allowedOutcomes: ['FORWARD'] }))) });
     const text = labels().join('|');

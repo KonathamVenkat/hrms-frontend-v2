@@ -3177,7 +3177,10 @@
       "forbidden": "You cannot view this request",
       "forbiddenHint": "Only the people involved in a request and HR can open it.",
       "cancel": "Cancel request",
-      "override": "Override (HR admin)"
+      "override": "Override (HR admin)",
+      "attachment": "Attachment:",
+      "download": "Download",
+      "downloadAttachment": "Download {{name}}"
     },
     "outcomes": {
       "FORWARD": "Forward",

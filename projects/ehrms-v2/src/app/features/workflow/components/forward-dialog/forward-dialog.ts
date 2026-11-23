@@ -4,6 +4,7 @@ import {
   DestroyRef,
   OnInit,
   computed,
+  effect,
   inject,
   input,
   output,
@@ -71,6 +72,8 @@ export class ForwardDialog implements OnInit {
   /** The step asks for a target department (only used when forwarding). */
   readonly pickDepartment = input(false);
   readonly departments = input<DepartmentLookup[]>([]);
+  /** The department to start the choice from (the requester's own), when it is in the list. */
+  readonly suggestedDepartmentId = input<number | null>(null);
   readonly departmentsError = input<string | null>(null);
   /** The outcomes an override may choose from. */
   readonly outcomes = input<StepOutcome[]>([]);
@@ -103,6 +106,17 @@ export class ForwardDialog implements OnInit {
   readonly danger = computed(() => ['REJECT', 'CANCEL', 'OVERRIDE'].includes(this.kind()));
 
   readonly isArabic = computed(() => this.lang.currentLang() === 'ar');
+
+  constructor() {
+    // Departments arrive after the dialog opens: start on the suggested one, unless the user already chose.
+    effect(() => {
+      const suggested = this.suggestedDepartmentId();
+      const control = this.form.controls.targetDepartmentId;
+      if (suggested !== null && control.value === null && this.departments().some((d) => d.id === suggested)) {
+        control.setValue(suggested);
+      }
+    });
+  }
 
   ngOnInit(): void {
     const { outcome, targetDepartmentId, text } = this.form.controls;

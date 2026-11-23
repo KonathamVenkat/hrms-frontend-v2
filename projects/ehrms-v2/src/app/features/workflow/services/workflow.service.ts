@@ -1,6 +1,6 @@
-import { Injectable, inject } from '@angular/core';
+import { DOCUMENT, Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { DepartmentLookup } from '../../employee/models/employee';
 import { environment } from '../../../../environments/environment';
 import {
@@ -18,6 +18,7 @@ import {
 @Injectable({ providedIn: 'root' })
 export class WorkflowService {
   private http = inject(HttpClient);
+  private document = inject(DOCUMENT);
   private root = `${environment.serviceUrl}/api/v1`;
 
   private url(type: RequestType, id: number, tail: string): string {
@@ -35,6 +36,23 @@ export class WorkflowService {
 
   history(type: RequestType, id: number): Observable<ApiResponse<RequestHistory[]>> {
     return this.http.get<ApiResponse<RequestHistory[]>>(this.url(type, id, 'history'));
+  }
+
+  /**
+   * The request's attachment (e.g. a sick note) for anyone involved in the request, fetched with the auth header and
+   * handed to the browser as a file download (never opened inline).
+   */
+  downloadAttachment(type: RequestType, id: number, fileName: string): Observable<void> {
+    return this.http.get(this.url(type, id, 'attachment'), { responseType: 'blob' }).pipe(
+      map((blob) => {
+        const url = URL.createObjectURL(blob);
+        const a = this.document.createElement('a');
+        a.href = url;
+        a.download = fileName;
+        a.click();
+        URL.revokeObjectURL(url);
+      }),
+    );
   }
 
   /** Departments a step holder may forward to (active only); 403 for anyone who does not hold a picking step. */
