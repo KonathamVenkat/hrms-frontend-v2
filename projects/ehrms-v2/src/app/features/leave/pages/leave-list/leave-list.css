@@ -70,33 +70,11 @@
   cursor: pointer;
 }
 .filter-select:focus-visible,
-.btn-clear:focus-visible,
 .btn-cancel-req:focus-visible,
 .attachment-link:focus-visible,
 .pag-btn:focus-visible {
   outline: 2px solid var(--mat-sys-primary);
   outline-offset: 2px;
-}
-.btn-clear {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-1);
-  min-block-size: 44px;
-  padding-inline: var(--space-4);
-  border: 1px solid var(--mat-sys-outline-variant);
-  border-radius: var(--radius-md);
-  background: var(--table-surface);
-  color: var(--mat-sys-on-surface-variant);
-  font: inherit;
-  font-weight: 600;
-  cursor: pointer;
-}
-.btn-clear:hover {
-  border-color: var(--danger);
-  color: var(--danger);
-}
-.btn-clear .material-icons {
-  font-size: 18px;
 }
 
 /* ── Leave cards: one compact row + one details line ─────── */

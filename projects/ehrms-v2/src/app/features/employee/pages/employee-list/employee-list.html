@@ -89,7 +89,7 @@
 
     <!-- Clear filters -->
     @if (hasNonDefaultFilters()) {
-      <button class="btn-clear" (click)="clearFilters()">
+      <button type="button" class="btn-filter-clear" (click)="clearFilters()">
         <span class="material-icons" aria-hidden="true">filter_alt_off</span>
         {{ 'employee.list.clearFilters' | translate }}
       </button>

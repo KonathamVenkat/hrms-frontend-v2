@@ -334,6 +334,8 @@ html {
   --success: light-dark(#15803d, #4ade80);
   --warning: light-dark(#b45309, #fbbf24);
   --danger: light-dark(#b91c1c, #f87171);
+  // Navy of the filled primary button (--grad-primary); light blue on dark surfaces.
+  --brand-navy: light-dark(#1c27a0, #bfd3ff);
 
   // Backdrop blob anchors: swapped for RTL so the warm/cool light sources mirror with the layout.
   --blob-a-x: 0%;

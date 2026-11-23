@@ -1709,28 +1709,6 @@ html[dir='rtl'] * {
 .admin-page .clear-btn .material-icons {
   font-size: 18px;
 }
-.admin-page .btn-clear-filters {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-1);
-  min-block-size: 44px;
-  padding-inline: var(--space-4);
-  border: 1px solid var(--mat-sys-outline-variant);
-  border-radius: var(--radius-md);
-  background: var(--table-surface);
-  color: var(--mat-sys-on-surface-variant);
-  font: inherit;
-  font-weight: 600;
-  cursor: pointer;
-}
-.admin-page .btn-clear-filters:hover {
-  border-color: var(--danger);
-  color: var(--danger);
-}
-.admin-page .btn-clear-filters:focus-visible {
-  outline: 2px solid var(--mat-sys-primary);
-  outline-offset: 2px;
-}
 .admin-page .filter-select {
   block-size: 44px;
   padding-inline: var(--space-3);
@@ -3152,4 +3130,46 @@ html:lang(ar) app-employee-form .field :is(input, select, textarea):not([type='c
 /* A modal with a wide form (identity details). */
 .modal.modal-wide {
   max-inline-size: 880px;
+}
+
+/* ── Clear filters: quiet tonal secondary, used in every filter bar (the filled Search stays the one primary) ── */
+.btn-filter-clear {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-block-size: 44px;
+  padding-inline: var(--space-4);
+  border: 1px solid color-mix(in srgb, var(--brand-navy) 22%, var(--mat-sys-outline-variant));
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--brand-navy) 6%, var(--table-surface));
+  color: var(--brand-navy);
+  font: inherit;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background var(--motion-fast),
+    border-color var(--motion-fast);
+}
+.btn-filter-clear:hover {
+  background: color-mix(in srgb, var(--brand-navy) 12%, var(--table-surface));
+  border-color: var(--brand-navy);
+}
+.btn-filter-clear:active {
+  background: color-mix(in srgb, var(--brand-navy) 18%, var(--table-surface));
+}
+.btn-filter-clear:focus-visible {
+  outline: 2px solid var(--brand-navy);
+  outline-offset: 2px;
+}
+.btn-filter-clear .material-icons,
+.btn-filter-clear .mat-icon {
+  inline-size: 18px;
+  block-size: 18px;
+  font-size: 18px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .btn-filter-clear {
+    transition: none;
+  }
 }

@@ -361,19 +361,19 @@ describe('MasterData (reference masters)', () => {
 
     it('narrows the cards to the chosen parent and clears everything with Clear filters', () => {
       const { comp, el, fixture } = setupWilayas();
-      expect(el.querySelector('.btn-clear-filters')).toBeNull();
+      expect(el.querySelector('.btn-filter-clear')).toBeNull();
 
       comp.setParentFilter('2');
       comp.filterText.set('wa');
       fixture.detectChanges();
       expect(comp.filtered().map((r) => r.name)).toEqual(['Wau']);
-      expect(el.querySelector('.btn-clear-filters')).not.toBeNull();
+      expect(el.querySelector('.btn-filter-clear')).not.toBeNull();
 
       comp.clearFilters();
       fixture.detectChanges();
       expect(comp.filtered().length).toBe(2);
       expect(comp.filterParent()).toBeNull();
-      expect(el.querySelector('.btn-clear-filters')).toBeNull();
+      expect(el.querySelector('.btn-filter-clear')).toBeNull();
     });
   });
 });

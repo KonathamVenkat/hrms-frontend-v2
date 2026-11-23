@@ -60,7 +60,7 @@
     </select>
 
     @if (filterStatus() || filterType()) {
-      <button class="btn-clear" (click)="clearFilters()">
+      <button type="button" class="btn-filter-clear" (click)="clearFilters()">
         <span aria-hidden="true" class="material-icons">filter_alt_off</span>
         {{ 'common.clear' | translate }}
       </button>
